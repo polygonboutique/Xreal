@@ -217,8 +217,7 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 
 	le->pos.trTime = cg.time;
 	// check for stop, making sure that even on low FPS systems it doesn't bobble
-	if (trace->allsolid ||
-	  (trace->plane.normal[2] > 0 && (le->pos.trDelta[2] < 40 || le->pos.trDelta[2] < -cg.frametime * le->pos.trDelta[2]))) {
+	if (trace->allsolid || (trace->plane.normal[2] > 0 && (le->pos.trDelta[2] < 40 || le->pos.trDelta[2] < -cg.frametime * le->pos.trDelta[2]))) {
 		le->pos.trType = TR_STATIONARY;
 	} else {
 		if (le->leFlags & LEF_TUMBLE) {
@@ -475,7 +474,6 @@ static void CG_AddExplosion(localEntity_t *ex) {
 	ent = &ex->refEntity;
 	// add the entity
 	trap_R_AddRefEntityToScene(ent);
-
 	// add the light
 	if (ex->light) {
 		float light;
@@ -556,8 +554,9 @@ void CG_AddKamikaze(localEntity_t *le) {
 
 	if (t > KAMI_SHOCKWAVE_STARTTIME && t < KAMI_SHOCKWAVE_ENDTIME) {
 		if (!(le->leFlags & LEF_SOUND1)) {
-//         trap_S_StartSound(re->origin, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.kamikazeExplodeSound);
+			//trap_S_StartSound(re->origin, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.kamikazeExplodeSound);
 			trap_S_StartLocalSound(cgs.media.kamikazeExplodeSound, CHAN_AUTO);
+
 			le->leFlags |= LEF_SOUND1;
 		}
 		// 1st kamikaze shockwave
@@ -665,6 +664,7 @@ void CG_AddKamikaze(localEntity_t *le) {
 		}
 
 		c *= 0xff;
+
 		shockwave.shaderRGBA[0] = 0xff - c;
 		shockwave.shaderRGBA[1] = 0xff - c;
 		shockwave.shaderRGBA[2] = 0xff - c;
@@ -853,7 +853,7 @@ void CG_AddRefEntity(localEntity_t *le) {
 	trap_R_AddRefEntityToScene(&le->refEntity);
 }
 #endif
-#define NUMBER_SIZE		8
+#define NUMBER_SIZE 8
 /*
 =======================================================================================================================================
 CG_AddScorePlum

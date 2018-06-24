@@ -129,6 +129,7 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from) {
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
 		VectorSubtract(spot->s.origin, from, delta);
+
 		dist = VectorLength(delta);
 
 		if (dist < nearestDist) {
@@ -405,7 +406,6 @@ void CopyToBodyQue(gentity_t *ent) {
 	int contents;
 
 	trap_UnlinkEntity(ent);
-
 	// if client is in a nodrop area, don't leave the body
 	contents = trap_PointContents(ent->s.origin, -1);
 
@@ -435,8 +435,10 @@ void CopyToBodyQue(gentity_t *ent) {
 				continue;
 			}
 
-			if (strcmp(e->classname, "kamikaze timer"))
+			if (strcmp(e->classname, "kamikaze timer")) {
 				continue;
+			}
+
 			e->activator = body;
 			break;
 		}
@@ -448,6 +450,7 @@ void CopyToBodyQue(gentity_t *ent) {
 	body->timestamp = level.time;
 	body->physicsObject = qtrue;
 	body->physicsBounce = 0; // don't bounce
+
 	if (body->s.groundEntityNum == ENTITYNUM_NONE) {
 		body->s.pos.trType = TR_GRAVITY;
 		body->s.pos.trAcceleration = g_gravity.value;
@@ -524,10 +527,10 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle) {
 
 /*
 =======================================================================================================================================
-respawn
+ClientRespawn
 =======================================================================================================================================
 */
-void respawn(gentity_t *ent) {
+void ClientRespawn(gentity_t *ent) {
 	gentity_t *tent;
 
 	//CopyToBodyQue(ent);
@@ -1000,6 +1003,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	CalculateRanks();
 	// for statistics
 //	client->areabits = areabits;
+
 //	if (!client->areabits) {
 //		client->areabits = G_Alloc((trap_AAS_PointReachabilityAreaIndex(NULL) + 7) / 8);
 //	}

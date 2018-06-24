@@ -219,13 +219,10 @@ void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops) {
 	cent = &cg.predictedPlayerEntity; // cg_entities[ps->clientNum];
 	// go through the predictable events buffer
 	for (i = ps->eventSequence - MAX_PS_EVENTS; i < ps->eventSequence; i++) {
-		// if we have a new predictable event
-		if (i >= ops->eventSequence
-		  // or the server told us to play another event instead of a predicted event we already issued
-		  // or something the server told us changed our prediction causing a different event
-		   || (i > ops->eventSequence - MAX_PS_EVENTS && ps->events[i &(MAX_PS_EVENTS - 1)] != ops->events[i &(MAX_PS_EVENTS - 1)])) {
-
-			event = ps->events[i &(MAX_PS_EVENTS - 1)];
+		// if we have a new predictable event or the server told us to play another event instead of a predicted event we already issued
+		// or something the server told us changed our prediction causing a different event
+		if (i >= ops->eventSequence || (i > ops->eventSequence - MAX_PS_EVENTS && ps->events[i & (MAX_PS_EVENTS - 1)] != ops->events[i & (MAX_PS_EVENTS - 1)])) {
+			event = ps->events[i & (MAX_PS_EVENTS - 1)];
 			cent->currentState.event = event;
 			cent->currentState.eventParm = ps->eventParms[i & (MAX_PS_EVENTS - 1)];
 

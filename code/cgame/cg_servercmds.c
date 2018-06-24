@@ -60,11 +60,9 @@ static int CG_ValidOrder(const char *p) {
 	return -1;
 }
 #endif
-
 /*
 =======================================================================================================================================
 CG_ParseScores
-
 =======================================================================================================================================
 */
 static void CG_ParseScores(void) {
@@ -82,7 +80,6 @@ static void CG_ParseScores(void) {
 	memset(cg.scores, 0, sizeof(cg.scores));
 
 	for (i = 0; i < cg.numScores; i++) {
-		//
 		cg.scores[i].client = atoi(CG_Argv(i * 14 + 4));
 		cg.scores[i].score = atoi(CG_Argv(i * 14 + 5));
 		cg.scores[i].ping = atoi(CG_Argv(i * 14 + 6));
@@ -92,7 +89,7 @@ static void CG_ParseScores(void) {
 		cg.scores[i].accuracy = atoi(CG_Argv(i * 14 + 10));
 		cg.scores[i].impressiveCount = atoi(CG_Argv(i * 14 + 11));
 		cg.scores[i].excellentCount = atoi(CG_Argv(i * 14 + 12));
-		cg.scores[i].guantletCount = atoi(CG_Argv(i * 14 + 13));
+		cg.scores[i].gauntletCount = atoi(CG_Argv(i * 14 + 13));
 		cg.scores[i].defendCount = atoi(CG_Argv(i * 14 + 14));
 		cg.scores[i].assistCount = atoi(CG_Argv(i * 14 + 15));
 		cg.scores[i].perfect = atoi(CG_Argv(i * 14 + 16));
@@ -104,13 +101,11 @@ static void CG_ParseScores(void) {
 
 		cgs.clientinfo[cg.scores[i].client].score = cg.scores[i].score;
 		cgs.clientinfo[cg.scores[i].client].powerups = powerups;
-
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
 	}
 #ifdef MISSIONPACK
 	CG_SetScoreSelection(NULL);
 #endif
-
 }
 
 /*
@@ -142,8 +137,7 @@ static void CG_ParseTeamInfo(void) {
 =======================================================================================================================================
 CG_ParseServerinfo
 
-This is called explicitly when the gamestate is first received, 
-and whenever the server updates any serverinfo flagged cvars
+This is called explicitly when the gamestate is first received, and whenever the server updates any serverinfo flagged cvars.
 =======================================================================================================================================
 */
 void CG_ParseServerinfo(void) {
@@ -152,7 +146,9 @@ void CG_ParseServerinfo(void) {
 
 	info = CG_ConfigString(CS_SERVERINFO);
 	cgs.gametype = atoi(Info_ValueForKey(info, "g_gametype"));
+
 	trap_Cvar_Set("g_gametype", va("%i", cgs.gametype));
+
 	cgs.dmflags = atoi(Info_ValueForKey(info, "dmflags"));
 	cgs.teamflags = atoi(Info_ValueForKey(info, "teamflags"));
 	cgs.fraglimit = atoi(Info_ValueForKey(info, "fraglimit"));
@@ -160,6 +156,7 @@ void CG_ParseServerinfo(void) {
 	cgs.timelimit = atoi(Info_ValueForKey(info, "timelimit"));
 	cgs.maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 	mapname = Info_ValueForKey(info, "mapname");
+
 	Com_sprintf(cgs.mapname, sizeof(cgs.mapname), "maps/%s.bsp", mapname);
 	Q_strncpyz(cgs.redTeam, Info_ValueForKey(info, "g_redTeam"), sizeof(cgs.redTeam));
 	trap_Cvar_Set("g_redTeam", cgs.redTeam);
@@ -177,7 +174,6 @@ static void CG_ParseWarmup(void) {
 	int warmup;
 
 	info = CG_ConfigString(CS_WARMUP);
-
 	warmup = atoi(info);
 	cg.warmupCount = -1;
 
@@ -194,7 +190,7 @@ static void CG_ParseWarmup(void) {
 =======================================================================================================================================
 CG_SetConfigValues
 
-Called on load to set the initial values from configure strings
+Called on load to set the initial values from configure strings.
 =======================================================================================================================================
 */
 void CG_SetConfigValues(void) {
@@ -231,7 +227,7 @@ void CG_ShaderStateChanged(void) {
 	o = CG_ConfigString(CS_SHADERSTATE);
 
 	while (o && *o) {
-		n = strstr(o, " = ");
+		n = strstr(o, "=");
 
 		if (n && *n) {
 			strncpy(originalShader, o, n - o);
@@ -264,7 +260,6 @@ void CG_ShaderStateChanged(void) {
 /*
 =======================================================================================================================================
 CG_ConfigStringModified
-
 =======================================================================================================================================
 */
 static void CG_ConfigStringModified(void) {
@@ -272,14 +267,10 @@ static void CG_ConfigStringModified(void) {
 	int num;
 
 	num = atoi(CG_Argv(1));
-
-	// get the gamestate from the client system, which will have the
-	// new configstring already integrated
+	// get the gamestate from the client system, which will have the new configstring already integrated
 	trap_GetGameState(&cgs.gameState);
-
 	// look up the individual string that was modified
 	str = CG_ConfigString(num);
-
 	// do something with it if necessary
 	if (num == CS_MUSIC) {
 		CG_StartMusic();
@@ -304,7 +295,6 @@ static void CG_ConfigStringModified(void) {
 		cgs.voteModified = qtrue;
 	} else if (num == CS_VOTE_STRING) {
 		Q_strncpyz(cgs.voteString, str, sizeof(cgs.voteString));
-
 		trap_S_StartLocalSound(cgs.media.voteNow, CHAN_ANNOUNCER);
 	} else if (num >= CS_TEAMVOTE_TIME && num <= CS_TEAMVOTE_TIME + 1) {
 		cgs.teamVoteTime[num - CS_TEAMVOTE_TIME] = atoi(str);
@@ -324,8 +314,7 @@ static void CG_ConfigStringModified(void) {
 	} else if (num >= CS_MODELS && num < CS_MODELS + MAX_MODELS) {
 		cgs.gameModels[num - CS_MODELS] = trap_R_RegisterModel(str);
 	} else if (num >= CS_SOUNDS && num < CS_SOUNDS + MAX_SOUNDS) {
-		if (str[0] != '*') {
-			// player specific sounds don't register here
+		if (str[0] != '*') { // player specific sounds don't register here
 			cgs.gameSounds[num - CS_SOUNDS] = trap_S_RegisterSound(str);
 		}
 	} else if (num >= CS_PLAYERS && num < CS_PLAYERS + MAX_CLIENTS) {
@@ -333,7 +322,7 @@ static void CG_ConfigStringModified(void) {
 		CG_BuildSpectatorString();
 	} else if (num == CS_FLAGSTATUS) {
 		if (cgs.gametype == GT_CTF) {
-			// format is rb where its red / blue, 0 is at base, 1 is taken, 2 is dropped
+			// format is rb where its red/blue, 0 is at base, 1 is taken, 2 is dropped
 			cgs.redflag = str[0] - '0';
 			cgs.blueflag = str[1] - '0';
 		} else if (cgs.gametype == GT_1FCTF) {
@@ -342,13 +331,11 @@ static void CG_ConfigStringModified(void) {
 	} else if (num == CS_SHADERSTATE) {
 		CG_ShaderStateChanged();
 	}
-
 }
 
 /*
 =======================================================================================================================================
 CG_AddToTeamChat
-
 =======================================================================================================================================
 */
 static void CG_AddToTeamChat(const char *str) {
@@ -370,12 +357,9 @@ static void CG_AddToTeamChat(const char *str) {
 	}
 
 	len = 0;
-
 	p = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
-
 	lastcolor = '7';
-
 	ls = NULL;
 
 	while (*str) {
@@ -389,20 +373,19 @@ static void CG_AddToTeamChat(const char *str) {
 			*p = 0;
 
 			cgs.teamChatMsgTimes[cgs.teamChatPos % chatHeight] = cg.time;
-
 			cgs.teamChatPos++;
 			p = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 			*p = 0;
-			*p++= Q_COLOR_ESCAPE;
-			*p++= lastcolor;
+			*p++ = Q_COLOR_ESCAPE;
+			*p++ = lastcolor;
 			len = 0;
 			ls = NULL;
 		}
 
 		if (Q_IsColorString(str)) {
-			*p++= *str++;
+			*p++ = *str++;
 			lastcolor = *str;
-			*p++= *str++;
+			*p++ = *str++;
 			continue;
 		}
 
@@ -410,31 +393,29 @@ static void CG_AddToTeamChat(const char *str) {
 			ls = p;
 		}
 
-		*p++= *str++;
+		*p++ = *str++;
 		len++;
 	}
 
 	*p = 0;
-
 	cgs.teamChatMsgTimes[cgs.teamChatPos % chatHeight] = cg.time;
 	cgs.teamChatPos++;
 
-	if (cgs.teamChatPos - cgs.teamLastChatPos > chatHeight)
+	if (cgs.teamChatPos - cgs.teamLastChatPos > chatHeight) {
 		cgs.teamLastChatPos = cgs.teamChatPos - chatHeight;
+	}
 }
 
 /*
 =======================================================================================================================================
 CG_MapRestart
 
-The server has issued a map_restart, so the next snapshot
-is completely new and should not be interpolated to.
-
-A tournament restart will clear everything, but doesn't
-require a reload of all the media
+The server has issued a map_restart, so the next snapshot is completely new and should not be interpolated to.
+A tournament restart will clear everything, but doesn't require a reload of all the media.
 =======================================================================================================================================
 */
 static void CG_MapRestart(void) {
+
 	if (cg_showmiss.integer) {
 		CG_Printf("CG_MapRestart\n");
 	}
@@ -442,26 +423,19 @@ static void CG_MapRestart(void) {
 	CG_InitLocalEntities();
 	CG_InitMarkPolys();
 	CG_InitParticles();
-
 	// make sure the "3 frags left" warnings play again
 	cg.fraglimitWarnings = 0;
-
 	cg.timelimitWarnings = 0;
-
 	cg.intermissionStarted = qfalse;
-
 	cgs.voteTime = 0;
-
 	cg.mapRestart = qtrue;
 
 	CG_StartMusic();
-
 	trap_S_ClearLoopingSounds(qtrue);
-
 	// we really should clear more parts of cg here and stop sounds
 
 	// play the "fight" sound if this is a restart without warmup
-	if (cg.warmup == 0 /* && cgs.gametype == GT_TOURNAMENT */) {
+	if (cg.warmup == 0 /*&& cgs.gametype == GT_TOURNAMENT*/) {
 		trap_S_StartLocalSound(cgs.media.countFightSound, CHAN_ANNOUNCER);
 		CG_CenterPrint("FIGHT!", 120, GIANTCHAR_WIDTH * 2);
 	}
@@ -474,17 +448,16 @@ static void CG_MapRestart(void) {
 		}
 	}
 #endif
-
 	trap_Cvar_Set("cg_cameraOrbit", "0");
 	trap_Cvar_Set("cg_thirdPerson", "0");
 }
 
-#define MAX_VOICEFILESIZE	16384
-#define MAX_VOICEFILES		8
-#define MAX_VOICECHATS		64
-#define MAX_VOICESOUNDS		64
-#define MAX_CHATSIZE		64
-#define MAX_HEADMODELS		64
+#define MAX_VOICEFILESIZE 16384
+#define MAX_VOICEFILES 8
+#define MAX_VOICECHATS 64
+#define MAX_VOICESOUNDS 64
+#define MAX_CHATSIZE 64
+#define MAX_HEADMODELS 64
 
 typedef struct voiceChat_s {
 	char id[64];
@@ -543,13 +516,16 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 	}
 
 	trap_FS_Read(buf, len, f);
+
 	buf[len] = 0;
+
 	trap_FS_FCloseFile(f);
 
 	ptr = buf;
 	p = &ptr;
 
 	Com_sprintf(voiceChatList->name, sizeof(voiceChatList->name), "%s", filename);
+
 	voiceChats = voiceChatList->voiceChats;
 
 	for (i = 0; i < maxVoiceChats; i++) {
@@ -582,14 +558,14 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 			return qtrue;
 		}
 
-		Com_sprintf(voiceChats[voiceChatList->numVoiceChats].id, sizeof(voiceChats[voiceChatList->numVoiceChats].id), "%s",
-					token);
+		Com_sprintf(voiceChats[voiceChatList->numVoiceChats].id, sizeof(voiceChats[voiceChatList->numVoiceChats].id), "%s", token);
 		token = Com_ParseExt(p, qtrue);
 
 		if (Q_stricmp(token, "{")) {
 			trap_Print(va(S_COLOR_RED "expected { found %s in voice chat file: %s\n", token, filename));
 			return qfalse;
 		}
+
 		voiceChats[voiceChatList->numVoiceChats].numSounds = 0;
 
 		while (1) {
@@ -599,11 +575,11 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 				return qtrue;
 			}
 
-			if (!Q_stricmp(token, "}"))
+			if (!Q_stricmp(token, "}")) {
 				break;
+			}
 
 			sound = trap_S_RegisterSound(token);
-
 			voiceChats[voiceChatList->numVoiceChats].sounds[voiceChats[voiceChatList->numVoiceChats].numSounds] = sound;
 			token = Com_ParseExt(p, qtrue);
 
@@ -611,19 +587,22 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 				return qtrue;
 			}
 
-			Com_sprintf(voiceChats[voiceChatList->numVoiceChats].chats[voiceChats[voiceChatList->numVoiceChats].numSounds],
-						MAX_CHATSIZE, "%s", token);
+			Com_sprintf(voiceChats[voiceChatList->numVoiceChats].chats[voiceChats[voiceChatList->numVoiceChats].numSounds], MAX_CHATSIZE, "%s", token);
 
-			if (sound)
+			if (sound) {
 				voiceChats[voiceChatList->numVoiceChats].numSounds++;
+			}
 
-			if (voiceChats[voiceChatList->numVoiceChats].numSounds >= MAX_VOICESOUNDS)
+			if (voiceChats[voiceChatList->numVoiceChats].numSounds >= MAX_VOICESOUNDS) {
 				break;
+			}
 		}
+
 		voiceChatList->numVoiceChats++;
 
-		if (voiceChatList->numVoiceChats >= maxVoiceChats)
+		if (voiceChatList->numVoiceChats >= maxVoiceChats) {
 			return qtrue;
+		}
 	}
 
 	return qtrue;
@@ -638,6 +617,7 @@ void CG_LoadVoiceChats(void) {
 	int size;
 
 	size = trap_MemoryRemaining();
+
 	CG_ParseVoiceChats("scripts/female1.voice", &voiceChatLists[0], MAX_VOICECHATS);
 	CG_ParseVoiceChats("scripts/female2.voice", &voiceChatLists[1], MAX_VOICECHATS);
 	CG_ParseVoiceChats("scripts/female3.voice", &voiceChatLists[2], MAX_VOICECHATS);

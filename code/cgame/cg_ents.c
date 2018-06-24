@@ -672,8 +672,8 @@ static void CG_Grapple(centity_t *cent) {
 	if (s1->weapon > WP_NUM_WEAPONS) {
 		s1->weapon = 0;
 	}
-	weapon = &cg_weapons[s1->weapon];
 
+	weapon = &cg_weapons[s1->weapon];
 	// calculate the axis
 	VectorCopy(s1->angles, cent->lerpAngles);
 #if 0 // FIXME add grapple pull sound here..?
@@ -1032,14 +1032,16 @@ static void CG_Physics_Box(centity_t *cent) {
 
 	//VectorAdd(cent->lerpOrigin, maxs, corners[3]);
 	VectorCopy(maxs, corners[3]);
-
 	VectorCopy(corners[3], corners[2]);
+
 	corners[2][0] -= extx;
 
 	VectorCopy(corners[2], corners[1]);
+
 	corners[1][1] -= exty;
 
 	VectorCopy(corners[1], corners[0]);
+
 	corners[0][0] += extx;
 
 	for (i = 0; i < 4; i++) {
@@ -1056,35 +1058,30 @@ static void CG_Physics_Box(centity_t *cent) {
 	VectorCopy(corners[2], verts[2].xyz);
 	VectorCopy(corners[3], verts[3].xyz);
 	trap_R_AddPolyToScene(cgs.media.debugPlayerAABB, 4, verts);
-
 	// bottom
 	VectorCopy(corners[7], verts[0].xyz);
 	VectorCopy(corners[6], verts[1].xyz);
 	VectorCopy(corners[5], verts[2].xyz);
 	VectorCopy(corners[4], verts[3].xyz);
 	trap_R_AddPolyToScene(cgs.media.debugPlayerAABB, 4, verts);
-
 	// top side
 	VectorCopy(corners[3], verts[0].xyz);
 	VectorCopy(corners[2], verts[1].xyz);
 	VectorCopy(corners[6], verts[2].xyz);
 	VectorCopy(corners[7], verts[3].xyz);
 	trap_R_AddPolyToScene(cgs.media.debugPlayerAABB_twoSided, 4, verts);
-
 	// left side
 	VectorCopy(corners[2], verts[0].xyz);
 	VectorCopy(corners[1], verts[1].xyz);
 	VectorCopy(corners[5], verts[2].xyz);
 	VectorCopy(corners[6], verts[3].xyz);
 	trap_R_AddPolyToScene(cgs.media.debugPlayerAABB_twoSided, 4, verts);
-
 	// right side
 	VectorCopy(corners[0], verts[0].xyz);
 	VectorCopy(corners[3], verts[1].xyz);
 	VectorCopy(corners[7], verts[2].xyz);
 	VectorCopy(corners[4], verts[3].xyz);
 	trap_R_AddPolyToScene(cgs.media.debugPlayerAABB_twoSided, 4, verts);
-
 	// bottom side
 	VectorCopy(corners[1], verts[0].xyz);
 	VectorCopy(corners[0], verts[1].xyz);

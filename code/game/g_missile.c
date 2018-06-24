@@ -145,7 +145,6 @@ void G_ExplodeIntoNails(gentity_t *ent) {
 
 	trap_LinkEntity(ent);
 }
-
 #ifdef MISSIONPACK
 /*
 =======================================================================================================================================
@@ -337,7 +336,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 		G_ExplodeIntoNails(ent);
 		return;
 	}
-
 #ifdef MISSIONPACK
 	if (other->takedamage) {
 		if (ent->s.weapon != WP_PROX_LAUNCHER) {
@@ -1303,7 +1301,7 @@ static void RailSphereShockWave(vec3_t origin, gentity_t *attacker, float damage
 		}
 
 		ent->kamikazeShockTime = level.time + 3000;
-//    }
+//	}
 	}
 }
 

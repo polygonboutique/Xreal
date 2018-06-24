@@ -1067,7 +1067,9 @@ static void CG_RegisterGraphics(void) {
 		int j;
 
 		Com_sprintf(name, sizeof(name), "*%i", i);
+
 		cgs.inlineDrawModel[i] = trap_R_RegisterModel(name);
+
 		trap_R_ModelBounds(cgs.inlineDrawModel[i], mins, maxs);
 
 		for (j = 0; j < 3; j++) {
@@ -1393,7 +1395,6 @@ Called before every level change or subsystem restart.
 =======================================================================================================================================
 */
 void CG_Shutdown(void) {
-
 	// some mods may need to do cleanup work here, like closing files or archiving session data
 	CG_Printf("------- CGame Shutdown -------\n");
 #ifdef CG_LUA

@@ -63,7 +63,6 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float spacing) {
 
 		re = &le->refEntity;
 		re->shaderTime = -cg.time / 1000.0f;
-
 		re->reType = RT_SPRITE;
 		re->rotation = 0;
 		re->radius = 3;
@@ -396,7 +395,6 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir, qhandle_t hModel, qha
 	}
 	// skew the time a bit so they aren't all in sync
 	offset = rand() & 63;
-
 	ex = CG_AllocLocalEntity();
 
 	if (isSprite) {
@@ -764,6 +762,7 @@ void CG_ExplosiveRubble(vec3_t origin, vec3_t mins, vec3_t maxs, qhandle_t model
 
 	// spawn debris ents
 	le = CG_AllocLocalEntity();
+
 	re = &le->refEntity;
 
 	// initialize type

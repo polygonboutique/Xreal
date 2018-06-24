@@ -808,8 +808,9 @@ void CG_RegisterWeapon(int weaponNum) {
 		}
 		// default all weapon animations to the idle animation
 		for (i = 0; i < MAX_WEAPON_STATES; i++) {
-			if (i == WEAPON_READY)
+			if (i == WEAPON_READY) {
 				continue;
+			}
 
 			weaponInfo->viewModel_animations[i] = weaponInfo->viewModel_animations[WEAPON_READY];
 		}
@@ -829,14 +830,11 @@ void CG_RegisterWeapon(int weaponNum) {
 		strcat(path, "_view_fire.md5anim");
 		CG_RegisterWeaponAnimation(&weaponInfo->viewModel_animations[WEAPON_FIRING], path, qtrue, qfalse, qfalse);
 	}
-
 	/*
-	   if (!weaponInfo->handsModel)
-	   {
-	   weaponInfo->handsModel = trap_R_RegisterModel("models/weapons/shotgun/shotgun_hand.md3");
-	  }
-	 */
-
+	if (!weaponInfo->handsModel) {
+		weaponInfo->handsModel = trap_R_RegisterModel("models/weapons/shotgun/shotgun_hand.md3");
+	}
+	*/
 	weaponInfo->loopFireSound = qfalse;
 
 	switch (weaponNum) {
@@ -2969,7 +2967,7 @@ void CG_MissileHitPlayer(int weapon, int entityType, vec3_t origin, vec3_t dir, 
 /*
 =======================================================================================================================================
 
-SHOTGUN TRACING
+	SHOTGUN TRACING
 
 =======================================================================================================================================
 */

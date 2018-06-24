@@ -163,6 +163,7 @@ static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
 				if (!token) {
 					break;
 				}
+
 				ci->headOffset[i] = atof(token);
 			}
 
@@ -251,14 +252,12 @@ qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t *ci, co
 
 	if (cgs.gametype >= GT_TEAM) {
 		switch (ci->team) {
-			case TEAM_BLUE:
-			{
+			case TEAM_BLUE: {
 				team = "blue";
 				break;
 			}
 
-			default:
-			{
+			default: {
 				team = "red";
 				break;
 			}
@@ -631,12 +630,9 @@ static qboolean CG_ScanForExistingClientInfo(clientInfo_t *ci) {
 			continue;
 		}
 
-		if (!Q_stricmp(ci->modelName, match->modelName)
-		   && !Q_stricmp(ci->skinName, match->skinName)
-		   && !Q_stricmp(ci->blueTeam, match->blueTeam)
-		   && !Q_stricmp(ci->redTeam, match->redTeam) && (cgs.gametype < GT_TEAM || ci->team == match->team)) {
-			// this clientinfo is identical, so use it's handles
-
+		if (!Q_stricmp(ci->modelName, match->modelName) && !Q_stricmp(ci->skinName, match->skinName) && !Q_stricmp(ci->blueTeam, match->blueTeam)
+			&& !Q_stricmp(ci->redTeam, match->redTeam) && (cgs.gametype < GT_TEAM || ci->team == match->team)) {
+			// this clientinfo is identical, so use its handles
 			ci->deferred = qfalse;
 
 			CG_CopyClientInfoModel(match, ci);
@@ -919,7 +915,6 @@ static void CG_SetPlayerLerpFrameAnimation(clientInfo_t *ci, lerpFrame_t *lf, in
 	lf->old_animationNumber = lf->animationNumber;
 	lf->old_animation = lf->animation;
 	lf->animationNumber = newAnimation;
-
 	newAnimation &= ~ANIM_TOGGLEBIT;
 
 	if (newAnimation < 0 || newAnimation >= MAX_PLAYER_ANIMATIONS) {
@@ -959,9 +954,16 @@ static void CG_SetPlayerLerpFrameAnimation(clientInfo_t *ci, lerpFrame_t *lf, in
 	}
 }
 
-// TODO: choose propper values and use blending speed from character.cfg
-// blending is slow for testing issues
+/*
+=======================================================================================================================================
+CG_BlendPlayerLerpFrame
+
+TODO: choose propper values and use blending speed from character.cfg.
+Blending is slow for testing issues.
+=======================================================================================================================================
+*/
 static void CG_BlendPlayerLerpFrame(lerpFrame_t *lf) {
+
 	if (cg_animBlend.value <= 0.0f) {
 		lf->blendlerp = 0.0f;
 		return;
@@ -975,14 +977,15 @@ static void CG_BlendPlayerLerpFrame(lerpFrame_t *lf) {
 		// exp blending
 		lf->blendlerp -= lf->blendlerp / cg_animBlend.value;
 #endif
-		if (lf->blendlerp <= 0.0f)
+		if (lf->blendlerp <= 0.0f) {
 			lf->blendlerp = 0.0f;
+		}
 
-		if (lf->blendlerp >= 1.0f)
+		if (lf->blendlerp >= 1.0f) {
 			lf->blendlerp = 1.0f;
+		}
 
 		lf->blendtime = cg.time + 10;
-
 		debug_anim_blend = lf->blendlerp;
 	}
 }
@@ -1115,6 +1118,7 @@ static void CG_ClearLerpFrame(clientInfo_t *ci, lerpFrame_t *lf, int animationNu
 	lf->frameTime = lf->oldFrameTime = cg.time;
 
 	CG_SetPlayerLerpFrameAnimation(ci, lf, animationNumber);
+
 	lf->oldFrame = lf->frame = lf->animation->firstFrame;
 }
 
@@ -1273,8 +1277,7 @@ static void CG_PlayerAngles(centity_t *cent, const vec3_t sourceAngles, vec3_t l
 	// --------- yaw -------------
 
 	// allow yaw to drift a bit
-	if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) != LEGS_IDLE
-	   || (cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT) != TORSO_STAND) {
+	if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) != LEGS_IDLE || (cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT) != TORSO_STAND) {
 		// if not standing still, always point all in the same direction
 		cent->pe.torso.yawing = qtrue; // always center
 		cent->pe.torso.pitching = qtrue; // always center
@@ -1285,7 +1288,7 @@ static void CG_PlayerAngles(centity_t *cent, const vec3_t sourceAngles, vec3_t l
 		// don't let dead bodies twitch
 		dir = 0;
 	} else {
-		// TA: did use angles2.. now uses time2.. looks a bit funny but time2 isn't used othwise
+		// TA: did use angles2.. now uses time2.. looks a bit funny but time2 isn't used otherwise
 		dir = cent->currentState.time2;
 
 		if (dir < 0 || dir > 7) {
@@ -1325,7 +1328,6 @@ static void CG_PlayerAngles(centity_t *cent, const vec3_t sourceAngles, vec3_t l
 	}
 
 	// --------- roll -------------
-
 
 	// lean towards the direction of travel
 /*	VectorCopy(cent->currentState.pos.trDelta, velocity);
@@ -1500,7 +1502,7 @@ void CG_BreathPuffs(centity_t *cent, const vec3_t headOrigin, const vec3_t headD
 
 	contents = trap_CM_PointContents(headOrigin, 0);
 
-	if (contents &(CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
+	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
 		return;
 	}
 
@@ -1630,7 +1632,6 @@ static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *body) {
 	} else {
 		flagAnim = FLAG_IDLE;
 	}
-
 #if 1
 	boneIndex = trap_R_BoneIndex(body->hModel, "tag_flag");
 
@@ -1651,7 +1652,6 @@ static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *body) {
 			}
 
 			angle = acos(d);
-
 			d = DotProduct(flag.axis[1], dir);
 
 			if (d < 0) {
@@ -1673,25 +1673,26 @@ static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *body) {
 			// change the yaw angle
 			CG_SwingAngles(angles[YAW], 25, 90, 0.15f, &cent->pe.flag.yawAngle, &cent->pe.flag.yawing);
 		}
-
 		/*
-		   d = DotProduct(pole.axis[2], dir);
-		   angle = Q_acos(d);
+		d = DotProduct(pole.axis[2], dir);
+		angle = Q_acos(d);
 
-		   d = DotProduct(pole.axis[1], dir);
-		   if (d < 0) {
-		   angle = 360 - angle * 180 / M_PI;
-		  }
-		   else {
-		   angle = angle * 180 / M_PI;
-		  }
-		   if (angle > 340 && angle < 20) {
-		   flagAnim = FLAG_RUNUP;
-		  }
-		   if (angle > 160 && angle < 200) {
-		   flagAnim = FLAG_RUNDOWN;
-		  }
-		 */
+		d = DotProduct(pole.axis[1], dir);
+
+		if (d < 0) {
+			angle = 360 - angle * 180 / M_PI;
+		} else {
+			angle = angle * 180 / M_PI;
+		}
+
+		if (angle > 340 && angle < 20) {
+			flagAnim = FLAG_RUNUP;
+		}
+
+		if (angle > 160 && angle < 200) {
+			flagAnim = FLAG_RUNDOWN;
+		}
+		*/
 	}
 	// set the yaw angle
 	angles[YAW] = cent->pe.flag.yawAngle;
@@ -2218,7 +2219,7 @@ void CG_PlayerSplash(centity_t *cent) {
 	// this won't handle moving water brushes, but they wouldn't draw right anyway...
 	contents = trap_CM_PointContents(end, 0);
 
-	if (!(contents &(CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
+	if (!(contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
 		return;
 	}
 
@@ -2228,7 +2229,7 @@ void CG_PlayerSplash(centity_t *cent) {
 	// if the head isn't out of liquid, don't make a mark
 	contents = trap_CM_PointContents(start, 0);
 
-	if (contents &(CONTENTS_SOLID|CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
+	if (contents & (CONTENTS_SOLID|CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
 		return;
 	}
 	// trace down to find the surface

@@ -827,16 +827,16 @@ void Svcmd_BotList_f(void) {
 		strcpy(model, Info_ValueForKey(g_botInfos[i], "model"));
 
 		if (!*model) {
-			strcpy(model, "visor / default");
+			strcpy(model, "visor/default");
 		}
 
 		strcpy(aifile, Info_ValueForKey(g_botInfos[i], "aifile"));
 
 		if (!*aifile) {
-			strcpy(aifile, "bots / default_c.c");
+			strcpy(aifile, "bots/default_c.c");
 		}
 
-		trap_Printf(va("% - 16s % - 16s % - 20s % - 20s\n", name, model, aifile, funname));
+		trap_Printf(va("%-16s %-16s %-20s %-20s\n", name, model, aifile, funname));
 	}
 }
 
@@ -888,7 +888,7 @@ static void G_SpawnBots(char *botList, int baseDelay) {
 		}
 
 		if (*p) {
-			*p++= 0;
+			*p++ = 0;
 		}
 		// we must add the bot this way, calling G_AddBot directly at this stage does "Bad Things"
 		trap_SendConsoleCommand(EXEC_INSERT, va("addbot %s %f free %i\n", bot, skill, delay));

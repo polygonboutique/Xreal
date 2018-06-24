@@ -317,6 +317,7 @@ void CG_TestModelDecreaseLerp_f(void) {
 void CG_TestModelNextSkin_f(void) {
 
 	cg.testModelEntity.skinNum++;
+
 	CG_Printf("skin %i\n", cg.testModelEntity.skinNum);
 }
 
@@ -351,7 +352,7 @@ static void CG_AddTestModel(void) {
 		CG_Printf("Can't register model\n");
 		return;
 	}
-	// if testing a gun, set the origin reletive to the view origin
+	// if testing a gun, set the origin relative to the view origin
 	if (cg.testGun) {
 		VectorCopy(cg.refdef.vieworg, cg.testModelEntity.origin);
 		VectorCopy(cg.refdef.viewaxis[0], cg.testModelEntity.axis[0]);
@@ -393,7 +394,7 @@ static void CG_AddTestModel(void) {
 =======================================================================================================================================
 CG_TestOmniLight_f
 
-Creates a omni-directional light in front of the current position, which can then be moved around
+Creates a omni-directional light in front of the current position, which can then be moved around.
 =======================================================================================================================================
 */
 void CG_TestOmniLight_f(void) {
@@ -490,8 +491,9 @@ CG_TestFlashLight_f
 =======================================================================================================================================
 */
 void CG_TestFlashLight_f(void) {
+
 	if (trap_Argc() < 2) {
-		CG_Printf("usage: testFlashLight < lightShaderName > \n");
+		CG_Printf("usage: testFlashLight <lightShaderName>\n");
 		return;
 	}
 
@@ -579,12 +581,12 @@ static void CG_CalcVrect(void) {
 	cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;
 }
 
+#define FOCUS_DISTANCE 512
 /*
 =======================================================================================================================================
 CG_OffsetThirdPersonView
 =======================================================================================================================================
 */
-#define FOCUS_DISTANCE 512
 static void CG_OffsetThirdPersonView(void) {
 	vec3_t forward, right, up;
 	vec3_t view;
@@ -646,7 +648,6 @@ static void CG_OffsetThirdPersonView(void) {
 	}
 
 	VectorCopy(view, cg.refdef.vieworg);
-
 	// select pitch to look at focus point from vieword
 	VectorSubtract(focusPoint, cg.refdef.vieworg, focusPoint);
 #if 0
@@ -1041,8 +1042,7 @@ static void CG_DamageBlendBlob(void) {
 }
 
 #define NORMAL_HEIGHT 64.0f
-#define NORMAL_WIDTH  6.0f
-
+#define NORMAL_WIDTH 6.0f
 /*
 =======================================================================================================================================
 CG_DrawSurfNormal
@@ -1150,7 +1150,6 @@ static void CG_smoothWWTransitions(playerState_t *ps, const vec3_t in, vec3_t ou
 		} else {
 			AnglesToAxis(cg.lastVangles, lastAxis);
 			rotAngle = DotProduct(inAxis[0], lastAxis[0]) +  DotProduct(inAxis[1], lastAxis[1]) + DotProduct(inAxis[2], lastAxis[2]);
-
 			rotAngle = RAD2DEG(acos((rotAngle - 1.0f) / 2.0f));
 
 			CrossProduct(lastAxis[0], inAxis[0], temp);
@@ -1182,8 +1181,7 @@ static void CG_smoothWWTransitions(playerState_t *ps, const vec3_t in, vec3_t ou
 			performed = qtrue;
 		}
 	}
-	// if we performed any ops then return the smoothed angles
-	// otherwise simply return the in angles
+	// if we performed any ops then return the smoothed angles, otherwise simply return the in angles
 	if (performed)
 		AxisToAngles(outAxis, out);
 	} else {
@@ -1227,8 +1225,7 @@ CG_smoothWJTransitions
 			performed = qtrue;
 		}
 	}
-	// if we performed any ops then return the smoothed angles
-	// otherwise simply return the in angles
+	// if we performed any ops then return the smoothed angles, otherwise simply return the in angles
 	if (performed)
 		AxisToAngles(outAxis, out);
 	} else {

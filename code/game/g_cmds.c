@@ -73,6 +73,7 @@ void DeathmatchScoreboardMessage(gentity_t *ent) {
 		}
 
 		strcpy(string + stringlength, entry);
+
 		stringlength += j;
 	}
 
@@ -443,10 +444,7 @@ void Cmd_LevelShot_f(gentity_t *ent) {
 
 /*
 =======================================================================================================================================
-Cmd_LevelShot_f
-
-This is just to help generate the level pictures for the menus. It goes to the intermission immediately and sends over a command to the
-client to resize the view, hide the scoreboard, and take a special screenshot.
+Cmd_TeamTask_f
 =======================================================================================================================================
 */
 void Cmd_TeamTask_f(gentity_t *ent) {
@@ -492,7 +490,7 @@ void Cmd_Kill_f(gentity_t *ent) {
 
 /*
 =======================================================================================================================================
-BroadCastTeamChange
+BroadcastTeamChange
 
 Let everyone know about a team change.
 =======================================================================================================================================
@@ -522,7 +520,6 @@ void SetTeam(gentity_t *ent, char *s) {
 	spectatorState_t specState;
 	int specClient;
 	int teamLeader;
-
 
 	// see what change is requested
 	client = ent->client;

@@ -25,7 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #include "cg_local.h"
 
-
+/*
+=======================================================================================================================================
+CG_RegisterAnimation
+=======================================================================================================================================
+*/
 qboolean CG_RegisterAnimation(animation_t *anim, const char *filename, qboolean loop, qboolean reversed, qboolean clearOrigin) {
 	int frameRate;
 
@@ -61,7 +65,7 @@ qboolean CG_RegisterAnimation(animation_t *anim, const char *filename, qboolean 
 
 /*
 =======================================================================================================================================
-
+CG_SetLerpFrameAnimation
 =======================================================================================================================================
 */
 void CG_SetLerpFrameAnimation(lerpFrame_t *lf, animation_t *anims, int animsNum, int newAnimation) {
@@ -138,9 +142,7 @@ void CG_RunLerpFrame(lerpFrame_t *lf, animation_t *anims, int animsNum, int newA
 		if (animChanged) {
 			lf->oldFrame = 0;
 			lf->oldFrameTime = cg.time;
-		} else
-
-		{
+		} else {
 			lf->oldFrame = lf->frame;
 			lf->oldFrameTime = lf->frameTime;
 		}
@@ -148,17 +150,17 @@ void CG_RunLerpFrame(lerpFrame_t *lf, animation_t *anims, int animsNum, int newA
 		anim = lf->animation;
 
 		if (!anim->frameTime) {
-			return;				// shouldn't happen
+			return; // shouldn't happen
 		}
 
 		if (cg.time < lf->animationStartTime) {
-			lf->frameTime = lf->animationStartTime;	// initial lerp
+			lf->frameTime = lf->animationStartTime; // initial lerp
 		} else {
 			lf->frameTime = lf->oldFrameTime + anim->frameTime;
 		}
 
 		f = (lf->frameTime - lf->animationStartTime) / anim->frameTime;
-		f *= speedScale;		// adjust for haste, etc
+		f *= speedScale; // adjust for haste, etc.
 
 		numFrames = anim->numFrames;
 
@@ -219,11 +221,13 @@ void CG_RunLerpFrame(lerpFrame_t *lf, animation_t *anims, int animsNum, int newA
 		// exp blending
 		lf->blendlerp -= lf->blendlerp / cg_animBlend.value;
 #endif
-		if (lf->blendlerp <= 0.0f)
+		if (lf->blendlerp <= 0.0f) {
 			lf->blendlerp = 0.0f;
+		}
 
-		if (lf->blendlerp >= 1.0f)
+		if (lf->blendlerp >= 1.0f) {
 			lf->blendlerp = 1.0f;
+		}
 
 		lf->blendtime = cg.time + 10;
 	}

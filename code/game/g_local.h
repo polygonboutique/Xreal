@@ -25,7 +25,6 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 US
 #include <q_shared.h>
 #include <bg_public.h>
 #include "g_public.h"
-
 #if defined(USE_BULLET)
 #include <Bullet-C-Api.h>
 #endif
@@ -35,7 +34,6 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 US
 // #define GLADIATOR
 // #define BRAINWORKS
 #define ACEBOT
-
 #define BODY_QUEUE_SIZE 8
 #define INFINITE 1000000
 #define FRAMETIME 100 // msec
@@ -80,16 +78,13 @@ typedef struct {
 	float wander_timeout;
 	float suicide_timeout;
 	// for node code
-	int currentNode;	// current node
-	int goalNode;	// current goal node
-	int nextNode;	// the node that will take us one step closer to our goal
+	int currentNode;		// current node
+	int goalNode;			// current goal node
+	int nextNode;			// the node that will take us one step closer to our goal
 	int lastNode;
 	int node_timeout;
 	int tries;
 	int state;
-	// result
-	// usercmd_t cmd; // this user command is generated every time the bot thinks
-	// using self->client->pers.cmd instead
 } botState_t;
 #endif
 

@@ -1,36 +1,42 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 Robert Beckebans < trebor_7@users.sourceforge.net > 
+Copyright (C) 1999-2005 Id Software, Inc.
 
-This file is part of XreaL source code.
+This file is part of Quake III Arena source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+Quake III Arena source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Quake III Arena source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with Quake III Arena source code; if not, write to the Free
+Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// cg_syscalls.c--this file is only included when building a dll
+
+/**************************************************************************************************************************************
+ This file is only included when building a dll, cg_syscalls.asm is included instead when building a qvm.
+**************************************************************************************************************************************/
+
 #include "cg_local.h"
 
-static          intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
+static intptr_t(QDECL *syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
 
-
-void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...)) {
+/*
+=======================================================================================================================================
+dllEntry
+=======================================================================================================================================
+*/
+void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...)) {
 	syscall = syscallptr;
 }
 
-
+/*
+=======================================================================================================================================
+PASSFLOAT
+=======================================================================================================================================
+*/
 int PASSFLOAT(float x) {
 	float floatTemp;
 
@@ -40,7 +46,7 @@ int PASSFLOAT(float x) {
 
 /*
 =======================================================================================================================================
-
+trap_Print
 =======================================================================================================================================
 */
 void trap_Print(const char *fmt) {
@@ -49,20 +55,26 @@ void trap_Print(const char *fmt) {
 
 /*
 =======================================================================================================================================
-
+trap_Error
 =======================================================================================================================================
 */
 void trap_Error(const char *fmt) {
+
 	syscall(CG_ERROR, fmt);
 }
 
+/*
+=======================================================================================================================================
+trap_Milliseconds
+=======================================================================================================================================
+*/
 int trap_Milliseconds(void) {
 	return syscall(CG_MILLISECONDS);
 }
 
 /*
 =======================================================================================================================================
-
+trap_Cvar_Register
 =======================================================================================================================================
 */
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags) {
@@ -71,7 +83,7 @@ void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defau
 
 /*
 =======================================================================================================================================
-
+trap_Cvar_Update
 =======================================================================================================================================
 */
 void trap_Cvar_Update(vmCvar_t *vmCvar) {
@@ -80,7 +92,7 @@ void trap_Cvar_Update(vmCvar_t *vmCvar) {
 
 /*
 =======================================================================================================================================
-
+trap_Cvar_Set
 =======================================================================================================================================
 */
 void trap_Cvar_Set(const char *var_name, const char *value) {
@@ -89,20 +101,25 @@ void trap_Cvar_Set(const char *var_name, const char *value) {
 
 /*
 =======================================================================================================================================
-
+trap_Cvar_VariableStringBuffer
 =======================================================================================================================================
 */
 void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
 	syscall(CG_CVAR_VARIABLESTRINGBUFFER, var_name, buffer, bufsize);
 }
 
+/*
+=======================================================================================================================================
+trap_Argc
+=======================================================================================================================================
+*/
 int trap_Argc(void) {
 	return syscall(CG_ARGC);
 }
 
 /*
 =======================================================================================================================================
-
+trap_Argv
 =======================================================================================================================================
 */
 void trap_Argv(int n, char *buffer, int bufferLength) {
@@ -111,20 +128,25 @@ void trap_Argv(int n, char *buffer, int bufferLength) {
 
 /*
 =======================================================================================================================================
-
+trap_Args
 =======================================================================================================================================
 */
 void trap_Args(char *buffer, int bufferLength) {
 	syscall(CG_ARGS, buffer, bufferLength);
 }
 
+/*
+=======================================================================================================================================
+trap_FS_FOpenFile
+=======================================================================================================================================
+*/
 int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 	return syscall(CG_FS_FOPENFILE, qpath, f, mode);
 }
 
 /*
 =======================================================================================================================================
-
+trap_FS_Read
 =======================================================================================================================================
 */
 void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
@@ -133,7 +155,7 @@ void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
 
 /*
 =======================================================================================================================================
-
+trap_FS_Write
 =======================================================================================================================================
 */
 void trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
@@ -142,24 +164,34 @@ void trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
 
 /*
 =======================================================================================================================================
-
+trap_FS_FCloseFile
 =======================================================================================================================================
 */
 void trap_FS_FCloseFile(fileHandle_t f) {
 	syscall(CG_FS_FCLOSEFILE, f);
 }
 
+/*
+=======================================================================================================================================
+trap_FS_Seek
+=======================================================================================================================================
+*/
 int trap_FS_Seek(fileHandle_t f, long offset, int origin) {
 	return syscall(CG_FS_SEEK, f, offset, origin);
 }
 
+/*
+=======================================================================================================================================
+trap_FS_GetFileList
+=======================================================================================================================================
+*/
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize) {
 	return syscall(CG_FS_GETFILELIST, path, extension, listbuf, bufsize);
 }
 
 /*
 =======================================================================================================================================
-
+trap_SendConsoleCommand
 =======================================================================================================================================
 */
 void trap_SendConsoleCommand(const char *text) {
@@ -168,7 +200,7 @@ void trap_SendConsoleCommand(const char *text) {
 
 /*
 =======================================================================================================================================
-
+trap_AddCommand
 =======================================================================================================================================
 */
 void trap_AddCommand(const char *cmdName) {
@@ -177,7 +209,7 @@ void trap_AddCommand(const char *cmdName) {
 
 /*
 =======================================================================================================================================
-
+trap_AddCommandAlias
 =======================================================================================================================================
 */
 void trap_AddCommandAlias(const char *cmdName, const char *cmdOther) {
@@ -195,7 +227,7 @@ void trap_RemoveCommand(const char *cmdName) {
 
 /*
 =======================================================================================================================================
-
+trap_SendClientCommand
 =======================================================================================================================================
 */
 void trap_SendClientCommand(const char *s) {
@@ -204,7 +236,7 @@ void trap_SendClientCommand(const char *s) {
 
 /*
 =======================================================================================================================================
-
+trap_UpdateScreen
 =======================================================================================================================================
 */
 void trap_UpdateScreen(void) {
@@ -213,40 +245,70 @@ void trap_UpdateScreen(void) {
 
 /*
 =======================================================================================================================================
-
+trap_CM_LoadMap
 =======================================================================================================================================
 */
 void trap_CM_LoadMap(const char *mapname) {
 	syscall(CG_CM_LOADMAP, mapname);
 }
 
+/*
+=======================================================================================================================================
+trap_CM_NumInlineModels
+=======================================================================================================================================
+*/
 int trap_CM_NumInlineModels(void) {
 	return syscall(CG_CM_NUMINLINEMODELS);
 }
 
+/*
+=======================================================================================================================================
+trap_CM_InlineModel
+=======================================================================================================================================
+*/
 clipHandle_t trap_CM_InlineModel(int index) {
 	return syscall(CG_CM_INLINEMODEL, index);
 }
 
+/*
+=======================================================================================================================================
+trap_CM_TempBoxModel
+=======================================================================================================================================
+*/
 clipHandle_t trap_CM_TempBoxModel(const vec3_t mins, const vec3_t maxs) {
 	return syscall(CG_CM_TEMPBOXMODEL, mins, maxs);
 }
 
+/*
+=======================================================================================================================================
+trap_CM_TempCapsuleModel
+=======================================================================================================================================
+*/
 clipHandle_t trap_CM_TempCapsuleModel(const vec3_t mins, const vec3_t maxs) {
 	return syscall(CG_CM_TEMPCAPSULEMODEL, mins, maxs);
 }
 
+/*
+=======================================================================================================================================
+trap_CM_PointContents
+=======================================================================================================================================
+*/
 int trap_CM_PointContents(const vec3_t p, clipHandle_t model) {
 	return syscall(CG_CM_POINTCONTENTS, p, model);
 }
 
+/*
+=======================================================================================================================================
+trap_CM_TransformedPointContents
+=======================================================================================================================================
+*/
 int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles) {
 	return syscall(CG_CM_TRANSFORMEDPOINTCONTENTS, p, model, origin, angles);
 }
 
 /*
 =======================================================================================================================================
-
+trap_CM_BoxTrace
 =======================================================================================================================================
 */
 void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
@@ -256,7 +318,7 @@ void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
 
 /*
 =======================================================================================================================================
-
+trap_CM_CapsuleTrace
 =======================================================================================================================================
 */
 void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
@@ -266,56 +328,52 @@ void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end
 
 /*
 =======================================================================================================================================
-
+trap_CM_TransformedBoxTrace
 =======================================================================================================================================
 */
-void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-								 const vec3_t mins, const vec3_t maxs,
-								 clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles) {
+void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles) {
 	syscall(CG_CM_TRANSFORMEDBOXTRACE, results, start, end, mins, maxs, model, brushmask, origin, angles);
 }
 
 /*
 =======================================================================================================================================
-
+trap_CM_TransformedCapsuleTrace
 =======================================================================================================================================
 */
-void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-									 const vec3_t mins, const vec3_t maxs,
-									 clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles) {
+void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles) {
 	syscall(CG_CM_TRANSFORMEDCAPSULETRACE, results, start, end, mins, maxs, model, brushmask, origin, angles);
 }
 
 /*
 =======================================================================================================================================
-
+trap_CM_BiSphereTrace
 =======================================================================================================================================
 */
-void trap_CM_BiSphereTrace(trace_t *results, const vec3_t start,
-						   const vec3_t end, float startRad, float endRad, clipHandle_t model, int mask) {
+void trap_CM_BiSphereTrace(trace_t *results, const vec3_t start, const vec3_t end, float startRad, float endRad, clipHandle_t model, int mask) {
 	syscall(CG_CM_BISPHERETRACE, results, start, end, PASSFLOAT(startRad), PASSFLOAT(endRad), model, mask);
 }
 
 /*
 =======================================================================================================================================
-
+trap_CM_TransformedBiSphereTrace
 =======================================================================================================================================
 */
-void trap_CM_TransformedBiSphereTrace(trace_t *results, const vec3_t start,
-									  const vec3_t end, float startRad, float endRad,
-									  clipHandle_t model, int mask, const vec3_t origin) {
+void trap_CM_TransformedBiSphereTrace(trace_t *results, const vec3_t start, const vec3_t end, float startRad, float endRad, clipHandle_t model, int mask, const vec3_t origin) {
 	syscall(CG_CM_TRANSFORMEDBISPHERETRACE, results, start, end, PASSFLOAT(startRad), PASSFLOAT(endRad), model, mask, origin);
 }
 
-int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
-						  const vec3_t projection,
-						  int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer) {
+/*
+=======================================================================================================================================
+trap_CM_MarkFragments
+=======================================================================================================================================
+*/
+int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer) {
 	return syscall(CG_CM_MARKFRAGMENTS, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer);
 }
 
 /*
 =======================================================================================================================================
-
+trap_S_StartSound
 =======================================================================================================================================
 */
 void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx) {
@@ -324,7 +382,7 @@ void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t
 
 /*
 =======================================================================================================================================
-
+trap_S_StartLocalSound
 =======================================================================================================================================
 */
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum) {
@@ -333,7 +391,7 @@ void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum) {
 
 /*
 =======================================================================================================================================
-
+trap_S_ClearLoopingSounds
 =======================================================================================================================================
 */
 void trap_S_ClearLoopingSounds(qboolean killall) {
@@ -342,7 +400,7 @@ void trap_S_ClearLoopingSounds(qboolean killall) {
 
 /*
 =======================================================================================================================================
-
+trap_S_AddLoopingSound
 =======================================================================================================================================
 */
 void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx) {
@@ -351,7 +409,7 @@ void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t vel
 
 /*
 =======================================================================================================================================
-
+trap_S_AddRealLoopingSound
 =======================================================================================================================================
 */
 void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx) {
@@ -360,7 +418,7 @@ void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t
 
 /*
 =======================================================================================================================================
-
+trap_S_StopLoopingSound
 =======================================================================================================================================
 */
 void trap_S_StopLoopingSound(int entityNum) {
@@ -369,7 +427,7 @@ void trap_S_StopLoopingSound(int entityNum) {
 
 /*
 =======================================================================================================================================
-
+trap_S_UpdateEntityPosition
 =======================================================================================================================================
 */
 void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin) {
@@ -378,20 +436,25 @@ void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin) {
 
 /*
 =======================================================================================================================================
-
+trap_S_Respatialize
 =======================================================================================================================================
 */
 void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater) {
 	syscall(CG_S_RESPATIALIZE, entityNum, origin, axis, inwater);
 }
 
+/*
+=======================================================================================================================================
+trap_S_RegisterSound
+=======================================================================================================================================
+*/
 sfxHandle_t trap_S_RegisterSound(const char *sample) {
 	return syscall(CG_S_REGISTERSOUND, sample);
 }
 
 /*
 =======================================================================================================================================
-
+trap_S_StartBackgroundTrack
 =======================================================================================================================================
 */
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop) {
@@ -400,29 +463,54 @@ void trap_S_StartBackgroundTrack(const char *intro, const char *loop) {
 
 /*
 =======================================================================================================================================
-
+trap_R_LoadWorldMap
 =======================================================================================================================================
 */
 void trap_R_LoadWorldMap(const char *mapname) {
 	syscall(CG_R_LOADWORLDMAP, mapname);
 }
 
+/*
+=======================================================================================================================================
+trap_R_RegisterModel
+=======================================================================================================================================
+*/
 qhandle_t trap_R_RegisterModel(const char *name) {
 	return syscall(CG_R_REGISTERMODEL, name);
 }
 
+/*
+=======================================================================================================================================
+trap_R_RegisterAnimation
+=======================================================================================================================================
+*/
 qhandle_t trap_R_RegisterAnimation(const char *name) {
 	return syscall(CG_R_REGISTERANIMATION, name);
 }
 
+/*
+=======================================================================================================================================
+trap_R_RegisterSkin
+=======================================================================================================================================
+*/
 qhandle_t trap_R_RegisterSkin(const char *name) {
 	return syscall(CG_R_REGISTERSKIN, name);
 }
 
+/*
+=======================================================================================================================================
+trap_R_RegisterShader
+=======================================================================================================================================
+*/
 qhandle_t trap_R_RegisterShader(const char *name) {
 	return syscall(CG_R_REGISTERSHADER, name);
 }
 
+/*
+=======================================================================================================================================
+trap_R_RegisterShaderNoMip
+=======================================================================================================================================
+*/
 qhandle_t trap_R_RegisterShaderNoMip(const char *name) {
 	return syscall(CG_R_REGISTERSHADERNOMIP, name);
 }
@@ -433,7 +521,7 @@ qhandle_t trap_R_RegisterShaderLightAttenuation(const char *name) {
 
 /*
 =======================================================================================================================================
-
+trap_R_RegisterFont
 =======================================================================================================================================
 */
 void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) {
@@ -442,7 +530,7 @@ void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) 
 
 /*
 =======================================================================================================================================
-
+trap_R_ClearScene
 =======================================================================================================================================
 */
 void trap_R_ClearScene(void) {
@@ -451,7 +539,7 @@ void trap_R_ClearScene(void) {
 
 /*
 =======================================================================================================================================
-
+trap_R_AddRefEntityToScene
 =======================================================================================================================================
 */
 void trap_R_AddRefEntityToScene(const refEntity_t *ent) {
@@ -460,7 +548,7 @@ void trap_R_AddRefEntityToScene(const refEntity_t *ent) {
 
 /*
 =======================================================================================================================================
-
+trap_R_AddRefLightToScene
 =======================================================================================================================================
 */
 void trap_R_AddRefLightToScene(const refLight_t *light) {
@@ -469,7 +557,7 @@ void trap_R_AddRefLightToScene(const refLight_t *light) {
 
 /*
 =======================================================================================================================================
-
+trap_R_AddPolyToScene
 =======================================================================================================================================
 */
 void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts) {
@@ -478,7 +566,7 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
 
 /*
 =======================================================================================================================================
-
+trap_R_AddPolysToScene
 =======================================================================================================================================
 */
 void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int num) {
@@ -491,7 +579,7 @@ int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight
 
 /*
 =======================================================================================================================================
-
+trap_R_AddLightToScene
 =======================================================================================================================================
 */
 void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
@@ -500,7 +588,7 @@ void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g,
 
 /*
 =======================================================================================================================================
-
+trap_R_RenderScene
 =======================================================================================================================================
 */
 void trap_R_RenderScene(const refdef_t *fd) {
@@ -509,7 +597,7 @@ void trap_R_RenderScene(const refdef_t *fd) {
 
 /*
 =======================================================================================================================================
-
+trap_R_SetColor
 =======================================================================================================================================
 */
 void trap_R_SetColor(const float *rgba) {
@@ -518,54 +606,88 @@ void trap_R_SetColor(const float *rgba) {
 
 /*
 =======================================================================================================================================
-
+trap_R_DrawStretchPic
 =======================================================================================================================================
 */
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader) {
-	syscall(CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1),
-			PASSFLOAT(s2), PASSFLOAT(t2), hShader);
+	syscall(CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
 }
 
 /*
 =======================================================================================================================================
-
+trap_R_ModelBounds
 =======================================================================================================================================
 */
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs) {
 	syscall(CG_R_MODELBOUNDS, model, mins, maxs);
 }
 
+/*
+=======================================================================================================================================
+trap_R_LerpTag
+=======================================================================================================================================
+*/
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName) {
 	return syscall(CG_R_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
 }
 
+/*
+=======================================================================================================================================
+trap_R_CheckSkeleton
+=======================================================================================================================================
+*/
 int trap_R_CheckSkeleton(refSkeleton_t *skel, qhandle_t hModel, qhandle_t hAnim) {
 	return syscall(CG_R_CHECKSKELETON, skel, hModel, hAnim);
 }
 
+/*
+=======================================================================================================================================
+trap_R_BuildSkeleton
+=======================================================================================================================================
+*/
 int trap_R_BuildSkeleton(refSkeleton_t *skel, qhandle_t anim, int startFrame, int endFrame, float frac, qboolean clearOrigin) {
 	return syscall(CG_R_BUILDSKELETON, skel, anim, startFrame, endFrame, PASSFLOAT(frac), clearOrigin);
 }
 
+/*
+=======================================================================================================================================
+trap_R_BlendSkeleton
+=======================================================================================================================================
+*/
 int trap_R_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac) {
 	return syscall(CG_R_BLENDSKELETON, skel, blend, PASSFLOAT(frac));
 }
 
+/*
+=======================================================================================================================================
+trap_R_BoneIndex
+=======================================================================================================================================
+*/
 int trap_R_BoneIndex(qhandle_t hModel, const char *boneName) {
 	return syscall(CG_R_BONEINDEX, hModel, boneName);
 }
 
+/*
+=======================================================================================================================================
+trap_R_AnimNumFrames
+=======================================================================================================================================
+*/
 int trap_R_AnimNumFrames(qhandle_t hAnim) {
 	return syscall(CG_R_ANIMNUMFRAMES, hAnim);
 }
 
+/*
+=======================================================================================================================================
+trap_R_AnimFrameRate
+=======================================================================================================================================
+*/
 int trap_R_AnimFrameRate(qhandle_t hAnim) {
 	return syscall(CG_R_ANIMFRAMERATE, hAnim);
 }
 
 /*
 =======================================================================================================================================
-
+trap_R_RemapShader
 =======================================================================================================================================
 */
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset) {
@@ -574,7 +696,7 @@ void trap_R_RemapShader(const char *oldShader, const char *newShader, const char
 
 /*
 =======================================================================================================================================
-
+trap_GetGlconfig
 =======================================================================================================================================
 */
 void trap_GetGlconfig(glconfig_t *glconfig) {
@@ -583,7 +705,7 @@ void trap_GetGlconfig(glconfig_t *glconfig) {
 
 /*
 =======================================================================================================================================
-
+trap_GetGameState
 =======================================================================================================================================
 */
 void trap_GetGameState(gameState_t *gamestate) {
@@ -592,32 +714,52 @@ void trap_GetGameState(gameState_t *gamestate) {
 
 /*
 =======================================================================================================================================
-
+trap_GetCurrentSnapshotNumber
 =======================================================================================================================================
 */
 void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime) {
 	syscall(CG_GETCURRENTSNAPSHOTNUMBER, snapshotNumber, serverTime);
 }
 
+/*
+=======================================================================================================================================
+trap_GetSnapshot
+=======================================================================================================================================
+*/
 qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot) {
 	return syscall(CG_GETSNAPSHOT, snapshotNumber, snapshot);
 }
 
+/*
+=======================================================================================================================================
+trap_GetServerCommand
+=======================================================================================================================================
+*/
 qboolean trap_GetServerCommand(int serverCommandNumber) {
 	return syscall(CG_GETSERVERCOMMAND, serverCommandNumber);
 }
 
+/*
+=======================================================================================================================================
+trap_GetCurrentCmdNumber
+=======================================================================================================================================
+*/
 int trap_GetCurrentCmdNumber(void) {
 	return syscall(CG_GETCURRENTCMDNUMBER);
 }
 
+/*
+=======================================================================================================================================
+trap_GetUserCmd
+=======================================================================================================================================
+*/
 qboolean trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd) {
 	return syscall(CG_GETUSERCMD, cmdNumber, ucmd);
 }
 
 /*
 =======================================================================================================================================
-
+trap_SetUserCmdValue
 =======================================================================================================================================
 */
 void trap_SetUserCmdValue(int stateValue, float sensitivityScale) {
@@ -626,7 +768,7 @@ void trap_SetUserCmdValue(int stateValue, float sensitivityScale) {
 
 /*
 =======================================================================================================================================
-
+testPrintInt
 =======================================================================================================================================
 */
 void testPrintInt(char *string, int i) {
@@ -635,116 +777,216 @@ void testPrintInt(char *string, int i) {
 
 /*
 =======================================================================================================================================
-
+testPrintFloat
 =======================================================================================================================================
 */
 void testPrintFloat(char *string, float f) {
 	syscall(CG_TESTPRINTFLOAT, string, PASSFLOAT(f));
 }
 
+/*
+=======================================================================================================================================
+trap_MemoryRemaining
+=======================================================================================================================================
+*/
 int trap_MemoryRemaining(void) {
 	return syscall(CG_MEMORY_REMAINING);
 }
 
+/*
+=======================================================================================================================================
+trap_Key_IsDown
+=======================================================================================================================================
+*/
 qboolean trap_Key_IsDown(int keynum) {
 	return syscall(CG_KEY_ISDOWN, keynum);
 }
 
+/*
+=======================================================================================================================================
+trap_Key_GetCatcher
+=======================================================================================================================================
+*/
 int trap_Key_GetCatcher(void) {
 	return syscall(CG_KEY_GETCATCHER);
 }
 
 /*
 =======================================================================================================================================
-
+trap_Key_SetCatcher
 =======================================================================================================================================
 */
 void trap_Key_SetCatcher(int catcher) {
 	syscall(CG_KEY_SETCATCHER, catcher);
 }
 
+/*
+=======================================================================================================================================
+trap_Key_GetKey
+=======================================================================================================================================
+*/
 int trap_Key_GetKey(const char *binding) {
 	return syscall(CG_KEY_GETKEY, binding);
 }
 
+/*
+=======================================================================================================================================
+trap_PC_AddGlobalDefine
+=======================================================================================================================================
+*/
 int trap_PC_AddGlobalDefine(char *define) {
 	return syscall(CG_PC_ADD_GLOBAL_DEFINE, define);
 }
 
+/*
+=======================================================================================================================================
+trap_PC_LoadSource
+=======================================================================================================================================
+*/
 int trap_PC_LoadSource(const char *filename) {
 	return syscall(CG_PC_LOAD_SOURCE, filename);
 }
 
+/*
+=======================================================================================================================================
+trap_PC_FreeSource
+=======================================================================================================================================
+*/
 int trap_PC_FreeSource(int handle) {
 	return syscall(CG_PC_FREE_SOURCE, handle);
 }
 
+/*
+=======================================================================================================================================
+trap_PC_ReadToken
+=======================================================================================================================================
+*/
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token) {
 	return syscall(CG_PC_READ_TOKEN, handle, pc_token);
 }
 
+/*
+=======================================================================================================================================
+trap_PC_SourceFileAndLine
+=======================================================================================================================================
+*/
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line) {
 	return syscall(CG_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
 }
 
 /*
 =======================================================================================================================================
-
+trap_S_StopBackgroundTrack
 =======================================================================================================================================
 */
 void trap_S_StopBackgroundTrack(void) {
 	syscall(CG_S_STOPBACKGROUNDTRACK);
 }
 
+/*
+=======================================================================================================================================
+trap_RealTime
+=======================================================================================================================================
+*/
 int trap_RealTime(qtime_t *qtime) {
 	return syscall(CG_REAL_TIME, qtime);
 }
 
-// this returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse(do not alter gamestate)
+/*
+=======================================================================================================================================
+trap_CIN_PlayCinematic
+
+This returns a handle. arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate).
+=======================================================================================================================================
+*/
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits) {
 	return syscall(CG_CIN_PLAYCINEMATIC, arg0, xpos, ypos, width, height, bits);
 }
 
-// stops playing the cinematic and ends it.  should always return FMV_EOF
-// cinematics must be stopped in reverse order of when they are started
+/*
+=======================================================================================================================================
+trap_CIN_StopCinematic
+
+Stops playing the cinematic and ends it. Should always return FMV_EOF. Cinematics must be stopped in reverse order of when they are
+started.
+=======================================================================================================================================
+*/
 e_status trap_CIN_StopCinematic(int handle) {
 	return syscall(CG_CIN_STOPCINEMATIC, handle);
 }
 
-// will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
+/*
+=======================================================================================================================================
+trap_CIN_RunCinematic
+
+Will run a frame of the cinematic but will not draw it. Will return FMV_EOF if the end of the cinematic has been reached.
+=======================================================================================================================================
+*/
 e_status trap_CIN_RunCinematic(int handle) {
 	return syscall(CG_CIN_RUNCINEMATIC, handle);
 }
 
-// draws the current frame
+/*
+=======================================================================================================================================
+trap_CIN_DrawCinematic
+
+Draws the current frame.
+=======================================================================================================================================
+*/
 void trap_CIN_DrawCinematic(int handle) {
 	syscall(CG_CIN_DRAWCINEMATIC, handle);
 }
 
-// allows you to resize the animation dynamically
+/*
+=======================================================================================================================================
+trap_CIN_SetExtents
+
+Allows you to resize the animation dynamically.
+=======================================================================================================================================
+*/
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h) {
 	syscall(CG_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
+/*
+=======================================================================================================================================
+trap_GetDemoState
+=======================================================================================================================================
+*/
 int trap_GetDemoState(void) {
 	return syscall(CG_GETDEMOSTATE);
 }
 
+/*
+=======================================================================================================================================
+trap_GetDemoPos
+=======================================================================================================================================
+*/
 int trap_GetDemoPos(void) {
 	return syscall(CG_GETDEMOPOS);
 }
 
+/*
+=======================================================================================================================================
+trap_GetEntityToken
+=======================================================================================================================================
+*/
 qboolean trap_GetEntityToken(char *buffer, int bufferSize) {
 	return syscall(CG_GET_ENTITY_TOKEN, buffer, bufferSize);
 }
 
+/*
+=======================================================================================================================================
+trap_R_inPVS
+=======================================================================================================================================
+*/
 qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2) {
 	return syscall(CG_R_INPVS, p1, p2);
 }
 
 /*
 =======================================================================================================================================
-
+trap_R_inPVS
 =======================================================================================================================================
 */
 void trap_GetDemoName(char *buffer, int size) {
@@ -753,7 +995,7 @@ void trap_GetDemoName(char *buffer, int size) {
 
 /*
 =======================================================================================================================================
-
+trap_Key_KeynumToStringBuf
 =======================================================================================================================================
 */
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen) {
@@ -762,7 +1004,7 @@ void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen) {
 
 /*
 =======================================================================================================================================
-
+trap_Key_GetBindingBuf
 =======================================================================================================================================
 */
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen) {
@@ -771,7 +1013,7 @@ void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen) {
 
 /*
 =======================================================================================================================================
-
+trap_Key_GetBindingBuf
 =======================================================================================================================================
 */
 void trap_Key_SetBinding(int keynum, const char *binding) {

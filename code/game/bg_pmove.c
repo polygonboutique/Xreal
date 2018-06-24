@@ -231,7 +231,7 @@ static void PM_Friction(void) {
 
 	speed = VectorLength(vec);
 
-	if (speed < 1) { // && pm->ps->pm_type != PM_SPECTATOR && pm->ps->pm_type != PM_NOCLIP) {
+	if (speed < 1) {
 		vel[0] = 0;
 		vel[1] = 0; // allow sinking underwater
 		// FIXME: still have z friction underwater?
@@ -851,7 +851,7 @@ static void PM_ClimbMove(void) {
 		return;
 	}
 
-	if (PM_CheckJump())			// || PM_CheckPounce()) {
+	if (PM_CheckJump()) {
 		// jumped away
 		if (pm->waterlevel > 1) {
 			PM_WaterMove();
@@ -953,7 +953,7 @@ static void PM_WalkMove(void) {
 		return;
 	}
 
-	if (PM_CheckJump())			// || PM_CheckPounce()) {
+	if (PM_CheckJump()) {
 		// jumped away
 		if (pm->waterlevel > 1) {
 			PM_WaterMove();
@@ -1038,13 +1038,11 @@ static void PM_WalkMove(void) {
 		return;
 	}
 	/*
-	   commenting these out prevents overbounces
-	   see: http://www.quakedev.com/forums/index.php?topic=1221.0
-
-	  // don't decrease velocity when going up or down a slope
-	   VectorNormalize(pm->ps->velocity);
-	   VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
-	 */
+	commenting these out prevents overbounces, see: http://www.quakedev.com/forums/index.php?topic=1221.0
+	// don't decrease velocity when going up or down a slope
+	VectorNormalize(pm->ps->velocity);
+	VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
+	*/
 	PM_StepSlideMove(qfalse, qfalse);
 	//Com_Printf("velocity2 = %1.1f\n", VectorLength(pm->ps->velocity));
 }
@@ -1306,6 +1304,7 @@ static void PM_GroundTraceMissed(void) {
 		// if they aren't in a jumping animation and the ground is a ways away, force into it
 		// if we didn't do the trace, the player would be backflipping down staircases
 		VectorCopy(pm->ps->origin, point);
+
 		point[2] -= 64.0f;
 
 		PM_TraceAll(&trace, pm->ps->origin, point);
@@ -1349,7 +1348,7 @@ static void PM_GroundClimbTrace(void) {
 	vec3_t abc;
 
 	// TA: If we're on the ceiling then grapplePoint is a rotation normal.. otherwise its a surface normal.
-	//   would have been nice if Carmack had left a few random variables in the ps struct for mod makers
+	// would have been nice if Carmack had left a few random variables in the ps struct for mod makers
 	if (pm->ps->pm_flags & PMF_WALLCLIMBINGCEILING) {
 		VectorCopy(ceilingNormal, surfNormal);
 	} else {
