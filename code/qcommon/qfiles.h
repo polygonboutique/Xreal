@@ -1,17 +1,17 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright(C)1999 - 2005 Id Software, Inc.
 
 This file is part of Quake III Arena source code.
 
-Quake III Arena source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+Quake III Arena source code is free software; you can redistribute it and / or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of the License, or(at your option)any later version.
 
 Quake III Arena source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with Quake III Arena source code; if not, write to the Free
-Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110 - 1301 USA
 =======================================================================================================================================
 */
 
@@ -24,22 +24,22 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 US
 
 #include "q_shared.h"
 
-// 
-// qfiles.h: quake file formats
-// This file must be identical in the quake and utils directories
-// 
+ // 
+ // qfiles.h: quake file formats
+ // This file must be identical in the quake and utils directories
+ // 
 
-// Ignore __attribute__ on non - gcc platforms
+ // Ignore __attribute__ on non - gcc platforms
 #ifndef __GNUC__
 #ifndef __attribute__
 #define __attribute__(x)
 #endif
 #endif
 
-// surface geometry should not exceed these limits
+ // surface geometry should not exceed these limits
 #define SHADER_MAX_VERTEXES 100000
-#define SHADER_MAX_INDEXES (SHADER_MAX_VERTEXES * 6)
-#define SHADER_MAX_TRIANGLES (SHADER_MAX_INDEXES / 3)
+#define SHADER_MAX_INDEXES(SHADER_MAX_VERTEXES * 6)
+#define SHADER_MAX_TRIANGLES(SHADER_MAX_INDEXES / 3)
 
 
 
@@ -59,7 +59,7 @@ typedef struct {
 	int codeLength;
 	int dataOffset;
 	int dataLength;
-	int litLength;	// (dataLength - litLength) should be byteswapped on load
+	int litLength;	// (dataLength - litLength)should be byteswapped on load
 	int bssLength;	// zero filled memory appended to datalength
 } vmHeader_t;
 
@@ -114,10 +114,10 @@ typedef struct _TargaHeader {
 =======================================================================================================================================
 */
 
-#define MD3_IDENT (('3' << 24) + ('P' << 16) + ('D' << 8) + 'I')
+#define MD3_IDENT(('3' << 24) + ('P' << 16) + ('D' << 8) + 'I')
 #define MD3_VERSION 15
 
-// limits
+ // limits
 #define MD3_MAX_LODS 3
 #define MD3_MAX_TRIANGLES 8192 // per surface
 #define MD3_MAX_VERTS 4096 // per surface
@@ -125,8 +125,8 @@ typedef struct _TargaHeader {
 #define MD3_MAX_FRAMES 1024 // per model
 #define MD3_MAX_SURFACES 32 // per model
 #define MD3_MAX_TAGS 16 // per frame
-// vertex scales
-#define MD3_XYZ_SCALE (1.0 / 64)
+ // vertex scales
+#define MD3_XYZ_SCALE(1.0 / 64)
 
 typedef struct md3Frame_s {
 	float bounds[2][3];
@@ -142,14 +142,14 @@ typedef struct md3Tag_s {
 } md3Tag_t;
 
 /*
-** md3Surface_t
+ * *md3Surface_t
 
-** CHUNK			SIZE
-** header			sizeof(md3Surface_t)
-** shaders			sizeof(md3Shader_t) * numShaders
-** triangles[0]		sizeof(md3Triangle_t) * numTriangles
-** st				sizeof(md3St_t) * numVerts
-** XyzNormals		sizeof(md3XyzNormal_t) * numVerts * numFrames
+ * *CHUNK			SIZE
+ * *header			sizeof(md3Surface_t)
+ * *shaders			sizeof(md3Shader_t) * numShaders
+ * *triangles[0]		sizeof(md3Triangle_t) * numTriangles
+ * *st				sizeof(md3St_t) * numVerts
+ * *XyzNormals		sizeof(md3XyzNormal_t) * numVerts * numFrames
 */
 typedef struct {
 	int ident;
@@ -168,7 +168,7 @@ typedef struct {
 
 typedef struct {
 	char name[64];
-	int shaderIndex; // for in-game use
+	int shaderIndex; // for in - game use
 } md3Shader_t;
 
 typedef struct {
@@ -207,8 +207,8 @@ typedef struct {
 =======================================================================================================================================
 */
 
-#define TAG_IDENT          (('1' << 24) + ('G' << 16) + ('A' << 8) + 'T')
-#define TAG_VERSION         1
+#define TAG_IDENT(('1' << 24) + ('G' << 16) + ('A' << 8) + 'T')
+#define TAG_VERSION 1
 
 typedef struct {
 	int ident;
@@ -223,7 +223,7 @@ typedef struct {
 	int count;
 } tagHeaderExt_t;
 
-// Ridah, mesh compression
+ // Ridah, mesh compression
 /*
 =======================================================================================================================================
 
@@ -232,16 +232,16 @@ MDC file format
 =======================================================================================================================================
 */
 
-#define MDC_IDENT          (('C' << 24) + ('P' << 16) + ('D' << 8) + 'I')
-#define MDC_VERSION         2
+#define MDC_IDENT(('C' << 24) + ('P' << 16) + ('D' << 8) + 'I')
+#define MDC_VERSION 2
 
-// version history:
-// 1 - original
-// 2 - changed tag structure so it only lists the names once
+ // version history:
+ // 1 - original
+ // 2 - changed tag structure so it only lists the names once
 
 typedef struct {
 	unsigned int ofsVec;		// offset direction from the last base frame
-// unsigned short ofsVec;
+ // unsigned short ofsVec;
 } mdcXyzCompressed_t;
 
 typedef struct {
@@ -256,17 +256,17 @@ typedef struct {
 } mdcTag_t;
 
 /*
- * * mdcSurface_t
- * * 
- * * CHUNK			SIZE
- * * header			sizeof(md3Surface_t)
- * * shaders			sizeof(md3Shader_t) * numShaders
- * * triangles[0]		sizeof(md3Triangle_t) * numTriangles
- * * st				sizeof(md3St_t) * numVerts
- * * XyzNormals		sizeof(md3XyzNormal_t) * numVerts * numBaseFrames
- * * XyzCompressed	sizeof(mdcXyzCompressed) * numVerts * numCompFrames
- * * frameBaseFrames	sizeof(short) * numFrames
- * * frameCompFrames	sizeof(short) * numFrames(-1 if frame is a baseFrame)
+ * *mdcSurface_t
+ * *
+ * *CHUNK			SIZE
+ * *header			sizeof(md3Surface_t)
+ * *shaders			sizeof(md3Shader_t) * numShaders
+ * *triangles[0]		sizeof(md3Triangle_t) * numTriangles
+ * *st				sizeof(md3St_t) * numVerts
+ * *XyzNormals		sizeof(md3XyzNormal_t) * numVerts * numBaseFrames
+ * *XyzCompressed	sizeof(mdcXyzCompressed) * numVerts * numCompFrames
+ * *frameBaseFrames	sizeof(short) * numFrames
+ * *frameCompFrames	sizeof(short) * numFrames( - 1 if frame is a baseFrame)
 */
 typedef struct {
 	int ident;		// 
@@ -303,7 +303,7 @@ typedef struct {
 	int ofsEnd;		// end of file
 } mdcHeader_t;
 
-// done.
+ // done.
 
 /*
 =======================================================================================================================================
@@ -313,9 +313,9 @@ MD4 file format
 =======================================================================================================================================
 */
 
-#define MD4_IDENT          (('4' << 24) + ('P' << 16) + ('D' << 8) + 'I')
-#define MD4_VERSION         1
-#define MD4_MAX_BONES       128
+#define MD4_IDENT(('4' << 24) + ('P' << 16) + ('D' << 8) + 'I')
+#define MD4_VERSION 1
+#define MD4_MAX_BONES 128
 
 typedef struct {
 	int boneIndex;	// these are indexes into the boneReferences,
@@ -346,7 +346,7 @@ typedef struct {
 	int ofsTriangles;
 
 	// Bone references are a set of ints representing all the bones
-	// present in any vertex weights for this surface.  This is
+	// present in any vertex weights for this surface. This is
 	// needed because a model may have surfaces that need to be
 	// drawn at different sort times, and we don't want to have
 	// to re - interpolate all the bones for each surface.
@@ -398,15 +398,15 @@ MDS file format(Wolfenstein Skeletal Format)
 =======================================================================================================================================
 */
 
-#define MDS_IDENT          (('W' << 24) + ('S' << 16) + ('D' << 8) + 'M')
-#define MDS_VERSION         4
-#define MDS_MAX_VERTS       6000
-#define MDS_MAX_TRIANGLES   8192
-#define MDS_MAX_BONES       128
-#define MDS_MAX_SURFACES    32
-#define MDS_MAX_TAGS        128
+#define MDS_IDENT(('W' << 24) + ('S' << 16) + ('D' << 8) + 'M')
+#define MDS_VERSION 4
+#define MDS_MAX_VERTS 6000
+#define MDS_MAX_TRIANGLES 8192
+#define MDS_MAX_BONES 128
+#define MDS_MAX_SURFACES 32
+#define MDS_MAX_TAGS 128
 
-#define MDS_TRANSLATION_SCALE  (1.0 / 64)
+#define MDS_TRANSLATION_SCALE(1.0 / 64)
 
 typedef struct {
 	int boneIndex;	// these are indexes into the boneReferences,
@@ -441,7 +441,7 @@ typedef struct {
 	int ofsCollapseMap;	// numVerts * int
 
 	// Bone references are a set of ints representing all the bones
-	// present in any vertex weights for this surface.  This is
+	// present in any vertex weights for this surface. This is
 	// needed because a model may have surfaces that need to be
 	// drawn at different sort times, and we don't want to have
 	// to re - interpolate all the bones for each surface.
@@ -457,7 +457,7 @@ typedef struct {
 	short ofsAngles[2];	// PITCH / YAW, head in this direction from parent to go to the offset position
 } mdsBoneFrameCompressed_t;
 
-// NOTE: this only used at run - time
+ // NOTE: this only used at run - time
 typedef struct {
 	float matrix[3][3];	// 3x3 rotation
 	vec3_t translation;	// translation vector
@@ -483,7 +483,7 @@ typedef struct {
 	int boneIndex;	// our index in the bones
 } mdsTag_t;
 
-#define BONEFLAG_TAG        1	// this bone is actually a tag
+#define BONEFLAG_TAG 1	// this bone is actually a tag
 
 typedef struct {
 	char name[64];	// name of bone
@@ -527,14 +527,14 @@ version history:
 =======================================================================================================================================
 */
 
-#define MDM_IDENT          (('W' << 24) + ('M' << 16) + ('D' << 8) + 'M')
-#define MDM_VERSION         3
-#define MDM_MAX_VERTS       6000
-#define MDM_MAX_TRIANGLES   8192
-#define MDM_MAX_SURFACES    32
-#define MDM_MAX_TAGS        128
+#define MDM_IDENT(('W' << 24) + ('M' << 16) + ('D' << 8) + 'M')
+#define MDM_VERSION 3
+#define MDM_MAX_VERTS 6000
+#define MDM_MAX_TRIANGLES 8192
+#define MDM_MAX_SURFACES 32
+#define MDM_MAX_TAGS 128
 
-#define MDM_TRANSLATION_SCALE  (1.0 / 64)
+#define MDM_TRANSLATION_SCALE(1.0 / 64)
 
 typedef struct {
 	int boneIndex;	// these are indexes into the boneReferences,
@@ -567,7 +567,7 @@ typedef struct {
 	int ofsCollapseMap;	// numVerts * int
 
 	// Bone references are a set of ints representing all the bones
-	// present in any vertex weights for this surface.  This is
+	// present in any vertex weights for this surface. This is
 	// needed because a model may have surfaces that need to be
 	// drawn at different sort times, and we don't want to have
 	// to re - interpolate all the bones for each surface.
@@ -599,7 +599,7 @@ typedef struct {
 	int ofsEnd;				// next tag follows
 } mdmTag_t;*/
 
-// Tags always only have one parent bone
+ // Tags always only have one parent bone
 typedef struct {
 	char name[64];	// name of tag
 	vec3_t axis[3];
@@ -651,9 +651,9 @@ version history:
 =======================================================================================================================================
 */
 
-#define MDX_IDENT          (('W' << 24) + ('X' << 16) + ('D' << 8) + 'M')
-#define MDX_VERSION         2
-#define MDX_MAX_BONES       128
+#define MDX_IDENT(('W' << 24) + ('X' << 16) + ('D' << 8) + 'M')
+#define MDX_VERSION 2
+#define MDX_MAX_BONES 128
 
 typedef struct {
 	vec3_t bounds[2];	// bounds of this frame
@@ -669,8 +669,8 @@ typedef struct {
 	short ofsAngles[2];	// PITCH / YAW, head in this direction from parent to go to the offset position
 } mdxBoneFrameCompressed_t;
 
-// NOTE: this only used at run - time
-// FIXME: do we really need this?
+ // NOTE: this only used at run - time
+ // FIXME: do we really need this?
 typedef struct {
 	float matrix[3][3];	// 3x3 rotation
 	vec3_t translation;	// translation vector
@@ -798,13 +798,13 @@ typedef struct {
 /*
 =======================================================================================================================================
 
-  .BSP file format
+ .BSP file format
 
 =======================================================================================================================================
 */
 
 #if defined(COMPAT_Q3A)
-#define BSP_IDENT	(('P' << 24) + ('S' << 16) + ('B' << 8) + 'I')// little - endian "IBSP"
+#define BSP_IDENT	(('P' << 24) + ('S' << 16) + ('B' << 8) + 'I') // little - endian "IBSP"
 #define BSP_VERSION			46
 #else
 #define BSP_IDENT	(('P' << 24) + ('S' << 16) + ('B' << 8) + 'X') // little - endian "XBSP"
@@ -812,8 +812,8 @@ typedef struct {
 #endif
 
 
-// there shouldn't be any problem with increasing these values at the
-// expense of more memory allocation in the utilities
+ // there shouldn't be any problem with increasing these values at the
+ // expense of more memory allocation in the utilities
 #define MAX_MAP_MODELS		0x400
 #define MAX_MAP_BRUSHES		0x8000
 #define MAX_MAP_ENTITIES	0x800
@@ -824,7 +824,7 @@ typedef struct {
 #define MAX_MAP_FOGS		0x100
 #define MAX_MAP_PLANES		0x20000
 #define MAX_MAP_NODES		0x20000
-#define MAX_MAP_BRUSHSIDES	0x40000	// % 0x20000 /* ydnar */
+#define MAX_MAP_BRUSHSIDES	0x40000	// % 0x20000/*ydnar*/
 #define MAX_MAP_LEAFS		0x20000
 #define MAX_MAP_LEAFFACES	0x20000
 #define MAX_MAP_LEAFBRUSHES 0x40000
@@ -838,22 +838,22 @@ typedef struct {
 #define MAX_MAP_DRAW_INDEXES	0x80000
 
 
-// key / value pair sizes in the entities lump
+ // key / value pair sizes in the entities lump
 #define MAX_KEY				32
 #define MAX_VALUE			1024
 
-// the editor uses these predefined yaw angles to orient entities up or down
+ // the editor uses these predefined yaw angles to orient entities up or down
 #define ANGLE_UP			 - 1
 #define ANGLE_DOWN			 - 2
 
 #define LIGHTMAP_WIDTH		128
 #define LIGHTMAP_HEIGHT		128
 
-#define MAX_WORLD_COORD    (128 * 1024)
-#define MIN_WORLD_COORD    (-128 * 1024)
-#define WORLD_SIZE         (MAX_WORLD_COORD - MIN_WORLD_COORD)
+#define MAX_WORLD_COORD(128 * 1024)
+#define MIN_WORLD_COORD( - 128 * 1024)
+#define WORLD_SIZE(MAX_WORLD_COORD - MIN_WORLD_COORD)
 
-//=============================================================================
+ //=============================================================================
 
 typedef struct {
 	int fileofs, filelen;
@@ -897,7 +897,7 @@ typedef struct {
 	int contentFlags;
 } dshader_t;
 
-// planes x^1 is allways the opposite of plane x
+ // planes x^1 is allways the opposite of plane x
 
 typedef struct {
 	float normal[3];
@@ -912,7 +912,7 @@ typedef struct {
 } dnode_t;
 
 typedef struct {
-	int cluster;	// -1 = opaque cluster(do I still store these?)
+	int cluster;	// - 1 = opaque cluster(do I still store these?)
 	int area;
 	int mins[3];	// for frustum culling
 	int maxs[3];
@@ -936,10 +936,10 @@ typedef struct {
 typedef struct {
 	char shader[64];
 	int brushNum;
-	int visibleSide;	// the brush side that ray tests need to clip against(-1 == none)
+	int visibleSide;	// the brush side that ray tests need to clip against( - 1 == none)
 } dfog_t;
 
-// light grid
+ // light grid
 #if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 typedef struct {
 	byte ambient[3];

@@ -1,29 +1,29 @@
 /*
 ===========================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright(C)1999 - 2005 Id Software, Inc.
 
 This file is part of XreaL source code.
 
 XreaL source code is free software; you can redistribute it
-and/or modify it under the terms of the GNU General Public License as
+and / or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of the License,
-or (at your option) any later version.
+or(at your option)any later version.
 
 XreaL source code is distributed in the hope that it will be
 useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-===========================================================================
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110 - 1301 USA
+=======================================================================================================================================
 */
 
 #ifndef __Q_PLATFORM_H
 #define __Q_PLATFORM_H
 
-// various feature defines
+ // various feature defines
 #ifndef CG_LUA
 #define CG_LUA 1
 #endif
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define G_LUA 1
 #endif
 
-// this is for determining if we have an asm version of a C function
+ // this is for determining if we have an asm version of a C function
 #ifdef Q3_VM
 
 #define id386 0
@@ -41,36 +41,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #else
 
-#if (defined(_M_IX86) || defined(__i386__)) && !defined(C_ONLY)
+#if(defined(_M_IX86) || defined(__i386__)) && !defined(C_ONLY)
 #define id386 1
 #if defined SIMD_3DNOW
-#define id386_3dnow  1
+#define id386_3dnow 1
 #else
-#define id386_3dnow  0
+#define id386_3dnow 0
 #endif
-#if defined(SIMD_SSE)			//|| 1 //|| defined(__SSE__)//defined(_MSC_VER)
-#define id386_sse  1
-#include <xmmintrin.h>
-//#define SSEVEC3_T
+#if defined(SIMD_SSE)			// || 1 // || defined(__SSE__) // defined(_MSC_VER)
+#define id386_sse 1
+#include < xmmintrin.h > 
+ // #define SSEVEC3_T
 #else
-#define id386_sse  0
+#define id386_sse 0
 #endif
 #else
 #define id386	0
-#define id386_3dnow  0
-#define id386_sse    0
+#define id386_3dnow 0
+#define id386_sse 0
 #endif
 
-#if (defined(powerc) || defined(powerpc) || defined(ppc) || \
+#if(defined(powerc) || defined(powerpc) || defined(ppc) || \
 	defined(__ppc) || defined(__ppc__)) && !defined(C_ONLY)
 #define idppc 1
 #if defined(__VEC__)
 #define idppc_altivec 1
 #ifdef MACOS_X					// Apple's GCC does this differently than the FSF.
-#define VECCONST_UINT8(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) \
-	(vector unsigned char) (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p)
+#define VECCONST_UINT8(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p)\
+	(vector unsigned char)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p)
 #else
-#define VECCONST_UINT8(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) \
+#define VECCONST_UINT8(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p)\
 	(vector unsigned char) {a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p}
 #endif
 #else
@@ -85,18 +85,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifndef __ASM_I386__			// don't include the C bits if included from qasm.h
 
-// for windows fastcall option
+ // for windows fastcall option
 #define QDECL
 #define QCALL
 
-//================================================================= WIN64/32 ===
+ //=================================================================WIN64 / 32 === 
 
 #ifdef __WIN64__
 
 #undef QDECL
 #define QDECL __cdecl
 
-#if defined( _MSC_VER )
+#if defined(_MSC_VER)
 #define OS_STRING "win_msvc64"
 #elif defined __MINGW64__
 #define OS_STRING "win_mingw64"
@@ -105,7 +105,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_INLINE inline
 #define PATH_SEP '\\'
 
-#if defined( __WIN64__ )
+#if defined(__WIN64__)
 #define ARCH_STRING "x86_64"
 #elif defined _M_ALPHA
 #define ARCH_STRING "AXP"
@@ -123,7 +123,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #undef QCALL
 #define QCALL __stdcall
 
-#if defined( _MSC_VER )
+#if defined(_MSC_VER)
 #define OS_STRING "win_msvc"
 #elif defined __MINGW32__
 #define OS_STRING "win_mingw"
@@ -132,7 +132,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_INLINE __inline
 #define PATH_SEP '\\'
 
-#if defined( _M_IX86 ) || defined( __i386__ )
+#if defined(_M_IX86) || defined(__i386__)
 #define ARCH_STRING "x86"
 #elif defined _M_ALPHA
 #define ARCH_STRING "AXP"
@@ -144,11 +144,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//============================================================== MAC OS X ===
+ //==============================================================MAC OS X === 
 
 #if defined(MACOS_X) || defined(__APPLE_CC__)
 
-// make sure this is defined, just for sanity's sake...
+ // make sure this is defined, just for sanity's sake...
 #ifndef MACOS_X
 #define MACOS_X
 #endif
@@ -175,11 +175,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//================================================================= LINUX ===
+ //=================================================================LINUX === 
 
 #ifdef __linux__
 
-#include <endian.h>
+#include < endian.h > 
 
 #define OS_STRING "linux"
 #define ID_INLINE inline
@@ -225,12 +225,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//=================================================================== BSD ===
+ //===================================================================BSD === 
 
 #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 
-#include <sys/types.h>
-#include <machine/endian.h>
+#include < sys / types.h > 
+#include < machine / endian.h > 
 
 #ifndef __BSD__
 #define __BSD__
@@ -265,12 +265,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//================================================================= SUNOS ===
+ //=================================================================SUNOS === 
 
 #ifdef __sun
 
-#include <stdint.h>
-#include <sys/byteorder.h>
+#include < stdint.h > 
+#include < sys / byteorder.h > 
 
 #define OS_STRING "solaris"
 #define ID_INLINE inline
@@ -282,9 +282,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ARCH_STRING "sparc"
 #endif
 
-#if defined( _BIG_ENDIAN )
+#if defined(_BIG_ENDIAN)
 #define Q3_BIG_ENDIAN
-#elif defined( _LITTLE_ENDIAN )
+#elif defined(_LITTLE_ENDIAN)
 #define Q3_LITTLE_ENDIAN
 #endif
 
@@ -292,7 +292,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//================================================================== IRIX ===
+ //==================================================================IRIX === 
 
 #ifdef __sgi
 
@@ -308,7 +308,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//================================================================== Q3VM ===
+ //==================================================================Q3VM === 
 
 #ifdef Q3_VM
 
@@ -322,14 +322,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//===========================================================================
+ //===========================================================================
 
-//catch missing defines in above blocks
-#if !defined( OS_STRING )
+ // catch missing defines in above blocks
+#if !defined(OS_STRING)
 #error "Operating system not supported"
 #endif
 
-#if !defined( ARCH_STRING )
+#if !defined(ARCH_STRING)
 #error "Architecture not supported"
 #endif
 
@@ -346,32 +346,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 
-//endianness
-short           ShortSwap(short l);
-int             LongSwap(int l);
-float           FloatSwap(const float *f);
+ // endianness
+short ShortSwap(short l);
+int LongSwap(int l);
+float FloatSwap(const float *f);
 
-#if defined( Q3_BIG_ENDIAN ) && defined( Q3_LITTLE_ENDIAN )
+#if defined(Q3_BIG_ENDIAN) && defined(Q3_LITTLE_ENDIAN)
 #error "Endianness defined as both big and little"
-#elif defined( Q3_BIG_ENDIAN )
+#elif defined(Q3_BIG_ENDIAN)
 
-#define LittleShort(x) ShortSwap(x)
-#define LittleLong(x) LongSwap(x)
-#define LittleFloat(x) FloatSwap(&x)
+#define LittleShort(x)ShortSwap(x)
+#define LittleLong(x)LongSwap(x)
+#define LittleFloat(x)FloatSwap(&x)
 #define BigShort
 #define BigLong
 #define BigFloat
 
-#elif defined( Q3_LITTLE_ENDIAN )
+#elif defined(Q3_LITTLE_ENDIAN)
 
 #define LittleShort
 #define LittleLong
 #define LittleFloat
-#define BigShort(x) ShortSwap(x)
-#define BigLong(x) LongSwap(x)
-#define BigFloat(x) FloatSwap(&x)
+#define BigShort(x)ShortSwap(x)
+#define BigLong(x)LongSwap(x)
+#define BigFloat(x)FloatSwap(&x)
 
-#elif defined( Q3_VM )
+#elif defined(Q3_VM)
 
 #define LittleShort
 #define LittleLong
@@ -385,11 +385,11 @@ float           FloatSwap(const float *f);
 #endif
 
 
-//platform string
+ // platform string
 #ifdef NDEBUG
-#define PLATFORM_STRING OS_STRING "-" ARCH_STRING
+#define PLATFORM_STRING OS_STRING " - " ARCH_STRING
 #else
-#define PLATFORM_STRING OS_STRING "-" ARCH_STRING "-debug"
+#define PLATFORM_STRING OS_STRING " - " ARCH_STRING " - debug"
 #endif
 
 #endif
