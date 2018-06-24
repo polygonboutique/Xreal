@@ -1,7 +1,0 @@
-textures/odin/misc/chrome
-{
-	qer_editorImage		textures/odin/misc/chrome
-	diffuseMap		_black
-	specularMap		_white
-	normalMap		heightMap(textures/odin/details/metaldetail_1, 0.25)
-}

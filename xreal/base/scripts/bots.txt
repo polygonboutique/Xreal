@@ -1,7 +1,0 @@
-{
-name		Visor
-model		visor
-headmodel   visor
-aifile		bots/visor_c.c
-}
-

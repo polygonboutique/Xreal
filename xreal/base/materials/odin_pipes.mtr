@@ -1,8 +1,0 @@
-textures/odin/pipes/m_rustypipe01
-{
-	qer_editorImage		textures/odin/pipes/m_rustypipe01
-
-	diffuseMap		textures/odin/pipes/m_rustypipe01_d
-	specularMap		textures/odin/pipes/m_rustypipe01_s
-	normalMap		addnormals(textures/odin/pipes/m_rustypipe01_local, heightmap(textures/odin/details/metaldetail_1, 1))
-}

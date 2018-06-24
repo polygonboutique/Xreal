@@ -1,4 +1,0 @@
-In Eclipse with the global file search:
-
-Find:		Stack.alloc\(([\S]+).class\)
-Replace:	new $1()
