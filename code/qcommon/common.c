@@ -34,6 +34,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 US
 #include <winsock.h>
 #endif
 int demo_protocols[] = {PROTOCOL_VERSION, 0};
+
 #define MAX_NUM_ARGVS 50
 #define MIN_DEDICATED_COMHUNKMEGS 1
 #define MIN_COMHUNKMEGS 96
@@ -43,15 +44,15 @@ int demo_protocols[] = {PROTOCOL_VERSION, 0};
 #define DEF_COMHUNKMEGS 512
 #endif
 #define DEF_COMZONEMEGS 96
-// #define XSTRING(x) STRING(x)
-// #define STRING(x) #x
+//#define XSTRING(x) STRING(x)
+//#define STRING(x) #x
 #define DEF_COMHUNKMEGS_S XSTRING(DEF_COMHUNKMEGS)
 #define DEF_COMZONEMEGS_S XSTRING(DEF_COMZONEMEGS)
 
 int com_argc;
 char *com_argv[MAX_NUM_ARGVS + 1];
 
-jmp_buf abortframe; // an ERR_DROP occured, exit the entire frame
+jmp_buf abortframe; // an ERR_DROP occurred, exit the entire frame
 
 FILE *debuglogfile;
 static fileHandle_t logfile;
@@ -2459,6 +2460,7 @@ Change to a new mod properly with cleaning up cvars before switching.
 =======================================================================================================================================
 */
 void Com_GameRestart(int checksumFeed, qboolean clientRestart) {
+
 	// make sure no recursion can be triggered
 	if (!com_gameRestarting && com_fullyInitialized) {
 		com_gameRestarting = qtrue;
@@ -3850,7 +3852,7 @@ void Com_Shutdown(void) {
 /*
 =======================================================================================================================================
 
-COMMAND LINE COMPLETION
+	COMMAND LINE COMPLETION
 
 =======================================================================================================================================
 */

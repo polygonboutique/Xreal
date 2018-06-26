@@ -178,7 +178,6 @@ vmCvar_t cg_railType;
 vmCvar_t cg_trueLightning;
 vmCvar_t cg_particles;
 vmCvar_t cg_particleCollision;
-
 // these cvars are shared accross both games
 vmCvar_t pm_airControl;
 vmCvar_t pm_fastWeaponSwitches;
@@ -294,7 +293,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	// the following variables are created in other parts of the system, but we also reference them here
 	{&cg_buildScript, "com_buildScript", "0", 0}, // force loading of all possible data amd error on failures
 	{&cg_blood, "com_blood", "1", CVAR_ARCHIVE},
-	{&cg_synchronousClients, "g_synchronousClients", "0", 0}, 	// communicated by systeminfo
+	{&cg_synchronousClients, "g_synchronousClients", "0", 0}, // communicated by systeminfo
 	{&cg_currentSelectedPlayer, "cg_currentSelectedPlayer", "0", CVAR_ARCHIVE},
 	{&cg_currentSelectedPlayerName, "cg_currentSelectedPlayerName", "", CVAR_ARCHIVE},
 	{&cg_singlePlayer, "ui_singlePlayerActive", "0", CVAR_USERINFO},
@@ -655,7 +654,7 @@ static void CG_RegisterSounds(void) {
 	cgs.media.obeliskHitSound1 = trap_S_RegisterSound("sound/items/obelisk_hit_01.ogg");
 	cgs.media.obeliskHitSound2 = trap_S_RegisterSound("sound/items/obelisk_hit_02.ogg");
 	cgs.media.obeliskHitSound3 = trap_S_RegisterSound("sound/items/obelisk_hit_03.ogg");
-	c
+	cgs.media.obeliskRespawnSound = trap_S_RegisterSound("sound/items/obelisk_respawn.ogg");
 #ifdef MISSIONPACK
 	cgs.media.ammoregenSound = trap_S_RegisterSound("sound/items/cl_ammoregen.wav", qfalse);
 	cgs.media.doublerSound = trap_S_RegisterSound("sound/items/cl_doubler.wav", qfalse);
@@ -951,7 +950,6 @@ static void CG_RegisterGraphics(void) {
 
 	if (cgs.gametype == GT_1FCTF) {
 		cgs.media.neutralFlagSkin = trap_R_RegisterSkin("models/flags / flag_neutral.skin");
-
 		cgs.media.flagShader[0] = trap_R_RegisterShaderNoMip("icons/iconf_neutral1");
 		cgs.media.flagShader[1] = trap_R_RegisterShaderNoMip("icons/iconf_red2");
 		cgs.media.flagShader[2] = trap_R_RegisterShaderNoMip("icons/iconf_blu2");
@@ -1032,21 +1030,19 @@ static void CG_RegisterGraphics(void) {
 
 	memset(cg_items, 0, sizeof(cg_items));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
-
 	// only register the items that the server says we need
-	// raynorpat: used to be a standard strcpy, but can be exploited via
-	// a remote stack overflow. see http:// www.milw0rm.com / exploits / 1977
+	// raynorpat: used to be a standard strcpy, but can be exploited via a remote stack overflow, see http://www.milw0rm.com/exploits/1977
 	Q_strncpyz(items, CG_ConfigString(CS_ITEMS), sizeof(items));
 
 	CG_LoadingString("items", qfalse);
 
 	for (i = 1; i < bg_numItems; i++) {
-		if (items[i] == '1' || cg_buildScript.integer)
+		if (items[i] == '1' || cg_buildScript.integer) {
 			CG_RegisterItemVisuals(i);
+		}
 	}
 
 	CG_LoadingString("marks", qfalse);
-
 	// wall marks
 	cgs.media.bulletMarkShader = trap_R_RegisterShader("gfx/damage/bullet_mrk");
 	cgs.media.burnMarkShader = trap_R_RegisterShader("burnMark");
@@ -1054,10 +1050,9 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.energyMarkShader = trap_R_RegisterShader("gfx/damage/plasma_mrk");
 	cgs.media.shadowMarkShader = trap_R_RegisterShader("markShadow");
 	cgs.media.wakeMarkShader = trap_R_RegisterShader("wake");
-	cgs.media.bloodMarkShader = trap_R_RegisterShader("textures / decals / blood_splat04");
-	cgs.media.bloodMark2Shader = trap_R_RegisterShader("textures / decals / blood_splat05");
-	cgs.media.bloodMark3Shader = trap_R_RegisterShader("textures / decals / blood_splat06");
-
+	cgs.media.bloodMarkShader = trap_R_RegisterShader("textures/decals/blood_splat04");
+	cgs.media.bloodMark2Shader = trap_R_RegisterShader("textures/decals/blood_splat05");
+	cgs.media.bloodMark3Shader = trap_R_RegisterShader("textures/decals/blood_splat06");
 	// register the inline models
 	cgs.numInlineModels = trap_CM_NumInlineModels();
 
@@ -1112,9 +1107,9 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.debugPlayerAABB = trap_R_RegisterShader("debugPlayerAABB");
 	cgs.media.debugPlayerAABB_twoSided = trap_R_RegisterShader("debugPlayerAABB_twoSided");
 	CG_LoadingString("debris effects", qfalse);
-	// Debris models
-	// Consider moving these loads into the code that initializes a func_explosive, so they are only loaded when required.
-	// Also, if theres not enough models, point some of these to others so the code still calls them fine. Eg, Gibs.
+	// debris models
+	// consider moving these loads into the code that initializes a func_explosive, so they are only loaded when required
+	// also, if theres not enough models, point some of these to others so the code still calls them fine, e.g. gibs
 	cgs.media.debrisModels[ENTMAT_WOOD][0][0] = trap_R_RegisterModel("models/debris/wood1a.md5mesh");
 	cgs.media.debrisModels[ENTMAT_WOOD][0][1] = trap_R_RegisterModel("models/debris/wood1b.md5mesh");
 	cgs.media.debrisModels[ENTMAT_WOOD][1][0] = trap_R_RegisterModel("models/debris/wood2a.md5mesh");
@@ -1184,7 +1179,6 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.flames[2] = trap_R_RegisterShader("flames2");
 
 	CG_LoadingString("particles", qfalse);
-
 	CG_InitParticles();
 
 

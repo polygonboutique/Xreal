@@ -407,7 +407,6 @@ static void PM_SetMovementDir(void) {
 	} else {
 		pm->ps->movementDir = 0;
 	}
-
 #else
 	if (pm->cmd.forwardmove || pm->cmd.rightmove) {
 		if (pm->cmd.rightmove == 0 && pm->cmd.forwardmove > 0) {

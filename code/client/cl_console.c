@@ -35,7 +35,7 @@ typedef struct {
 	float yadjust;		// for narrow aspect screens
 	float displayFrac;	// aproaches finalFrac at scr_conspeed
 	float finalFrac;	// 0.0 to 1.0 lines of console to display
-	int vislines;	// in scanlines
+	int vislines;		// in scanlines
 	int times[NUM_CON_TIMES]; // cls.realtime time the line was generated
 	// for transparent notify lines
 	vec4_t color;
@@ -71,7 +71,7 @@ void Con_ToggleConsole_f(void) {
 	g_consoleField.widthInChars = g_console_field_width;
 
 	Con_ClearNotify();
-	Key_SetCatcher(Key_GetCatcher()^ KEYCATCH_CONSOLE);
+	Key_SetCatcher(Key_GetCatcher() ^ KEYCATCH_CONSOLE);
 }
 
 /*
@@ -406,8 +406,7 @@ void CL_ConsolePrint(char *txt) {
 	qboolean skipnotify = qfalse;
 	int prev;
 
-	// prefix for text that shows up in console but not in notify
-	// backported from RTCW
+	// work around for text that shows up in console but not in notify
 	if (!Q_strncmp(txt, "[skipnotify]", 12)) {
 		skipnotify = qtrue;
 		txt += 12;
@@ -612,7 +611,6 @@ void Con_DrawNotify(void) {
 
 		v += BIGCHAR_HEIGHT;
 	}
-
 }
 
 int nextLine = 0;

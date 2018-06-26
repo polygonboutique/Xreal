@@ -1122,8 +1122,7 @@ static void CG_DrawAreaPowerUp(rectDef_t *rect, int align, float special, float 
 		}
 
 		t = ps->powerups[i] - cg.time;
-		// ZOID--don't draw if the power up has unlimited time(999 seconds)
-		// This is true of the CTF flags
+		// don't draw if the power up has unlimited time. This is true of the CTF flags
 		if (t <= 0 || t >= 999000) {
 			continue;
 		}

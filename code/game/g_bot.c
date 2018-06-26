@@ -280,7 +280,7 @@ void G_AddRandomBot(int team) {
 
 	for (n = 0; n < g_numBots; n++) {
 		value = Info_ValueForKey(g_botInfos[n], "name");
-		//
+
 		for (i = 0; i < g_maxclients.integer; i++) {
 			cl = level.clients + i;
 
@@ -300,6 +300,7 @@ void G_AddRandomBot(int team) {
 				break;
 			}
 		}
+	}
 
 		if (i >= g_maxclients.integer) {
 			num--;

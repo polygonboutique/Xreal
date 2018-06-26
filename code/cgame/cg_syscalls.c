@@ -311,8 +311,7 @@ int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const v
 trap_CM_BoxTrace
 =======================================================================================================================================
 */
-void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-					  const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
+void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
 	syscall(CG_CM_BOXTRACE, results, start, end, mins, maxs, model, brushmask);
 }
 
@@ -321,8 +320,7 @@ void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
 trap_CM_CapsuleTrace
 =======================================================================================================================================
 */
-void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-						  const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
+void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
 	syscall(CG_CM_CAPSULETRACE, results, start, end, mins, maxs, model, brushmask);
 }
 
@@ -515,6 +513,11 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name) {
 	return syscall(CG_R_REGISTERSHADERNOMIP, name);
 }
 
+/*
+=======================================================================================================================================
+trap_R_RegisterShaderLightAttenuation
+=======================================================================================================================================
+*/
 qhandle_t trap_R_RegisterShaderLightAttenuation(const char *name) {
 	return syscall(CG_R_REGISTERSHADERLIGHTATTENUATION, name);
 }
@@ -573,6 +576,11 @@ void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *v
 	syscall(CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, num);
 }
 
+/*
+=======================================================================================================================================
+trap_R_LightForPoint
+=======================================================================================================================================
+*/
 int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir) {
 	return syscall(CG_R_LIGHTFORPOINT, point, ambientLight, directedLight, lightDir);
 }

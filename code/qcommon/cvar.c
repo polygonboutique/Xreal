@@ -330,8 +330,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags) {
 
 	if (var) {
 		var_value = Cvar_Validate(var, var_value, qfalse);
-		// if the C code is now specifying a variable that the user already
-		// set a value for, take the new value as the reset value
+		// if the C code is now specifying a variable that the user already set a value for, take the new value as the reset value
 		if (var->flags & CVAR_USER_CREATED) {
 			var->flags &= ~CVAR_USER_CREATED;
 			Z_Free(var->resetString);
@@ -1003,7 +1002,7 @@ void Cvar_Unset_f(void) {
 	cvar_t *cv;
 
 	if (Cmd_Argc() != 2) {
-		Com_Printf("Usage: %s <varname> \n", Cmd_Argv(0));
+		Com_Printf("Usage: %s <varname>\n", Cmd_Argv(0));
 		return;
 	}
 

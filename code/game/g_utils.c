@@ -254,12 +254,18 @@ gentity_t *G_FindRadius(gentity_t *from, const vec3_t org, float rad) {
 	return NULL;
 }
 
-// Visiblilty check
+/*
+=======================================================================================================================================
+G_IsVisible
+
+Visiblilty check.
+=======================================================================================================================================
+*/
 qboolean G_IsVisible(const gentity_t *self, const vec3_t goal) {
 	trace_t trace;
 
 	trap_Trace(&trace, self->r.currentOrigin, NULL, NULL, goal, self->s.number, MASK_SHOT);
-	// Yes we can see it
+	// yes we can see it
 	if (trace.contents & CONTENTS_SOLID) {
 		return qfalse;
 	} else {
@@ -304,7 +310,7 @@ gentity_t *G_PickTarget(char *name) {
 		return NULL;
 	}
 
-	return choice[rand()% num_choices];
+	return choice[rand() % num_choices];
 }
 
 /*
@@ -437,6 +443,7 @@ An activate function that calls the ent's use function.
 =======================================================================================================================================
 */
 void G_ActivateUse(gentity_t *ent, gentity_t *other, qboolean firstActivate) {
+
 	if (ent->use) {
 		ent->use(ent, other, other);
 	}
@@ -450,6 +457,7 @@ An activate function that calls the ent's use function, but only on the first pr
 =======================================================================================================================================
 */
 void G_ActivateUseFirst(gentity_t *ent, gentity_t *other, qboolean firstActivate) {
+
 	if (ent->use && (firstActivate == qtrue)) {
 		ent->use(ent, other, other);
 	}

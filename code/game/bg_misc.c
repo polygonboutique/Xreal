@@ -1345,7 +1345,7 @@ char *eventnames[] = {
 	"EV_POWERUP_REGEN",
 	"EV_GIB_PLAYER",			// gib a previously living player
 	"EV_SCOREPLUM",				// score plum
-// #ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 	"EV_PROXIMITY_MINE_STICK",
 	"EV_PROXIMITY_MINE_TRIGGER",
 	"EV_KAMIKAZE",				// kamikaze explodes
@@ -1355,7 +1355,7 @@ char *eventnames[] = {
 	"EV_INVUL_IMPACT",			// invulnerability sphere impact
 	"EV_JUICED",				// invulnerability juiced effect
 	"EV_LIGHTNINGBOLT",			// lightning bolt bounced of invulnerability sphere
-// #endif
+//#endif
 	"EV_EFFECT",				// Lua scripted special effect
 	"EV_EXPLODE",
 	"EV_DEBUG_LINE",

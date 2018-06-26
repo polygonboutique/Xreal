@@ -411,7 +411,7 @@ void MSG_WriteString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= MAX_STRING_CHARS) {
-			Com_Printf("MSG_WriteString: MAX_STRING_CHARS");
+			Com_Printf("MSG_WriteString: MAX_STRING_CHARS size reached.\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
@@ -444,7 +444,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= BIG_INFO_STRING) {
-			Com_Printf("MSG_WriteString: BIG_INFO_STRING");
+			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached.\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
@@ -1260,7 +1260,9 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 MSG_ReadDeltaEntity
 
 The entity number has already been read from the message, which is how the from state is identified.
+
 If the delta removes the entity, entityState_t->number will be set to MAX_GENTITIES - 1.
+
 Can go from either a baseline or a previous packet_entity.
 =======================================================================================================================================
 */

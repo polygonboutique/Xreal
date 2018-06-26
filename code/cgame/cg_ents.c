@@ -217,6 +217,7 @@ static void CG_EntityEffects(centity_t *cent) {
 		g = (cl >> 8)& 255;
 		b = (cl >> 16)& 255;
 		i = ((cl >> 24)& 255) * 4;
+
 		trap_R_AddLightToScene(cent->lerpOrigin, i, r, g, b);
 	}
 }

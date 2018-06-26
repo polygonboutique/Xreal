@@ -130,7 +130,6 @@ char *Sys_ConsoleInput(void) {
 #else
 #define PID_FILENAME PRODUCT_NAME_UPPPER ".pid"
 #endif
-
 /*
 =======================================================================================================================================
 Sys_PIDFileName
@@ -554,13 +553,13 @@ int main(int argc, char **argv) {
 	char commandLine[MAX_STRING_CHARS] = {0};
 #ifndef DEDICATED
 	// SDL version check
+
 	// compile time
 #if !SDL_VERSION_ATLEAST(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
 #error A more recent version of SDL is required
 #endif
 	// run time
 	const SDL_version * ver = SDL_Linked_Version();
-
 #define MINSDL_VERSION \
 	XSTRING(MINSDL_MAJOR)"." \
 	XSTRING(MINSDL_MINOR)"." \

@@ -44,7 +44,6 @@ extern glconfig_t glConfig;
 extern int s_paintedtime;
 extern int s_rawend[MAX_RAW_STREAMS];
 
-
 static void RoQ_init(void);
 
 /**************************************************************************************************************************************
@@ -619,7 +618,6 @@ void Frame_yuv_to_rgb24(const unsigned char *y, const unsigned char *u, const un
 			++output;
 		}
 	}
-
 }
 
 /*
@@ -674,9 +672,7 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags) {
 	union {
 		unsigned int *i;
 		unsigned short *s;
-	}
-	
-	iaptr, ibptr, icptr, idptr;
+	} iaptr, ibptr, icptr, idptr;
 
 	if (!roq_flags) {
 		two = four = 256;
@@ -1563,6 +1559,7 @@ int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBit
 	}
 
 	Com_DPrintf("SCR_PlayCinematic(%s)\n", arg);
+
 	Com_Memset(&cin, 0, sizeof(cinematics_t));
 
 	currentHandle = CIN_HandleForVideo();

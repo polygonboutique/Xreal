@@ -1695,7 +1695,7 @@ static float CG_DrawTimer(float y) {
 	s = va("%i:%i%i", mins, tens, seconds);
 	//w = CG_DrawStrlen(s) * BIGCHAR_WIDTH;
 
-	//CG_DrawBigString(635 - w, y + 2, s, 1.0F);
+	//CG_DrawBigString(635 - w, y + 2, s, 1.0f);
 	CG_Text_PaintAligned(635, y, s, 0.25f, UI_RIGHT|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
 
 	return y + 16;
@@ -1905,7 +1905,6 @@ static void CG_DrawUpperRight(void) {
 	if (cg_drawAttacker.integer) {
 		y = CG_DrawAttacker(y);
 	}
-
 }
 
 /*
@@ -1960,7 +1959,7 @@ static float CG_DrawScores(float y) {
 			CG_DrawPic(x, y - 4, w, BIGCHAR_HEIGHT + 8, cgs.media.selectShader);
 		}
 
-		CG_DrawBigString(x + 4, y, s, 1.0F);
+		CG_DrawBigString(x + 4, y, s, 1.0f);
 
 		if (cgs.gametype == GT_CTF) {
 			// display flag status
@@ -1990,7 +1989,7 @@ static float CG_DrawScores(float y) {
 			CG_DrawPic(x, y - 4, w, BIGCHAR_HEIGHT + 8, cgs.media.selectShader);
 		}
 
-		CG_DrawBigString(x + 4, y, s, 1.0F);
+		CG_DrawBigString(x + 4, y, s, 1.0f);
 
 		if (cgs.gametype == GT_CTF) {
 			// Display flag status
@@ -2029,7 +2028,7 @@ static float CG_DrawScores(float y) {
 			w = CG_DrawStrlen(s) * BIGCHAR_WIDTH + 8;
 			x -= w;
 
-			CG_DrawBigString(x + 4, y, s, 1.0F);
+			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
 	} else {
 		qboolean spectator;
@@ -2064,7 +2063,7 @@ static float CG_DrawScores(float y) {
 				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
 			}
 
-			CG_DrawBigString(x + 4, y, s, 1.0F);
+			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
 		// first place
 		if (s1 != SCORE_NOT_PRESENT) {
@@ -2089,7 +2088,7 @@ static float CG_DrawScores(float y) {
 				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
 			}
 
-			CG_DrawBigString(x + 4, y, s, 1.0F);
+			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
 
 		if (cgs.fraglimit) {
@@ -2097,7 +2096,7 @@ static float CG_DrawScores(float y) {
 			w = CG_DrawStrlen(s) * BIGCHAR_WIDTH + 8;
 			x -= w;
 
-			CG_DrawBigString(x + 4, y, s, 1.0F);
+			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
 	}
 
@@ -2138,8 +2137,7 @@ void CG_DrawPowerups(void) {
 		}
 
 		t = ps->powerups[i] - cg.time;
-		// ZOID--don't draw if the power up has unlimited time(999 seconds)
-		// This is true of the CTF flags
+		// don't draw if the power up has unlimited time, this is true of the CTF flags
 		if (t < 0 || t > 999000) {
 			continue;
 		}
@@ -2240,7 +2238,6 @@ static int CG_DrawPickupItem(int y) {
 	}
 
 	y -= ICON_SIZE * 2 + 15;
-
 	value = cg.itemPickup;
 
 	if (value) {
@@ -2353,7 +2350,8 @@ static void CG_DrawTeamInfo(void) {
 CG_DrawHoldableItem
 =======================================================================================================================================
 */
-/*static void CG_DrawHoldableItem(void) {
+/*
+static void CG_DrawHoldableItem(void) {
 	int value;
 
 	value = cg.snap->ps.stats[STAT_HOLDABLE_ITEM];
@@ -2362,7 +2360,6 @@ CG_DrawHoldableItem
 		CG_RegisterItemVisuals(value);
 		CG_DrawPic(640 - ICON_SIZE, (SCREEN_HEIGHT - ICON_SIZE) / 2, ICON_SIZE, ICON_SIZE, cg_items[value].icon);
 	}
-
 }
 */
 
@@ -2587,7 +2584,7 @@ static void CG_DrawLagometer(void) {
 	range = ah / 3;
 	mid = ay + range;
 	vscale = range / MAX_LAGOMETER_RANGE;
-	// draw the frame interpoalte/extrapolate graph
+	// draw the frame interpolate/extrapolate graph
 	for (a = 0; a < aw; a++) {
 		i = (lagometer.frameCount - 1 - a) & (LAG_SAMPLES - 1);
 		v = lagometer.frameSamples[i];
@@ -3049,7 +3046,7 @@ static void CG_DrawVote(void) {
 
 	s = va("VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo);
 
-	CG_DrawSmallString(0, 58, s, 1.0F);
+	CG_DrawSmallString(0, 58, s, 1.0f);
 }
 
 /*
@@ -3061,9 +3058,9 @@ static void CG_DrawTeamVote(void) {
 	char *s;
 	int sec, cs_offset;
 
-	if (cgs.clientinfo->team == TEAM_RED)
+	if (cgs.clientinfo->team == TEAM_RED) {
 		cs_offset = 0;
-	} else if (cgs.clientinfo->team == TEAM_BLUE)
+	} else if (cgs.clientinfo->team == TEAM_BLUE) {
 		cs_offset = 1;
 	} else {
 		return;
@@ -3085,7 +3082,8 @@ static void CG_DrawTeamVote(void) {
 	}
 
 	s = va("TEAMVOTE(%i):%s yes:%i no:%i", sec, cgs.teamVoteString[cs_offset], cgs.teamVoteYes[cs_offset], cgs.teamVoteNo[cs_offset]);
-	CG_DrawSmallString(0, 90, s, 1.0F);
+
+	CG_DrawSmallString(0, 90, s, 1.0f);
 }
 
 /*
@@ -3135,7 +3133,6 @@ static qboolean CG_DrawFollow(void) {
 	name = cgs.clientinfo[cg.snap->ps.clientNum].name;
 
 	CG_Text_PaintAligned(320, 90, name, 0.45f, UI_CENTER|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
-
 	return qtrue;
 }
 
@@ -3196,6 +3193,7 @@ static void CG_DrawProxWarning(void) {
 	}
 
 	w = CG_DrawStrlen(s) * BIGCHAR_WIDTH;
+
 	CG_DrawBigStringColor(320 - w / 2, 64 + BIGCHAR_HEIGHT, s, (float *)g_color_table[ColorIndex(COLOR_RED)]);
 }
 

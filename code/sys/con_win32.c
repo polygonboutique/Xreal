@@ -356,13 +356,13 @@ static void CON_ColorPrint(const char *msg) {
 
 	while (*msg) {
 		if (Q_IsColorString(msg)) {
-			// First empty the buffer
+			// first empty the buffer
 			if (length > 0) {
 				buffer[length] = '\0';
 				fputs(buffer, stderr);
 				length = 0;
 			}
-			// Change the color code
+			// change the color code
 			SetConsoleTextAttribute(qconsole_hout, q3ToWin[ColorIndex(*(msg + 1))]);
 			msg += 2;
 		} else if (*msg == '\n')// || * msg == '\r') {
@@ -374,7 +374,7 @@ static void CON_ColorPrint(const char *msg) {
 			
 			buffer[length++] = '\n';
 			msg++;
-			// Issue a reset and then the newline
+			// issue a reset and then the newline
 			SetConsoleTextAttribute(qconsole_hout, q3ToWin[ColorIndex(COLOR_WHITE)]);
 		} else {
 			if (length >= MAXPRINTMSG - 1) {
@@ -412,6 +412,7 @@ CON_SetVisibility
 =======================================================================================================================================
 */
 void CON_SetVisibility(int visLevel) {
+
 	if (!qconsole_window) {
 		return;
 	}
@@ -444,4 +445,5 @@ CON_SetErrorText
 =======================================================================================================================================
 */
 void CON_SetErrorText(const char *buf) {
+
 }

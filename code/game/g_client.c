@@ -492,7 +492,7 @@ void CopyToBodyQue(gentity_t *ent) {
 	body->r.ownerNum = ent->s.number;
 	body->nextthink = level.time + 5000;
 	body->think = BodySink;
-	body->die = body_die;
+	body->die = BodyDie;
 	// don't take more damage if already gibbed
 //	if (ent->health <= GIB_HEALTH) {
 		body->takedamage = qfalse;

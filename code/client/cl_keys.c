@@ -263,6 +263,7 @@ keyname_t keynames[] = {
 	{"POWER", K_POWER},
 	{"EURO", K_EURO},
 	{"UNDO", K_UNDO},
+
 	{"XBOX360_A", K_XBOX360_A},
 	{"XBOX360_B", K_XBOX360_B},
 	{"XBOX360_X", K_XBOX360_X},
@@ -318,7 +319,6 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 
 	drawLen = edit->widthInChars - 1; // - 1 so there is always a space for the cursor
 	len = strlen(edit->buffer);
-
 	// draw only inside given width
 	if (drawLen * SMALLCHAR_WIDTH > width) {
 		drawLen = width / SMALLCHAR_WIDTH;
@@ -529,8 +529,10 @@ void Field_CharEvent(field_t *edit, int ch) {
 	}
 
 	if (key_overstrikeMode) {
-		if (edit->cursor == MAX_EDIT_LINE - 1)
+		if (edit->cursor == MAX_EDIT_LINE - 1) {
 			return;
+		}
+
 		edit->buffer[edit->cursor] = ch;
 		edit->cursor++;
 	} else { // insert mode

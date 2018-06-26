@@ -834,7 +834,7 @@ void CG_NewClientInfo(int clientNum) {
 			slash = strchr(newInfo.modelName, '/');
 
 			if (!slash) {
-				// modelName didn not include a skin name
+				// modelName did not include a skin name
 				Q_strncpyz(newInfo.skinName, "default", sizeof(newInfo.skinName));
 			} else {
 				Q_strncpyz(newInfo.skinName, slash + 1, sizeof(newInfo.skinName));
@@ -1578,14 +1578,19 @@ CG_TrailItem
 	vec3_t axis[3];
 
 	VectorCopy(cent->lerpAngles, angles);
+
 	angles[PITCH] = 0;
 	angles[ROLL] = 0;
+
 	AnglesToAxis(angles, axis);
 
 	memset(&ent, 0, sizeof(ent));
+
 	VectorMA(cent->lerpOrigin, -16, axis[0], ent.origin);
+
 	ent.origin[2] += 16;
 	angles[YAW] += 90;
+
 	AnglesToAxis(angles, ent.axis);
 
 	ent.hModel = hModel;
@@ -2185,12 +2190,10 @@ qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane, int noShadowID) {
 	if (cg_shadows.integer != 1) { // no mark for stencil or projection shadows
 		return qtrue;
 	}
-	// bk0101022 - hack/FPE - bogus planes?
+	// hack/FPE - bogus planes?
 	//assert(DotProduct(trace.plane.normal, trace.plane.normal) != 0.0f)
-	// add the mark as a temporary, so it goes directly to the renderer
 	// add the mark as a temporary, so it goes directly to the renderer without taking a spot in the cg_marks array
 	CG_ImpactMark(cgs.media.shadowMarkShader, trace.endpos, trace.plane.normal, cent->pe.legs.yawAngle, alpha, alpha, alpha, 1, qfalse, 24, qtrue);
-
 	return qtrue;
 }
 
@@ -2615,8 +2618,6 @@ void CG_Player(centity_t *cent) {
 		QuatMultiply0(body.skeleton.bones[boneIndex].rotation, legsQuat);
 	}
 #endif
-
-
 	// rotate torso
 #if 1
 	boneIndex = trap_R_BoneIndex(body.hModel, ci->torsoControlBoneName);
@@ -2901,7 +2902,7 @@ void CG_Player(centity_t *cent) {
 	CG_AddPlayerWeapon(&body, NULL, cent, ci->team);
 	// add powerups floating behind the player
 	CG_PlayerPowerups(cent, &body, noShadowID);
-	// add the bounding box(if cg_drawPlayerCollision is 1)
+	// add the bounding box (if cg_drawPlayerCollision is 1)
 	MatrixFromVectorsFLU(bodyRotation, body.axis[0], body.axis[1], body.axis[2]);
 	CG_DrawPlayerCollision(cent, playerOrigin, bodyRotation);
 	VectorCopy(surfNormal, cent->pe.lastNormal);

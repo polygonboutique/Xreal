@@ -143,7 +143,7 @@ Sys_GetCurrentUser
 =======================================================================================================================================
 */
 char *Sys_GetCurrentUser(void) {
-	struct passwd  *p;
+	struct passwd *p;
 
 	if ((p = getpwuid(getuid())) == NULL) {
 		return "player";

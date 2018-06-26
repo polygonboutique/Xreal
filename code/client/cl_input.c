@@ -1268,8 +1268,8 @@ void CL_WritePacket(void) {
 		Com_DPrintf("MAX_PACKET_USERCMDS\n");
 	}
 #ifdef USE_VOIP
-	if (clc.voipOutgoingDataSize > 0) { // only send if data.
-		// Move cl_voipSendTarget from a string to the bitmasks if needed.
+	if (clc.voipOutgoingDataSize > 0) { // only send if data
+		// move cl_voipSendTarget from a string to the bitmasks if needed
 		if (cl_voipSendTarget->modified) {
 			char buffer[32];
 			const char *target = cl_voipSendTarget->string;
@@ -1291,6 +1291,7 @@ void CL_WritePacket(void) {
 				player = VM_Call(cgvm, CG_CROSSHAIR_PLAYER);
 #endif
 				Com_sprintf(buffer, sizeof(buffer), "%d", player);
+
 				target = buffer;
 			}
 
@@ -1325,7 +1326,7 @@ void CL_WritePacket(void) {
 			cl_voipSendTarget->modified = qfalse;
 		}
 
-		MSG_WriteByte(&buf, clc_EOF); // placate legacy servers.
+		MSG_WriteByte(&buf, clc_EOF); // placate legacy servers
 		MSG_WriteByte(&buf, clc_extension);
 		MSG_WriteByte(&buf, clc_voip);
 		MSG_WriteByte(&buf, clc.voipOutgoingGeneration);
@@ -1336,7 +1337,7 @@ void CL_WritePacket(void) {
 		MSG_WriteLong(&buf, clc.voipTarget3);
 		MSG_WriteShort(&buf, clc.voipOutgoingDataSize);
 		MSG_WriteData(&buf, clc.voipOutgoingData, clc.voipOutgoingDataSize);
-		// If we're recording a demo, we have to fake a server packet with this VoIP data so it gets to disk; the server doesn't send it
+		// if we're recording a demo, we have to fake a server packet with this VoIP data so it gets to disk; the server doesn't send it
 		// back to us, and we might as well eliminate concerns about dropped and misordered packets here.
 		if (clc.demorecording && !clc.demowaiting) {
 			const int voipSize = clc.voipOutgoingDataSize;
@@ -1403,9 +1404,7 @@ void CL_WritePacket(void) {
 	}
 
 	CL_Netchan_Transmit(&clc.netchan, &buf);
-	// clients never really should have messages large enough
-	// to fragment, but in case they do, fire them all off
-	// at once
+	// clients never really should have messages large enough to fragment, but in case they do, fire them all off at once
 	// TTimo: this causes a packet burst, which is bad karma for winsock
 	// added a WARNING message, we'll see if there are legit situations where this happens
 	while (clc.netchan.unsentFragments) {

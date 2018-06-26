@@ -402,7 +402,6 @@ static void SV_Kick_f(void) {
 
 #ifndef STANDALONE
 // these functions require the auth server which of course is not available anymore for stand-alone games.
-
 /*
 =======================================================================================================================================
 SV_Ban_f
@@ -712,7 +711,7 @@ static void SV_AddBanToList(qboolean isexception) {
 	banstring = Cmd_Argv(1);
 
 	if (strchr(banstring, '.') || strchr(banstring, ':')) {
-		// This is an ip address, not a client num.
+		// this is an ip address, not a client num.
 		if (SV_ParseCIDRNotation(&ip, &mask, banstring)) {
 			Com_Printf("Error: Invalid address %s\n", banstring);
 			return;

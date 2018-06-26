@@ -67,7 +67,6 @@ typedef struct {
 	int numEdges;
 } cbrush_t;
 
-
 typedef struct cPlane_s {
 	float plane[4];
 	int signbits;	// signx + (signy << 1) + (signz << 2), used as lookup during collision
@@ -156,8 +155,7 @@ typedef struct {
 	float startRadius;
 	float endRadius;
 } biSphere_t;
-
-// Used for oriented capsule collision detection
+// used for oriented capsule collision detection
 typedef struct {
 	float radius;
 	float halfheight;

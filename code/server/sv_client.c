@@ -258,8 +258,7 @@ void SV_DirectConnect(netadr_t from) {
 	char *ip;
 
 	Com_DPrintf("SVC_DirectConnect()\n");
-
-	// Check whether this client is banned.
+	// check whether this client is banned
 	if (SV_IsBanned(&from, qfalse)) {
 		NET_OutOfBandPrint(NS_SERVER, from, "print\nYou are banned from this server.\n");
 		return;
@@ -293,7 +292,7 @@ void SV_DirectConnect(netadr_t from) {
 		}
 	}
 	// don't let "ip" overflow userinfo string
-	if (NET_IsLocalAddress(from))
+	if (NET_IsLocalAddress(from)) {
 		ip = "localhost";
 	} else {
 		ip = (char *)NET_AdrToString(from);
@@ -1628,29 +1627,29 @@ static void SV_UserVoip(client_t *cl, msg_t *msg) {
 	// decide who needs this VoIP packet sent to them...
 	for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++) {
 		if (client->state != CS_ACTIVE) {
-			continue; // not in the game yet, don't send to this guy.
+			continue; // not in the game yet, don't send to this guy
 		} else if (i == sender) {
-			continue; // don't send voice packet back to original author.
+			continue; // don't send voice packet back to original author
 		} else if (!client->hasVoip) {
 			continue; // no VoIP support, or support disabled
 		} else if (client->muteAllVoip) {
-			continue; // client is ignoring everyone.
+			continue; // client is ignoring everyone
 		} else if (client->ignoreVoipFromClient[sender]) {
-			continue; // client is ignoring this talker.
+			continue; // client is ignoring this talker
 		} else if (*cl->downloadName) { // !!! FIXME: possible to DoS?
-			continue; // no VoIP allowed if downloading, to save bandwidth.
+			continue; // no VoIP allowed if downloading, to save bandwidth
 		} else if (((i >= 0) && (i < 31)) && ((recip1 &(1 << (i - 0))) == 0)) {
 			continue; // not addressed to this player.
 		} else if (((i >= 31) && (i < 62)) && ((recip2 &(1 << (i - 31))) == 0)) {
 			continue; // not addressed to this player.
 		} else if (((i >= 62) && (i < 93)) && ((recip3 &(1 << (i - 62))) == 0)) {
-			continue; // not addressed to this player.
+			continue; // not addressed to this player
 		}
-		// transmit this packet to the client.
+		// transmit this packet to the client
 		// !!! FIXME: I don't like this queueing system
 		if (client->queuedVoipPackets >= (sizeof(client->voipPacket) / sizeof(client->voipPacket[0]))) {
 			Com_Printf("Too many VoIP packets queued for client #%d\n", i);
-			continue; // no room for another packet right now.
+			continue; // no room for another packet right now
 		}
 
 		packet = &client->voipPacket[client->queuedVoipPackets];

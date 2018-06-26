@@ -669,25 +669,25 @@ static void CL_ParseVoip(msg_t *msg) {
 		return; // bogus sender
 	} else if (CL_ShouldIgnoreVoipSender(sender)) {
 		MSG_ReadData(msg, encoded, packetsize);	// skip payload
-		return; // Channel is muted, bail.
+		return; // channel is muted, bail
 	}
 	// !!! FIXME: make sure data is narrowband? Does decoder handle this?
 	Com_DPrintf("VoIP: packet accepted!\n");
-	// This is a new "generation" ... a new recording started, reset the bits
+	// this is a new "generation" ... a new recording started, reset the bits
 	if (generation != clc.voipIncomingGeneration[sender]) {
 		Com_DPrintf("VoIP: new generation %d!\n", generation);
 		speex_bits_reset(&clc.speexDecoderBits[sender]);
 		clc.voipIncomingGeneration[sender] = generation;
 		seqdiff = 0;
 	} else if (seqdiff < 0) { // we're ahead of the sequence?!
-		// This shouldn't happen unless the packet is corrupted or something
+		// this shouldn't happen unless the packet is corrupted or something
 		Com_DPrintf("VoIP: misordered sequence! %d < %d!\n", sequence, clc.voipIncomingSequence[sender]);
-		// reset the bits just in case.
+		// reset the bits just in case
 		speex_bits_reset(&clc.speexDecoderBits[sender]);
 		seqdiff = 0;
 	} else if (seqdiff > 100) { // more than 2 seconds of audio dropped?
 		// just start over.
-		Com_DPrintf("VoIP: Dropped way too many(%d)frames from client #%d\n", seqdiff, sender);
+		Com_DPrintf("VoIP: Dropped way too many (%d) frames from client #%d\n", seqdiff, sender);
 		speex_bits_reset(&clc.speexDecoderBits[sender]);
 		seqdiff = 0;
 	}

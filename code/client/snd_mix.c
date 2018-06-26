@@ -518,7 +518,7 @@ void S_PaintChannels(int endtime) {
 	int ltime, count;
 	int sampleOffset;
 
-	if (s_muted->integer)
+	if (s_muted->integer) {
 		snd_vol = 0;
 	} else {
 		snd_vol = s_volume->value * 255;

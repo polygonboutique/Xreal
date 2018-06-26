@@ -588,6 +588,7 @@ void SetTeam(gentity_t *ent, char *s) {
 		return;
 	}
 	// execute the team change
+
 	// if the player was dead leave the body
 /*	if (client->ps.stats[STAT_HEALTH] <= 0) {
 		CopyToBodyQue(ent);

@@ -1066,7 +1066,6 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 			}
 		} else if (search->dir) {
 			dir = search->dir;
-
 			netpath = FS_BuildOSPath(dir->path, dir->gamedir, filename);
 			filep = fopen(netpath, "rb");
 
@@ -1183,7 +1182,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 				!FS_IsExt(filename, ".game", len) &&	// menu files
 				!FS_IsExt(filename, ".dat", len) &&		// for journal files
 				Q_stricmp(filename + len - strlen(demoExt), demoExt))	// demo files
-			{		// demos
+			{
 				*file = 0;
 				return -1;
 			}
@@ -2165,13 +2164,7 @@ int FS_GetFileList(const char *path, const char *extension, char *listbuf, int b
 
 /*
 =======================================================================================================================================
-Sys_ConcatenateFileLists
-
-mkv: Naive implementation. Concatenates three lists into a
-     new list, and frees the old lists from the heap.
-bk001129 - from cvs1.17(mkv)
-
-FIXME TTimo those two should move to common.c next to Sys_ListFiles
+Sys_CountFileList
 =======================================================================================================================================
 */
 static unsigned int Sys_CountFileList(char **list) {
@@ -2190,6 +2183,11 @@ static unsigned int Sys_CountFileList(char **list) {
 /*
 =======================================================================================================================================
 Sys_ConcatenateFileLists
+
+NOTE: naive implementation.
+Concatenates three lists into a new list, and frees the old lists from the heap. bk001129 - from cvs1.17 (mkv).
+
+FIXME: those two should move to common.c next to Sys_ListFiles.
 =======================================================================================================================================
 */
 static char **Sys_ConcatenateFileLists(char **list0, char **list1) {
@@ -2757,7 +2755,6 @@ FS_CheckDirTraversal
 Check whether the string contains stuff like "../" to prevent directory traversal bugs and return qtrue if it does.
 =======================================================================================================================================
 */
-
 qboolean FS_CheckDirTraversal(const char *checkdir) {
 
 	if (strstr(checkdir, "../") || strstr(checkdir, "..\\")) {
@@ -2994,7 +2991,7 @@ static void FS_Startup(const char *gameName) {
 	// fs_homepath is somewhat particular to *nix systems, only add if relevant
 #ifdef MACOS_X
 	fs_apppath = Cvar_Get("fs_apppath", Sys_DefaultAppPath(), CVAR_INIT);
-	// Make MacOSX also include the base path included with the .app bundle
+	// make MacOSX also include the base path included with the .app bundle
 	if (fs_apppath->string[0]) {
 		FS_AddGameDirectory(fs_apppath->string, gameName);
 	}
@@ -3460,6 +3457,7 @@ void FS_Restart(int checksumFeed) {
 			FS_PureServerSetLoadedPaks("", "");
 			Cvar_Set("fs_basepath", lastValidBase);
 			Cvar_Set("fs_gamedirvar", lastValidGame);
+
 			lastValidBase[0] = '\0';
 			lastValidGame[0] = '\0';
 

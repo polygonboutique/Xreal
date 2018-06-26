@@ -165,6 +165,7 @@ qboolean CL_Netchan_Process(netchan_t *chan, msg_t *msg) {
 	}
 
 	CL_Netchan_Decode(msg);
+
 	newsize += msg->cursize;
 	return qtrue;
 }

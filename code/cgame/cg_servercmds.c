@@ -433,7 +433,6 @@ static void CG_MapRestart(void) {
 	CG_StartMusic();
 	trap_S_ClearLoopingSounds(qtrue);
 	// we really should clear more parts of cg here and stop sounds
-
 	// play the "fight" sound if this is a restart without warmup
 	if (cg.warmup == 0 /*&& cgs.gametype == GT_TOURNAMENT*/) {
 		trap_S_StartLocalSound(cgs.media.countFightSound, CHAN_ANNOUNCER);
@@ -559,6 +558,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 		}
 
 		Com_sprintf(voiceChats[voiceChatList->numVoiceChats].id, sizeof(voiceChats[voiceChatList->numVoiceChats].id), "%s", token);
+
 		token = Com_ParseExt(p, qtrue);
 
 		if (Q_stricmp(token, "{")) {
@@ -975,9 +975,9 @@ static void CG_spWin(void) {
 	trap_Cvar_Set("cg_thirdPerson", "1");
 	trap_Cvar_Set("cg_thirdPersonAngle", "0");
 	trap_Cvar_Set("cg_thirdPersonRange", "100");
-	// CG_AddBufferedSound(cgs.media.winnerSound);
-	// trap_S_StartLocalSound(cgs.media.winnerSound, CHAN_ANNOUNCER);
-	// CG_CenterPrint("YOU WIN!", SCREEN_HEIGHT * .30, 0);
+	//CG_AddBufferedSound(cgs.media.winnerSound);
+	//trap_S_StartLocalSound(cgs.media.winnerSound, CHAN_ANNOUNCER);
+	//CG_CenterPrint("YOU WIN!", SCREEN_HEIGHT * .30, 0);
 #endif
 }
 
@@ -993,9 +993,9 @@ static void CG_spLose(void) {
 	trap_Cvar_Set("cg_thirdPerson", "1");
 	trap_Cvar_Set("cg_thirdPersonAngle", "0");
 	trap_Cvar_Set("cg_thirdPersonRange", "100");
-	// CG_AddBufferedSound(cgs.media.loserSound);
-	// trap_S_StartLocalSound(cgs.media.loserSound, CHAN_ANNOUNCER);
-	// CG_CenterPrint("YOU LOSE...", SCREEN_HEIGHT * .30, 0);
+	//CG_AddBufferedSound(cgs.media.loserSound);
+	//trap_S_StartLocalSound(cgs.media.loserSound, CHAN_ANNOUNCER);
+	//CG_CenterPrint("YOU LOSE...", SCREEN_HEIGHT * .30, 0);
 #endif
 }
 

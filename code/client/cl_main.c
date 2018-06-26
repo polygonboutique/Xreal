@@ -87,7 +87,7 @@ cvar_t *cl_consoleKeys;
 clientActive_t cl;
 clientConnection_t clc;
 clientStatic_t cls;
-// Structure containing functions exported from refresh DLL
+// structure containing functions exported from refresh DLL
 refexport_t re;
 
 ping_t cl_pinglist[MAX_PINGREQUESTS];
@@ -217,7 +217,7 @@ void CL_Voip_f(void) {
 	} else if (!cl_connectedToVoipServer) {
 		reason = "Server doesn't support VoIP";
 	} else if (Cvar_VariableValue("g_gametype") == GT_SINGLE_PLAYER || Cvar_VariableValue("ui_singlePlayerActive")) {
-		reason = "running in single - player mode";
+		reason = "running in single-player mode";
 	}
 
 	if (reason != NULL) {
@@ -407,7 +407,7 @@ static void CL_CaptureVoip(void) {
 			clc.voipPower = (voipPower / (32768.0f * 32768.0f * ((float)(clc.speexFrameSize * speexFrames)))) * 100.0f;
 
 			if ((useVad) && (clc.voipPower < cl_voipVADThreshold->value)) {
-				CL_VoipNewGeneration(); // no "talk" for at least 1/4 second.
+				CL_VoipNewGeneration(); // no "talk" for at least 1/4 second
 			} else {
 				clc.voipOutgoingDataSize = wpos;
 				clc.voipOutgoingDataFrames = speexFrames;
@@ -443,7 +443,7 @@ static void CL_CaptureVoip(void) {
 	if (finalFrame) {
 		S_StopCapture();
 		S_MasterGain(1.0f);
-		clc.voipPower = 0.0f; // force this value so it doesn't linger.
+		clc.voipPower = 0.0f; // force this value so it doesn't linger
 	}
 }
 #endif
@@ -948,7 +948,9 @@ void CL_PlayDemo_f(void) {
 		} else {
 			Com_Printf("Protocol %d not supported for demos\n", protocol);
 			Q_strncpyz(retry, arg, sizeof(retry));
+
 			retry[strlen(retry) - 6] = 0;
+
 			CL_WalkDemoExt(retry, name, &clc.demofile);
 		}
 	} else {
@@ -987,7 +989,7 @@ benchmark <demoname>.
 static void CL_BenchmarkDemo_f(void) {
 
 	if (Cmd_Argc() != 2) {
-		Com_Printf("benchmark < demoname > \n");
+		Com_Printf("benchmark <demoname>\n");
 		return;
 	}
 
@@ -1600,7 +1602,7 @@ void CL_Connect_f(void) {
 
 	Key_SetCatcher(0);
 
-	clc.connectTime = -99999; //CL_CheckForResend() will fire immediately
+	clc.connectTime = -99999; // CL_CheckForResend() will fire immediately
 	clc.connectPacketCount = 0;
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", server);
@@ -2101,7 +2103,7 @@ void CL_CheckForResend(void) {
 			data[8] = '"';
 
 			for (i = 0; i < strlen(info); i++) {
-				data[9 + i] = info[i]; // + (clc.challenge)&0x3;
+				data[9 + i] = info[i]; //+ (clc.challenge)&0x3;
 			}
 
 			data[9 + i] = '"';
@@ -2111,7 +2113,6 @@ void CL_CheckForResend(void) {
 			// the most current userinfo has been sent, so watch for any newer changes to userinfo variables
 			cvar_modifiedFlags &= ~CVAR_USERINFO;
 			break;
-
 		default:
 			Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state");
 	}
@@ -2328,8 +2329,8 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 		}
 
 		if (!NET_CompareAdr(from, clc.serverAddress)) {
-			// This challenge response is not coming from the expected address.
-			// Check whether we have a matching client challenge to prevent connection hi - jacking.
+			// this challenge response is not coming from the expected address.
+			// check whether we have a matching client challenge to prevent connection hi - jacking.
 			c = Cmd_Argv(2);
 
 			if (!*c || atoi(c) != clc.challenge) {
@@ -2366,6 +2367,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 		}
 
 		Netchan_Setup(NS_CLIENT, &clc.netchan, from, Cvar_VariableValue("net_qport"));
+
 		cls.state = CA_CONNECTED;
 		clc.lastPacketSentTime = -9999; // send first packet immediately
 		return;
@@ -2578,7 +2580,7 @@ void CL_Frame(int msec) {
 		// save the current screen
 		if (cls.state == CA_ACTIVE || cl_forceavidemo->integer) {
 			CL_TakeVideoFrame();
-			// fixed time for next frame'
+			// fixed time for next frame
 			msec = (int)ceil((1000.0f / cl_aviFrameRate->value) * com_timescale->value);
 
 			if (msec == 0) {
@@ -3154,14 +3156,12 @@ void CL_Init(void) {
 	// this is a protocol version number.
 	cl_voip = Cvar_Get("cl_voip", "1", CVAR_USERINFO|CVAR_ARCHIVE|CVAR_LATCH);
 	Cvar_CheckRange(cl_voip, 0, 1, qtrue);
-	// If your data rate is too low, you'll get Connection Interrupted warnings
-	// when VoIP packets arrive, even if you have a broadband connection.
-	// This might work on rates lower than 25000, but for safety's sake, we'll
-	// just demand it. Who doesn't have at least a DSL line now, anyhow? If
-	// you don't, you don't need VoIP.  :)
+	// If your data rate is too low, you'll get Connection Interrupted warnings when VoIP packets arrive, even if you have a broadband connection
+	// This might work on rates lower than 25000, but for safety's sake, we'll just demand it. Who doesn't have at least a DSL line now, anyhow?
+	// If you don't, you don't need VoIP.  :)
 	if ((cl_voip->integer) && (Cvar_VariableIntegerValue("rate") < 25000)) {
 		Com_Printf(S_COLOR_YELLOW "Your network rate is too slow for VoIP.\n");
-		Com_Printf("Set 'Data Rate' to 'LAN / Cable / xDSL' in 'Setup / System / Network' and restart.\n");
+		Com_Printf("Set 'Data Rate' to 'LAN/Cable/xDSL' in 'Setup/System/Network' and restart.\n");
 		Com_Printf("Until then, VoIP is disabled.\n");
 		Cvar_Set("cl_voip", "0");
 	}
@@ -3687,7 +3687,7 @@ void CL_GlobalServers_f(void) {
 	char *cmdname;
 
 	if ((count = Cmd_Argc()) < 3 || (masterNum = atoi(Cmd_Argv(1))) < 0 || masterNum > 4) {
-		Com_Printf("usage: globalservers < master# 0 - 4 > < protocol > [keywords]\n");
+		Com_Printf("usage: globalservers <master# 0-4> <protocol> [keywords]\n");
 		return;
 	}
 

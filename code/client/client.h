@@ -194,9 +194,9 @@ typedef struct {
 	qboolean voipIgnore[MAX_CLIENTS];
 	qboolean voipMuteAll;
 	// outgoing data...
-	int voipTarget1;			// these three ints make up a bit mask of 92 bits.
-	int voipTarget2;			// the bits say who a VoIP pack is addressed to:
-	int voipTarget3;			// (1 << clientnum). See cl_voipSendTarget cvar.
+	int voipTarget1;			// these three ints make up a bit mask of 92 bits
+	int voipTarget2;			// the bits say who a VoIP pack is addressed to: (1 << clientnum), see cl_voipSendTarget cvar
+	int voipTarget3;
 	SpeexPreprocessState *speexPreprocessor;
 	SpeexBits speexEncoderBits;
 	void *speexEncoder;
@@ -245,7 +245,7 @@ typedef struct {
 typedef struct {
 	connstate_t state;	// connection status
 	qboolean cddialog;	// bring up the cd needed dialog next frame
-	char servername[MAX_OSPATH]; // name of server from original connect(used by reconnect)
+	char servername[MAX_OSPATH]; // name of server from original connect (used by reconnect)
 	// when the server clears the hunk, all of these must be restarted
 	qboolean rendererStarted;
 	qboolean soundStarted;

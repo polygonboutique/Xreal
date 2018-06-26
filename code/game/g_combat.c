@@ -277,14 +277,12 @@ void BodyDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int dam
 	if (self->health > GIB_HEALTH) {
 		return;
 	}
-
 	/*
 // if (!g_blood.integer) {
 	self->health = GIB_HEALTH + 1;
 	return;
 //}
 	*/
-
 	GibEntity(self, 0);
 }
 
@@ -659,26 +657,26 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 
 		switch (i) {
 			case 0:*/
-		anim = BOTH_DEATH1;
-		/*break;
-		   case 1:
-		   anim = BOTH_DEATH2;
-		   break;
-		   case 2:
-		   default:
-		   anim = BOTH_DEATH3;
-		   break;
-		  }
-		 */
-		// for the no - blood option, we need to prevent the health
+				anim = BOTH_DEATH1;
+				/*break;
+			case 1:
+				anim = BOTH_DEATH2;
+				break;
+			case 2:
+			default:
+				anim = BOTH_DEATH3;
+				break;
+		}
+*/
+		// for the no-blood option, we need to prevent the health
 		// from going to gib level
 /*		if (self->health <= GIB_HEALTH) {
 			self->health = GIB_HEALTH + 1;
 		}
 */
-		self->client->ps.legsAnim = ((self->client->ps.legsAnim & ANIM_TOGGLEBIT)^ ANIM_TOGGLEBIT)| anim;
-		self->client->ps.torsoAnim = ((self->client->ps.torsoAnim & ANIM_TOGGLEBIT)^ ANIM_TOGGLEBIT)| anim;
-//     G_AddEvent(self, EV_DEATH1 + i, killer);
+		self->client->ps.legsAnim = ((self->client->ps.legsAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT)|anim;
+		self->client->ps.torsoAnim = ((self->client->ps.torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT)|anim;
+//		G_AddEvent(self, EV_DEATH1 + i, killer);
 		G_AddEvent(self, EV_DEATH1, killer);
 		// the body can still be gibbed
 		self->die = BodyDie;
