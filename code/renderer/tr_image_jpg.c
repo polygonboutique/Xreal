@@ -125,11 +125,11 @@ void LoadJPG(const char *filename, unsigned char **pic, int *width, int *height,
 	/*Now we can initialize the JPEG decompression object.*/
 	jpeg_create_decompress(&cinfo);
 
-	/*Step 2: specify data source(eg, a file)*/
+	/*Step 2: specify data source(eg, a file) */
 
 	jpeg_mem_src(&cinfo, fbuffer.b, len);
 
-	/*Step 3: read file parameters with jpeg_read_header()*/
+	/*Step 3: read file parameters with jpeg_read_header() */
 
 	(void)jpeg_read_header(&cinfo, TRUE);
 	/*We can ignore the return value from jpeg_read_header since
@@ -179,7 +179,7 @@ void LoadJPG(const char *filename, unsigned char **pic, int *width, int *height,
 	*width = cinfo.output_width;
 	*height = cinfo.output_height;
 
-	/*Step 6: while (scan lines remain to be read)*/
+	/*Step 6: while (scan lines remain to be read) */
 	/*          jpeg_read_scanlines(...);*/
 
 	/*Here we use the library's state variable cinfo.output_scanline as the
@@ -235,7 +235,6 @@ void LoadJPG(const char *filename, unsigned char **pic, int *width, int *height,
 	/*And we're done!*/
 }
 
-
 /*
 =======================================================================================================================================
 
@@ -268,7 +267,6 @@ static void init_destination(j_compress_ptr cinfo) {
 	dest->pub.next_output_byte = dest->outfile;
 	dest->pub.free_in_buffer = dest->size;
 }
-
 
 /*
  * Empty the output buffer--- called whenever buffer fills up.
@@ -314,7 +312,6 @@ static          boolean empty_output_buffer(j_compress_ptr cinfo) {
 
 static void term_destination(j_compress_ptr cinfo) {
 }
-
 
 /*
  * Prepare for output to a stdio stream.
@@ -368,7 +365,7 @@ int SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, 
 	/*Now we can initialize the JPEG compression object.*/
 	jpeg_create_compress(&cinfo);
 
-	/*Step 2: specify data destination(eg, a file)*/
+	/*Step 2: specify data destination(eg, a file) */
 	/*Note: steps 2 and 3 can be done in either order.*/
 	jpegDest(&cinfo, buffer, bufSize);
 
@@ -389,7 +386,7 @@ int SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, 
 	/*Step 4: Start compressor*/
 	jpeg_start_compress(&cinfo, TRUE);
 
-	/*Step 5: while (scan lines remain to be written)*/
+	/*Step 5: while (scan lines remain to be written) */
 	/*          jpeg_write_scanlines(...);*/
 	row_stride = image_width * cinfo.input_components;// + padding;	/*JSAMPLEs per row in image_buffer*/
 

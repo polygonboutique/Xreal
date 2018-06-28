@@ -110,7 +110,7 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 	hasWeights = qfalse;
 
 	numNewReferences = 0;
-	Com_Memset(newReferences, - 1, sizeof(newReferences));
+	Com_Memset(newReferences, -1, sizeof(newReferences));
 
 	for (i = 0; i < 3; i++) {
 		v = tri->vertexes[i];

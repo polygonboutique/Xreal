@@ -39,7 +39,7 @@ static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader) {
 
 static void PrintChunkHeader(axChunkHeader_t *chunkHeader) {
 #if 0
-	ri.Printf(PRINT_ALL, "--------------------- -\n");
+	ri.Printf(PRINT_ALL, "-------------- -------\n");
 	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header ident: '%s'\n", chunkHeader->ident);
 	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header flags: %i\n", chunkHeader->flags);
 	ri.Printf(PRINT_ALL, "R_LoadPSK: chunk header data size: %i\n", chunkHeader->dataSize);
@@ -138,7 +138,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	matrix_t unrealToQuake;
 
-	//MatrixSetupScale(unrealToQuake, 1, - 1, 1);
+	//MatrixSetupScale(unrealToQuake, 1, -1, 1);
 	MatrixFromAngles(unrealToQuake, 0, 90, 0);
 
 	stream = AllocMemStream(buffer, bufferSize);

@@ -1377,7 +1377,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(bool onlyWorld) {
 				Tess_End();
 			}
 
-			Tess_Begin(Tess_StageIteratorDepthFill, NULL, shader, NULL, qtrue, qfalse, - 1, 0);
+			Tess_Begin(Tess_StageIteratorDepthFill, NULL, shader, NULL, qtrue, qfalse, -1, 0);
 
 			oldShader = shader;
 			oldAlphaTest = alphaTest;
@@ -1454,7 +1454,7 @@ static void Render_lightVolume(interaction_t *ia) {
 	GL_Scissor(ia->scissorX, ia->scissorY, ia->scissorWidth, ia->scissorHeight);
 	// set 2D virtual screen size
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, - 99999, 99999);
+	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 
@@ -1811,7 +1811,7 @@ static void RB_RenderInteractions() {
 		// draw the contents of the last shader batch
 		Tess_End();
 		// begin a new batch
-		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, -1, 0);
 		// change the modelview matrix if needed
 		if (entity != oldEntity) {
 			depthRange = qfalse;
@@ -2080,7 +2080,7 @@ static void RB_RenderInteractionsShadowMapped() {
 
 								case 3:
 								{
-									VectorSet(angles, 0, - 90, 0);
+									VectorSet(angles, 0, -90, 0);
 									flipX = qtrue;
 									flipY = qtrue;
 									break;
@@ -2088,7 +2088,7 @@ static void RB_RenderInteractionsShadowMapped() {
 
 								case 4:
 								{
-									VectorSet(angles, - 90, 90, 0);
+									VectorSet(angles, -90, 90, 0);
 									flipX = qfalse;
 									flipY = qfalse;
 									break;
@@ -2296,7 +2296,7 @@ static void RB_RenderInteractionsShadowMapped() {
 								}
 
 								//MatrixScaleTranslateToUnitCube(projectionMatrix, splitFrustumViewBounds[0], splitFrustumViewBounds[1]);
-								//MatrixOrthogonalProjectionRH(projectionMatrix, - 1, 1, - 1, 1, - splitFrustumViewBounds[1][2], - splitFrustumViewBounds[0][2]);
+								//MatrixOrthogonalProjectionRH(projectionMatrix, -1, 1, -1, 1, -splitFrustumViewBounds[1][2], -splitFrustumViewBounds[0][2]);
 #if 1
 								MatrixOrthogonalProjectionRH(projectionMatrix, splitFrustumViewBounds[0][0], splitFrustumViewBounds[1][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[1][1], -splitFrustumViewBounds[1][2], -splitFrustumViewBounds[0][2]);
 #endif
@@ -2347,7 +2347,7 @@ static void RB_RenderInteractionsShadowMapped() {
 									AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 								}
 
-								MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], - cropBounds[1][2], - cropBounds[0][2]);
+								MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 								MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 								numCasters = MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, casterBounds, qtrue);
@@ -2433,7 +2433,7 @@ static void RB_RenderInteractionsShadowMapped() {
 								MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
 								MatrixMultiply(flipZMatrix, projectionMatrix, light->projectionMatrix);
 #else
-								MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], - cropBounds[1][2], - cropBounds[0][2]);
+								MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 #endif
 								GL_LoadProjectionMatrix(light->projectionMatrix);
 							}
@@ -2488,7 +2488,7 @@ static void RB_RenderInteractionsShadowMapped() {
 
 							// set 2D virtual screen size
 							GL_PushMatrix();
-							MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, - 99999, 99999);
+							MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
 							GL_LoadProjectionMatrix(ortho);
 							GL_LoadModelViewMatrix(matrixIdentity);
 
@@ -2681,7 +2681,7 @@ static void RB_RenderInteractionsShadowMapped() {
 						}
 
 						// we don't need tangent space calculations here
-						Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, - 1, 0);
+						Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
 					}
 
 					break;
@@ -2725,7 +2725,7 @@ static void RB_RenderInteractionsShadowMapped() {
 					GLimp_LogComment(va("----- Beginning Light Interaction: %i-----\n", iaCount));
 				}
 				// begin a new batch
-				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, - 1, 0);
+				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, -1, 0);
 			}
 		}
 		// change the modelview matrix if needed
@@ -3020,7 +3020,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer() {
 					Tess_End();
 				}
 
-				Tess_Begin(Tess_StageIteratorGBufferNormalsOnly, NULL, shader, NULL, qfalse, qfalse, - 1, 0);
+				Tess_Begin(Tess_StageIteratorGBufferNormalsOnly, NULL, shader, NULL, qfalse, qfalse, -1, 0);
 				oldShader = shader;
 				oldLightmapNum = lightmapNum;
 			}
@@ -3785,7 +3785,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 
 								case 3:
 								{
-									VectorSet(angles, 0, - 90, 0);
+									VectorSet(angles, 0, -90, 0);
 									flipX = qtrue;
 									flipY = qtrue;
 									break;
@@ -3793,7 +3793,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 
 								case 4:
 								{
-									VectorSet(angles, - 90, 90, 0);
+									VectorSet(angles, -90, 90, 0);
 									flipX = qfalse;
 									flipY = qfalse;
 									break;
@@ -3913,13 +3913,13 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 								const matrix_t switchToArticle = {
 									1, 0, 0, 0,
 									0, 0, 1, 0,
-									0, - 1, 0, 0,
+									0, -1, 0, 0,
 									0, 0, 0, 1
 								};
 
 								const matrix_t switchToGL = {
 									1, 0, 0, 0,
-									0, 0, - 1, 0,
+									0, 0, -1, 0,
 									0, 1, 0, 0,
 									0, 0, 0, 1
 								};
@@ -4012,7 +4012,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 								VectorSet(viewOrigin, 0, 0, 0);
 								MatrixTransformPoint2(viewOrigin);
 
-								VectorSet(viewDirection, 0, 0, - 1);
+								VectorSet(viewDirection, 0, 0, -1);
 								MatrixTransformPoint2(viewDirection);
 
 								VectorSet(up, 0, 1, 0);
@@ -4069,7 +4069,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									ri.Printf(PRINT_ALL, "gamma = %5.3f, sin(gamma) = %5.3f, n = %5.3f, f = %5.3f\n", gamma, sinGamma, n, f);
 									// new observer point n - 1 behind eye position:  pos = eyePos - up * (n - nearDist)
 #if 1
-									VectorMA(viewOrigin, - (n - zNear), up, C);
+									VectorMA(viewOrigin, -(n - zNear), up, C);
 									//VectorMA(C, depth * 0.5f, lightDirection, C);
 #else
 									// get the coordinates of the near camera point in light space
@@ -4078,7 +4078,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									VectorSet(Cstart_lp, viewOriginLS[0], viewOriginLS[1], depth * 0.5f);
 									// calc C the projection center
 									// new projection center C, n behind the near plane of P
-									VectorMA(Cstart_lp, - n, axisDefault[1], C);
+									VectorMA(Cstart_lp, -n, axisDefault[1], C);
 									MatrixAffineInverse(light->viewMatrix, transformMatrix);
 									MatrixTransformPoint2(transformMatrix, C);
 #endif
@@ -4126,12 +4126,12 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 										m[11] = 0;
 										m[15] = 0;
 
-										//MatrixPerspectiveProjectionRH(lispMatrix, - 1, 1, n, f, - 1, 1);
-										//MatrixPerspectiveProjection(lispMatrix, - 1, 1, - 1, 1, n, f);
+										//MatrixPerspectiveProjectionRH(lispMatrix, -1, 1, n, f, -1, 1);
+										//MatrixPerspectiveProjection(lispMatrix, -1, 1, -1, 1, n, f);
 										//MatrixInverse(lispMatrix);
 
 										//MatrixPerspectiveProjectionLH(lispMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], cropBounds[0][2], cropBounds[1][2]);
-										//MatrixPerspectiveProjectionRH(lispMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], - f, - n);
+										//MatrixPerspectiveProjectionRH(lispMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -f, -n);
 
 #if 0
 										ri.Printf(PRINT_ALL, "lispMatrix =\n(%5.3f, %5.3f, %5.3f, %5.3f)\n"
@@ -4153,7 +4153,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									//MatrixMultiply2(viewProjectionMatrix, switchToGL);
 									MatrixMultiply2(viewProjectionMatrix, lispMatrix);
 									//MatrixMultiply2(viewProjectionMatrix, switchToGL);
-									//MatrixMultiplyScale(viewProjectionMatrix, 1, 1, - 1);
+									//MatrixMultiplyScale(viewProjectionMatrix, 1, 1, -1);
 									//MatrixMultiply(flipZMatrix, lispMatrix, viewProjectionMatrix);
 									//MatrixMultiply(lispMatrix, light->viewMatrix, viewProjectionMatrix);
 									//MatrixMultiply2(viewProjectionMatrix, cropMatrix);
@@ -4225,7 +4225,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 												   cropMatrix[3], cropMatrix[7], cropMatrix[11], cropMatrix[15]);
 #endif
 
-								//MatrixOrthogonalProjectionLH(cropMatrix, - 1024, 1024, - 1024, 1024, cropBounds[0][2], cropBounds[1][2]);
+								//MatrixOrthogonalProjectionLH(cropMatrix, -1024, 1024, -1024, 1024, cropBounds[0][2], cropBounds[1][2]);
 								//MatrixIdentity(light->projectionMatrix);
 								MatrixCopy(flipZMatrix, light->projectionMatrix);
 								//MatrixMultiply2(light->projectionMatrix, switchToArticle);
@@ -4324,7 +4324,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 								}
 
 								//MatrixScaleTranslateToUnitCube(projectionMatrix, splitFrustumViewBounds[0], splitFrustumViewBounds[1]);
-								//MatrixOrthogonalProjectionRH(projectionMatrix, - 1, 1, - 1, 1, - splitFrustumViewBounds[1][2], - splitFrustumViewBounds[0][2]);
+								//MatrixOrthogonalProjectionRH(projectionMatrix, -1, 1, -1, 1, -splitFrustumViewBounds[1][2], -splitFrustumViewBounds[0][2]);
 								MatrixOrthogonalProjectionRH(projectionMatrix, splitFrustumViewBounds[0][0], splitFrustumViewBounds[1][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[1][1], -splitFrustumViewBounds[1][2], -splitFrustumViewBounds[0][2]);
 								MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 								// find the bounding box of the current split in the light's clip space
@@ -4368,7 +4368,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 								}
 
-								MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], - cropBounds[1][2], - cropBounds[0][2]);
+								MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 								MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 								numCasters = MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, casterBounds, true);
@@ -4459,7 +4459,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 								MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
 								MatrixMultiply(flipZMatrix, projectionMatrix, light->projectionMatrix);
 #else
-								MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], - cropBounds[1][2], - cropBounds[0][2]);
+								MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 #endif
 								GL_LoadProjectionMatrix(light->projectionMatrix);
 							}
@@ -5215,7 +5215,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 						}
 
 						// we don't need tangent space calculations here
-						Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, - 1, 0);
+						Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
 					}
 					break;
 				}
@@ -5696,7 +5696,7 @@ void RB_RenderBloom() {
 		GL_PushMatrix();
 		GL_LoadModelViewMatrix(matrixIdentity);
 #if 1
-		MatrixOrthogonalProjection(ortho, 0, tr.contrastRenderFBO->width, 0, tr.contrastRenderFBO->height, - 99999, 99999);
+		MatrixOrthogonalProjection(ortho, 0, tr.contrastRenderFBO->width, 0, tr.contrastRenderFBO->height, -99999, 99999);
 		GL_LoadProjectionMatrix(ortho);
 #endif
 		if (DS_STANDARD_ENABLED()) {
@@ -5759,7 +5759,7 @@ void RB_RenderBloom() {
 				GL_PushMatrix();
 				GL_LoadModelViewMatrix(matrixIdentity);
 
-				MatrixOrthogonalProjection(ortho, 0, tr.bloomRenderFBO[0]->width, 0, tr.bloomRenderFBO[0]->height, - 99999, 99999);
+				MatrixOrthogonalProjection(ortho, 0, tr.bloomRenderFBO[0]->width, 0, tr.bloomRenderFBO[0]->height, -99999, 99999);
 				GL_LoadProjectionMatrix(ortho);
 
 				if (i == 0) {
@@ -5878,7 +5878,7 @@ void RB_CameraPostFX(void) {
 	MatrixMultiplyTranslation(grain, backEnd.refdef.floatTime * 10, backEnd.refdef.floatTime * 10, 0);
 	MatrixMultiplyTranslation(grain, 0.5, 0.5, 0.0);
 	MatrixMultiplyZRotation(grain, backEnd.refdef.floatTime * (random() * 7));
-	MatrixMultiplyTranslation(grain, - 0.5, - 0.5, 0.0);
+	MatrixMultiplyTranslation(grain, -0.5, -0.5, 0.0);
 
 	gl_cameraEffectsShader->SetUniform_ColorTextureMatrix(grain);
 	// bind u_CurrentMap
@@ -6122,7 +6122,6 @@ void RB_RenderDeferredHDRResultToFrameBuffer() {
 	GL_PopMatrix();
 }
 
-
 //================================================================================================
 //
 // LIGHTS OCCLUSION CULLING
@@ -6327,7 +6326,7 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 	if (QueueEmpty(multiQueue))
 		return;
 
-	multiQueryLight = (trRefLight_t *)QueueFront(multiQueue)->data;
+	multiQueryLight = (trRefLight_t *)QueueFront(multiQueue) ->data;
 
 	if (tr.numUsedOcclusionQueryObjects < (MAX_OCCLUSION_QUERIES - 1)) {
 		multiQueryLight->occlusionQueryObject = tr.occlusionQueryObjects[tr.numUsedOcclusionQueryObjects++];
@@ -6446,7 +6445,6 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light) {
 
 	for (l = sentinel->prev; l != sentinel; l = l->prev) {
 		light = (trRefLight_t *)l->data;
-
 		light->occlusionQuerySamples = ocSamples;
 	}
 }
@@ -6570,11 +6568,13 @@ void RB_RenderLightOcclusionQueries() {
 			EnQueue(&invisibleQueue, light);
 
 			if ((invisibleList.currentElements - i) <= 100) {
-				if (QueueSize(&invisibleQueue) >= 10)
+				if (QueueSize(&invisibleQueue) >= 10) {
 					IssueLightMultiOcclusionQueries(&invisibleQueue, &occlusionQueryQueue);
+				}
 			} else {
-				if (QueueSize(&invisibleQueue) >= 50)
+				if (QueueSize(&invisibleQueue) >= 50) {
 					IssueLightMultiOcclusionQueries(&invisibleQueue, &occlusionQueryQueue);
+				}
 			}
 		}
 
@@ -6591,7 +6591,7 @@ void RB_RenderLightOcclusionQueries() {
 		GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 
 		while (!QueueEmpty(&occlusionQueryQueue)) {
-			if (LightOcclusionResultAvailable((trRefLight_t *)QueueFront(&occlusionQueryQueue)->data)) {
+			if (LightOcclusionResultAvailable((trRefLight_t *)QueueFront(&occlusionQueryQueue) ->data)) {
 				light = (trRefLight_t *)DeQueue(&occlusionQueryQueue);
 				// wait if result not available
 				GetLightOcclusionQueryResult(light);
@@ -6612,8 +6612,8 @@ void RB_RenderLightOcclusionQueries() {
 				} else {
 					if (!QueueEmpty(&light->multiQuery)) {
 						backEnd.pc.c_occlusionQueriesLightsCulled++;
-
 						multiQueryLight = light;
+
 						while (!QueueEmpty(&multiQueryLight->multiQuery)) {
 							light = (trRefLight_t *)DeQueue(&multiQueryLight->multiQuery);
 
@@ -6851,7 +6851,7 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 	if (QueueEmpty(multiQueue))
 		return;
 
-	multiQueryEntity = (trRefEntity_t *)QueueFront(multiQueue)->data;
+	multiQueryEntity = (trRefEntity_t *)QueueFront(multiQueue) ->data;
 
 	if (tr.numUsedOcclusionQueryObjects < (MAX_OCCLUSION_QUERIES - 1)) {
 		multiQueryEntity->occlusionQueryObject = tr.occlusionQueryObjects[tr.numUsedOcclusionQueryObjects++];
@@ -7054,11 +7054,13 @@ void RB_RenderEntityOcclusionQueries() {
 		Com_InitGrowList(&invisibleList, 1000);
 		// loop trough all entities and render the entity OBB
 		for (i = 0, entity = backEnd.refdef.entities; i < backEnd.refdef.numEntities; i++, entity++) {
-			if ((entity->e.renderfx & RF_THIRD_PERSON) && !backEnd.viewParms.isPortal)
+			if ((entity->e.renderfx & RF_THIRD_PERSON) && !backEnd.viewParms.isPortal) {
 				continue;
+			}
 
-			if (entity->cull == CULL_OUT)
+			if (entity->cull == CULL_OUT) {
 				continue;
+			}
 
 			backEnd.currentEntity = entity;
 			
@@ -7080,11 +7082,13 @@ void RB_RenderEntityOcclusionQueries() {
 			EnQueue(&invisibleQueue, entity);
 
 			if ((invisibleList.currentElements - i) <= 100) {
-				if (QueueSize(&invisibleQueue) >= 10)
+				if (QueueSize(&invisibleQueue) >= 10) {
 					IssueEntityMultiOcclusionQueries(&invisibleQueue, &occlusionQueryQueue);
+				}
 			} else {
-				if (QueueSize(&invisibleQueue) >= 50)
+				if (QueueSize(&invisibleQueue) >= 50) {
 					IssueEntityMultiOcclusionQueries(&invisibleQueue, &occlusionQueryQueue);
+				}
 			}
 		}
 
@@ -7101,7 +7105,7 @@ void RB_RenderEntityOcclusionQueries() {
 		GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 
 		while (!QueueEmpty(&occlusionQueryQueue)) {
-			if (EntityOcclusionResultAvailable((trRefEntity_t *)QueueFront(&occlusionQueryQueue)->data)) {
+			if (EntityOcclusionResultAvailable((trRefEntity_t *)QueueFront(&occlusionQueryQueue) ->data)) {
 				entity = (trRefEntity_t *)DeQueue(&occlusionQueryQueue);
 				// wait if result not available
 				GetEntityOcclusionQueryResult(entity);
@@ -7342,7 +7346,7 @@ static void RB_RenderDebugUtils() {
 		vec4_t lightColor;
 		vec4_t quadVerts[4];
 
-		vec3_t minSize = {- 2, - 2, - 2};
+		vec3_t minSize = {-2, -2, -2};
 		vec3_t maxSize = {2,  2,  2};
 
 		gl_genericShader->DisableAlphaTesting();
@@ -7465,8 +7469,9 @@ static void RB_RenderDebugUtils() {
 
 							Tess_AddCube(vec3_origin, light->localBounds[0], light->localBounds[1], lightColor);
 
-							if (!VectorCompare(light->l.center, vec3_origin))
+							if (!VectorCompare(light->l.center, vec3_origin)) {
 								Tess_AddCube(light->l.center, minSize, maxSize, colorYellow);
+							}
 
 							Tess_UpdateVBOs(ATTR_POSITION|ATTR_COLOR);
 							Tess_DrawElements();
@@ -7601,11 +7606,13 @@ static void RB_RenderDebugUtils() {
 							Tess_AddCube(light->l.projRight, minSize, maxSize, colorGreen);
 							Tess_AddCube(light->l.projUp, minSize, maxSize, colorBlue);
 
-							if (!VectorCompare(light->l.projStart, vec3_origin))
+							if (!VectorCompare(light->l.projStart, vec3_origin)) {
 								Tess_AddCube(light->l.projStart, minSize, maxSize, colorYellow);
+							}
 
-							if (!VectorCompare(light->l.projEnd, vec3_origin))
+							if (!VectorCompare(light->l.projEnd, vec3_origin)) {
 								Tess_AddCube(light->l.projEnd, minSize, maxSize, colorMagenta);
+							}
 
 							Tess_UpdateVBOs(ATTR_POSITION|ATTR_COLOR);
 							Tess_DrawElements();
@@ -7649,7 +7656,7 @@ static void RB_RenderDebugUtils() {
 		trRefEntity_t *entity;
 		surfaceType_t *surface;
 		vec4_t lightColor;
-		vec3_t mins = {- 1, - 1, - 1};
+		vec3_t mins = {-1, -1, -1};
 		vec3_t maxs = {1, 1, 1};
 
 		gl_genericShader->DisableAlphaTesting();
@@ -7798,7 +7805,7 @@ static void RB_RenderDebugUtils() {
 	if (r_showEntityTransforms->integer) {
 		trRefEntity_t *ent;
 		int i;
-		vec3_t mins = {- 1, - 1, - 1};
+		vec3_t mins = {-1, -1, -1};
 		vec3_t maxs = {1, 1, 1};
 
 		gl_genericShader->DisableAlphaTesting();
@@ -7822,11 +7829,13 @@ static void RB_RenderDebugUtils() {
 		ent = backEnd.refdef.entities;
 
 		for (i = 0; i < backEnd.refdef.numEntities; i++, ent++) {
-			if ((ent->e.renderfx & RF_THIRD_PERSON) && !backEnd.viewParms.isPortal)
+			if ((ent->e.renderfx & RF_THIRD_PERSON) && !backEnd.viewParms.isPortal) {
 				continue;
+			}
 
-			if (ent->cull == CULL_OUT)
+			if (ent->cull == CULL_OUT) {
 				continue;
+			}
 			// set up the transformation matrix
 			R_RotateEntityForViewParms(ent, &backEnd.viewParms, &backEnd.orientation);
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
@@ -7850,18 +7859,15 @@ static void RB_RenderDebugUtils() {
 			}
 			
 			Tess_AddCube(vec3_origin, mins, maxs, colorWhite);
-
 			Tess_UpdateVBOs(ATTR_POSITION|ATTR_COLOR);
 			Tess_DrawElements();
 
 			tess.multiDrawPrimitives = 0;
 			tess.numIndexes = 0;
 			tess.numVertexes = 0;
-
 			// go back to the world modelview matrix
 			//backEnd.orientation = backEnd.viewParms.world;
 			//GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
-
 			//R_DebugBoundingBox(vec3_origin, ent->worldBounds[0], ent->worldBounds[1], colorCyan);
 		}
 		// go back to the world modelview matrix
@@ -7901,8 +7907,9 @@ static void RB_RenderDebugUtils() {
 		ent = backEnd.refdef.entities;
 
 		for (i = 0; i < backEnd.refdef.numEntities; i++, ent++) {
-			if ((ent->e.renderfx & RF_THIRD_PERSON) && !backEnd.viewParms.isPortal)
+			if ((ent->e.renderfx & RF_THIRD_PERSON) && !backEnd.viewParms.isPortal) {
 				continue;
+			}
 			// set up the transformation matrix
 			R_RotateEntityForViewParms(ent, &backEnd.viewParms, &backEnd.orientation);
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
@@ -7929,10 +7936,9 @@ static void RB_RenderDebugUtils() {
 							// copy absolute bones
 							skeleton.numBones = model->md5->numBones;
 							for (j = 0, bone = &skeleton.bones[0]; j < skeleton.numBones; j++, bone++) {
-								#if defined(REFBONE_NAMES)
+#if defined(REFBONE_NAMES)
 								Q_strncpyz(bone->name, model->md5->bones[j].name, sizeof(bone->name));
-								#endif
-
+#endif
 								bone->parentIndex = model->md5->bones[j].parentIndex;
 								VectorCopy(model->md5->bones[j].origin, bone->origin);
 								VectorCopy(model->md5->bones[j].rotation, bone->rotation);
@@ -7964,12 +7970,11 @@ static void RB_RenderDebugUtils() {
 
 					VectorCopy(skel->bones[j].origin, offset);
 					QuatToVectorsFRU(skel->bones[j].rotation, forward, right, up);
-
 					VectorSubtract(offset, origin, diff);
+
 					if ((length = VectorNormalize(diff))) {
 						PerpendicularVector(tmp, diff);
 						//VectorCopy(up, tmp);
-
 						VectorScale(tmp, length * 0.1, tmp2);
 						VectorMA(tmp2, length * 0.2, diff, tmp2);
 
@@ -8012,6 +8017,7 @@ static void RB_RenderDebugUtils() {
 
 						// calculate the xyz locations for the four corners
 						radius = 0.4;
+
 						VectorScale(backEnd.viewParms.orientation.axis[1], radius, left);
 						VectorScale(backEnd.viewParms.orientation.axis[2], radius, up);
 
@@ -8039,7 +8045,7 @@ static void RB_RenderDebugUtils() {
 							fcol = col * 0.0625;
 							size = 0.0625;
 
-							VectorMA(worldOrigins[j], - (k + 2.0f), left, origin);
+							VectorMA(worldOrigins[j], -(k + 2.0f), left, origin);
 							Tess_AddQuadStampExt(origin, left, up, colorWhite, fcol, frow, fcol + size, frow + size);
 						}
 
@@ -8084,7 +8090,7 @@ static void RB_RenderDebugUtils() {
 		gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
 		// set 2D virtual screen size
 		GL_PushMatrix();
-		MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, - 99999, 99999);
+		MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
 		GL_LoadProjectionMatrix(ortho);
 		GL_LoadModelViewMatrix(matrixIdentity);
 
@@ -8136,7 +8142,7 @@ static void RB_RenderDebugUtils() {
 		cubemapProbe_t *cubeProbe;
 		int j;
 		vec4_t quadVerts[4];
-		vec3_t mins = {- 8, - 8, - 8};
+		vec3_t mins = {-8, -8, -8};
 		vec3_t maxs = {8,  8,  8};
 		//vec3_t viewOrigin;
 
@@ -8145,7 +8151,7 @@ static void RB_RenderDebugUtils() {
 		}
 		// choose right shader program----------------------------------
 		gl_reflectionShader->SetPortalClipping(backEnd.viewParms.isPortal);
-	//	gl_reflectionShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS)!= 0);
+	//	gl_reflectionShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
 		gl_reflectionShader->SetVertexSkinning(false);
 		gl_reflectionShader->SetVertexAnimation(false);
 		gl_reflectionShader->SetDeformVertexes(false);
@@ -8164,7 +8170,7 @@ static void RB_RenderDebugUtils() {
 		gl_reflectionShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
 		gl_reflectionShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 
-		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
 
 		for (j = 0; j < tr.cubeProbes.currentElements; j++) {
 			cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
@@ -8209,7 +8215,7 @@ static void RB_RenderDebugUtils() {
 
 			R_FindTwoNearestCubeMaps(backEnd.viewParms.orientation.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
 
-			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, - 1, 0);
+			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
 
 			if (cubeProbeNearest == NULL && cubeProbeSecondNearest == NULL) {
 				// bad
@@ -8270,13 +8276,14 @@ static void RB_RenderDebugUtils() {
 
 		GL_CheckErrors();
 
-		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
 
 		for (j = 0; j < tr.world->numLightGridPoints; j++) {
 			gridPoint = &tr.world->lightGridData[j];
 
-			if (VectorDistanceSquared(gridPoint->origin, backEnd.viewParms.orientation.origin) > SQR(1024))
+			if (VectorDistanceSquared(gridPoint->origin, backEnd.viewParms.orientation.origin) > SQR(1024)) {
 				continue;
+			}
 
 			VectorNegate(gridPoint->direction, lightDirection);
 
@@ -8341,7 +8348,7 @@ static void RB_RenderDebugUtils() {
 			if (i == 1) {
 				// set 2D virtual screen size
 				GL_PushMatrix();
-				MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, - 99999, 99999);
+				MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
 				GL_LoadProjectionMatrix(ortho);
 				GL_LoadModelViewMatrix(matrixIdentity);
 				GL_Cull(CT_TWO_SIDED);
@@ -8376,7 +8383,7 @@ static void RB_RenderDebugUtils() {
 					GL_PushMatrix();
 					// calculate top down view projection matrix
 					{
-						vec3_t forward = {0, 0, - 1};
+						vec3_t forward = {0, 0, -1};
 						vec3_t up = {1, 0, 0};
 
 						matrix_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix;
@@ -8410,7 +8417,7 @@ static void RB_RenderDebugUtils() {
 							AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 						}
 
-						MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], - cropBounds[1][2], - cropBounds[0][2]);
+						MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 
 						GL_LoadModelViewMatrix(viewMatrix);
 						GL_LoadProjectionMatrix(projectionMatrix);
@@ -8491,53 +8498,64 @@ static void RB_RenderDebugUtils() {
 
 				if (!r_dynamicBspOcclusionCulling->integer) {
 					if (node->contents != -1) {
-						if (r_showBspNodes->integer == 3)
+						if (r_showBspNodes->integer == 3) {
 							continue;
+						}
 
-						if (node->numMarkSurfaces <= 0)
+						if (node->numMarkSurfaces <= 0) {
 							continue;
+						}
 
 						//if(node->shrinkedAABB)
 						//	gl_genericShader->SetUniform_Color(colorBlue);
 						//else 
-						if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex])
+						if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex]) {
 							gl_genericShader->SetUniform_Color(colorGreen);
-						else
+						} else {
 							gl_genericShader->SetUniform_Color(colorRed);
+						}
 					} else {
-						if (r_showBspNodes->integer == 2)
+						if (r_showBspNodes->integer == 2) {
 							continue;
+						}
 
-						if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex])
+						if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex]) {
 							gl_genericShader->SetUniform_Color(colorYellow);
-						else
+						} else {
 							gl_genericShader->SetUniform_Color(colorBlue);
+						}
 					}
 				} else {
-					if (node->lastVisited[backEnd.viewParms.viewCount] != backEnd.viewParms.frameCount)
+					if (node->lastVisited[backEnd.viewParms.viewCount] != backEnd.viewParms.frameCount) {
 						continue;
+					}
 
-					if (r_showBspNodes->integer == 5 && node->lastQueried[backEnd.viewParms.viewCount] != backEnd.viewParms.frameCount)
+					if (r_showBspNodes->integer == 5 && node->lastQueried[backEnd.viewParms.viewCount] != backEnd.viewParms.frameCount) {
 						continue;
+					}
 
 					if (node->contents != -1) {
-						if (r_showBspNodes->integer == 3)
+						if (r_showBspNodes->integer == 3) {
 							continue;
+						}
 
 						//if(node->occlusionQuerySamples[backEnd.viewParms.viewCount] > 0)
-						if (node->visible[backEnd.viewParms.viewCount])
+						if (node->visible[backEnd.viewParms.viewCount]) {
 							gl_genericShader->SetUniform_Color(colorGreen);
-						else
+						} else {
 							gl_genericShader->SetUniform_Color(colorRed);
+						}
 					} else {
-						if (r_showBspNodes->integer == 2)
+						if (r_showBspNodes->integer == 2) {
 							continue;
+						}
 
 						//if(node->occlusionQuerySamples[backEnd.viewParms.viewCount] > 0)
-						if (node->visible[backEnd.viewParms.viewCount])
+						if (node->visible[backEnd.viewParms.viewCount]) {
 							gl_genericShader->SetUniform_Color(colorYellow);
-						else
+						} else {
 							gl_genericShader->SetUniform_Color(colorBlue);
+						}
 					}
 
 					if (r_showBspNodes->integer == 4) {
@@ -8593,7 +8611,7 @@ static void RB_RenderDebugUtils() {
 		int i;
 		decalProjector_t *dp;
 		srfDecal_t *srfDecal;
-		vec3_t mins = {- 1, - 1, - 1};
+		vec3_t mins = {-1, -1, -1};
 		vec3_t maxs = {1, 1, 1};
 
 		if (backEnd.refdef.rdflags &(RDF_NOWORLDMODEL)) {
@@ -8624,11 +8642,12 @@ static void RB_RenderDebugUtils() {
 
 		GL_CheckErrors();
 
-		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
 
 		for (i = 0, dp = backEnd.refdef.decalProjectors; i < backEnd.refdef.numDecalProjectors; i++, dp++) {
-			if (VectorDistanceSquared(dp->center, backEnd.viewParms.orientation.origin) > SQR(1024))
+			if (VectorDistanceSquared(dp->center, backEnd.viewParms.orientation.origin) > SQR(1024)) {
 				continue;
+			}
 
 			Tess_AddCube(dp->center, mins, maxs, colorRed);
 			Tess_AddCube(vec3_origin, dp->mins, dp->maxs, colorBlue);
@@ -8674,6 +8693,7 @@ static void RB_RenderView(void) {
 		// Deferred shading path
 		int clearBits = 0;
 		int startTime = 0, endTime = 0;
+
 		// sync with gl if needed
 		if (r_finish->integer == 1 && !glState.finishCalled) {
 			glFinish();
@@ -8696,7 +8716,6 @@ static void RB_RenderView(void) {
 		//glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
 		clearBits = GL_DEPTH_BUFFER_BIT;
-
 		/*
 		   if (r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL)
 		   {
@@ -8741,7 +8760,6 @@ static void RB_RenderView(void) {
 		backEnd.skyRenderedThisView = qfalse;
 
 		GL_CheckErrors();
-
 		//RB_RenderDrawSurfacesIntoGeometricBuffer();
 
 		if (r_speeds->integer == RSPEEDS_SHADING_TIMES) {
@@ -8811,7 +8829,6 @@ static void RB_RenderView(void) {
 				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.geometricRenderFBO->frameBuffer);
 				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_quarter->frameBuffer);
 				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, glConfig.vidWidth * 0.25f, glConfig.vidHeight * 0.25f, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
 				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.geometricRenderFBO->frameBuffer);
 				glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, tr.downScaleFBO_64x64->frameBuffer);
 				glBlitFramebufferEXT(0, 0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 64, 64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
@@ -8870,10 +8887,11 @@ static void RB_RenderView(void) {
 		}
 		// disable offscreen rendering
 		if (glConfig2.framebufferObjectAvailable) {
-			if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+			if (r_hdrRendering->integer && glConfig2.textureFloatAvailable) {
 				R_BindFBO(tr.deferredRenderFBO);
-			else
+			} else {
 				R_BindNullFBO();
+			}
 		}
 		// we will need to change the projection matrix before drawing
 		// 2D images again
@@ -8890,17 +8908,14 @@ static void RB_RenderView(void) {
 		}
 #if defined(COMPAT_ET)
 		// ydnar: global q3 fog volume
-		else 
-		if (tr.world && tr.world->globalFog >= 0) {
+		else if (tr.world && tr.world->globalFog >= 0) {
 			clearBits|= GL_DEPTH_BUFFER_BIT;
 
 			if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL)) {
 				clearBits|= GL_COLOR_BUFFER_BIT;
 				GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0], tr.world->fogs[tr.world->globalFog].color[1], tr.world->fogs[tr.world->globalFog].color[2], 1.0);
 			}
-		}
-
-		else if (tr.world && tr.world->hasSkyboxPortal) {
+		} else if (tr.world && tr.world->hasSkyboxPortal) {
 			if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL) {
 				// portal scene, clear whatever is necessary
 				clearBits|= GL_DEPTH_BUFFER_BIT;
@@ -8957,9 +8972,7 @@ static void RB_RenderView(void) {
 			// NERVE - SMF - we don't want to clear the buffer when no world model is specified
 			if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
 				clearBits & = ~GL_COLOR_BUFFER_BIT;
-			}
-			// - NERVE - SMF
-			else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
+			} else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
 				clearBits|= GL_COLOR_BUFFER_BIT;
 
 				if (tr.glfogsettings[FOG_CURRENT].registered) {
@@ -8969,7 +8982,7 @@ static void RB_RenderView(void) {
 					//GL_ClearColor(0.0, 0.0, 1.0, 1.0);   // blue clear for testing world sky clear
 					GL_ClearColor(0.05, 0.05, 0.05, 1.0);	// JPW NERVE changed per id req was 0.5s
 				}
-			} else {						
+			} else {
 				// world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
 				if (tr.glfogsettings[FOG_CURRENT].registered) {
 					// try to clear fastsky with current fog color
@@ -9059,8 +9072,9 @@ static void RB_RenderView(void) {
 		// render ambient occlusion process effect
 		// Tr3B: needs way more work RB_RenderScreenSpaceAmbientOcclusion(qfalse);
 
-		if (HDR_ENABLED())
+		if (HDR_ENABLED()) {
 			R_BindFBO(tr.deferredRenderFBO);
+		}
 		// render global fog post process effect
 		RB_RenderGlobalFog();
 		// draw everything that is translucent
@@ -9179,7 +9193,6 @@ static void RB_RenderView(void) {
 	backEnd.pc.c_views++;
 }
 
-
 /*
 =======================================================================================================================================
 
@@ -9225,7 +9238,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 
 	}
 
-	if ((1 << i)!= cols || (1 << j)!= rows) {
+	if ((1 << i) != cols || (1 << j) != rows) {
 		ri.Error(ERR_DROP, "Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 	}
 
@@ -9423,7 +9436,7 @@ const void *RB_StretchPic(const void *data) {
 		}
 
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -9514,7 +9527,7 @@ const void *RB_Draw2dPolys(const void *data) {
 		}
 
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);
@@ -9571,7 +9584,7 @@ const void *RB_RotatedPic(const void *data) {
 		}
 
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -9657,7 +9670,7 @@ const void *RB_StretchPicGradient(const void *data) {
 		}
 
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, - 1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
 	}
 
 	Tess_CheckOverflow(4, 6);

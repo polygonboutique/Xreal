@@ -133,8 +133,8 @@ static int R_CullModel(trRefEntity_t *ent) {
 	vec3_t v;
 	vec3_t transformed;
 
-	newFrameHeader = R_GetModelByHandle(ent->e.frameModel)->mdx;
-	oldFrameHeader = R_GetModelByHandle(ent->e.oldframeModel)->mdx;
+	newFrameHeader = R_GetModelByHandle(ent->e.frameModel) ->mdx;
+	oldFrameHeader = R_GetModelByHandle(ent->e.oldframeModel) ->mdx;
 
 	if (!newFrameHeader || !oldFrameHeader) {
 		return CULL_OUT;
@@ -300,7 +300,6 @@ static int R_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, floa
 	return lod;
 }
 
-
 /*
 =======================================================================================================================================
 R_ComputeFogNum
@@ -318,7 +317,7 @@ static int R_ComputeFogNum(trRefEntity_t *ent) {
 		return 0;
 	}
 
-	header = R_GetModelByHandle(ent->e.frameModel)->mdx;
+	header = R_GetModelByHandle(ent->e.frameModel) ->mdx;
 	// compute frame pointers
 	mdxFrame = (mdxFrame_t *)((byte *)header + header->ofsFrames + 
 							   ent->e.frame * (int)(sizeof(mdxBoneFrameCompressed_t)) * header->numBones + 
@@ -452,7 +451,7 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent) {
 	// see if we are in a fog volume
 	fogNum = R_FogWorldBox(ent->worldBounds);
 	// draw all surfaces
-	if (r_vboModels->integer && mdm->numVBOSurfaces && glConfig2.vboVertexSkinningAvailable)// && ent->e.skeleton.type == SK_ABSOLUTE)) {
+	if (r_vboModels->integer && mdm->numVBOSurfaces && glConfig2.vboVertexSkinningAvailable) // && ent->e.skeleton.type == SK_ABSOLUTE)) {
 		int i, j;
 		srfVBOMDMMesh_t *vboSurface;
 		shader_t *shader;
@@ -464,7 +463,7 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent) {
 			shader = GetMDMSurfaceShader(ent, mdmSurface);
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel) {
-				R_AddDrawSurf((void *)vboSurface, shader, - 1, fogNum);
+				R_AddDrawSurf((void *)vboSurface, shader, -1, fogNum);
 			}
 		}
 	} else {
@@ -472,12 +471,11 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent) {
 			shader = GetMDMSurfaceShader(ent, mdmSurface);
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel) {
-				R_AddDrawSurf((void *)mdmSurface, shader, - 1, fogNum);
+				R_AddDrawSurf((void *)mdmSurface, shader, -1, fogNum);
 			}
 		}
 	}
 }
-
 
 /*
 =======================================================================================================================================
@@ -654,7 +652,6 @@ __inline void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out) {
 	VectorNormalizeFast(out);
 }
 
-
 // ydnar
 
 #define FUNCTABLE_SHIFT(16 - FUNCTABLE_SIZE2)
@@ -698,7 +695,6 @@ static void InglesToAxis(int ingles[3], vec3_t axis[3]) {
 	axis[2][1] = cr * sp * sy + - sr * cy;
 	axis[2][2] = cr * cp;
 }
-
 
 /*
 =======================================================================================================================================
@@ -891,7 +887,6 @@ __inline void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[3]) {
 		}
 	}
 }
-
 
 /*
 =======================================================================================================================================
@@ -1363,7 +1358,6 @@ static qboolean R_BonesStillValid(const refEntity_t *refent) {
 #endif
 }
 
-
 /*
 =======================================================================================================================================
 R_CalcBones
@@ -1376,10 +1370,10 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones) 
 	int i;
 	int *boneRefs;
 	float torsoWeight;
-	mdxHeader_t *mdxFrameHeader = R_GetModelByHandle(refent->frameModel)->mdx;
-	mdxHeader_t *mdxOldFrameHeader = R_GetModelByHandle(refent->oldframeModel)->mdx;
-	mdxHeader_t *mdxTorsoFrameHeader = R_GetModelByHandle(refent->torsoFrameModel)->mdx;
-	mdxHeader_t *mdxOldTorsoFrameHeader = R_GetModelByHandle(refent->oldTorsoFrameModel)->mdx;
+	mdxHeader_t *mdxFrameHeader = R_GetModelByHandle(refent->frameModel) ->mdx;
+	mdxHeader_t *mdxOldFrameHeader = R_GetModelByHandle(refent->oldframeModel) ->mdx;
+	mdxHeader_t *mdxTorsoFrameHeader = R_GetModelByHandle(refent->torsoFrameModel) ->mdx;
+	mdxHeader_t *mdxOldTorsoFrameHeader = R_GetModelByHandle(refent->oldTorsoFrameModel) ->mdx;
 
 	if (!mdxFrameHeader || !mdxOldFrameHeader || !mdxTorsoFrameHeader || !mdxOldTorsoFrameHeader) {
 		return;
@@ -1776,7 +1770,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface) {
 			if (r_showSkeleton->integer == 8) {
 				// FIXME: Actually draw the whole skeleton
 				//if(surface == (mdmSurface_t *)((byte *)header + header->ofsSurfaces)){
-				mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel)->mdx;
+				mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel) ->mdx;
 
 				boneRefs = (int *)((byte *)surface + surface->ofsBoneReferences);
 
@@ -1939,7 +1933,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface) {
 
 /*if(r_showmodelbounds->integer){
 		vec3_t diff, v1, v2, v3, v4, v5, v6;
-		mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel)->mdx;
+		mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel) ->mdx;
 		mdxFrame_t *mdxFrame = (mdxFrame_t *)((byte *)mdxHeader + mdxHeader->ofsFrames + 
 								refent->frame * (int)(sizeof(mdxBoneFrameCompressed_t)) * mdxHeader->numBones + 
 								refent->frame * sizeof(mdxFrame_t));
@@ -2023,7 +2017,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface) {
 	int lodIndex;
 	IBO_t *lodIBO;
 
-	GLimp_LogComment("--- Tess_SurfaceVBOMDMMesh---\n");
+	GLimp_LogComment("--- Tess_SurfaceVBOMDMMesh ---\n");
 
 	if (!surface->vbo || !surface->ibo)
 		return;
@@ -2089,7 +2083,6 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface) {
 
 	Tess_End();
 }
-
 
 /*
 =======================================================================================================================================

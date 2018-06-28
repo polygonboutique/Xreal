@@ -62,7 +62,7 @@ bool GLCompileMacro_USE_VERTEX_SKINNING::HasConflictingMacros(int permutation, c
 		GLCompileMacro * macro = macros[i];
 
 		//if(GLCompileMacro_USE_VERTEX_ANIMATION * m = dynamic_cast<GLCompileMacro_USE_VERTEX_ANIMATION * >(macro))
-		if ((permutation & macro->GetBit())!= 0 && macro->GetType() == USE_VERTEX_ANIMATION) {
+		if ((permutation & macro->GetBit()) != 0 && macro->GetType() == USE_VERTEX_ANIMATION) {
 			//ri.Printf(PRINT_ALL, "conflicting macro! canceling '%s' vs. '%s'\n", GetName(), macro->GetName());
 			return true;
 		}
@@ -81,7 +81,7 @@ bool GLCompileMacro_USE_VERTEX_ANIMATION::HasConflictingMacros(int permutation, 
 	for (size_t i = 0; i < macros.size(); i++) {
 		GLCompileMacro * macro = macros[i];
 
-		if ((permutation & macro->GetBit())!= 0 && macro->GetType() == USE_VERTEX_SKINNING) {
+		if ((permutation & macro->GetBit()) != 0 && macro->GetType() == USE_VERTEX_SKINNING) {
 			//ri.Printf(PRINT_ALL, "conflicting macro! canceling '%s' vs. '%s'\n", GetName(), macro->GetName());
 			return true;
 		}
@@ -111,7 +111,7 @@ bool GLCompileMacro_USE_PARALLAX_MAPPING::MissesRequiredMacros(int permutation, 
 	for (size_t i = 0; i < macros.size(); i++) {
 		GLCompileMacro * macro = macros[i];
 
-		if ((permutation & macro->GetBit())!= 0 && macro->GetType() == USE_NORMAL_MAPPING) {
+		if ((permutation & macro->GetBit()) != 0 && macro->GetType() == USE_NORMAL_MAPPING) {
 			foundUSE_NORMAL_MAPPING = true;
 		}
 	}
@@ -130,7 +130,7 @@ bool GLCompileMacro_USE_REFLECTIVE_SPECULAR::MissesRequiredMacros(int permutatio
 	for (size_t i = 0; i < macros.size(); i++) {
 		GLCompileMacro * macro = macros[i];
 
-		if ((permutation & macro->GetBit())!= 0 && macro->GetType() == USE_NORMAL_MAPPING) {
+		if ((permutation & macro->GetBit()) != 0 && macro->GetType() == USE_NORMAL_MAPPING) {
 			foundUSE_NORMAL_MAPPING = true;
 		}
 	}
@@ -615,16 +615,16 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			static char msgPart[1024];
 
 			int i;
-			ri.Printf(PRINT_WARNING, "--------------------------------------------------------- -\n");
-			ri.Printf(PRINT_WARNING, "CONCATENATED shader '%s'--------- -\n", filename);
-			ri.Printf(PRINT_WARNING, " BEGIN---------------------------------------------------\n");
+			ri.Printf(PRINT_WARNING, "-------------------------------------------------- -------\n");
+			ri.Printf(PRINT_WARNING, "CONCATENATED shader '%s'-- -------\n", filename);
+			ri.Printf(PRINT_WARNING, " BEGIN------------------------------------------- -------\n");
 
 			for (i = 0; i < sizeFinal; i += 1024) {
 				Q_strncpyz(msgPart, bufferFinal + i, sizeof(msgPart));
 				ri.Printf(PRINT_ALL, "%s", msgPart);
 			}
 
-			ri.Printf(PRINT_WARNING, " END-----------------------------------------------------\n");
+			ri.Printf(PRINT_WARNING, " END--------------------------------------------- -------\n");
 		}
 #endif
 
@@ -651,9 +651,9 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			if (glslopt_get_status(shaderOptimized)) {
 				const char *newSource = glslopt_get_output(shaderOptimized);
 
-				ri.Printf(PRINT_DEVELOPER, "--------------------------------------------------------- -\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED shader '%s'--------- -\n", filename);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN---------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, "-------------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED shader '%s'-- -------\n", filename);
+				ri.Printf(PRINT_DEVELOPER, " BEGIN------------------------------------------- -------\n");
 
 				length = strlen(newSource);
 
@@ -662,7 +662,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 					ri.Printf(PRINT_WARNING, "%s\n", msgPart);
 				}
 
-				ri.Printf(PRINT_DEVELOPER, " END-----------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, " END--------------------------------------------- -------\n");
 				shaderText = std::string(newSource, length);
 			} else {
 				const char *errorLog = glslopt_get_log(shaderOptimized);
@@ -760,7 +760,7 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 	bool        optimize = r_glslOptimizer->integer ? true : false;
 #endif
 
-	//ri.Printf(PRINT_DEVELOPER, "------ - GPU shader------ -\n");
+	//ri.Printf(PRINT_DEVELOPER, "------ - GPU shader -------\n");
 
 	Q_strncpyz(program->name, programName, sizeof(program->name));
 
@@ -839,9 +839,9 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 			if (glslopt_get_status(shaderOptimized)) {
 				vertexShaderTextWithMacros = version + glslopt_get_output(shaderOptimized);
 
-				ri.Printf(PRINT_DEVELOPER, "--------------------------------------------------------- -\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED VERTEX shader '%s'--------- -\n", programName);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN---------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, "-------------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED VERTEX shader '%s'-- -------\n", programName);
+				ri.Printf(PRINT_DEVELOPER, " BEGIN------------------------------------------- -------\n");
 
 				length = strlen(vertexShaderTextWithMacros.c_str());
 
@@ -850,7 +850,7 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 					ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
 				}
 
-				ri.Printf(PRINT_DEVELOPER, " END-----------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, " END--------------------------------------------- -------\n");
 			} else {
 				const char *errorLog = glslopt_get_log(shaderOptimized);
 
@@ -871,9 +871,9 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 			if (glslopt_get_status(shaderOptimized1)) {
 				fragmentShaderTextWithMacros = version + glslopt_get_output(shaderOptimized1);
 
-				ri.Printf(PRINT_DEVELOPER, "--------------------------------------------------------- -\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED FRAGMENT shader '%s'--------- -\n", programName);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN---------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, "-------------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED FRAGMENT shader '%s'-- -------\n", programName);
+				ri.Printf(PRINT_DEVELOPER, " BEGIN------------------------------------------- -------\n");
 
 				length = strlen(fragmentShaderTextWithMacros.c_str());
 
@@ -882,7 +882,7 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 					ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
 				}
 
-				ri.Printf(PRINT_DEVELOPER, " END-----------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, " END--------------------------------------------- -------\n");
 			} else {
 				const char *errorLog = glslopt_get_log(shaderOptimized1);
 
@@ -908,8 +908,8 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 }
 
 void GLShader::CompilePermutations() {
-	ri.Printf(PRINT_ALL, "// / ------------------------------------------------ -\n");
-	ri.Printf(PRINT_ALL, "// / creating %s shaders--------\n", this->GetName().c_str());
+	ri.Printf(PRINT_ALL, "// / ----------------------------------------- -------\n");
+	ri.Printf(PRINT_ALL, "// / creating %s shaders -------\n", this->GetName().c_str());
 
 	int startTime = ri.Milliseconds();
 
@@ -1298,7 +1298,7 @@ GLShader_lightMapping::GLShader_lightMapping():
 		GLCompileMacro_USE_ALPHA_TESTING(this),
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
-		GLCompileMacro_USE_PARALLAX_MAPPING(this)//,
+		GLCompileMacro_USE_PARALLAX_MAPPING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1358,7 +1358,7 @@ GLShader_vertexLighting_DBS_entity::GLShader_vertexLighting_DBS_entity():
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
 		GLCompileMacro_USE_PARALLAX_MAPPING(this),
-		GLCompileMacro_USE_REFLECTIVE_SPECULAR(this)//,
+		GLCompileMacro_USE_REFLECTIVE_SPECULAR(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1419,7 +1419,7 @@ GLShader_vertexLighting_DBS_world::GLShader_vertexLighting_DBS_world():
 		GLCompileMacro_USE_ALPHA_TESTING(this),
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
-		GLCompileMacro_USE_PARALLAX_MAPPING(this)//,
+		GLCompileMacro_USE_PARALLAX_MAPPING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1480,7 +1480,7 @@ GLShader_forwardLighting_omniXYZ::GLShader_forwardLighting_omniXYZ():
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
 		GLCompileMacro_USE_PARALLAX_MAPPING(this),
-		GLCompileMacro_USE_SHADOWING(this)//,
+		GLCompileMacro_USE_SHADOWING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1559,7 +1559,7 @@ GLShader_forwardLighting_projXYZ::GLShader_forwardLighting_projXYZ():
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
 		GLCompileMacro_USE_PARALLAX_MAPPING(this),
-		GLCompileMacro_USE_SHADOWING(this)//,
+		GLCompileMacro_USE_SHADOWING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1642,7 +1642,7 @@ GLShader_forwardLighting_directionalSun::GLShader_forwardLighting_directionalSun
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
 		GLCompileMacro_USE_PARALLAX_MAPPING(this),
-		GLCompileMacro_USE_SHADOWING(this)//,
+		GLCompileMacro_USE_SHADOWING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1712,7 +1712,7 @@ GLShader_deferredLighting_omniXYZ::GLShader_deferredLighting_omniXYZ():
 		GLCompileMacro_USE_PORTAL_CLIPPING(this),
 		GLCompileMacro_USE_FRUSTUM_CLIPPING(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
-		GLCompileMacro_USE_SHADOWING(this)//,
+		GLCompileMacro_USE_SHADOWING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1766,7 +1766,7 @@ GLShader_deferredLighting_projXYZ::GLShader_deferredLighting_projXYZ():
 		GLCompileMacro_USE_PORTAL_CLIPPING(this),
 		GLCompileMacro_USE_FRUSTUM_CLIPPING(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
-		GLCompileMacro_USE_SHADOWING(this)//,
+		GLCompileMacro_USE_SHADOWING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1822,7 +1822,7 @@ GLShader_deferredLighting_directionalSun::GLShader_deferredLighting_directionalS
 		GLCompileMacro_USE_PORTAL_CLIPPING(this),
 		GLCompileMacro_USE_FRUSTUM_CLIPPING(this),
 		GLCompileMacro_USE_NORMAL_MAPPING(this),
-		GLCompileMacro_USE_SHADOWING(this)//,
+		GLCompileMacro_USE_SHADOWING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }
@@ -1976,7 +1976,7 @@ GLShader_reflection::GLShader_reflection():
 		GLCompileMacro_USE_VERTEX_SKINNING(this),
 		GLCompileMacro_USE_VERTEX_ANIMATION(this),
 		GLCompileMacro_USE_DEFORM_VERTEXES(this),
-		GLCompileMacro_USE_NORMAL_MAPPING(this)//,
+		GLCompileMacro_USE_NORMAL_MAPPING(this) //,
 		//GLCompileMacro_TWOSIDED(this) {
 	CompilePermutations();
 }

@@ -369,7 +369,7 @@ static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader) {
 
 static void PrintChunkHeader(axChunkHeader_t *chunkHeader) {
 #if 0
-	ri.Printf(PRINT_ALL, "--------------------- -\n");
+	ri.Printf(PRINT_ALL, "-------------- -------\n");
 	ri.Printf(PRINT_ALL, "R_LoadPSA: chunk header ident: '%s'\n", chunkHeader->ident);
 	ri.Printf(PRINT_ALL, "R_LoadPSA: chunk header flags: %i\n", chunkHeader->flags);
 	ri.Printf(PRINT_ALL, "R_LoadPSA: chunk header data size: %i\n", chunkHeader->dataSize);
@@ -728,7 +728,6 @@ qhandle_t RE_RegisterAnimation(const char *name) {
 	return anim->index;
 }
 
-
 /*
 =======================================================================================================================================
 R_GetAnimationByHandle
@@ -870,7 +869,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent) {
 
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel) {
-				R_AddDrawSurf((void *)surface, shader, - 1, fogNum);
+				R_AddDrawSurf((void *)surface, shader, -1, fogNum);
 			}
 		}
 	} else {
@@ -906,7 +905,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent) {
 
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel) {
-				R_AddDrawSurf((void *)vboSurface, shader, - 1, fogNum);
+				R_AddDrawSurf((void *)vboSurface, shader, -1, fogNum);
 			}
 		}
 	}
@@ -1039,7 +1038,6 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light) {
 		}
 	}
 }
-
 
 /*
 =======================================================================================================================================
@@ -1339,7 +1337,6 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 	return qfalse;
 }
 
-
 /*
 =======================================================================================================================================
 RE_BlendSkeleton
@@ -1375,7 +1372,6 @@ int RE_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac
 	return qtrue;
 }
 
-
 /*
 =======================================================================================================================================
 RE_AnimNumFrames
@@ -1396,7 +1392,6 @@ int RE_AnimNumFrames(qhandle_t hAnim) {
 
 	return 0;
 }
-
 
 /*
 =======================================================================================================================================

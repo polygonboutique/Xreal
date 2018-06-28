@@ -181,7 +181,7 @@ void R_ImageList_f(void) {
 		"no ", "yes"
 	};
 
-	ri.Printf(PRINT_ALL, "\n      - w--- h--- mm--type -   - if--wrap--name------ -\n");
+	ri.Printf(PRINT_ALL, "\n      - w--- h--- mm--type -   - if--wrap--name -------\n");
 
 	texels = 0;
 	dataSize = 0;
@@ -328,7 +328,7 @@ void R_ImageList_f(void) {
 		ri.Printf(PRINT_ALL, " %s\n", image->name);
 	}
 
-	ri.Printf(PRINT_ALL, "---------\n");
+	ri.Printf(PRINT_ALL, "- -------\n");
 	ri.Printf(PRINT_ALL, " %i total texels(not including mipmaps)\n", texels);
 	ri.Printf(PRINT_ALL, " %d.%02d MB total image memory\n", dataSize / (1024 * 1024),
 			(dataSize %(1024 * 1024)) * 100 / (1024 * 1024));
@@ -446,7 +446,6 @@ static void ResampleTexture(unsigned * in, int inwidth, int inheight, unsigned *
 		}
 	}
 }
-
 
 /*
 =======================================================================================================================================
@@ -877,7 +876,6 @@ static void R_MakeAlpha(byte *in, int width, int height) {
 		}
 	}
 }
-
 
 /*
 =======================================================================================================================================
@@ -1328,7 +1326,6 @@ image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable) {
 
 	return image;
 }
-
 
 /*
 =======================================================================================================================================
@@ -1998,15 +1995,15 @@ static ID_INLINE void SwapPixel(byte *inout, int x, int y, int x2, int y2, int w
 	byte color[4];
 	byte color2[4];
 
-	color[0] =  inout[4 * (y * width + x) + 0];
-	color[1] =  inout[4 * (y * width + x) + 1];
-	color[2] =  inout[4 * (y * width + x) + 2];
-	color[3] =  inout[4 * (y * width + x) + 3];
+	color[0] = inout[4 * (y * width + x) + 0];
+	color[1] = inout[4 * (y * width + x) + 1];
+	color[2] = inout[4 * (y * width + x) + 2];
+	color[3] = inout[4 * (y * width + x) + 3];
 
-	color2[0] =  inout[4 * (y2 * width + x2) + 0];
-	color2[1] =  inout[4 * (y2 * width + x2) + 1];
-	color2[2] =  inout[4 * (y2 * width + x2) + 2];
-	color2[3] =  inout[4 * (y2 * width + x2) + 3];
+	color2[0] = inout[4 * (y2 * width + x2) + 0];
+	color2[1] = inout[4 * (y2 * width + x2) + 1];
+	color2[2] = inout[4 * (y2 * width + x2) + 2];
+	color2[3] = inout[4 * (y2 * width + x2) + 3];
 
 	inout[4 * (y * width + x) + 0] = color2[0];
 	inout[4 * (y * width + x) + 1] = color2[1];
@@ -2054,10 +2051,10 @@ static void R_Rotate(byte *in, int width, int height, int degrees) {
 	// rotate into tmp buffer
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
-			color[0] =  in[4 * (y * width + x) + 0];
-			color[1] =  in[4 * (y * width + x) + 1];
-			color[2] =  in[4 * (y * width + x) + 2];
-			color[3] =  in[4 * (y * width + x) + 3];
+			color[0] = in[4 * (y * width + x) + 0];
+			color[1] = in[4 * (y * width + x) + 1];
+			color[2] = in[4 * (y * width + x) + 2];
+			color[3] = in[4 * (y * width + x) + 3];
 
 			if (degrees == 90) {
 				x2 = y;
@@ -2343,7 +2340,6 @@ void R_InitFogTable(void) {
 	}
 }
 
-
 /*
 =======================================================================================================================================
 R_FogFactor
@@ -2380,7 +2376,6 @@ float R_FogFactor(float s, float t) {
 
 	return d;
 }
-
 
 /*
 =======================================================================================================================================
@@ -2421,7 +2416,6 @@ static void R_CreateFogImage(void) {
 
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 }
-
 
 /*
 =======================================================================================================================================
@@ -2601,7 +2595,7 @@ static void R_CreateDepthRenderImage(void) {
 #if 0
 	if (glConfig2.framebufferPackedDepthStencilAvailable) {
 		tr.depthRenderImage = R_CreateImage("_depthRender", data, width, height, IF_NOPICMIP|IF_PACKED_DEPTH24_STENCIL8, FT_NEAREST, WT_CLAMP);
-	} else if (glConfig.hardwareType == GLHW_ATI || glConfig.hardwareType == GLHW_ATI_DX10)// || glConfig.hardwareType == GLHW_NV_DX10) {
+	} else if (glConfig.hardwareType == GLHW_ATI || glConfig.hardwareType == GLHW_ATI_DX10) // || glConfig.hardwareType == GLHW_NV_DX10) {
 		tr.depthRenderImage = R_CreateImage("_depthRender", data, width, height, IF_NOPICMIP|IF_DEPTH16, FT_NEAREST, WT_CLAMP);
 	} else
 #endif
@@ -3177,7 +3171,6 @@ void R_SetColorMappings(void) {
 	}
 }
 
-
 /*
 =======================================================================================================================================
 R_InitImages
@@ -3188,7 +3181,7 @@ void R_InitImages(void) {
 	const char *grainImage = "gfx / 2d / camera / grain.png";
 	const char *vignetteImage = "gfx / 2d / camera / vignette.png";
 
-	ri.Printf(PRINT_ALL, "------ - R_InitImages------ -\n");
+	ri.Printf(PRINT_ALL, "------ - R_InitImages -------\n");
 
 	Com_Memset(r_imageHashTable, 0, sizeof(r_imageHashTable));
 	Com_InitGrowList(&tr.images, 4096);
@@ -3218,7 +3211,6 @@ void R_InitImages(void) {
 	}
 }
 
-
 /*
 =======================================================================================================================================
 R_ShutdownImages
@@ -3228,7 +3220,7 @@ void R_ShutdownImages(void) {
 	int i;
 	image_t *image;
 
-	ri.Printf(PRINT_ALL, "------ - R_ShutdownImages------ -\n");
+	ri.Printf(PRINT_ALL, "------ - R_ShutdownImages -------\n");
 
 	for (i = 0; i < tr.images.currentElements; i++) {
 		image = Com_GrowListElement(&tr.images, i);

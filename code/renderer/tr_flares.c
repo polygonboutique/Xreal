@@ -55,22 +55,16 @@ up to five or more times in a frame with 3D status bar icons).
 // flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
 typedef struct flare_s {
 	struct flare_s * next;		// for active chain
-
 	int addedFrame;
-
 	qboolean inPortal;	// true if in a portal view of the scene
 	int frameSceneNum;
 	void *surface;
 	int fogNum;
-
 	int fadeTime;
-
 	qboolean visible;	// state of last test
 	float drawIntensity;	// may be non 0 even if !visible due to fading
-
 	int windowX, windowY;
 	float eyeZ;
-
 	vec3_t color;
 } flare_t;
 
@@ -90,6 +84,7 @@ void R_ClearFlares(void) {
 	int i;
 
 	Com_Memset(r_flareStructs, 0, sizeof(r_flareStructs));
+
 	r_activeFlares = NULL;
 	r_inactiveFlares = NULL;
 
@@ -128,17 +123,16 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 
 	R_TransformClipToWindow(clip, &backEnd.viewParms, normalized, window);
 
-	if (window[0] < 0 || window[0] >= backEnd.viewParms.viewportWidth ||
-	   window[1] < 0 || window[1] >= backEnd.viewParms.viewportHeight)
-		return;					// shouldn't happen, since we check the clip[] above, except for FP rounding
-
+	if (window[0] < 0 || window[0] >= backEnd.viewParms.viewportWidth || window[1] < 0 || window[1] >= backEnd.viewParms.viewportHeight) {
+		return; // shouldn't happen, since we check the clip[] above, except for FP rounding
+	}
 	// see if a flare with a matching surface, scene, and view exists
 	oldest = r_flareStructs;
 
 	for (f = r_activeFlares; f; f = f->next) {
-		if (f->surface == surface && f->frameSceneNum == backEnd.viewParms.frameSceneNum &&
-		   f->inPortal == backEnd.viewParms.isPortal)
+		if (f->surface == surface && f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal) {
 			break;
+		}
 	}
 	// allocate a new one
 	if (!f) {
@@ -180,8 +174,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	} else {
 		d2 = distLerp;
 	}
-	// fade the intensity of the flare down as the
-	// light surface turns away from the viewer
+	// fade the intensity of the flare down as the light surface turns away from the viewer
 	if (normal) {
 		VectorSubtract(backEnd.viewParms.orientation.origin, point, local);
 		VectorNormalize(local);
@@ -194,7 +187,6 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	// save info needed to test
 	f->windowX = backEnd.viewParms.viewportX + window[0];
 	f->windowY = backEnd.viewParms.viewportY + window[1];
-
 	f->eyeZ = eye[2];
 }
 
@@ -208,15 +200,17 @@ void RB_AddLightFlares(void) {
 	trRefLight_t *l;
 	fog_t *fog;
 
-	if (!r_flares->integer)
+	if (!r_flares->integer) {
 		return;
+	}
 
 	l = backEnd.refdef.lights;
 	fog = tr.world->fogs;
 
 	for (i = 0; i < backEnd.refdef.numLights; i++, l++) {
-		if (!l->isStatic)
+		if (!l->isStatic) {
 			continue;
+		}
 		// find which fog volume the light is in 
 		for (j = 1; j < tr.world->numFogs; j++) {
 			fog = &tr.world->fogs[j];
@@ -242,7 +236,7 @@ void RB_AddLightFlares(void) {
 /*
 =======================================================================================================================================
 
-FLARE BACK END
+	FLARE BACK END
 
 =======================================================================================================================================
 */
@@ -259,15 +253,12 @@ void RB_TestFlare(flare_t *f) {
 	float screenZ;
 
 	backEnd.pc.c_flareTests++;
-	// doing a readpixels is as good as doing a glFinish(), so
-	// don't bother with another sync
+	// doing a readpixels is as good as doing a glFinish(), so don't bother with another sync
 	glState.finishCalled = qfalse;
 	// read back the z buffer contents
 	glReadPixels(f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
-	screenZ = backEnd.viewParms.projectionMatrix[14] / 
-		((2 * depth - 1) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
-
+	screenZ = backEnd.viewParms.projectionMatrix[14] / ((2 * depth - 1) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
 	visible = (-f->eyeZ--screenZ) < 24;
 
 	if (visible) {
@@ -307,44 +298,44 @@ void RB_RenderFlare(flare_t *f) {
 	vec3_t color;
 
 	backEnd.pc.c_flareRenders++;
-
 #if 1
 	//VectorScale(f->color, f->drawIntensity, color);
 	VectorScale(colorWhite, f->drawIntensity, color);
 
-	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / - f->eyeZ);
+	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / -f->eyeZ);
 #else
 	/*
-	   As flare sizes stay nearly constant with increasing distance we must decrease the intensity
-	   to achieve a reasonable visual result. The intensity is ~(size^2 / distance^2)which can be
-	   got by considering the ratio of(flaresurface on screen):(Surface of sphere defined by flare origin and distance from flare)
-	   An important requirement is: intensity <= 1 for all distances.
+	As flare sizes stay nearly constant with increasing distance we must decrease the intensity
+	to achieve a reasonable visual result. The intensity is ~(size^2 / distance^2)which can be
+	got by considering the ratio of(flaresurface on screen):(Surface of sphere defined by flare origin and distance from flare)
+	An important requirement is: intensity <= 1 for all distances.
 
-	   The formula used here to compute the intensity is as follows:
-	   intensity = flareCoeff * size^2 / (distance + size * sqrt(flareCoeff))^2.
-	   As you can see, the intensity will have a max. of 1 when the distance is 0.
+	The formula used here to compute the intensity is as follows:
+	intensity = flareCoeff * size^2 / (distance + size * sqrt(flareCoeff))^2.
+	As you can see, the intensity will have a max. of 1 when the distance is 0.
 
-	   The coefficient flareCoeff will determine the falloff speed with increasing distance.
+	The coefficient flareCoeff will determine the falloff speed with increasing distance.
 	*/
 	float distance, intensity, factor;
 	// We don't want too big values anyways when dividing by distance
-	if (f->eyeZ > - 1.0f)
+	if (f->eyeZ > - 1.0f) {
 		distance = 1.0f;
-	else
+	} else {
 		distance = -f->eyeZ;
 	// calculate the flare size
-	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
+	}
 
+	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
 	factor = distance + size * sqrt(flareCoeff);
 	intensity = flareCoeff * size * size / (factor * factor);
 
 	VectorScale(f->color, f->drawIntensity * intensity, color);
+
 	iColor[0] = color[0] * 255;
 	iColor[1] = color[1] * 255;
 	iColor[2] = color[2] * 255;
 #endif
-
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, - 1, f->fogNum);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, -1, f->fogNum);
 	// FIXME: use quadstamp?
 	tess.xyz[tess.numVertexes][0] = f->windowX - size;
 	tess.xyz[tess.numVertexes][1] = f->windowY - size;
@@ -416,16 +407,11 @@ void RB_RenderFlare(flare_t *f) {
 =======================================================================================================================================
 RB_RenderFlares
 
-Because flares are simulating an occular effect, they should be drawn after
-everything(all views)in the entire frame has been drawn.
-
-Because of the way portals use the depth buffer to mark off areas, the
-needed information would be lost after each view, so we are forced to draw
-flares after each view.
-
-The resulting artifact is that flares in mirrors or portals don't dim properly
-when occluded by something in the main view, and portal flares that should
-extend past the portal edge will be overwritten.
+Because flares are simulating an occular effect, they should be drawn after everything (all views) in the entire frame has been drawn.
+Because of the way portals use the depth buffer to mark off areas, the needed information would be lost after each view, so we are
+forced to draw flares after each view.
+The resulting artifact is that flares in mirrors or portals don't dim properly when occluded by something in the main view, and portal
+flares that should extend past the portal edge will be overwritten.
 =======================================================================================================================================
 */
 void RB_RenderFlares(void) {
@@ -434,35 +420,33 @@ void RB_RenderFlares(void) {
 	qboolean draw;
 	matrix_t ortho;
 
-	if (!r_flares->integer)
+	if (!r_flares->integer) {
 		return;
 
 #if 0
 	if (r_flareCoeff->modified) {
-		if (r_flareCoeff->value == 0.0f)
+		if (r_flareCoeff->value == 0.0f) {
 			flareCoeff = atof("150");
-		else
+		} else {
 			flareCoeff = r_flareCoeff->value;
+		}
 
 		r_flareCoeff->modified = qfalse;
 	}
 #endif
-
-	// reset currentEntity to world so that any previously referenced entities don't have influence
-	// on the rendering of these flares(i.e. RF_ renderer flags).
+	// reset currentEntity to world so that any previously referenced entities don't have influence on the rendering of these flares (i.e. RF_ renderer flags).
 	backEnd.currentEntity = &tr.worldEntity;
 	backEnd.orientation = backEnd.viewParms.world;
 	GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 
-	if (tr.world != NULL)		// thx Thilo
-	{
+	if (tr.world != NULL) { // thx Thilo
 		RB_AddLightFlares();
 	}
 	// perform z buffer readback on each flare in this view
 	draw = qfalse;
 	prev = &r_activeFlares;
 
-	while ((f = *prev)!= NULL) {
+	while ((f = *prev) != NULL) {
 		// throw out any flares that weren't added last frame
 		if (f->addedFrame < backEnd.viewParms.frameCount - 1) {
 			*prev = f->next;
@@ -502,19 +486,16 @@ void RB_RenderFlares(void) {
 	GL_CheckErrors();
 
 	GL_PushMatrix();
-	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX,
-									backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-									backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-									-99999, 99999);
+	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 
 	for (f = r_activeFlares; f; f = f->next) {
-		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity)
+		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity) {
 			RB_RenderFlare(f);
+		}
 	}
 
 	GL_PopMatrix();
-
 	GL_CheckErrors();
 }

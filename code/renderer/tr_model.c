@@ -325,7 +325,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name) {
 	LL(mdx->ofsEnd);
 	LL(mdx->torsoParent);
 
-	if (LittleLong(1)!= 1) {
+	if (LittleLong(1) != 1) {
 		// swap all the frames
 		frameSize = (int)(sizeof(mdxBoneFrameCompressed_t)) * mdx->numBones;
 
@@ -437,7 +437,7 @@ void RE_BeginRegistration(glconfig_t *glconfigOut, glconfig2_t *glconfigOut2) {
 	R_SyncRenderThread();
 
 	tr.visIndex = 0;
-	memset(tr.visClusters, - 2, sizeof(tr.visClusters));	// force markleafs to regenerate
+	memset(tr.visClusters, -2, sizeof(tr.visClusters));	// force markleafs to regenerate
 
 #if defined(USE_D3D10)
 	// TODO
@@ -478,7 +478,6 @@ void R_ModelInit(void) {
 	mod = R_AllocModel();
 	mod->type = MOD_BAD;
 }
-
 
 /*
 =======================================================================================================================================
@@ -558,7 +557,6 @@ void R_Modellist_f(void) {
 	}
 #endif
 }
-
 
 //=============================================================================
 
@@ -679,7 +677,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 */
 	model = R_GetModelByHandle(handle);
 	/*
-	if (!model->mdv[0])//if(!model->model.md3[0] && !model->model.mdc[0] && !model->model.mds) {
+	if (!model->mdv[0]) //if(!model->model.md3[0] && !model->model.mdc[0] && !model->model.mds) {
 		AxisClear(tag->axis);
 		VectorClear(tag->origin);
 		return -1;

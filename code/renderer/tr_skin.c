@@ -357,7 +357,6 @@ qhandle_t RE_RegisterSkin(const char *name) {
 	return hSkin;
 }
 
-
 /*
 =======================================================================================================================================
 R_InitSkins
@@ -397,7 +396,7 @@ void R_SkinList_f(void) {
 	int i, j;
 	skin_t *skin;
 
-	ri.Printf(PRINT_ALL, "------------------\n");
+	ri.Printf(PRINT_ALL, "---------- -------\n");
 
 	for (i = 0; i < tr.numSkins; i++) {
 		skin = tr.skins[i];
@@ -409,6 +408,6 @@ void R_SkinList_f(void) {
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "------------------\n");
+	ri.Printf(PRINT_ALL, "---------- -------\n");
 }
 

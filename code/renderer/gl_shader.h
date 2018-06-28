@@ -65,7 +65,7 @@ protected:
 	  _vertexAttribs(0)
 	  //_vertexAttribsOptional(vertexAttribsOptional),
 	  //_vertexAttribsUnsupported(vertexAttribsUnsupported) {
-		//ri.Printf(PRINT_ALL, "// / ------------------------------------------------ -\n");
+		//ri.Printf(PRINT_ALL, "// / ----------------------------------------- -------\n");
 	}
 
 	GLShader(const std::string& name, const std::string &mainName, uint32_t vertexAttribsRequired/*, uint32_t vertexAttribsOptional, uint32_t vertexAttribsUnsupported*/):
@@ -77,7 +77,7 @@ protected:
 	  _vertexAttribs(0)
 	  //_vertexAttribsOptional(vertexAttribsOptional),
 	  //_vertexAttribsUnsupported(vertexAttribsUnsupported) {
-		//ri.Printf(PRINT_ALL, "// / ------------------------------------------------ -\n");
+		//ri.Printf(PRINT_ALL, "// / ----------------------------------------- -------\n");
 	}
 
 	~GLShader() {
@@ -154,7 +154,7 @@ public:
 	void SetRequiredVertexPointers();
 
 	bool IsMacroSet(int bit) {
-		return (_activeMacros & bit)!= 0;
+		return (_activeMacros & bit) != 0;
 	}
 
 	void AddMacroBit(int bit) {
@@ -166,7 +166,7 @@ public:
 	}
 
 	bool IsVertexAtttribSet(int bit) {
-		return (_vertexAttribs & bit)!= 0;
+		return (_vertexAttribs & bit) != 0;
 	}
 
 	void AddVertexAttribBit(int bit) {
@@ -891,7 +891,7 @@ public:
 	}
 
 	void SetUniform_ColorMap(int texUnit) {
-		glUniform1i(_shader->GetProgram()->u_ColorMap, texUnit);
+		glUniform1i(_shader->GetProgram() ->u_ColorMap, texUnit);
 	}
 };
 
@@ -914,7 +914,7 @@ public:
 	}
 
 	void SetUniform_NormalMap(int texUnit) {
-		glUniform1i(_shader->GetProgram()->u_NormalMap, texUnit);
+		glUniform1i(_shader->GetProgram() ->u_NormalMap, texUnit);
 	}
 };
 
@@ -937,7 +937,7 @@ public:
 	}
 
 	void SetUniform_CurrentMap(int texUnit) {
-		glUniform1i(_shader->GetProgram()->u_CurrentMap, texUnit);
+		glUniform1i(_shader->GetProgram() ->u_CurrentMap, texUnit);
 	}
 };
 
@@ -1301,7 +1301,7 @@ public:
 								"(%5.3f, %5.3f, %5.3f, %5.3f)\n"
 								"(%5.3f, %5.3f, %5.3f, %5.3f)\n"
 								"(%5.3f, %5.3f, %5.3f, %5.3f)\n"
-								"(%5.3f, %5.3f, %5.3f, %5.3f))---\n",
+								"(%5.3f, %5.3f, %5.3f, %5.3f)) ---\n",
 								program->name,
 								lightFrustum[0][0], lightFrustum[0][1], lightFrustum[0][2], lightFrustum[0][3],
 								lightFrustum[1][0], lightFrustum[1][1], lightFrustum[1][2], lightFrustum[1][3],
@@ -1613,7 +1613,7 @@ public:
 	}
 
 	void SetUniform_BoneMatrix(int numBones, const matrix_t boneMatrices[MAX_BONES]) {
-		glUniformMatrix4fv(_shader->GetProgram()->u_BoneMatrix, numBones, GL_FALSE, &boneMatrices[0][0]);
+		glUniformMatrix4fv(_shader->GetProgram() ->u_BoneMatrix, numBones, GL_FALSE, &boneMatrices[0][0]);
 	}
 };
 
@@ -1802,7 +1802,7 @@ public:
 					break;
 			}
 
-			glUniform1fv(_shader->GetProgram()->u_DeformParms, MAX_SHADER_DEFORM_PARMS, deformParms);
+			glUniform1fv(_shader->GetProgram() ->u_DeformParms, MAX_SHADER_DEFORM_PARMS, deformParms);
 		}
 	}
 };
@@ -1863,7 +1863,7 @@ public:
 		vec4_t v;
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- u_ColorModulate::SetUniform_ColorModulate(program = %s, colorGen = %i, alphaGen = %i)---\n", _shader->GetProgram()->name, colorGen, alphaGen));
+			GLimp_LogComment(va("--- u_ColorModulate::SetUniform_ColorModulate(program = %s, colorGen = %i, alphaGen = %i) ---\n", _shader->GetProgram() ->name, colorGen, alphaGen));
 		}
 
 		switch (colorGen) {
@@ -1873,7 +1873,7 @@ public:
 				break;
 			case CGEN_ONE_MINUS_VERTEX:
 				_shader->AddVertexAttribBit(ATTR_COLOR);
-				VectorSet(v, - 1, - 1, - 1);
+				VectorSet(v, -1, -1, -1);
 				break;
 
 			default:
@@ -1934,7 +1934,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_FogDistanceVector(program = %s, vector = (%5.3f, %5.3f, %5.3f, %5.3f))---\n", program->name, v[0], v[1], v[2], v[3]));
+			GLimp_LogComment(va("--- SetUniform_FogDistanceVector(program = %s, vector = (%5.3f, %5.3f, %5.3f, %5.3f)) ---\n", program->name, v[0], v[1], v[2], v[3]));
 		}
 
 #endif
@@ -1976,7 +1976,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_FogDepthVector(program = %s, vector = (%5.3f, %5.3f, %5.3f, %5.3f))---\n", program->name, v[0], v[1], v[2], v[3]));
+			GLimp_LogComment(va("--- SetUniform_FogDepthVector(program = %s, vector = (%5.3f, %5.3f, %5.3f, %5.3f)) ---\n", program->name, v[0], v[1], v[2], v[3]));
 		}
 
 #endif
@@ -2018,7 +2018,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_FogEyeT(program = %s, value = %f)---\n", program->name, value));
+			GLimp_LogComment(va("--- SetUniform_FogEyeT(program = %s, value = %f) ---\n", program->name, value));
 		}
 
 #endif
@@ -2060,7 +2060,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_DeformMagnitude(program = %s, value = %f)---\n", program->name, value));
+			GLimp_LogComment(va("--- SetUniform_DeformMagnitude(program = %s, value = %f) ---\n", program->name, value));
 		}
 
 #endif
@@ -2102,7 +2102,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_HDRKey(program = %s, value = %f)---\n", program->name, value));
+			GLimp_LogComment(va("--- SetUniform_HDRKey(program = %s, value = %f) ---\n", program->name, value));
 		}
 
 #endif
@@ -2144,7 +2144,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_HDRAverageLuminance(program = %s, value = %f)---\n", program->name, value));
+			GLimp_LogComment(va("--- SetUniform_HDRAverageLuminance(program = %s, value = %f) ---\n", program->name, value));
 		}
 
 #endif
@@ -2186,7 +2186,7 @@ public:
 #if defined(LOG_GLSL_UNIFORMS)
 
 		if (r_logFile->integer) {
-			GLimp_LogComment(va("--- SetUniform_HDRMaxLuminance(program = %s, value = %f)---\n", program->name, value));
+			GLimp_LogComment(va("--- SetUniform_HDRMaxLuminance(program = %s, value = %f) ---\n", program->name, value));
 		}
 
 #endif

@@ -551,7 +551,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	buff = (byte *)pImageData;
 
-	if (strncmp((const char *)buff, "DDS ", 4)!= 0) {
+	if (strncmp((const char *)buff, "DDS ", 4) != 0) {
 		ri.Printf(PRINT_WARNING, "R_LoadDDSImage: invalid dds header \"%s\"\n", name);
 		goto ret_error;
 	}
@@ -918,7 +918,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		if (filterType == FT_DEFAULT && mipLevels == 1 && glConfig2.generateMipmapAvailable)
 			glTexParameteri(ret->type, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
-		//the faces are stored in the order + x, - x, + y, - y, + z, - z
+		//the faces are stored in the order + x, -x, + y, -y, + z, -z
 		//but there may be missing faces in the sequence which we cannot upload
 		if (ddsd->ddsCaps.dwCaps2 & DDSCAPS2_CUBEMAP_POSITIVEX) {
 			loadCubeFace(GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB);

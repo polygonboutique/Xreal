@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "tr_local.h"
 
 volatile renderCommandList_t *renderCommandList;
-
 volatile qboolean renderThreadActive;
 
 /*
@@ -33,6 +32,7 @@ R_PerformanceCounters
 =======================================================================================================================================
 */
 void R_PerformanceCounters(void) {
+
 	if (!r_speeds->integer) {
 		// clear the counters even if we aren't printing
 		Com_Memset(&tr.pc, 0, sizeof(tr.pc));
@@ -41,96 +41,52 @@ void R_PerformanceCounters(void) {
 	}
 
 	if (r_speeds->integer == RSPEEDS_GENERAL) {
-		ri.Printf(PRINT_ALL, "%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n",
-				  backEnd.pc.c_views, backEnd.pc.c_portals, backEnd.pc.c_batches, backEnd.pc.c_surfaces, tr.pc.c_leafs,
-				  backEnd.pc.c_vertexes, backEnd.pc.c_indexes / 3);
-
+		ri.Printf(PRINT_ALL, "%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n", backEnd.pc.c_views, backEnd.pc.c_portals, backEnd.pc.c_batches, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes, backEnd.pc.c_indexes / 3);
 		ri.Printf(PRINT_ALL, "%i lights %i bout %i pvsout %i queryout %i interactions\n",
-				  tr.pc.c_dlights + tr.pc.c_slights - backEnd.pc.c_occlusionQueriesLightsCulled,
-				  tr.pc.c_box_cull_light_out,
-				  tr.pc.c_pvs_cull_light_out,
-				  backEnd.pc.c_occlusionQueriesLightsCulled,
-				  tr.pc.c_dlightInteractions + tr.pc.c_slightInteractions - backEnd.pc.c_occlusionQueriesInteractionsCulled);
+			tr.pc.c_dlights + tr.pc.c_slights - backEnd.pc.c_occlusionQueriesLightsCulled, tr.pc.c_box_cull_light_out, tr.pc.c_pvs_cull_light_out, backEnd.pc.c_occlusionQueriesLightsCulled, tr.pc.c_dlightInteractions + tr.pc.c_slightInteractions - backEnd.pc.c_occlusionQueriesInteractionsCulled);
 
-		ri.Printf(PRINT_ALL, "%i draws %i queries %i CHC++ms %i vbos %i ibos %i verts %i tris\n",
-				  backEnd.pc.c_drawElements,
-				  tr.pc.c_occlusionQueries,
-				  tr.pc.c_CHCTime,
-				  backEnd.pc.c_vboVertexBuffers, backEnd.pc.c_vboIndexBuffers,
-				  backEnd.pc.c_vboVertexes, backEnd.pc.c_vboIndexes / 3);
-
-		ri.Printf(PRINT_ALL, "%i multidraws %i primitives %i tris\n",
-				  backEnd.pc.c_multiDrawElements,
-				  backEnd.pc.c_multiDrawPrimitives,
-				  backEnd.pc.c_multiVboIndexes / 3);
+		ri.Printf(PRINT_ALL, "%i draws %i queries %i CHC++ms %i vbos %i ibos %i verts %i tris\n", backEnd.pc.c_drawElements, tr.pc.c_occlusionQueries, tr.pc.c_CHCTime, backEnd.pc.c_vboVertexBuffers, backEnd.pc.c_vboIndexBuffers, backEnd.pc.c_vboVertexes, backEnd.pc.c_vboIndexes / 3);
+		ri.Printf(PRINT_ALL, "%i multidraws %i primitives %i tris\n", backEnd.pc.c_multiDrawElements, backEnd.pc.c_multiDrawPrimitives, backEnd.pc.c_multiVboIndexes / 3);
 	} else if (r_speeds->integer == RSPEEDS_CULLING) {
-		ri.Printf(PRINT_ALL, "(gen)%i sin %i sout %i pin %i pout\n",
-				  tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out, tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
-
-		ri.Printf(PRINT_ALL, "(patch)%i sin %i sclip %i sout %i bin %i bclip %i bout\n",
-				  tr.pc.c_sphere_cull_patch_in, tr.pc.c_sphere_cull_patch_clip,
-				  tr.pc.c_sphere_cull_patch_out, tr.pc.c_box_cull_patch_in,
-				  tr.pc.c_box_cull_patch_clip, tr.pc.c_box_cull_patch_out);
-
-		ri.Printf(PRINT_ALL, "(mdx)%i sin %i sclip %i sout %i bin %i bclip %i bout\n",
-				  tr.pc.c_sphere_cull_mdx_in, tr.pc.c_sphere_cull_mdx_clip,
-				  tr.pc.c_sphere_cull_mdx_out, tr.pc.c_box_cull_mdx_in, tr.pc.c_box_cull_mdx_clip, tr.pc.c_box_cull_mdx_out);
-
-		ri.Printf(PRINT_ALL, "(md5)%i bin %i bclip %i bout\n",
-				  tr.pc.c_box_cull_md5_in, tr.pc.c_box_cull_md5_clip, tr.pc.c_box_cull_md5_out);
+		ri.Printf(PRINT_ALL, "(gen)%i sin %i sout %i pin %i pout\n", tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out, tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
+		ri.Printf(PRINT_ALL, "(patch)%i sin %i sclip %i sout %i bin %i bclip %i bout\n", tr.pc.c_sphere_cull_patch_in, tr.pc.c_sphere_cull_patch_clip,
+			tr.pc.c_sphere_cull_patch_out, tr.pc.c_box_cull_patch_in, tr.pc.c_box_cull_patch_clip, tr.pc.c_box_cull_patch_out);
+		ri.Printf(PRINT_ALL, "(mdx)%i sin %i sclip %i sout %i bin %i bclip %i bout\n", tr.pc.c_sphere_cull_mdx_in, tr.pc.c_sphere_cull_mdx_clip, tr.pc.c_sphere_cull_mdx_out, tr.pc.c_box_cull_mdx_in, tr.pc.c_box_cull_mdx_clip, tr.pc.c_box_cull_mdx_out);
+		ri.Printf(PRINT_ALL, "(md5)%i bin %i bclip %i bout\n", tr.pc.c_box_cull_md5_in, tr.pc.c_box_cull_md5_clip, tr.pc.c_box_cull_md5_out);
 	} else if (r_speeds->integer == RSPEEDS_VIEWCLUSTER) {
 		ri.Printf(PRINT_ALL, "viewcluster: %i\n", tr.visClusters[tr.visIndex]);
 	} else if (r_speeds->integer == RSPEEDS_LIGHTS) {
 		ri.Printf(PRINT_ALL, "dlight srf:%i culled:%i\n", tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled);
-
 		ri.Printf(PRINT_ALL, "dlights:%i interactions:%i\n", tr.pc.c_dlights, tr.pc.c_dlightInteractions);
-
 		ri.Printf(PRINT_ALL, "slights:%i interactions:%i\n", tr.pc.c_slights, tr.pc.c_slightInteractions);
 	} else if (r_speeds->integer == RSPEEDS_SHADOWCUBE_CULLING) {
-		ri.Printf(PRINT_ALL, "omni pyramid tests:%i bin:%i bclip:%i bout:%i\n",
-				  tr.pc.c_pyramidTests, tr.pc.c_pyramid_cull_ent_in, tr.pc.c_pyramid_cull_ent_clip, tr.pc.c_pyramid_cull_ent_out);
+		ri.Printf(PRINT_ALL, "omni pyramid tests:%i bin:%i bclip:%i bout:%i\n", tr.pc.c_pyramidTests, tr.pc.c_pyramid_cull_ent_in, tr.pc.c_pyramid_cull_ent_clip, tr.pc.c_pyramid_cull_ent_out);
 	} else if (r_speeds->integer == RSPEEDS_FOG) {
 		ri.Printf(PRINT_ALL, "fog srf:%i batches:%i\n", backEnd.pc.c_fogSurfaces, backEnd.pc.c_fogBatches);
 	} else if (r_speeds->integer == RSPEEDS_FLARES) {
-		ri.Printf(PRINT_ALL, "flare adds:%i tests:%i renders:%i\n",
-				  backEnd.pc.c_flareAdds, backEnd.pc.c_flareTests, backEnd.pc.c_flareRenders);
+		ri.Printf(PRINT_ALL, "flare adds:%i tests:%i renders:%i\n", backEnd.pc.c_flareAdds, backEnd.pc.c_flareTests, backEnd.pc.c_flareRenders);
 	} else if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES) {
-		ri.Printf(PRINT_ALL, "occlusion queries:%i multi:%i saved:%i culled lights:%i culled entities:%i culled leafs:%i response time:%i fetch time:%i\n",
-				  backEnd.pc.c_occlusionQueries,
-				  backEnd.pc.c_occlusionQueriesMulti,
-				  backEnd.pc.c_occlusionQueriesSaved,
-				  backEnd.pc.c_occlusionQueriesLightsCulled,
-				  backEnd.pc.c_occlusionQueriesEntitiesCulled,
-				  backEnd.pc.c_occlusionQueriesLeafsCulled,
-				  backEnd.pc.c_occlusionQueriesResponseTime,
-				  backEnd.pc.c_occlusionQueriesFetchTime);
+		ri.Printf(PRINT_ALL, "occlusion queries:%i multi:%i saved:%i culled lights:%i culled entities:%i culled leafs:%i response time:%i fetch time:%i\n", backEnd.pc.c_occlusionQueries, backEnd.pc.c_occlusionQueriesMulti, backEnd.pc.c_occlusionQueriesSaved,
+			backEnd.pc.c_occlusionQueriesLightsCulled, backEnd.pc.c_occlusionQueriesEntitiesCulled, backEnd.pc.c_occlusionQueriesLeafsCulled, backEnd.pc.c_occlusionQueriesResponseTime, backEnd.pc.c_occlusionQueriesFetchTime);
 	} else if (r_speeds->integer == RSPEEDS_DEPTH_BOUNDS_TESTS) {
 		ri.Printf(PRINT_ALL, "depth bounds tests:%i rejected:%i\n", tr.pc.c_depthBoundsTests, tr.pc.c_depthBoundsTestsRejected);
 	} else if (r_speeds->integer == RSPEEDS_SHADING_TIMES) {
-		if (DS_STANDARD_ENABLED())
-			ri.Printf(PRINT_ALL, "deferred shading times: g - buffer:%i lighting:%i translucent:%i\n", backEnd.pc.c_deferredGBufferTime,
-					  backEnd.pc.c_deferredLightingTime, backEnd.pc.c_forwardTranslucentTime);
-		else
-			ri.Printf(PRINT_ALL, "forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
-					  backEnd.pc.c_forwardLightingTime);
+		if (DS_STANDARD_ENABLED()) {
+			ri.Printf(PRINT_ALL, "deferred shading times: g - buffer:%i lighting:%i translucent:%i\n", backEnd.pc.c_deferredGBufferTime, backEnd.pc.c_deferredLightingTime, backEnd.pc.c_forwardTranslucentTime);
+		} else {
+			ri.Printf(PRINT_ALL, "forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime, backEnd.pc.c_forwardLightingTime);
+		}
 	} else if (r_speeds->integer == RSPEEDS_CHC) {
-		ri.Printf(PRINT_ALL, "%i CHC++ms %i queries %i multi queries %i saved\n",
-						  tr.pc.c_CHCTime,
-						  tr.pc.c_occlusionQueries,
-						  tr.pc.c_occlusionQueriesMulti,
-						  tr.pc.c_occlusionQueriesSaved);
+		ri.Printf(PRINT_ALL, "%i CHC++ms %i queries %i multi queries %i saved\n", tr.pc.c_CHCTime, tr.pc.c_occlusionQueries, tr.pc.c_occlusionQueriesMulti, tr.pc.c_occlusionQueriesSaved);
 	} else if (r_speeds->integer == RSPEEDS_NEAR_FAR) {
 		ri.Printf(PRINT_ALL, "zNear: %.0f zFar: %.0f\n", tr.viewParms.zNear, tr.viewParms.zFar);
 	} else if (r_speeds->integer == RSPEEDS_DECALS) {
-		ri.Printf(PRINT_ALL, "decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
-				  tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces,
-				  tr.pc.c_decalSurfacesCreated);
+		ri.Printf(PRINT_ALL, "decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n", tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces, tr.pc.c_decalSurfacesCreated);
 	}
 
 	Com_Memset(&tr.pc, 0, sizeof(tr.pc));
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
-
 
 /*
 =======================================================================================================================================
@@ -158,6 +114,7 @@ R_ShutdownCommandBuffers
 =======================================================================================================================================
 */
 void R_ShutdownCommandBuffers(void) {
+
 	// kill the rendering thread
 	if (glConfig.smpActive) {
 		GLimp_WakeRenderer(NULL);
@@ -165,19 +122,18 @@ void R_ShutdownCommandBuffers(void) {
 	}
 }
 
+int c_blockedOnRender;
+int c_blockedOnMain;
 /*
 =======================================================================================================================================
 R_IssueRenderCommands
 =======================================================================================================================================
 */
-int c_blockedOnRender;
-int c_blockedOnMain;
-
 void R_IssueRenderCommands(qboolean runPerformanceCounters) {
 	renderCommandList_t *cmdList;
 
 	cmdList = &backEndData[tr.smpFrame]->commands;
-	assert(cmdList);			// bk001205
+	assert(cmdList); // bk001205
 	// add an end - of - list command
 	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 	// clear it out, in case this is a sync and not a buffer flip
@@ -201,8 +157,7 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters) {
 		// sleep until the renderer has completed
 		GLimp_FrontEndSleep();
 	}
-	// at this point, the back end thread is idle, so it is ok
-	// to look at it's performance counters
+	// at this point, the back end thread is idle, so it is ok to look at it's performance counters
 	if (runPerformanceCounters) {
 		R_PerformanceCounters();
 	}
@@ -217,18 +172,17 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters) {
 	}
 }
 
-
 /*
 =======================================================================================================================================
 R_SyncRenderThread
 
 Issue any pending commands and wait for them to complete.
-After exiting, the render thread will have completed its work
-and will remain idle and the main thread is free to issue
+After exiting, the render thread will have completed its work and will remain idle and the main thread is free to issue
 OpenGL calls until R_IssueRenderCommands is called.
 =======================================================================================================================================
 */
 void R_SyncRenderThread(void) {
+
 	if (!tr.registered) {
 		return;
 	}
@@ -246,8 +200,7 @@ void R_SyncRenderThread(void) {
 =======================================================================================================================================
 R_GetCommandBuffer
 
-make sure there is enough command space, waiting on the
-render thread if needed.
+Make sure there is enough command space, waiting on the render thread if needed.
 =======================================================================================================================================
 */
 void *R_GetCommandBuffer(int bytes) {
@@ -269,7 +222,6 @@ void *R_GetCommandBuffer(int bytes) {
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
-
 /*
 =======================================================================================================================================
 R_AddDrawViewCmd
@@ -290,12 +242,11 @@ void R_AddDrawViewCmd() {
 	cmd->viewParms = tr.viewParms;
 }
 
-
 /*
 =======================================================================================================================================
 RE_SetColor
 
-Passing NULL will set the color to white
+Passing NULL will set the color to white.
 =======================================================================================================================================
 */
 void RE_SetColor(const float *rgba) {
@@ -324,7 +275,6 @@ void RE_SetColor(const float *rgba) {
 	cmd->color[2] = rgba[2];
 	cmd->color[3] = rgba[3];
 }
-
 
 /*
 =======================================================================================================================================
@@ -385,7 +335,6 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader) {
 	r_numPolyVerts += numverts;
 }
 
-
 /*
 =======================================================================================================================================
 RE_RotatedPic
@@ -421,15 +370,12 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 	cmd->t2 = t2;
 }
 
-//--- - (SA)added
 /*
 =======================================================================================================================================
 RE_StretchPicGradient
 =======================================================================================================================================
 */
-void RE_StretchPicGradient(float x, float y, float w, float h,
-						   float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
-						   int gradientType) {
+void RE_StretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType) {
 	stretchPicCommand_t *cmd;
 
 	cmd = R_GetCommandBuffer(sizeof(*cmd));
@@ -462,16 +408,11 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 	cmd->gradientType = gradientType;
 }
 
-//--- - (SA)end
-
-
-
 /*
 =======================================================================================================================================
 RE_BeginFrame
 
-If running in stereo, RE_BeginFrame will be called twice
-for each RE_EndFrame
+If running in stereo, RE_BeginFrame will be called twice for each RE_EndFrame.
 =======================================================================================================================================
 */
 void RE_BeginFrame(stereoFrame_t stereoFrame) {
@@ -481,18 +422,15 @@ void RE_BeginFrame(stereoFrame_t stereoFrame) {
 		return;
 	}
 
-	GLimp_LogComment("--- RE_BeginFrame---\n");
-
+	GLimp_LogComment("--- RE_BeginFrame ---\n");
 #if defined(USE_D3D10)
 	// TODO
 #else
 	glState.finishCalled = qfalse;
 #endif
-
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 	tr.viewCount = 0;
-
 #if defined(USE_D3D10)
 	// draw buffer stuff
 	cmd = R_GetCommandBuffer(sizeof(*cmd));
@@ -549,7 +487,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame) {
 
 		R_SyncRenderThread();
 
-		if ((err = glGetError())!= GL_NO_ERROR) {
+		if ((err = glGetError()) != GL_NO_ERROR) {
 			switch (err) {
 				case GL_INVALID_ENUM:
 					strcpy(s, "GL_INVALID_ENUM");
@@ -617,12 +555,11 @@ void RE_BeginFrame(stereoFrame_t stereoFrame) {
 #endif
 }
 
-
 /*
 =======================================================================================================================================
 RE_EndFrame
 
-Returns the number of msec spent in the back end
+Returns the number of msec spent in the back end.
 =======================================================================================================================================
 */
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec) {
@@ -641,8 +578,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec) {
 	cmd->commandId = RC_SWAP_BUFFERS;
 
 	R_IssueRenderCommands(qtrue);
-	// use the other buffers next frame, because another CPU
-	// may still be rendering into the current ones
+	// use the other buffers next frame, because another CPU may still be rendering into the current ones
 	R_ToggleSmpFrame();
 
 	if (frontEndMsec){
@@ -663,8 +599,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec) {
 RE_TakeVideoFrame
 =======================================================================================================================================
 */
-void RE_TakeVideoFrame(int width, int height,
-		byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg) {
+void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg) {
 	videoFrameCommand_t *cmd;
 
 	if (!tr.registered){
@@ -678,7 +613,6 @@ void RE_TakeVideoFrame(int width, int height,
 	}
 
 	cmd->commandId = RC_VIDEOFRAME;
-
 	cmd->width = width;
 	cmd->height = height;
 	cmd->captureBuffer = captureBuffer;
@@ -686,7 +620,6 @@ void RE_TakeVideoFrame(int width, int height,
 	cmd->motionJpeg = motionJpeg;
 }
 
-//bani
 /*
 =======================================================================================================================================
 RE_RenderToTexture
@@ -696,7 +629,6 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h) {
 	renderToTextureCommand_t *cmd;
 
 	ri.Printf(PRINT_ALL, S_COLOR_RED "TODO RE_RenderToTexture\n");
-
 #if 0
 	if (textureid > tr.numImages || textureid < 0) {
 		ri.Printf(PRINT_ALL, "Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);

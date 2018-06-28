@@ -58,11 +58,11 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 
 	/*project triangle onto plane of projection*/
 	d = DotProduct(a->xyz, projection) - projection[3];
-	VectorMA(a->xyz, - d, projection, pa);
+	VectorMA(a->xyz, -d, projection, pa);
 	d = DotProduct(b->xyz, projection) - projection[3];
-	VectorMA(b->xyz, - d, projection, pb);
+	VectorMA(b->xyz, -d, projection, pb);
 	d = DotProduct(c->xyz, projection) - projection[3];
-	VectorMA(c->xyz, - d, projection, pc);
+	VectorMA(c->xyz, -d, projection, pc);
 
 	/*calculate barycentric basis for the triangle*/
 	bb = (b->st[0] - a->st[0]) * (c->st[1] - a->st[1]) - (c->st[0] - a->st[0]) * (b->st[1] - a->st[1]);
@@ -109,7 +109,7 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 	VectorSubtract(xyz, origin, vecs[1]);
 
 	/*calcuate r vector*/
-	VectorScale(projection, - 1.0f, vecs[2]);
+	VectorScale(projection, -1.0f, vecs[2]);
 
 	/*calculate transform axis*/
 	for (i = 0; i < 3; i++)
@@ -182,7 +182,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	temp.fadeStartTime = tr.refdef.time + lifeTime - fadeTime;
 	temp.fadeEndTime = temp.fadeStartTime + fadeTime;
 
-	/*set up decal texcoords(fixme: support arbitrary projector st coordinates in trapcall)*/
+	/*set up decal texcoords(fixme: support arbitrary projector st coordinates in trapcall) */
 	dv[0].st[0] = 0.0f;
 	dv[0].st[1] = 0.0f;
 	dv[1].st[0] = 0.0f;
@@ -199,26 +199,26 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		temp.numPlanes = 6;
 		temp.omnidirectional = qtrue;
 		radius = projection[3];
-		Vector4Set(omniProjection, 0.0f, 0.0f, - 1.0f, radius * 2.0f);
+		Vector4Set(omniProjection, 0.0f, 0.0f, -1.0f, radius * 2.0f);
 		projection = omniProjection;
 		iDist = 1.0f / (radius * 2.0f);
 
 		/*set corner*/
 		VectorSet(xyz, points[0][0] - radius, points[0][1] - radius, points[0][2] + radius);
 
-		/*make x axis texture matrix(yz)*/
+		/*make x axis texture matrix(yz) */
 		VectorSet(temp.texMat[0][0], 0.0f, iDist, 0.0f);
 		temp.texMat[0][0][3] = -DotProduct(temp.texMat[0][0], xyz);
 		VectorSet(temp.texMat[0][1], 0.0f, 0.0f, iDist);
 		temp.texMat[0][1][3] = -DotProduct(temp.texMat[0][1], xyz);
 
-		/*make y axis texture matrix(xz)*/
+		/*make y axis texture matrix(xz) */
 		VectorSet(temp.texMat[1][0], iDist, 0.0f, 0.0f);
 		temp.texMat[1][0][3] = -DotProduct(temp.texMat[1][0], xyz);
 		VectorSet(temp.texMat[1][1], 0.0f, 0.0f, iDist);
 		temp.texMat[1][1][3] = -DotProduct(temp.texMat[1][1], xyz);
 
-		/*make z axis texture matrix(xy)*/
+		/*make z axis texture matrix(xy) */
 		VectorSet(temp.texMat[2][0], iDist, 0.0f, 0.0f);
 		temp.texMat[2][0][3] = -DotProduct(temp.texMat[2][0], xyz);
 		VectorSet(temp.texMat[2][1], 0.0f, iDist, 0.0f);
@@ -261,7 +261,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	temp.radius = VectorLength(xyz);
 	temp.radius2 = temp.radius * temp.radius;
 
-	/*frustum cull the projector(fixme: this uses a stale frustum!)*/
+	/*frustum cull the projector(fixme: this uses a stale frustum!) */
 	if (R_CullPointAndRadius(temp.center, temp.radius) == CULL_OUT) {
 		return;
 	}
@@ -341,7 +341,7 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 	out->omnidirectional = in->omnidirectional;
 	out->numPlanes = in->numPlanes;
 
-	/*translate bounding box and sphere(note: rotated projector bounding box will be invalid!)*/
+	/*translate bounding box and sphere(note: rotated projector bounding box will be invalid!) */
 	VectorSubtract(in->mins, origin, out->mins);
 	VectorSubtract(in->maxs, origin, out->maxs);
 	VectorSubtract(in->center, origin, center);
@@ -411,7 +411,6 @@ qboolean R_TestDecalBoundingSphere(decalProjector_t *dp, vec3_t center, float ra
 
 	return qtrue;
 }
-
 
 /*
 ChopWindingBehindPlane()
@@ -483,7 +482,7 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 
 		if (sides[i] == SIDE_ON || sides[i] == SIDE_BACK) {
 			VectorCopy(p1, clip);
-			(*numOutPoints)++;
+			(*numOutPoints) ++;
 		}
 
 		if (sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i]) {
@@ -507,7 +506,7 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 		for (j = 0; j < 3; j++)
 			clip[j] = p1[j] + dot * (p2[j] - p1[j]);
 
-		(*numOutPoints)++;
+		(*numOutPoints) ++;
 	}
 }
 
@@ -592,7 +591,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		}
 	}
 
-	/*find first free decal(fixme: optimize this)*/
+	/*find first free decal(fixme: optimize this) */
 	count = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 	oldest = &bmodel->decals[0];
 	decal = bmodel->decals;
@@ -617,7 +616,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	/*r_speeds useful info*/
 	tr.pc.c_decalSurfacesCreated++;
 
-	/*set it up(fixme: get the shader before this happens)*/
+	/*set it up(fixme: get the shader before this happens) */
 	decal->parent = surf;
 	decal->shader = dp->shader;
 	decal->fadeStartTime = dp->fadeStartTime;
@@ -865,7 +864,7 @@ void R_AddDecalSurface(decal_t *decal) {
 
 	/*add surface to scene*/
 	//R_AddDrawSurf((void *)srf, decal->shader, decal->fogIndex, 0, dlightMap);
-	R_AddDrawSurf((void *)srf, decal->shader, - 1, decal->fogIndex);
+	R_AddDrawSurf((void *)srf, decal->shader, -1, decal->fogIndex);
 	tr.pc.c_decalSurfaces++;
 
 	/*free temporary decal*/

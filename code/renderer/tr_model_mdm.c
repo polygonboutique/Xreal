@@ -339,7 +339,6 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	*/
 }
 
-
 /*
 =======================================================================================================================================
 R_LoadMDM

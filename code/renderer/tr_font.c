@@ -127,7 +127,7 @@ FT_Bitmap      * R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut) {
 
 		Com_Memset(bit2->buffer, 0, size);
 
-		FT_Outline_Translate(&glyph->outline, - left, - bottom);
+		FT_Outline_Translate(&glyph->outline, -left, -bottom);
 
 		FT_Outline_Get_Bitmap(ftLibrary, &glyph->outline, bit2);
 
@@ -349,7 +349,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) {
 		}
 	}
 
-#if defined(COMPAT_ET)// DON'T DO THIS WITH VANILLA XREAL
+#if defined(COMPAT_ET) // DON'T DO THIS WITH VANILLA XREAL
 	len = ri.FS_ReadFile(fileName, NULL);
 
 	if (len == sizeof(fontInfo_t)) {

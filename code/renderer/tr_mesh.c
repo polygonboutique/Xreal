@@ -145,7 +145,7 @@ int R_ComputeLOD(trRefEntity_t *ent) {
 
 		radius = RadiusFromBounds(frame->bounds[0], frame->bounds[1]);
 
-		if ((projectedRadius = R_ProjectRadius(radius, ent->e.origin))!= 0) {
+		if ((projectedRadius = R_ProjectRadius(radius, ent->e.origin)) != 0) {
 			lodscale = r_lodScale->value;
 
 			if (lodscale > 20)
@@ -280,7 +280,7 @@ void R_AddMDVSurfaces(trRefEntity_t *ent) {
 			shader = GetMDVSurfaceShader(ent, mdvSurface);
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel) {
-				R_AddDrawSurf((void *)vboSurface, shader, - 1, fogNum);
+				R_AddDrawSurf((void *)vboSurface, shader, -1, fogNum);
 			}
 		}
 	} else {
@@ -290,7 +290,7 @@ void R_AddMDVSurfaces(trRefEntity_t *ent) {
 
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel) {
-				R_AddDrawSurf((void *)mdvSurface, shader, - 1, fogNum);
+				R_AddDrawSurf((void *)mdvSurface, shader, -1, fogNum);
 			}
 		}
 	}
