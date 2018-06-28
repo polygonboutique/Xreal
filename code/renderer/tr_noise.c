@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
 =======================================================================================================================================
 */
 // tr_noise.c
+
 #include "tr_local.h"
 
 #define NOISE_SIZE 256
 #define NOISE_MASK(NOISE_SIZE - 1)
-
 #define VAL(a)s_noise_perm[(a)&(NOISE_MASK)]
 #define INDEX(x, y, z, t)VAL(x + VAL(y + VAL(z + VAL(t))))
 
@@ -34,12 +34,22 @@ static int s_noise_perm[NOISE_SIZE];
 
 #define LERP(a, b, w)(a * (1.0f - w) + b * w)
 
+/*
+=======================================================================================================================================
+GetNoiseValue
+=======================================================================================================================================
+*/
 static float GetNoiseValue(int x, int y, int z, int t) {
 	int index = INDEX((int)x, (int)y, (int)z, (int)t);
 
 	return s_noise_table[index];
 }
 
+/*
+=======================================================================================================================================
+R_NoiseInit
+=======================================================================================================================================
+*/
 void R_NoiseInit(void) {
 	int i;
 
@@ -51,6 +61,11 @@ void R_NoiseInit(void) {
 	}
 }
 
+/*
+=======================================================================================================================================
+R_NoiseGet4f
+=======================================================================================================================================
+*/
 float R_NoiseGet4f(float x, float y, float z, float t) {
 	int i;
 	int ix, iy, iz, it;
@@ -81,7 +96,6 @@ float R_NoiseGet4f(float x, float y, float z, float t) {
 
 		fvalue = LERP(LERP(front[0], front[1], fx), LERP(front[2], front[3], fx), fy);
 		bvalue = LERP(LERP(back[0], back[1], fx), LERP(back[2], back[3], fx), fy);
-
 		value[i] = LERP(fvalue, bvalue, fz);
 	}
 

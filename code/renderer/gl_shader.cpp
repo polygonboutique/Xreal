@@ -24,39 +24,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "gl_shader.h"
 
 #if defined(USE_GLSL_OPTIMIZER)
-#include "../.. / libs / glsl - optimizer / src / glsl / glsl_optimizer.h"
+#include "../../libs/glsl-optimizer/src/glsl/glsl_optimizer.h"
 
-struct glslopt_ctx * s_glslOptimizer;
+struct glslopt_ctx *s_glslOptimizer;
 
 #endif
-//*INDENT - OFF * 
+//*INDENT-OFF*
 
-GLShader_generic * gl_genericShader = NULL;
-GLShader_lightMapping * gl_lightMappingShader = NULL;
-GLShader_vertexLighting_DBS_entity * gl_vertexLightingShader_DBS_entity = NULL;
-GLShader_vertexLighting_DBS_world * gl_vertexLightingShader_DBS_world = NULL;
-GLShader_forwardLighting_omniXYZ * gl_forwardLightingShader_omniXYZ = NULL;
-GLShader_forwardLighting_projXYZ * gl_forwardLightingShader_projXYZ = NULL;
-GLShader_forwardLighting_directionalSun * gl_forwardLightingShader_directionalSun = NULL;
-GLShader_deferredLighting_omniXYZ * gl_deferredLightingShader_omniXYZ = NULL;
-GLShader_deferredLighting_projXYZ * gl_deferredLightingShader_projXYZ = NULL;
-GLShader_deferredLighting_directionalSun * gl_deferredLightingShader_directionalSun = NULL;
-GLShader_geometricFill * gl_geometricFillShader = NULL;
-GLShader_shadowFill * gl_shadowFillShader = NULL;
-GLShader_reflection * gl_reflectionShader = NULL;
-GLShader_skybox * gl_skyboxShader = NULL;
-GLShader_fogQuake3 * gl_fogQuake3Shader = NULL;
-GLShader_fogGlobal * gl_fogGlobalShader = NULL;
-GLShader_heatHaze * gl_heatHazeShader = NULL;
-GLShader_screen * gl_screenShader = NULL;
-GLShader_portal * gl_portalShader = NULL;
-GLShader_toneMapping * gl_toneMappingShader = NULL;
-GLShader_contrast * gl_contrastShader = NULL;
-GLShader_cameraEffects * gl_cameraEffectsShader = NULL;
-GLShader_blurX * gl_blurXShader = NULL;
-GLShader_blurY * gl_blurYShader = NULL;
-GLShader_debugShadowMap * gl_debugShadowMapShader = NULL;
+GLShader_generic *gl_genericShader = NULL;
+GLShader_lightMapping *gl_lightMappingShader = NULL;
+GLShader_vertexLighting_DBS_entity *gl_vertexLightingShader_DBS_entity = NULL;
+GLShader_vertexLighting_DBS_world *gl_vertexLightingShader_DBS_world = NULL;
+GLShader_forwardLighting_omniXYZ *gl_forwardLightingShader_omniXYZ = NULL;
+GLShader_forwardLighting_projXYZ *gl_forwardLightingShader_projXYZ = NULL;
+GLShader_forwardLighting_directionalSun *gl_forwardLightingShader_directionalSun = NULL;
+GLShader_deferredLighting_omniXYZ *gl_deferredLightingShader_omniXYZ = NULL;
+GLShader_deferredLighting_projXYZ *gl_deferredLightingShader_projXYZ = NULL;
+GLShader_deferredLighting_directionalSun *gl_deferredLightingShader_directionalSun = NULL;
+GLShader_geometricFill *gl_geometricFillShader = NULL;
+GLShader_shadowFill *gl_shadowFillShader = NULL;
+GLShader_reflection *gl_reflectionShader = NULL;
+GLShader_skybox *gl_skyboxShader = NULL;
+GLShader_fogQuake3 *gl_fogQuake3Shader = NULL;
+GLShader_fogGlobal *gl_fogGlobalShader = NULL;
+GLShader_heatHaze *gl_heatHazeShader = NULL;
+GLShader_screen *gl_screenShader = NULL;
+GLShader_portal *gl_portalShader = NULL;
+GLShader_toneMapping *gl_toneMappingShader = NULL;
+GLShader_contrast *gl_contrastShader = NULL;
+GLShader_cameraEffects *gl_cameraEffectsShader = NULL;
+GLShader_blurX *gl_blurXShader = NULL;
+GLShader_blurY *gl_blurYShader = NULL;
+GLShader_debugShadowMap *gl_debugShadowMapShader = NULL;
 
+/*
+=======================================================================================================================================
+HasConflictingMacros
+=======================================================================================================================================
+*/
 bool GLCompileMacro_USE_VERTEX_SKINNING::HasConflictingMacros(int permutation, const std::vector<GLCompileMacro * >& macros)const {
 	for (size_t i = 0; i < macros.size(); i++) {
 		GLCompileMacro * macro = macros[i];
@@ -71,10 +76,20 @@ bool GLCompileMacro_USE_VERTEX_SKINNING::HasConflictingMacros(int permutation, c
 	return false;
 }
 
+/*
+=======================================================================================================================================
+MissesRequiredMacros
+=======================================================================================================================================
+*/
 bool GLCompileMacro_USE_VERTEX_SKINNING::MissesRequiredMacros(int permutation, const std::vector<GLCompileMacro * >& macros)const {
 	return !glConfig2.vboVertexSkinningAvailable;
 }
 
+/*
+=======================================================================================================================================
+HasConflictingMacros
+=======================================================================================================================================
+*/
 bool GLCompileMacro_USE_VERTEX_ANIMATION::HasConflictingMacros(int permutation, const std::vector<GLCompileMacro * >& macros)const {
 #if 1
 
@@ -91,6 +106,11 @@ bool GLCompileMacro_USE_VERTEX_ANIMATION::HasConflictingMacros(int permutation, 
 	return false;
 }
 
+/*
+=======================================================================================================================================
+GetRequiredVertexAttributes
+=======================================================================================================================================
+*/
 uint32_t GLCompileMacro_USE_VERTEX_ANIMATION::GetRequiredVertexAttributes()const {
 	uint32_t attribs = ATTR_NORMAL|ATTR_POSITION2|ATTR_NORMAL2;
 
@@ -101,10 +121,20 @@ uint32_t GLCompileMacro_USE_VERTEX_ANIMATION::GetRequiredVertexAttributes()const
 	return attribs;
 }
 
+/*
+=======================================================================================================================================
+HasConflictingMacros
+=======================================================================================================================================
+*/
 bool GLCompileMacro_USE_DEFORM_VERTEXES::HasConflictingMacros(int permutation, const std::vector<GLCompileMacro * >& macros)const {
 	return (glConfig.driverType != GLDRV_OPENGL3 || !r_vboDeformVertexes->integer);
 }
 
+/*
+=======================================================================================================================================
+MissesRequiredMacros
+=======================================================================================================================================
+*/
 bool GLCompileMacro_USE_PARALLAX_MAPPING::MissesRequiredMacros(int permutation, const std::vector<GLCompileMacro * >& macros)const {
 	bool foundUSE_NORMAL_MAPPING = false;
 
@@ -124,6 +154,11 @@ bool GLCompileMacro_USE_PARALLAX_MAPPING::MissesRequiredMacros(int permutation, 
 	return false;
 }
 
+/*
+=======================================================================================================================================
+MissesRequiredMacros
+=======================================================================================================================================
+*/
 bool GLCompileMacro_USE_REFLECTIVE_SPECULAR::MissesRequiredMacros(int permutation, const std::vector<GLCompileMacro * >& macros)const {
 	bool foundUSE_NORMAL_MAPPING = false;
 
@@ -143,6 +178,11 @@ bool GLCompileMacro_USE_REFLECTIVE_SPECULAR::MissesRequiredMacros(int permutatio
 	return false;
 }
 
+/*
+=======================================================================================================================================
+GetCompileMacrosString
+=======================================================================================================================================
+*/
 bool GLShader::GetCompileMacrosString(int permutation, std::string& compileMacrosOut)const {
 	compileMacrosOut = "";
 
@@ -167,6 +207,11 @@ bool GLShader::GetCompileMacrosString(int permutation, std::string& compileMacro
 	return true;
 }
 
+/*
+=======================================================================================================================================
+UpdateShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader::UpdateShaderProgramUniformLocations(shaderProgram_t *shaderProgram)const {
 	size_t numUniforms = _uniforms.size();
 
@@ -177,20 +222,21 @@ void GLShader::UpdateShaderProgramUniformLocations(shaderProgram_t *shaderProgra
 	}
 }
 
-std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
-											const char *libShaderNames,
-											GLenum shaderType)const {
+/*
+=======================================================================================================================================
+BuildGPUShaderText
+=======================================================================================================================================
+*/
+std::string GLShader::BuildGPUShaderText(const char *mainShaderName, const char *libShaderNames, GLenum shaderType)const {
 	char filename[MAX_QPATH];
 	GLchar *mainBuffer = NULL;
 	int mainSize;
 	char *token;
-
 	int libsSize;
-	char *libsBuffer;		// all libs concatenated
-
+	char *libsBuffer; // all libs concatenated
 	char **libs = (char **)&libShaderNames;
 
-	std::string		shaderText;
+	std::string shaderText;
 
 	GL_CheckErrors();
 	// load libs
@@ -199,7 +245,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 	while (1) {
 		int libSize;
-		char *libBuffer;		// single extra lib file
+		char *libBuffer; // single extra lib file
 
 		token = Com_ParseExt(libs, qfalse);
 
@@ -208,10 +254,10 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		}
 
 		if (shaderType == GL_VERTEX_SHADER) {
-			Com_sprintf(filename, sizeof(filename), "glsl / %s_vp.glsl", token);
+			Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", token);
 			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
 		} else {
-			Com_sprintf(filename, sizeof(filename), "glsl / %s_fp.glsl", token);
+			Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", token);
 			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
 		}
 	
@@ -224,6 +270,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		libsBuffer = (char *)realloc(libsBuffer, libsSize + libSize);
 
 		memset(libsBuffer + libsSize, 0, libSize);
+
 		libsSize += libSize;
 
 		Q_strcat(libsBuffer, libsSize, libBuffer);
@@ -233,10 +280,10 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 	}
 	// load main()program
 	if (shaderType == GL_VERTEX_SHADER) {
-		Com_sprintf(filename, sizeof(filename), "glsl / %s_vp.glsl", mainShaderName);
+		Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", mainShaderName);
 		ri.Printf(PRINT_ALL, "...loading vertex main()shader '%s'\n", filename);
 	} else {
-		Com_sprintf(filename, sizeof(filename), "glsl / %s_fp.glsl", mainShaderName);
+		Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", mainShaderName);
 		ri.Printf(PRINT_ALL, "...loading fragment main()shader '%s'\n", filename);
 	}
 
@@ -249,41 +296,27 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 	{
 		static char bufferExtra[32000];
 		int sizeExtra;
-
 		char *bufferFinal = NULL;
 		int sizeFinal;
-
 		float fbufWidthScale, fbufHeightScale;
 		float npotWidthScale, npotHeightScale;
 
 		Com_Memset(bufferExtra, 0, sizeof(bufferExtra));
-
 #if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_Q3A\n#define COMPAT_Q3A 1\n#endif\n");
 #endif
-
 #if defined(COMPAT_ET)
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_ET\n#define COMPAT_ET 1\n#endif\n");
 #endif
-
 		// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-				 va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-				 va("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value));
-
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-				 va("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value));
+		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
+		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value));
+		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value));
 		//Q_strcat(bufferExtra, sizeof(bufferExtra),
-		//       va("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value));
-
+		//va("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value));
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
-
 		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS));
-
 		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS));
-
 		Q_strcat(bufferExtra, sizeof(bufferExtra),
 						 va("#ifndef deform_t\n"
 							"#define deform_t\n"
@@ -368,8 +401,8 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 		fbufWidthScale = Q_recip((float)glConfig.vidWidth);
 		fbufHeightScale = Q_recip((float)glConfig.vidHeight);
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-				 va("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale));
+
+		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_FBufScale\n#define r_FBufScale vec2(%f, %f)\n#endif\n", fbufWidthScale, fbufHeightScale));
 
 		if (glConfig2.textureNPOTAvailable) {
 			npotWidthScale = 1;
@@ -379,8 +412,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			npotHeightScale = (float)glConfig.vidHeight / (float)NearestPowerOfTwo(glConfig.vidHeight);
 		}
 
-		Q_strcat(bufferExtra, sizeof(bufferExtra),
-				 va("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale));
+		Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale));
 
 		if (glConfig.driverType == GLDRV_MESA) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
@@ -388,13 +420,9 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 		if (glConfig.hardwareType == GLHW_ATI) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI\n#define GLHW_ATI 1\n#endif\n");
-		}
-
-		else if (glConfig.hardwareType == GLHW_ATI_DX10) {
+		} else if (glConfig.hardwareType == GLHW_ATI_DX10) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_ATI_DX10\n#define GLHW_ATI_DX10 1\n#endif\n");
-		}
-
-		else if (glConfig.hardwareType == GLHW_NV_DX10) {
+		} else if (glConfig.hardwareType == GLHW_NV_DX10) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
 		}
 
@@ -406,8 +434,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 				// The exponents for the EVSM techniques should be less than ln(FLT_MAX / FILTER_SIZE) / 2 {ln(FLT_MAX / 1) / 2 ~44.3}
 				//         42.9 is the maximum possible value for FILTER_SIZE = 15
 				//         42.0 is the truncated value that we pass into the sample
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-					 va("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0f, 42.0f));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0f, 42.0f));
 
 				if (r_evsmPostProcess->integer) {
 					Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_EVSMPostProcess\n#define r_EVSMPostProcess 1\n#endif\n");
@@ -427,28 +454,20 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			}
 
 			if (r_lightBleedReduction->value) {
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-						 va("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n",
-							r_lightBleedReduction->value));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n", r_lightBleedReduction->value));
 			}
 
 			if (r_overDarkeningFactor->value) {
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-						 va("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n",
-							r_overDarkeningFactor->value));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n", r_overDarkeningFactor->value));
 			}
 
 			if (r_shadowMapDepthScale->value) {
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-						 va("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n",
-							r_shadowMapDepthScale->value));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n", r_shadowMapDepthScale->value));
 			}
 
 			if (r_debugShadowMaps->integer) {
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-						 va("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer));
 			}
-
 			/*
 			if (r_softShadows->integer == 1) {
 				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCF_2X2\n#define PCF_2X2 1\n#endif\n");
@@ -465,13 +484,11 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			if (r_softShadows->integer == 6) {
 				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef PCSS\n#define PCSS 1\n#endif\n");
 			} else if (r_softShadows->integer) {
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-					va("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f));
 			}
 
 			if (r_parallelShadowSplits->integer) {
-				Q_strcat(bufferExtra, sizeof(bufferExtra),
-						 va("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer));
+				Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer));
 			}
 
 			if (r_showParallelShadowSplits->integer) {
@@ -479,8 +496,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			}
 		}
 
-		if (r_deferredShading->integer && glConfig2.maxColorAttachments >= 4 && glConfig2.textureFloatAvailable &&
-		   glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4) {
+		if (r_deferredShading->integer && glConfig2.maxColorAttachments >= 4 && glConfig2.textureFloatAvailable && glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4) {
 			if (r_deferredShading->integer == DS_STANDARD) {
 				Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_DeferredShading\n#define r_DeferredShading 1\n#endif\n");
 			}
@@ -488,27 +504,14 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 		if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_HDRRendering\n#define r_HDRRendering 1\n#endif\n");
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-					 va("#ifndef r_HDRContrastThreshold\n#define r_HDRContrastThreshold %f\n#endif\n",
-						r_hdrContrastThreshold->value));
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-					 va("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n",
-						r_hdrContrastOffset->value));
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-					 va("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n",
-						r_hdrToneMappingOperator->integer));
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-					 va("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n",
-						r_hdrGamma->value));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_HDRContrastThreshold\n#define r_HDRContrastThreshold %f\n#endif\n", r_hdrContrastThreshold->value));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n", r_hdrContrastOffset->value));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n", r_hdrToneMappingOperator->integer));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n", r_hdrGamma->value));
 		}
 
 		if (r_precomputedLighting->integer) {
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-					 "#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
 		}
 
 		if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && /*glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10 &&*/ glConfig.driverType != GLDRV_MESA) {
@@ -522,7 +525,6 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		if (r_showDeluxeMaps->integer) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_showDeluxeMaps\n#define r_showDeluxeMaps 1\n#endif\n");
 		}
-
 #ifdef EXPERIMENTAL
 		if (r_screenSpaceAmbientOcclusion->integer) {
 			int i;
@@ -532,8 +534,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 			if (!jitterInit) {
 				for (i = 0; i < 32; i++) {
 					float *jit = &jitter[i][0];
-
-					float rad = crandom() * 1024.0f;	// FIXME radius;
+					float rad = crandom() * 1024.0f; // FIXME radius;
 					float a = crandom() * M_PI * 2;
 					float b = crandom() * M_PI * 2;
 
@@ -544,29 +545,21 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 				jitterInit = qtrue;
 			}
-
 			// TODO
 		}
 #endif
-
 		if (glConfig2.vboVertexSkinningAvailable) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_VertexSkinning\n#define r_VertexSkinning 1\n#endif\n");
-
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-								 va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", glConfig2.maxVertexSkinningBones));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", glConfig2.maxVertexSkinningBones));
 		} else {
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-								 va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", 4));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef MAX_GLSL_BONES\n#define MAX_GLSL_BONES %i\n#endif\n", 4));
 		}
-
 		/*
-		   if (glConfig.drawBuffersAvailable && glConfig.maxDrawBuffers >= 4)
-		   {
-		   //Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GL_ARB_draw_buffers\n#define GL_ARB_draw_buffers 1\n#endif\n");
-		   Q_strcat(bufferExtra, sizeof(bufferExtra), "#extension GL_ARB_draw_buffers : enable\n");
-		  }
+		if (glConfig.drawBuffersAvailable && glConfig.maxDrawBuffers >= 4) {
+			//Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef GL_ARB_draw_buffers\n#define GL_ARB_draw_buffers 1\n#endif\n");
+			Q_strcat(bufferExtra, sizeof(bufferExtra), "#extension GL_ARB_draw_buffers : enable\n");
+		}
 		*/
-
 		if (r_normalMapping->integer) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_NormalMapping\n#define r_NormalMapping 1\n#endif\n");
 		}
@@ -576,9 +569,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		}
 
 		if (r_wrapAroundLighting->value) {
-			Q_strcat(bufferExtra, sizeof(bufferExtra),
-							 va("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n",
-									 r_wrapAroundLighting->value));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n", r_wrapAroundLighting->value));
 		}
 
 		if (r_halfLambertLighting->integer) {
@@ -588,8 +579,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		if (r_rimLighting->integer) {
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimLighting\n#define r_RimLighting 1\n#endif\n");
 			Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef r_RimColor\n#define r_RimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
-			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n",
-														r_rimExponent->value));
+			Q_strcat(bufferExtra, sizeof(bufferExtra), va("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n", r_rimExponent->value));
 		}
 		// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line
 		// so we have to reset the line counting
@@ -609,32 +599,27 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		}
 
 		Q_strcat(bufferFinal, sizeFinal, mainBuffer);
-
 #if 0
 		{
 			static char msgPart[1024];
-
 			int i;
-			ri.Printf(PRINT_WARNING, "-------------------------------------------------- -------\n");
-			ri.Printf(PRINT_WARNING, "CONCATENATED shader '%s'-- -------\n", filename);
-			ri.Printf(PRINT_WARNING, " BEGIN------------------------------------------- -------\n");
+
+			ri.Printf(PRINT_WARNING, "---------------------------------------------------------\n");
+			ri.Printf(PRINT_WARNING, "CONCATENATED shader '%s' ---------\n", filename);
+			ri.Printf(PRINT_WARNING, " BEGIN --------------------------------------------------\n");
 
 			for (i = 0; i < sizeFinal; i += 1024) {
 				Q_strncpyz(msgPart, bufferFinal + i, sizeof(msgPart));
 				ri.Printf(PRINT_ALL, "%s", msgPart);
 			}
 
-			ri.Printf(PRINT_WARNING, " END--------------------------------------------- -------\n");
+			ri.Printf(PRINT_WARNING, " END ----------------------------------------------------\n");
 		}
 #endif
-
 #if 0
-
 		if (optimize) {
 			static char msgPart[1024];
-
 			int length = 0;
-
 			int i;
 			
 			glslopt_shader_type glsloptShaderType;
@@ -645,15 +630,14 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 				glsloptShaderType = kGlslOptShaderVertex;
 			}
 
-			glslopt_shader * shaderOptimized = glslopt_optimize(s_glslOptimizer,
-				glsloptShaderType, bufferFinal, 0);
+			glslopt_shader * shaderOptimized = glslopt_optimize(s_glslOptimizer, glsloptShaderType, bufferFinal, 0);
 
 			if (glslopt_get_status(shaderOptimized)) {
 				const char *newSource = glslopt_get_output(shaderOptimized);
 
-				ri.Printf(PRINT_DEVELOPER, "-------------------------------------------------- -------\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED shader '%s'-- -------\n", filename);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, "---------------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED shader '%s' ---------\n", filename);
+				ri.Printf(PRINT_DEVELOPER, " BEGIN --------------------------------------------------\n");
 
 				length = strlen(newSource);
 
@@ -662,7 +646,7 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 					ri.Printf(PRINT_WARNING, "%s\n", msgPart);
 				}
 
-				ri.Printf(PRINT_DEVELOPER, " END--------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, " END ----------------------------------------------------\n");
 				shaderText = std::string(newSource, length);
 			} else {
 				const char *errorLog = glslopt_get_log(shaderOptimized);
@@ -684,11 +668,9 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 		} else {
 			shaderText = std::string(bufferFinal, sizeFinal);
 		}
-
 #else
 		shaderText = std::string(bufferFinal, sizeFinal);
 #endif
-
 		ri.Hunk_FreeTempMemory(bufferFinal);
 	}
 
@@ -698,10 +680,16 @@ std::string	GLShader::BuildGPUShaderText(const char *mainShaderName,
 	return shaderText;
 }
 
+/*
+=======================================================================================================================================
+SaveShaderProgram
+=======================================================================================================================================
+*/
 void GLShader::SaveShaderProgram(GLuint program, const char *pname, int i)const {
 #ifdef GLEW_ARB_get_program_binary
 	GLint binaryLength;
 	GLvoid *binary;
+
 	// Don't even try if the necessary functions aren't available
 	if (!GLEW_ARB_get_program_binary) {
 		return;
@@ -710,25 +698,31 @@ void GLShader::SaveShaderProgram(GLuint program, const char *pname, int i)const 
 	glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
 	// Allocate enough for the binary and the binaryFormat
 	binary = (GLvoid *)ri.Hunk_AllocateTempMemory(binaryLength + sizeof(GLenum));
+
 	glGetProgramBinary(program, binaryLength, NULL, (GLenum *)binary, (char *)binary + sizeof(GLenum));
 
-	ri.FS_WriteFile(va("glsl / %s_%d.bin", pname, i), binary, binaryLength + sizeof(GLenum));
-
+	ri.FS_WriteFile(va("glsl/%s_%d.bin", pname, i), binary, binaryLength + sizeof(GLenum));
 	ri.Hunk_FreeTempMemory(binary);
 #endif
 }
 
+/*
+=======================================================================================================================================
+LoadShaderProgram
+=======================================================================================================================================
+*/
 bool GLShader::LoadShaderProgram(GLuint program, const char *pname, int i)const {
 #ifdef GLEW_ARB_get_program_binary
 	GLint binaryLength, success;
 	GLvoid *binary;
 	GLenum binaryFormat;
+
 	// Don't even try if the necessary functions aren't available
 	if (!GLEW_ARB_get_program_binary) {
 		return false;
 	}
 
-	binaryLength = ri.FS_ReadFile(va("glsl / %s_%d.bin", pname, i), (void **)&binary);
+	binaryLength = ri.FS_ReadFile(va("glsl/%s_%d.bin", pname, i), (void **)&binary);
 	// File empty or not found
 	if (binaryLength <= 0) {
 		return false;
@@ -737,7 +731,6 @@ bool GLShader::LoadShaderProgram(GLuint program, const char *pname, int i)const 
 	binaryFormat = *(GLenum *)binary;
 
 	glProgramBinary(program, binaryFormat, (char *)binary + sizeof(GLenum), binaryLength - sizeof(GLenum));
-
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	// Did it work?
 	if (!success) {
@@ -746,26 +739,23 @@ bool GLShader::LoadShaderProgram(GLuint program, const char *pname, int i)const 
 
 	return true;
 #else
-        return false;
+	return false;
 #endif
 }
 
-void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
-												const char *programName,
-												const std::string& vertexShaderText,
-												const std::string& fragmentShaderText,
-												const std::string& compileMacros,
-												int iteration)const {
+/*
+=======================================================================================================================================
+CompileAndLinkGPUShaderProgram
+=======================================================================================================================================
+*/
+void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program, const char *programName, const std::string& vertexShaderText, const std::string& fragmentShaderText, const std::string& compileMacros, int iteration)const {
 #ifdef USE_GLSL_OPTIMIZER
-	bool        optimize = r_glslOptimizer->integer ? true : false;
+	bool optimize = r_glslOptimizer->integer ? true : false;
 #endif
-
 	//ri.Printf(PRINT_DEVELOPER, "------ - GPU shader -------\n");
 
 	Q_strncpyz(program->name, programName, sizeof(program->name));
-
 #if 0
-
 	if (!compileMacros.empty()) {
 		program->compileMacros = (char *)ri.Hunk_Alloc(sizeof(char) * compileMacros.length() + 1, h_low);
 		Q_strncpyz(program->compileMacros, compileMacros.c_str(), compileMacros.length() + 1);
@@ -785,18 +775,13 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 
 		if (glConfig.driverType == GLDRV_OPENGL3) {
 			// HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.30 ones
-
 			vertexHeader += "#version 130\n";
 			fragmentHeader += "#version 130\n";
-
 			vertexHeader += "#define attribute in\n";
 			vertexHeader += "#define varying out\n";
-
 			fragmentHeader += "#define varying in\n";
-
 			fragmentHeader += "out vec4 out_Color;\n";
 			fragmentHeader += "#define gl_FragColor out_Color\n";
-
 			vertexHeader += "#define textureCube texture\n";
 			fragmentHeader += "#define textureCube texture\n";
 		} else {
@@ -827,11 +812,8 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 #ifdef USE_GLSL_OPTIMIZER
 		if (optimize) {
 			static char msgPart[1024];
-
 			int length = 0;
-
 			int i;
-
 			const std::string version = (glConfig.driverType == GLDRV_OPENGL3) ? "#version 130\n" : "#version 120\n";
 
 			glslopt_shader * shaderOptimized = glslopt_optimize(s_glslOptimizer, kGlslOptShaderVertex, vertexShaderTextWithMacros.c_str(), 0);
@@ -839,9 +821,9 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 			if (glslopt_get_status(shaderOptimized)) {
 				vertexShaderTextWithMacros = version + glslopt_get_output(shaderOptimized);
 
-				ri.Printf(PRINT_DEVELOPER, "-------------------------------------------------- -------\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED VERTEX shader '%s'-- -------\n", programName);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, "---------------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED VERTEX shader '%s' ---------\n", programName);
+				ri.Printf(PRINT_DEVELOPER, " BEGIN --------------------------------------------------\n");
 
 				length = strlen(vertexShaderTextWithMacros.c_str());
 
@@ -850,7 +832,7 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 					ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
 				}
 
-				ri.Printf(PRINT_DEVELOPER, " END--------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, " END ----------------------------------------------------\n");
 			} else {
 				const char *errorLog = glslopt_get_log(shaderOptimized);
 
@@ -865,15 +847,14 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 			}
 
 			glslopt_shader_delete(shaderOptimized);
-
 			glslopt_shader * shaderOptimized1 = glslopt_optimize(s_glslOptimizer, kGlslOptShaderFragment, fragmentShaderTextWithMacros.c_str(), 0);
 
 			if (glslopt_get_status(shaderOptimized1)) {
 				fragmentShaderTextWithMacros = version + glslopt_get_output(shaderOptimized1);
 
-				ri.Printf(PRINT_DEVELOPER, "-------------------------------------------------- -------\n");
-				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED FRAGMENT shader '%s'-- -------\n", programName);
-				ri.Printf(PRINT_DEVELOPER, " BEGIN------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, "---------------------------------------------------------\n");
+				ri.Printf(PRINT_DEVELOPER, "OPTIMIZED FRAGMENT shader '%s' ---------\n", programName);
+				ri.Printf(PRINT_DEVELOPER, " BEGIN --------------------------------------------------\n");
 
 				length = strlen(fragmentShaderTextWithMacros.c_str());
 
@@ -882,7 +863,7 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 					ri.Printf(PRINT_DEVELOPER, "%s\n", msgPart);
 				}
 
-				ri.Printf(PRINT_DEVELOPER, " END--------------------------------------------- -------\n");
+				ri.Printf(PRINT_DEVELOPER, " END ----------------------------------------------------\n");
 			} else {
 				const char *errorLog = glslopt_get_log(shaderOptimized1);
 
@@ -904,9 +885,13 @@ void GLShader::CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 		BindAttribLocations(program->program); //, _vertexAttribsRequired|_vertexAttribsOptional);
 		LinkProgram(program->program);
 	}
-
 }
 
+/*
+=======================================================================================================================================
+CompilePermutations
+=======================================================================================================================================
+*/
 void GLShader::CompilePermutations() {
 	ri.Printf(PRINT_ALL, "// / ----------------------------------------- -------\n");
 	ri.Printf(PRINT_ALL, "// / creating %s shaders -------\n", this->GetName().c_str());
@@ -938,7 +923,9 @@ void GLShader::CompilePermutations() {
 		if ((i + 1) >= nextTicCount) {
 			size_t ticsNeeded = (size_t)(((double)(i + 1) / numPermutations) * 50.0);
 
-			do {ri.Printf(PRINT_ALL, " * ");}
+			do {
+				ri.Printf(PRINT_ALL, "*");
+			}
 
 			while (++tics < ticsNeeded);
 
@@ -962,14 +949,8 @@ void GLShader::CompilePermutations() {
 
 			shaderProgram_t *shaderProgram = &_shaderPrograms[i];
 
-			CompileAndLinkGPUShaderProgram(shaderProgram,
-											this->GetName().c_str(),
-											vertexShaderText,
-											fragmentShaderText,
-											compileMacros, i);
-
+			CompileAndLinkGPUShaderProgram(shaderProgram, this->GetName().c_str(), vertexShaderText, fragmentShaderText, compileMacros, i);
 			UpdateShaderProgramUniformLocations(shaderProgram);
-
 			SetShaderProgramUniformLocations(shaderProgram);
 
 			glUseProgram(shaderProgram->program);
@@ -991,7 +972,13 @@ void GLShader::CompilePermutations() {
 	ri.Printf(PRINT_ALL, "...compiled %i %s shader permutations in %5.2f seconds\n", (int)numCompiled, this->GetName().c_str(), (endTime - startTime) / 1000.0);
 }
 
+/*
+=======================================================================================================================================
+CompileGPUShader
+=======================================================================================================================================
+*/
 void GLShader::CompileGPUShader(GLuint program, const char *programName, const char *shaderText, int shaderTextSize, GLenum shaderType)const {
+
 	GLuint shader = glCreateShader(shaderType);
 
 	GL_CheckErrors();
@@ -1021,6 +1008,11 @@ void GLShader::CompileGPUShader(GLuint program, const char *programName, const c
 	GL_CheckErrors();
 }
 
+/*
+=======================================================================================================================================
+PrintShaderText
+=======================================================================================================================================
+*/
 void GLShader::PrintShaderText(const std::string& shaderText)const {
 	static char msgPart[1024];
 	
@@ -1030,6 +1022,11 @@ void GLShader::PrintShaderText(const std::string& shaderText)const {
 	}
 }
 
+/*
+=======================================================================================================================================
+PrintShaderSource
+=======================================================================================================================================
+*/
 void GLShader::PrintShaderSource(GLuint object)const {
 	char *msg;
 	static char msgPart[1024];
@@ -1050,6 +1047,11 @@ void GLShader::PrintShaderSource(GLuint object)const {
 	ri.Hunk_FreeTempMemory(msg);
 }
 
+/*
+=======================================================================================================================================
+PrintInfoLog
+=======================================================================================================================================
+*/
 void GLShader::PrintInfoLog(GLuint object, bool developerOnly)const {
 	char *msg;
 	static char msgPart[1024];
@@ -1081,9 +1083,13 @@ void GLShader::PrintInfoLog(GLuint object, bool developerOnly)const {
 	ri.Hunk_FreeTempMemory(msg);
 }
 
+/*
+=======================================================================================================================================
+LinkProgram
+=======================================================================================================================================
+*/
 void GLShader::LinkProgram(GLuint program)const {
 	GLint linked;
-
 #ifdef GLEW_ARB_get_program_binary
 	// Apparently, this is necessary to get the binary program via glGetProgramBinary
 	if (GLEW_ARB_get_program_binary) {
@@ -1100,11 +1106,16 @@ void GLShader::LinkProgram(GLuint program)const {
 	}
 }
 
+/*
+=======================================================================================================================================
+ValidateProgram
+=======================================================================================================================================
+*/
 void GLShader::ValidateProgram(GLuint program)const {
+
 	GLint validated;
 
 	glValidateProgram(program);
-
 	glGetProgramiv(program, GL_VALIDATE_STATUS, &validated);
 
 	if (!validated) {
@@ -1113,10 +1124,16 @@ void GLShader::ValidateProgram(GLuint program)const {
 	}
 }
 
+/*
+=======================================================================================================================================
+ShowProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader::ShowProgramUniforms(GLuint program)const {
 	int i, count, size;
-	GLenum			type;
+	GLenum type;
 	char uniformName[1000];
+
 	// install the executables in the program object as part of current state.
 	glUseProgram(program);
 	// check for GL Errors
@@ -1133,59 +1150,56 @@ void GLShader::ShowProgramUniforms(GLuint program)const {
 	glUseProgram(0);
 }
 
+/*
+=======================================================================================================================================
+BindAttribLocations
+=======================================================================================================================================
+*/
 void GLShader::BindAttribLocations(GLuint program)const {
+
 	//if(attribs & ATTR_POSITION)
 	glBindAttribLocation(program, ATTR_INDEX_POSITION, "attr_Position");
-
 	//if(attribs & ATTR_TEXCOORD)
 	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD0, "attr_TexCoord0");
-
 	//if(attribs & ATTR_LIGHTCOORD)
 	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD1, "attr_TexCoord1");
-
 //  if (attribs & ATTR_TEXCOORD2)
 //      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
-
 //  if (attribs & ATTR_TEXCOORD3)
 //      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
-
 	//if(attribs & ATTR_TANGENT)
 	glBindAttribLocation(program, ATTR_INDEX_TANGENT, "attr_Tangent");
-
 	//if(attribs & ATTR_BINORMAL)
 	glBindAttribLocation(program, ATTR_INDEX_BINORMAL, "attr_Binormal");
-
 	//if(attribs & ATTR_NORMAL)
 	glBindAttribLocation(program, ATTR_INDEX_NORMAL, "attr_Normal");
-
 	//if(attribs & ATTR_COLOR)
 	glBindAttribLocation(program, ATTR_INDEX_COLOR, "attr_Color");
-
 #if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
 	//if(attribs & ATTR_PAINTCOLOR)
 	glBindAttribLocation(program, ATTR_INDEX_PAINTCOLOR, "attr_PaintColor");
-
 	//if(attribs & ATTR_LIGHTDIRECTION)
 	glBindAttribLocation(program, ATTR_INDEX_LIGHTDIRECTION, "attr_LightDirection");
 #endif
-
 	//if(glConfig2.vboVertexSkinningAvailable) {
 		glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
 		glBindAttribLocation(program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
 	}
 	//if(attribs & ATTR_POSITION2)
 	glBindAttribLocation(program, ATTR_INDEX_POSITION2, "attr_Position2");
-
 	//if(attribs & ATTR_TANGENT2)
 	glBindAttribLocation(program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
-
 	//if(attribs & ATTR_BINORMAL2)
 	glBindAttribLocation(program, ATTR_INDEX_BINORMAL2, "attr_Binormal2");
-
 	//if(attribs & ATTR_NORMAL2)
 	glBindAttribLocation(program, ATTR_INDEX_NORMAL2, "attr_Normal2");
 }
 
+/*
+=======================================================================================================================================
+SelectProgram
+=======================================================================================================================================
+*/
 void GLShader::SelectProgram() {
 	int index = 0;
 
@@ -1200,6 +1214,11 @@ void GLShader::SelectProgram() {
 	_currentProgram = &_shaderPrograms[index];
 }
 
+/*
+=======================================================================================================================================
+BindProgram
+=======================================================================================================================================
+*/
 void GLShader::BindProgram() {
 	SelectProgram();
 
@@ -1224,6 +1243,11 @@ void GLShader::BindProgram() {
 	GL_BindProgram(_currentProgram);
 }
 
+/*
+=======================================================================================================================================
+SetRequiredVertexPointers
+=======================================================================================================================================
+*/
 void GLShader::SetRequiredVertexPointers() {
 	uint32_t macroVertexAttribs = 0;
 	size_t numMacros = _compileMacros.size();
@@ -1241,6 +1265,11 @@ void GLShader::SetRequiredVertexPointers() {
 	GL_VertexAttribsState((_vertexAttribsRequired|_vertexAttribs|macroVertexAttribs));// & ~_vertexAttribsUnsupported);
 }
 
+/*
+=======================================================================================================================================
+GLShader_generic
+=======================================================================================================================================
+*/
 GLShader_generic::GLShader_generic():
 		GLShader("generic", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_ColorMap(this),
@@ -1264,7 +1293,13 @@ GLShader_generic::GLShader_generic():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_generic::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -1272,14 +1307,29 @@ void GLShader_generic::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_generic::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	//shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_generic::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
+/*
+=======================================================================================================================================
+GLShader_lightMapping
+=======================================================================================================================================
+*/
 GLShader_lightMapping::GLShader_lightMapping():
 		GLShader("lightMapping", ATTR_POSITION|ATTR_TEXCOORD|ATTR_LIGHTCOORD|ATTR_NORMAL),
 		u_DiffuseTextureMatrix(this),
@@ -1303,21 +1353,42 @@ GLShader_lightMapping::GLShader_lightMapping():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_lightMapping::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
 		vertexInlines += "deformVertexes ";
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_lightMapping::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_lightMapping::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_lightMapping::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_SpecularMap = glGetUniformLocation(shaderProgram->program, "u_SpecularMap");
@@ -1325,7 +1396,13 @@ void GLShader_lightMapping::SetShaderProgramUniformLocations(shaderProgram_t *sh
 	shaderProgram->u_DeluxeMap = glGetUniformLocation(shaderProgram->program, "u_DeluxeMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_lightMapping::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
@@ -1333,6 +1410,11 @@ void GLShader_lightMapping::SetShaderProgramUniforms(shaderProgram_t *shaderProg
 	glUniform1i(shaderProgram->u_DeluxeMap, 4);
 }
 
+/*
+=======================================================================================================================================
+GLShader_vertexLighting_DBS_entity
+=======================================================================================================================================
+*/
 GLShader_vertexLighting_DBS_entity::GLShader_vertexLighting_DBS_entity():
 		GLShader("vertexLighting_DBS_entity", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_DiffuseTextureMatrix(this),
@@ -1363,7 +1445,13 @@ GLShader_vertexLighting_DBS_entity::GLShader_vertexLighting_DBS_entity():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_entity::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -1371,14 +1459,29 @@ void GLShader_vertexLighting_DBS_entity::BuildShaderVertexLibNames(std::string& 
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_entity::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_entity::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_entity::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
@@ -1387,7 +1490,13 @@ void GLShader_vertexLighting_DBS_entity::SetShaderProgramUniformLocations(shader
 	shaderProgram->u_EnvironmentMap1 = glGetUniformLocation(shaderProgram->program, "u_EnvironmentMap1");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_entity::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
@@ -1395,6 +1504,11 @@ void GLShader_vertexLighting_DBS_entity::SetShaderProgramUniforms(shaderProgram_
 	glUniform1i(shaderProgram->u_EnvironmentMap1, 4);
 }
 
+/*
+=======================================================================================================================================
+GLShader_vertexLighting_DBS_world
+=======================================================================================================================================
+*/
 GLShader_vertexLighting_DBS_world::GLShader_vertexLighting_DBS_world():
 		GLShader("vertexLighting_DBS_world",
 					ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL|ATTR_COLOR
@@ -1424,31 +1538,64 @@ GLShader_vertexLighting_DBS_world::GLShader_vertexLighting_DBS_world():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_world::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
 		vertexInlines += "deformVertexes ";
 	}
 }
+
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_world::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_world::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_world::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_SpecularMap = glGetUniformLocation(shaderProgram->program, "u_SpecularMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_vertexLighting_DBS_world::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
 }
 
+/*
+=======================================================================================================================================
+GLShader_forwardLighting_omniXYZ
+=======================================================================================================================================
+*/
 GLShader_forwardLighting_omniXYZ::GLShader_forwardLighting_omniXYZ():
 		GLShader("forwardLighting_omniXYZ", "forwardLighting", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_DiffuseTextureMatrix(this),
@@ -1485,6 +1632,11 @@ GLShader_forwardLighting_omniXYZ::GLShader_forwardLighting_omniXYZ():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_omniXYZ::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
@@ -1493,14 +1645,29 @@ void GLShader_forwardLighting_omniXYZ::BuildShaderVertexLibNames(std::string& ve
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_omniXYZ::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_omniXYZ::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_omniXYZ::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
@@ -1514,7 +1681,13 @@ void GLShader_forwardLighting_omniXYZ::SetShaderProgramUniformLocations(shaderPr
 	shaderProgram->u_RandomMap = glGetUniformLocation(shaderProgram->program, "u_RandomMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_omniXYZ::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
@@ -1527,6 +1700,11 @@ void GLShader_forwardLighting_omniXYZ::SetShaderProgramUniforms(shaderProgram_t 
 	glUniform1i(shaderProgram->u_RandomMap, 6);
 }
 
+/*
+=======================================================================================================================================
+GLShader_forwardLighting_projXYZ
+=======================================================================================================================================
+*/
 GLShader_forwardLighting_projXYZ::GLShader_forwardLighting_projXYZ():
 		GLShader("forwardLighting_projXYZ", "forwardLighting", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_DiffuseTextureMatrix(this),
@@ -1564,7 +1742,13 @@ GLShader_forwardLighting_projXYZ::GLShader_forwardLighting_projXYZ():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_projXYZ::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -1572,17 +1756,32 @@ void GLShader_forwardLighting_projXYZ::BuildShaderVertexLibNames(std::string& ve
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_projXYZ::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_projXYZ::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "LIGHT_PROJ ";
 	compileMacros += "TWOSIDED ";
 }
 
-
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_projXYZ::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_SpecularMap = glGetUniformLocation(shaderProgram->program, "u_SpecularMap");
@@ -1595,7 +1794,13 @@ void GLShader_forwardLighting_projXYZ::SetShaderProgramUniformLocations(shaderPr
 	shaderProgram->u_RandomMap = glGetUniformLocation(shaderProgram->program, "u_RandomMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_projXYZ::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
@@ -1608,6 +1813,11 @@ void GLShader_forwardLighting_projXYZ::SetShaderProgramUniforms(shaderProgram_t 
 	glUniform1i(shaderProgram->u_RandomMap, 6);
 }
 
+/*
+=======================================================================================================================================
+GLShader_forwardLighting_directionalSun
+=======================================================================================================================================
+*/
 GLShader_forwardLighting_directionalSun::GLShader_forwardLighting_directionalSun():
 		GLShader("forwardLighting_directionalSun", "forwardLighting", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_DiffuseTextureMatrix(this),
@@ -1647,6 +1857,11 @@ GLShader_forwardLighting_directionalSun::GLShader_forwardLighting_directionalSun
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_directionalSun::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
@@ -1655,16 +1870,32 @@ void GLShader_forwardLighting_directionalSun::BuildShaderVertexLibNames(std::str
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_directionalSun::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_directionalSun::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "LIGHT_DIRECTIONAL ";
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+GLShader_forwardLighting_directionalSun
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_directionalSun::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_SpecularMap = glGetUniformLocation(shaderProgram->program, "u_SpecularMap");
@@ -1677,7 +1908,13 @@ void GLShader_forwardLighting_directionalSun::SetShaderProgramUniformLocations(s
 	}
 }
 
+/*
+=======================================================================================================================================
+GLShader_forwardLighting_directionalSun
+=======================================================================================================================================
+*/
 void GLShader_forwardLighting_directionalSun::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
@@ -1692,6 +1929,11 @@ void GLShader_forwardLighting_directionalSun::SetShaderProgramUniforms(shaderPro
 	}
 }
 
+/*
+=======================================================================================================================================
+GLShader_deferredLighting_omniXYZ
+=======================================================================================================================================
+*/
 GLShader_deferredLighting_omniXYZ::GLShader_deferredLighting_omniXYZ():
 		GLShader("deferredLighting_omniXYZ", "deferredLighting", ATTR_POSITION),
 		u_ViewOrigin(this),
@@ -1717,10 +1959,20 @@ GLShader_deferredLighting_omniXYZ::GLShader_deferredLighting_omniXYZ():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_omniXYZ::BuildShaderCompileMacros(std::string& compileMacros) {
 	//compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_omniXYZ::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
@@ -1733,6 +1985,11 @@ void GLShader_deferredLighting_omniXYZ::SetShaderProgramUniformLocations(shaderP
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_omniXYZ::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
@@ -1745,6 +2002,11 @@ void GLShader_deferredLighting_omniXYZ::SetShaderProgramUniforms(shaderProgram_t
 	}
 }
 
+/*
+=======================================================================================================================================
+GLShader_deferredLighting_projXYZ
+=======================================================================================================================================
+*/
 GLShader_deferredLighting_projXYZ::GLShader_deferredLighting_projXYZ():
 		GLShader("deferredLighting_projXYZ", "deferredLighting", ATTR_POSITION),
 		u_ViewOrigin(this),
@@ -1771,10 +2033,20 @@ GLShader_deferredLighting_projXYZ::GLShader_deferredLighting_projXYZ():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_projXYZ::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "LIGHT_PROJ ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_projXYZ::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
@@ -1787,6 +2059,11 @@ void GLShader_deferredLighting_projXYZ::SetShaderProgramUniformLocations(shaderP
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_projXYZ::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
@@ -1799,6 +2076,11 @@ void GLShader_deferredLighting_projXYZ::SetShaderProgramUniforms(shaderProgram_t
 	}
 }
 
+/*
+=======================================================================================================================================
+GLShader_deferredLighting_directionalSun
+=======================================================================================================================================
+*/
 GLShader_deferredLighting_directionalSun::GLShader_deferredLighting_directionalSun():
 		GLShader("deferredLighting_directionalSun", "deferredLighting", ATTR_POSITION),
 		u_ViewOrigin(this),
@@ -1827,11 +2109,22 @@ GLShader_deferredLighting_directionalSun::GLShader_deferredLighting_directionalS
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_directionalSun::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "LIGHT_DIRECTIONAL ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_directionalSun::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_SpecularMap = glGetUniformLocation(shaderProgram->program, "u_SpecularMap");
@@ -1845,6 +2138,11 @@ void GLShader_deferredLighting_directionalSun::SetShaderProgramUniformLocations(
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_deferredLighting_directionalSun::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUseProgram(shaderProgram->program);
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
@@ -1862,6 +2160,11 @@ void GLShader_deferredLighting_directionalSun::SetShaderProgramUniforms(shaderPr
 	}
 }
 
+/*
+=======================================================================================================================================
+GLShader_geometricFill
+=======================================================================================================================================
+*/
 GLShader_geometricFill::GLShader_geometricFill():
 		GLShader("geometricFill", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_DiffuseTextureMatrix(this),
@@ -1889,7 +2192,13 @@ GLShader_geometricFill::GLShader_geometricFill():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_geometricFill::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -1897,15 +2206,31 @@ void GLShader_geometricFill::BuildShaderVertexLibNames(std::string& vertexInline
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderFragmentLibNames
+=======================================================================================================================================
+*/
 void GLShader_geometricFill::BuildShaderFragmentLibNames(std::string& fragmentInlines) {
 	fragmentInlines += "reliefMapping";
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_geometricFill::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_geometricFill::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_DiffuseMap = glGetUniformLocation(shaderProgram->program, "u_DiffuseMap");
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_SpecularMap = glGetUniformLocation(shaderProgram->program, "u_SpecularMap");
@@ -1913,7 +2238,13 @@ void GLShader_geometricFill::SetShaderProgramUniformLocations(shaderProgram_t *s
 	shaderProgram->u_EnvironmentMap1 = glGetUniformLocation(shaderProgram->program, "u_EnvironmentMap1");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_geometricFill::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_DiffuseMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 	glUniform1i(shaderProgram->u_SpecularMap, 2);
@@ -1921,6 +2252,11 @@ void GLShader_geometricFill::SetShaderProgramUniforms(shaderProgram_t *shaderPro
 	glUniform1i(shaderProgram->u_EnvironmentMap1, 4);
 }
 
+/*
+=======================================================================================================================================
+GLShader_shadowFill
+=======================================================================================================================================
+*/
 GLShader_shadowFill::GLShader_shadowFill():
 		GLShader("shadowFill", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_ColorTextureMatrix(this),
@@ -1944,7 +2280,13 @@ GLShader_shadowFill::GLShader_shadowFill():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_shadowFill::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -1952,14 +2294,29 @@ void GLShader_shadowFill::BuildShaderVertexLibNames(std::string& vertexInlines) 
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_shadowFill::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_shadowFill::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
+/*
+=======================================================================================================================================
+GLShader_reflection
+=======================================================================================================================================
+*/
 GLShader_reflection::GLShader_reflection():
 		GLShader("reflection", "reflection_CB", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_ColorMap(this),
@@ -1981,7 +2338,13 @@ GLShader_reflection::GLShader_reflection():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_reflection::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -1989,18 +2352,38 @@ void GLShader_reflection::BuildShaderVertexLibNames(std::string& vertexInlines) 
 	}
 }
 
+/*
+=======================================================================================================================================
+BuildShaderCompileMacros
+=======================================================================================================================================
+*/
 void GLShader_reflection::BuildShaderCompileMacros(std::string& compileMacros) {
 	compileMacros += "TWOSIDED ";
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_reflection::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_reflection::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 	glUniform1i(shaderProgram->u_NormalMap, 1);
 }
 
+/*
+=======================================================================================================================================
+GLShader_skybox
+=======================================================================================================================================
+*/
 GLShader_skybox::GLShader_skybox():
 		GLShader("skybox", ATTR_POSITION),
 		u_ColorMap(this),
@@ -2015,13 +2398,28 @@ GLShader_skybox::GLShader_skybox():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_skybox::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_skybox::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
+/*
+=======================================================================================================================================
+GLShader_fogQuake3
+=======================================================================================================================================
+*/
 GLShader_fogQuake3::GLShader_fogQuake3():
 		GLShader("fogQuake3", ATTR_POSITION|ATTR_NORMAL),
 		u_ModelMatrix(this),
@@ -2043,7 +2441,13 @@ GLShader_fogQuake3::GLShader_fogQuake3():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_fogQuake3::BuildShaderVertexLibNames(std::string& vertexInlines) {
+
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
 	if (glConfig.driverType == GLDRV_OPENGL3 && r_vboDeformVertexes->integer) {
@@ -2051,14 +2455,29 @@ void GLShader_fogQuake3::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_fogQuake3::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_fogQuake3::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
+/*
+=======================================================================================================================================
+GLShader_fogGlobal
+=======================================================================================================================================
+*/
 GLShader_fogGlobal::GLShader_fogGlobal():
 		GLShader("fogGlobal", ATTR_POSITION),
 		u_ViewOrigin(this),
@@ -2071,16 +2490,33 @@ GLShader_fogGlobal::GLShader_fogGlobal():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_fogGlobal::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 	shaderProgram->u_DepthMap = glGetUniformLocation(shaderProgram->program, "u_DepthMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_fogGlobal::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 	glUniform1i(shaderProgram->u_DepthMap, 1);
 }
 
+/*
+=======================================================================================================================================
+GLShader_heatHaze
+=======================================================================================================================================
+*/
 GLShader_heatHaze::GLShader_heatHaze():
 		GLShader("heatHaze", ATTR_POSITION|ATTR_TEXCOORD|ATTR_NORMAL),
 		u_NormalTextureMatrix(this),
@@ -2105,6 +2541,11 @@ GLShader_heatHaze::GLShader_heatHaze():
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+BuildShaderVertexLibNames
+=======================================================================================================================================
+*/
 void GLShader_heatHaze::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	vertexInlines += "vertexSkinning vertexAnimation ";
 
@@ -2113,6 +2554,11 @@ void GLShader_heatHaze::BuildShaderVertexLibNames(std::string& vertexInlines) {
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_heatHaze::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_NormalMap = glGetUniformLocation(shaderProgram->program, "u_NormalMap");
 	shaderProgram->u_CurrentMap = glGetUniformLocation(shaderProgram->program, "u_CurrentMap");
@@ -2122,7 +2568,13 @@ void GLShader_heatHaze::SetShaderProgramUniformLocations(shaderProgram_t *shader
 	}
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_heatHaze::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_NormalMap, 0);
 	glUniform1i(shaderProgram->u_CurrentMap, 1);
 
@@ -2131,128 +2583,224 @@ void GLShader_heatHaze::SetShaderProgramUniforms(shaderProgram_t *shaderProgram)
 	}
 }
 
-GLShader_screen::GLShader_screen():
-		GLShader("screen", ATTR_POSITION),
-		u_ModelViewProjectionMatrix(this) {
+/*
+=======================================================================================================================================
+GLShader_screen
+=======================================================================================================================================
+*/
+GLShader_screen::GLShader_screen():GLShader("screen", ATTR_POSITION), u_ModelViewProjectionMatrix(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_screen::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_CurrentMap = glGetUniformLocation(shaderProgram->program, "u_CurrentMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_screen::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_CurrentMap, 0);
 }
 
-GLShader_portal::GLShader_portal():
-		GLShader("portal", ATTR_POSITION),
-		u_ModelViewMatrix(this),
-		u_ModelViewProjectionMatrix(this),
-		u_PortalRange(this) {
+/*
+=======================================================================================================================================
+GLShader_portal
+=======================================================================================================================================
+*/
+GLShader_portal::GLShader_portal():GLShader("portal", ATTR_POSITION), u_ModelViewMatrix(this), u_ModelViewProjectionMatrix(this),´u_PortalRange(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_portal::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_CurrentMap = glGetUniformLocation(shaderProgram->program, "u_CurrentMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_portal::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_CurrentMap, 0);
 }
 
-GLShader_toneMapping::GLShader_toneMapping():
-		GLShader("toneMapping", ATTR_POSITION),
-		u_ModelViewProjectionMatrix(this),
-		u_HDRKey(this),
-		u_HDRAverageLuminance(this),
-		u_HDRMaxLuminance(this),
-		GLCompileMacro_BRIGHTPASS_FILTER(this) {
+/*
+=======================================================================================================================================
+GLShader_toneMapping
+=======================================================================================================================================
+*/
+GLShader_toneMapping::GLShader_toneMapping():GLShader("toneMapping", ATTR_POSITION), u_ModelViewProjectionMatrix(this), u_HDRKey(this), u_HDRAverageLuminance(this), u_HDRMaxLuminance(this), GLCompileMacro_BRIGHTPASS_FILTER(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_toneMapping::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_CurrentMap = glGetUniformLocation(shaderProgram->program, "u_CurrentMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_toneMapping::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_CurrentMap, 0);
 }
 
-GLShader_contrast::GLShader_contrast():
-		GLShader("contrast", ATTR_POSITION),
-		u_ModelViewProjectionMatrix(this) {
+/*
+=======================================================================================================================================
+GLShader_contrast
+=======================================================================================================================================
+*/
+GLShader_contrast::GLShader_contrast():GLShader("contrast", ATTR_POSITION), u_ModelViewProjectionMatrix(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_contrast::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_contrast::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
-GLShader_cameraEffects::GLShader_cameraEffects():
-		GLShader("cameraEffects", ATTR_POSITION|ATTR_TEXCOORD),
-		u_ColorTextureMatrix(this),
-		u_ModelViewProjectionMatrix(this),
-		u_DeformMagnitude(this) {
+/*
+=======================================================================================================================================
+GLShader_cameraEffects
+=======================================================================================================================================
+*/
+GLShader_cameraEffects::GLShader_cameraEffects():GLShader("cameraEffects", ATTR_POSITION|ATTR_TEXCOORD), u_ColorTextureMatrix(this), u_ModelViewProjectionMatrix(this), u_DeformMagnitude(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_cameraEffects::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
+
 	shaderProgram->u_CurrentMap = glGetUniformLocation(shaderProgram->program, "u_CurrentMap");
 	shaderProgram->u_GrainMap = glGetUniformLocation(shaderProgram->program, "u_GrainMap");
 	shaderProgram->u_VignetteMap = glGetUniformLocation(shaderProgram->program, "u_VignetteMap");
 }
 
+/*
+=======================================================================================================================================
+GLShader_cameraEffects::SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_cameraEffects::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
+
 	glUniform1i(shaderProgram->u_CurrentMap, 0);
 	glUniform1i(shaderProgram->u_GrainMap, 1);
 	glUniform1i(shaderProgram->u_VignetteMap, 2);
 }
 
-GLShader_blurX::GLShader_blurX():
-		GLShader("blurX", ATTR_POSITION),
-		u_ModelViewProjectionMatrix(this),
-		u_DeformMagnitude(this) {
+/*
+=======================================================================================================================================
+GLShader_blurX
+=======================================================================================================================================
+*/
+GLShader_blurX::GLShader_blurX():GLShader("blurX", ATTR_POSITION), u_ModelViewProjectionMatrix(this), u_DeformMagnitude(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_blurX::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_blurX::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
-GLShader_blurY::GLShader_blurY():
-		GLShader("blurY", ATTR_POSITION),
-		u_ModelViewProjectionMatrix(this),
-		u_DeformMagnitude(this) {
+/*
+=======================================================================================================================================
+GLShader_blurY
+=======================================================================================================================================
+*/
+GLShader_blurY::GLShader_blurY():GLShader("blurY", ATTR_POSITION), u_ModelViewProjectionMatrix(this), u_DeformMagnitude(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_blurY::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_ColorMap = glGetUniformLocation(shaderProgram->program, "u_ColorMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_blurY::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
 
-GLShader_debugShadowMap::GLShader_debugShadowMap():
-		GLShader("debugShadowMap", ATTR_POSITION),
-		u_ModelViewProjectionMatrix(this) {
+/*
+=======================================================================================================================================
+GLShader_debugShadowMap
+=======================================================================================================================================
+*/
+GLShader_debugShadowMap::GLShader_debugShadowMap():GLShader("debugShadowMap", ATTR_POSITION), u_ModelViewProjectionMatrix(this) {
 	CompilePermutations();
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniformLocations
+=======================================================================================================================================
+*/
 void GLShader_debugShadowMap::SetShaderProgramUniformLocations(shaderProgram_t *shaderProgram) {
 	shaderProgram->u_CurrentMap = glGetUniformLocation(shaderProgram->program, "u_CurrentMap");
 }
 
+/*
+=======================================================================================================================================
+SetShaderProgramUniforms
+=======================================================================================================================================
+*/
 void GLShader_debugShadowMap::SetShaderProgramUniforms(shaderProgram_t *shaderProgram) {
 	glUniform1i(shaderProgram->u_CurrentMap, 0);
 }
