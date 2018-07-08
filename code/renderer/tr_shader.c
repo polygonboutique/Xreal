@@ -1,26 +1,25 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_shader.c--this file deals with the parsing and definition of shaders
+
+/**************************************************************************************************************************************
+ This file deals with the parsing and definition of shaders.
+**************************************************************************************************************************************/
+
 #include "tr_local.h"
 
 #define MAX_GUIDETEXT_HASH 2048
@@ -31,7 +30,6 @@ static shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
 static shader_t *shaderHashTable[FILE_HASH_SIZE];
 #define MAX_SHADERTEXT_HASH 2048
 static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
-
 static char *s_guideText;
 static char *s_shaderText;
 // the shader is parsed into these global variables, then copied into
@@ -63,7 +61,7 @@ static long generateHashValue(const char *fname, const int size) {
 	i = 0;
 //  len = strlen(fname);
 
-	while (fname[i] != '\0')
+	while (fname[i] != '\0') {
 //  for(i = 0; i < len; i++) {
 		letter = tolower(fname[i]);
 
@@ -83,8 +81,8 @@ static long generateHashValue(const char *fname, const int size) {
 		i++;
 	}
 
-	hash = (hash ^(hash >> 10)^(hash >> 20));
-	hash & = (size - 1);
+	hash = (hash ^ (hash >> 10) ^ (hash >> 20));
+	hash &= (size - 1);
 	return hash;
 }
 
@@ -96,7 +94,7 @@ R_RemapShader
 void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset) {
 	char strippedName[MAX_QPATH];
 	int hash;
-	shader_t *sh, * sh2;
+	shader_t *sh, *sh2;
 	qhandle_t h;
 
 	sh = R_FindShaderByName(shaderName);
@@ -124,6 +122,7 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 	}
 	// remap all the shaders with the given name even tho they might have different lightmaps
 	Com_StripExtension(shaderName, strippedName, sizeof(strippedName));
+
 	hash = generateHashValue(strippedName, FILE_HASH_SIZE);
 
 	for (sh = shaderHashTable[hash]; sh; sh = sh->next) {
@@ -173,7 +172,6 @@ static qboolean ParseVector(char **text, int count, float *v) {
 
 	return qtrue;
 }
-
 
 opstring_t opStrings[] = {
 	{"bad", OP_BAD},
@@ -1133,7 +1131,7 @@ static qboolean ParseTexMod(char **text, shaderStage_t *stage) {
 
 /*
 =======================================================================================================================================
-
+ParseMap
 =======================================================================================================================================
 */
 static qboolean ParseMap(shaderStage_t *stage, char **text, char *buffer, int bufferSize) {
@@ -1170,6 +1168,7 @@ static qboolean ParseMap(shaderStage_t *stage, char **text, char *buffer, int bu
 
 /*
 =======================================================================================================================================
+LoadMap
 
 =======================================================================================================================================
 */
@@ -1545,7 +1544,6 @@ static qboolean ParseStage(shaderStage_t *stage, char **text) {
 			} else {
 				// complex double blends
 				blendSrcBits = NameToSrcBlendMode(token);
-
 				token = Com_ParseExt(text, qfalse);
 
 				if (token[0] == 0) {
@@ -1559,7 +1557,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text) {
 			if (!depthMaskExplicit) {
 				depthMaskBits = 0;
 			}
-		// blend <srcFactor> , <dstFactor> or blend <add|filter|blend> or blend <diffusemap|bumpmap|specularmap>
+		// blend <srcFactor>, <dstFactor> or blend <add|filter|blend> or blend <diffusemap|bumpmap|specularmap>
 		} else if (!Q_stricmp(token, "blend")) {
 			token = Com_ParseExt(text, qfalse);
 
@@ -3733,14 +3731,12 @@ static void FixRenderCommandList(int newShader) {
 				case RC_SET_COLOR:
 				{
 					const setColorCommand_t *sc_cmd = (const setColorCommand_t *)curCmd;
-
 					curCmd = (const void *)(sc_cmd + 1);
 					break;
 				}
 				case RC_STRETCH_PIC:
 				{
 					const stretchPicCommand_t *sp_cmd = (const stretchPicCommand_t *)curCmd;
-
 					curCmd = (const void *)(sp_cmd + 1);
 					break;
 				}
@@ -3763,14 +3759,12 @@ static void FixRenderCommandList(int newShader) {
 				case RC_DRAW_BUFFER:
 				{
 					const drawBufferCommand_t *db_cmd = (const drawBufferCommand_t *)curCmd;
-
 					curCmd = (const void *)(db_cmd + 1);
 					break;
 				}
 				case RC_SWAP_BUFFERS:
 				{
 					const swapBuffersCommand_t *sb_cmd = (const swapBuffersCommand_t *)curCmd;
-
 					curCmd = (const void *)(sb_cmd + 1);
 					break;
 				}
@@ -3830,7 +3824,6 @@ static shader_t *GeneratePermanentShader(void) {
 	}
 
 	newShader = ri.Hunk_Alloc(sizeof(shader_t), h_low);
-
 	*newShader = shader;
 
 	if (shader.sort <= SS_OPAQUE) {
@@ -4064,7 +4057,7 @@ static shader_t *FinishShader(void) {
 			int blendDstBits = pStage->stateBits & GLS_DSTBLEND_BITS;
 
 			// fog color adjustment only works for blend modes that have a contribution
-			// that aproaches 0 as the modulate values aproach 0--
+			// that aproaches 0 as the modulate values aproach 0 --
 			// GL_ONE, GL_ONE
 			// GL_ZERO, GL_ONE_MINUS_SRC_COLOR
 			// GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
@@ -4094,8 +4087,7 @@ static shader_t *FinishShader(void) {
 	}
 
 	shader.numStages = stage;
-	// there are times when you will need to manually apply a sort to
-	// opaque alpha tested shaders that have later blend passes
+	// there are times when you will need to manually apply a sort to opaque alpha tested shaders that have later blend passes
 	if (!shader.sort) {
 		if (shader.translucent && !shader.forceOpaque) {
 			shader.sort = SS_DECAL;
@@ -4364,11 +4356,16 @@ R_FindShader
 Will always return a valid shader, but it might be the default shader if the real one can't be found.
 
 In the interest of not requiring an explicit shader text entry to be defined for every single image used in the game, three default
-shader behaviors can be auto - created for any image:
+shader behaviors can be auto-created for any image:
 
-If type == SHADER_2D, then the image will be used for 2D rendering unless an explicit shader is found.
-If type == SHADER_3D_DYNAMIC, then the image will have dynamic diffuse lighting applied to it, as apropriate for most entity skin surfaces.
-If type == SHADER_3D_STATIC, then the image will use the vertex rgba modulate values, as apropriate for misc_model pre-lit surfaces.
+If lightmapIndex == LIGHTMAP_NONE, then the image will have dynamic diffuse lighting applied to it, as appropriate for most entity skin
+surfaces.
+If lightmapIndex == LIGHTMAP_2D, then the image will be used for 2D rendering unless an explicit shader is found
+If lightmapIndex == LIGHTMAP_BY_VERTEX, then the image will use the vertex rgba modulate values, as appropriate for misc_model pre-lit
+surfaces.
+
+Other lightmapIndex values will have a lightmap stage created and src * dest blending applied with the texture, as appropriate for most
+world construction surfaces.
 =======================================================================================================================================
 */
 shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage) {
@@ -4571,8 +4568,9 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 =======================================================================================================================================
 RE_RegisterShader
 
-This is the exported shader entry point for the rest of the system. It will always return an index that will be valid. This should
-really only be used for explicit shaders, because there is no way to ask for different implicit lighting modes(vertex, lightmap, etc.)
+This is the exported shader entry point for the rest of the system. It will always return an index that will be valid.
+This should really only be used for explicit shaders, because there is no way to ask for different implicit lighting modes (vertex,
+lightmap, etc.).
 =======================================================================================================================================
 */
 qhandle_t RE_RegisterShader(const char *name) {
@@ -4584,8 +4582,9 @@ qhandle_t RE_RegisterShader(const char *name) {
 	}
 
 	sh = R_FindShader(name, SHADER_2D, qtrue);
-	// we want to return 0 if the shader failed to load for some reason, but R_FindShader should still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again with the same name, we don't try looking for it again
+	// we want to return 0 if the shader failed to load for some reason, but R_FindShader should
+	// still keep a name allocated for it, so if something calls RE_RegisterShader again with
+	// the same name, we don't try looking for it again
 	if (sh->defaultShader) {
 		return 0;
 	}
@@ -4609,8 +4608,9 @@ qhandle_t RE_RegisterShaderNoMip(const char *name) {
 	}
 
 	sh = R_FindShader(name, SHADER_2D, qfalse);
-	// we want to return 0 if the shader failed to load for some reason, but R_FindShader should still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again wi the same name, we don't try looking for it again
+	// we want to return 0 if the shader failed to load for some reason, but R_FindShader should
+	// still keep a name allocated for it, so if something calls RE_RegisterShader again with
+	// the same name, we don't try looking for it again
 	if (sh->defaultShader) {
 		return 0;
 	}
@@ -4634,8 +4634,9 @@ qhandle_t RE_RegisterShaderLightAttenuation(const char *name) {
 	}
 
 	sh = R_FindShader(name, SHADER_LIGHT, qfalse);
-	// we want to return 0 if the shader failed to load for some reason, but R_FindShader should still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again with the same name, we don't try looking for it again
+	// we want to return 0 if the shader failed to load for some reason, but R_FindShader should
+	// still keep a name allocated for it, so if something calls RE_RegisterShader again with
+	// the same name, we don't try looking for it again
 	if (sh->defaultShader) {
 		return 0;
 	}
@@ -4692,8 +4693,9 @@ void R_ShaderList_f(void) {
 			shader = tr.shaders[i];
 		}
 
-		if (s && Q_stricmpn(shader->name, s, strlen(s)) != 0)
+		if (s && Q_stricmpn(shader->name, s, strlen(s)) != 0) {
 			continue;
+		}
 
 		ri.Printf(PRINT_ALL, "%i ", shader->numStages);
 
@@ -4726,13 +4728,9 @@ void R_ShaderList_f(void) {
 		else*/
 		if (shader->collapseType == COLLAPSE_lighting_DB) {
 			ri.Printf(PRINT_ALL, "lighting_DB    ");
-		}
-
-		else if (shader->collapseType == COLLAPSE_lighting_DBS) {
+		} else if (shader->collapseType == COLLAPSE_lighting_DBS) {
 			ri.Printf(PRINT_ALL, "lighting_DBS   ");
-		}
-
-		else if (shader->collapseType == COLLAPSE_reflection_CB) {
+		} else if (shader->collapseType == COLLAPSE_reflection_CB) {
 			ri.Printf(PRINT_ALL, "reflection_CB  ");
 		} else {
 			ri.Printf(PRINT_ALL, "               ");
@@ -4740,9 +4738,7 @@ void R_ShaderList_f(void) {
 
 		if (shader->createdByGuide) {
 			ri.Printf(PRINT_ALL, "G ");
-		}
-
-		else if (shader->explicitlyDefined) {
+		} else if (shader->explicitlyDefined) {
 			ri.Printf(PRINT_ALL, "E ");
 		} else {
 			ri.Printf(PRINT_ALL, "  ");
@@ -4750,89 +4746,47 @@ void R_ShaderList_f(void) {
 
 		if (shader->sort == SS_BAD) {
 			ri.Printf(PRINT_ALL, "SS_BAD              ");
-		}
-
-		else if (shader->sort == SS_PORTAL) {
+		} else if (shader->sort == SS_PORTAL) {
 			ri.Printf(PRINT_ALL, "SS_PORTAL           ");
-		}
-
-		else if (shader->sort == SS_ENVIRONMENT_FOG) {
+		} else if (shader->sort == SS_ENVIRONMENT_FOG) {
 			ri.Printf(PRINT_ALL, "SS_ENVIRONMENT_FOG  ");
-		}
-
-		else if (shader->sort == SS_ENVIRONMENT_NOFOG) {
+		} else if (shader->sort == SS_ENVIRONMENT_NOFOG) {
 			ri.Printf(PRINT_ALL, "SS_ENVIRONMENT_NOFOG");
-		}
-
-		else if (shader->sort == SS_OPAQUE) {
+		} else if (shader->sort == SS_OPAQUE) {
 			ri.Printf(PRINT_ALL, "SS_OPAQUE           ");
-		}
-
-		else if (shader->sort == SS_DECAL) {
+		} else if (shader->sort == SS_DECAL) {
 			ri.Printf(PRINT_ALL, "SS_DECAL            ");
-		}
-
-		else if (shader->sort == SS_SEE_THROUGH) {
+		} else if (shader->sort == SS_SEE_THROUGH) {
 			ri.Printf(PRINT_ALL, "SS_SEE_THROUGH      ");
-		}
-
-		else if (shader->sort == SS_BANNER) {
+		} else if (shader->sort == SS_BANNER) {
 			ri.Printf(PRINT_ALL, "SS_BANNER           ");
-		}
-
-		else if (shader->sort == SS_FOG) {
+		} else if (shader->sort == SS_FOG) {
 			ri.Printf(PRINT_ALL, "SS_FOG              ");
-		}
-
-		else if (shader->sort == SS_UNDERWATER) {
+		} else if (shader->sort == SS_UNDERWATER) {
 			ri.Printf(PRINT_ALL, "SS_UNDERWATER       ");
-		}
-
-		else if (shader->sort == SS_WATER) {
+		} else if (shader->sort == SS_WATER) {
 			ri.Printf(PRINT_ALL, "SS_WATER            ");
-		}
-
-		else if (shader->sort == SS_FAR) {
+		} else if (shader->sort == SS_FAR) {
 			ri.Printf(PRINT_ALL, "SS_FAR              ");
-		}
-
-		else if (shader->sort == SS_MEDIUM) {
+		} else if (shader->sort == SS_MEDIUM) {
 			ri.Printf(PRINT_ALL, "SS_MEDIUM           ");
-		}
-
-		else if (shader->sort == SS_CLOSE) {
+		} else if (shader->sort == SS_CLOSE) {
 			ri.Printf(PRINT_ALL, "SS_CLOSE            ");
-		}
-
-		else if (shader->sort == SS_BLEND0) {
+		} else if (shader->sort == SS_BLEND0) {
 			ri.Printf(PRINT_ALL, "SS_BLEND0           ");
-		}
-
-		else if (shader->sort == SS_BLEND1) {
+		} else if (shader->sort == SS_BLEND1) {
 			ri.Printf(PRINT_ALL, "SS_BLEND1           ");
-		}
-
-		else if (shader->sort == SS_BLEND2) {
+		} else if (shader->sort == SS_BLEND2) {
 			ri.Printf(PRINT_ALL, "SS_BLEND2           ");
-		}
-
-		else if (shader->sort == SS_BLEND3) {
+		} else if (shader->sort == SS_BLEND3) {
 			ri.Printf(PRINT_ALL, "SS_BLEND3           ");
-		}
-
-		else if (shader->sort == SS_BLEND6) {
+		} else if (shader->sort == SS_BLEND6) {
 			ri.Printf(PRINT_ALL, "SS_BLEND6           ");
-		}
-
-		else if (shader->sort == SS_ALMOST_NEAREST) {
+		} else if (shader->sort == SS_ALMOST_NEAREST) {
 			ri.Printf(PRINT_ALL, "SS_ALMOST_NEAREST   ");
-		}
-
-		else if (shader->sort == SS_NEAREST) {
+		} else if (shader->sort == SS_NEAREST) {
 			ri.Printf(PRINT_ALL, "SS_NEAREST          ");
-		}
-
-		else if (shader->sort == SS_POST_PROCESS) {
+		} else if (shader->sort == SS_POST_PROCESS) {
 			ri.Printf(PRINT_ALL, "SS_POST_PROCESS     ");
 		} else {
 			ri.Printf(PRINT_ALL, "                    ");
@@ -4990,11 +4944,13 @@ static void ScanAndLoadGuideFiles(void) {
 			while (1) {
 				token = Com_ParseExt(&p, qtrue);
 
-				if (!token[0])
+				if (!token[0]) {
 					break;
+				}
 
-				if (!Q_stricmp(token, ")"))
+				if (!Q_stricmp(token, ")")) {
 					break;
+				}
 			}
 
 			if (Q_stricmp(token, ")")) {
@@ -5062,11 +5018,13 @@ static void ScanAndLoadGuideFiles(void) {
 			while (1) {
 				token = Com_ParseExt(&p, qtrue);
 
-				if (!token[0])
+				if (!token[0]) {
 					break;
+				}
 
-				if (!Q_stricmp(token, ")"))
+				if (!Q_stricmp(token, ")")) {
 					break;
+				}
 			}
 
 			if (Q_stricmp(token, ")")) {
@@ -5184,9 +5142,8 @@ static void ScanAndLoadShaderFiles(void) {
 				token = Com_ParseExt(&p, qtrue);
 
 				Com_SkipBracedSection(&p);
-			}
 			// support shader templates
-			else if (!Q_stricmp(token, "guide")) {
+			} else if (!Q_stricmp(token, "guide")) {
 				// parse shader name
 				token = Com_ParseExt(&p, qtrue);
 
@@ -5199,6 +5156,7 @@ static void ScanAndLoadShaderFiles(void) {
 				token = Com_ParseExt(&p, qtrue);
 				// skip parameters
 				token = Com_ParseExt(&p, qtrue);
+
 				if (Q_stricmp(token, "(")) {
 					Com_ParseWarning("expected(found '%s'\n", token);
 					break;
@@ -5207,11 +5165,13 @@ static void ScanAndLoadShaderFiles(void) {
 				while (1) {
 					token = Com_ParseExt(&p, qtrue);
 
-					if (!token[0])
+					if (!token[0]) {
 						break;
+					}
 
-					if (!Q_stricmp(token, ")"))
+					if (!Q_stricmp(token, ")")) {
 						break;
+					}
 				}
 
 				if (Q_stricmp(token, ")")) {
@@ -5236,7 +5196,6 @@ static void ScanAndLoadShaderFiles(void) {
 	}
 
 	size += MAX_SHADERTEXT_HASH;
-
 	hashMem = ri.Hunk_Alloc(size * sizeof(char *), h_low);
 
 	for (i = 0; i < MAX_SHADERTEXT_HASH; i++) {
@@ -5279,6 +5238,7 @@ static void ScanAndLoadShaderFiles(void) {
 				// check if already created
 				alreadyCreated = qfalse;
 				hash = generateHashValue(table.name, MAX_SHADERTABLE_HASH);
+
 				for (tb = shaderTableHashTable[hash]; tb; tb = tb->next) {
 					if (Q_stricmp(tb->name, table.name) == 0) {
 						// match found
@@ -5289,29 +5249,21 @@ static void ScanAndLoadShaderFiles(void) {
 
 				depth = 0;
 				numValues = 0;
-				do
-				{
+				do {
 					token = Com_ParseExt(&p, qtrue);
 
 					if (!Q_stricmp(token, "snap")) {
 						table.snap = qtrue;
-					}
-					else if (!Q_stricmp(token, "clamp")) {
+					} else if (!Q_stricmp(token, "clamp")) {
 						table.clamp = qtrue;
-					}
-					else if (token[0] == '{') {
+					} else if (token[0] == '{') {
 						depth++;
-					}
-					else if (token[0] == '}') {
+					} else if (token[0] == '}') {
 						depth--;
-					}
-					else if (token[0] == ',') {
+					} else if (token[0] == ',') {
 						continue;
-					}
-					else
-					{
-						if (numValues == FUNCTABLE_SIZE)
-						{
+					} else {
+						if (numValues == FUNCTABLE_SIZE) {
 							ri.Printf(PRINT_WARNING, "WARNING: FUNCTABLE_SIZE hit\n");
 							break;
 						}
@@ -5323,9 +5275,8 @@ static void ScanAndLoadShaderFiles(void) {
 					ri.Printf(PRINT_DEVELOPER, "...generating '%s'\n", table.name);
 					GeneratePermanentShaderTable(values, numValues);
 				}
-			}
 			// support shader templates
-			else if (!Q_stricmp(token, "guide")) {
+			} else if (!Q_stricmp(token, "guide")) {
 				// parse shader name
 				oldp = p;
 				token = Com_ParseExt(&p, qtrue);
@@ -5346,11 +5297,13 @@ static void ScanAndLoadShaderFiles(void) {
 				while (1) {
 					token = Com_ParseExt(&p, qtrue);
 
-					if (!token[0])
+					if (!token[0]) {
 						break;
+					}
 
-					if (!Q_stricmp(token, ")"))
+					if (!Q_stricmp(token, ")")) {
 						break;
+					}
 				}
 
 				if (Q_stricmp(token, ")")) {

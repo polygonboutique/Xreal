@@ -2,7 +2,7 @@
 =======================================================================================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright(C)1999 - 2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999 - 2010 id Software LLC, a ZeniMax Media company. 
 
 This file is part of the Wolfenstein: Enemy Territory GPL Source Code(Wolf ET Source Code).  
 

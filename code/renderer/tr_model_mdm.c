@@ -2,8 +2,8 @@
 =======================================================================================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright(C)1999 - 2010 id Software LLC, a ZeniMax Media company. 
-Copyright(C)2010 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 2010 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of the Wolfenstein: Enemy Territory GPL Source Code("Wolf ET Source Code").
 
@@ -328,7 +328,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	}
 
 	while (lod < MD3_MAX_LODS);
-	
+
 	ri.Hunk_FreeTempMemory(data);
 	// megs
 	/*
@@ -346,7 +346,7 @@ R_LoadMDM
 */
 qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName) {
 	int i, j, k;
-	
+
 	mdmHeader_t *mdm;
 //    mdmFrame_t   * frame;
 	mdmSurface_t *mdmSurf;
@@ -376,7 +376,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName) {
 	mod->type = MOD_MDM;
 	size = LittleLong(mdm->ofsEnd);
 	mod->dataSize += sizeof(mdmModel_t);
-	
+
 	//mdm = mod->mdm = ri.Hunk_Alloc(size, h_low);
 	//memcpy(mdm, buffer, LittleLong(pinmodel->ofsEnd));
 
@@ -391,7 +391,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName) {
 	LL(mdm->ofsTags);
 	LL(mdm->ofsEnd);
 	LL(mdm->ofsSurfaces);
-	
+
 	mdmModel->lodBias = LittleFloat(mdm->lodBias);
 	mdmModel->lodScale = LittleFloat(mdm->lodScale);
 
@@ -406,8 +406,6 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName) {
 		return qfalse;
 	}*/
 
-	
-	
 	// swap all the frames
 	/*frameSize = (int)(sizeof(mdmFrame_t));
 	   for(i = 0; i < mdm->numFrames; i++, frame++){

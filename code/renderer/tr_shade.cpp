@@ -1,26 +1,21 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_shade.c
+
 #include "tr_local.h"
 #include "gl_shader.h"
 
@@ -137,7 +132,7 @@ static void GLSL_LoadGPUShader(GLhandleARB program, const char *name, const char
 		} else {
 			Com_sprintf(filename, sizeof(filename), "glsl / %s_fp.glsl", token);
 		}
-	
+
 		libSize = ri.FS_ReadFile(filename, (void **)&libBuffer);
 
 		if (!libBuffer) {
@@ -734,7 +729,7 @@ static void GLSL_InitGPUShader2(shaderProgram_t *program,
 
 	GLSL_LoadGPUShader(program->program, vertexMainShader, vertexLibShaders, "", GL_VERTEX_SHADER_ARB, optimize);
 	GLSL_LoadGPUShader(program->program, fragmentMainShader, fragmentLibShaders, "", GL_FRAGMENT_SHADER_ARB, optimize);
-	
+
 	GLSL_BindAttribLocations(program->program, attribs);
 	GLSL_LinkProgram(program->program);
 }
@@ -3315,7 +3310,7 @@ static void Render_fog() {
 	qboolean eyeOutside;
 	vec3_t local;
 	vec4_t fogDistanceVector, fogDepthVector;
-	
+
 	//ri.Printf(PRINT_ALL, "--- Render_fog ---\n");
 #if defined(COMPAT_ET)
 	// no fog pass in snooper
@@ -4530,8 +4525,6 @@ void Tess_StageIteratorLighting() {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
-
-
 
 /*
 =======================================================================================================================================

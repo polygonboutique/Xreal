@@ -1,26 +1,25 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_mesh.c--triangle model functions
+
+/**************************************************************************************************************************************
+ Triangle model functions.
+**************************************************************************************************************************************/
+
 #include "tr_local.h"
 
 /*
@@ -29,7 +28,7 @@ R_CullMDV
 =======================================================================================================================================
 */
 static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent) {
-	mdvFrame_t *oldFrame, * newFrame;
+	mdvFrame_t *oldFrame, *newFrame;
 	int i;
 	vec3_t v;
 	vec3_t transformed;
@@ -38,10 +37,8 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent) {
 	oldFrame = model->frames + ent->e.oldframe;
 	// calculate a bounding box in the current coordinate system
 	for (i = 0; i < 3; i++) {
-		ent->localBounds[0][i] = 
-			oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
-		ent->localBounds[1][i] = 
-			oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
+		ent->localBounds[0][i] = oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
+		ent->localBounds[1][i] = oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
 	}
 	// setup world bounds for intersection tests
 	ClearBounds(ent->worldBounds[0], ent->worldBounds[1]);
@@ -63,12 +60,10 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent) {
 					tr.pc.c_sphere_cull_mdx_out++;
 					ent->cull = CULL_OUT;
 					return;
-
 				case CULL_IN:
 					tr.pc.c_sphere_cull_mdx_in++;
 					ent->cull = CULL_IN;
 					return;
-
 				case CULL_CLIP:
 					tr.pc.c_sphere_cull_mdx_clip++;
 					break;
@@ -105,12 +100,10 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent) {
 			tr.pc.c_box_cull_mdx_in++;
 			ent->cull = CULL_IN;
 			return;
-
 		case CULL_CLIP:
 			tr.pc.c_box_cull_mdx_clip++;
 			ent->cull = CULL_CLIP;
 			return;
-
 		case CULL_OUT:
 		default:
 			tr.pc.c_box_cull_mdx_out++;
@@ -118,8 +111,6 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent) {
 			return;
 	}
 }
-
-
 
 /*
 =======================================================================================================================================
@@ -137,8 +128,7 @@ int R_ComputeLOD(trRefEntity_t *ent) {
 		// model has only 1 LOD level, skip computations and bias
 		lod = 0;
 	} else {
-		// multiple LODs exist, so compute projected bounding sphere
-		// and use that as a criteria for selecting LOD
+		// multiple LODs exist, so compute projected bounding sphere and use that as a criteria for selecting LOD
 
 		frame = tr.currentModel->mdv[0]->frames;
 		frame += ent->e.frame;
@@ -148,8 +138,10 @@ int R_ComputeLOD(trRefEntity_t *ent) {
 		if ((projectedRadius = R_ProjectRadius(radius, ent->e.origin)) != 0) {
 			lodscale = r_lodScale->value;
 
-			if (lodscale > 20)
+			if (lodscale > 20) {
 				lodscale = 20;
+			}
+
 			flod = 1.0f - projectedRadius * lodscale;
 		} else {
 			// object intersects near view plane, e.g. view weapon
@@ -161,24 +153,23 @@ int R_ComputeLOD(trRefEntity_t *ent) {
 
 		if (lod < 0) {
 			lod = 0;
-		}
-
-		else if (lod >= tr.currentModel->numLods) {
+		} else if (lod >= tr.currentModel->numLods) {
 			lod = tr.currentModel->numLods - 1;
 		}
 	}
 
 	lod += r_lodBias->integer;
 
-	if (lod >= tr.currentModel->numLods)
+	if (lod >= tr.currentModel->numLods) {
 		lod = tr.currentModel->numLods - 1;
+	}
 
-	if (lod < 0)
+	if (lod < 0) {
 		lod = 0;
+	}
 
 	return lod;
 }
-
 
 static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdvSurface) {
 	shader_t *shader = 0;
@@ -203,9 +194,7 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 
 		if (shader == tr.defaultShader) {
 			ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %s in skin %s\n", mdvSurface->name, skin->name);
-		}
-
-		else if (shader->defaultShader) {
+		} else if (shader->defaultShader) {
 			ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 		}
 	} else {
@@ -232,8 +221,8 @@ void R_AddMDVSurfaces(trRefEntity_t *ent) {
 	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
 
 	if (ent->e.renderfx & RF_WRAP_FRAMES) {
-		ent->e.frame % = tr.currentModel->mdv[0]->numFrames;
-		ent->e.oldframe % = tr.currentModel->mdv[0]->numFrames;
+		ent->e.frame %= tr.currentModel->mdv[0]->numFrames;
+		ent->e.oldframe %= tr.currentModel->mdv[0]->numFrames;
 	}
 	// compute LOD
 	if (ent->e.renderfx & RF_FORCENOLOD) {
@@ -245,17 +234,14 @@ void R_AddMDVSurfaces(trRefEntity_t *ent) {
 	// This will write directly into the entity structure, so
 	// when the surfaces are rendered, they don't need to be
 	// range checked again.
-	if ((ent->e.frame >= tr.currentModel->mdv[lod]->numFrames)
-	   || (ent->e.frame < 0) || (ent->e.oldframe >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.oldframe < 0)) {
-		ri.Printf(PRINT_DEVELOPER, "R_AddMDVSurfaces: no such frame %d to %d for '%s'(%d)\n",
-				  ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
+	if ((ent->e.frame >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.frame < 0) || (ent->e.oldframe >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.oldframe < 0)) {
+		ri.Printf(PRINT_DEVELOPER, "R_AddMDVSurfaces: no such frame %d to %d for '%s'(%d)\n", ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
 		ent->e.frame = 0;
 		ent->e.oldframe = 0;
 	}
 
 	model = tr.currentModel->mdv[lod];
-	// cull the entire model if merged bounding box of both frames
-	// is outside the view frustum.
+	// cull the entire model if merged bounding box of both frames is outside the view frustum.
 	R_CullMDV(model, ent);
 
 	if (ent->cull == CULL_OUT) {

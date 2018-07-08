@@ -1,7 +1,7 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2010 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2010 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #define LL(x)x = LittleLong(x)
 #define LF(x)x = LittleFloat(x)
-
 
 /*
 =======================================================================================================================================

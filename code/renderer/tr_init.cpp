@@ -1,25 +1,21 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
+
 // tr_init.c--functions that are not called every frame
 #include "tr_local.h"
 
@@ -468,7 +464,7 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode) {
 		*windowAspect = r_customaspect->value;
 	} else {
 		vm = &r_vidModes[mode];
-	
+
 		*width = vm->width;
 		*height = vm->height;
 		*windowAspect = (float)vm->width / (vm->height * vm->pixelAspect);
@@ -1601,7 +1597,7 @@ void R_Init(void) {
 	backEndData[0]->polys = (srfPoly_t *)ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPoly_t), h_low);
 	backEndData[0]->polyVerts = (polyVert_t *)ri.Hunk_Alloc(r_maxPolyVerts->integer * sizeof(polyVert_t), h_low);
 	backEndData[0]->polybuffers = (srfPolyBuffer_t *)ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPolyBuffer_t), h_low);
-	
+
 	if (r_smp->integer) {
 		backEndData[1] = (backEndData_t *)ri.Hunk_Alloc(sizeof(*backEndData[1]), h_low);
 		backEndData[1]->polys = (srfPoly_t *)ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPoly_t), h_low);

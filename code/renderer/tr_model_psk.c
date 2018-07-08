@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C)2009 - 2010 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2009 - 2010 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #include "tr_local.h"
 #include "tr_model_skel.h"
-
 
 static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader) {
 	int i;
@@ -537,7 +536,6 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		QuatCopy(boneQuat, md5Bone->rotation);
 
 		//QuatClear(md5Bone->rotation);
-
 
 #if 0
 		ri.Printf(PRINT_ALL, "R_LoadPSK: md5Bone_t(%i):\n"

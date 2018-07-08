@@ -1,37 +1,29 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_world.c
 
 #include "tr_local.h"
 #include "gl_shader.h"
-
 
 /*
 =======================================================================================================================================
 R_CullTriSurf
 
-Returns true if the grid is completely culled away.
-Also sets the clipped hint bit in tess
+Returns true if the grid is completely culled away. Also sets the clipped hint bit in tess.
 =======================================================================================================================================
 */
 /*
@@ -52,8 +44,7 @@ static qboolean R_CullTriSurf(srfTriangles_t *cv) {
 =======================================================================================================================================
 R_CullGrid
 
-Returns true if the grid is completely culled away.
-Also sets the clipped hint bit in tess
+Returns true if the grid is completely culled away. Also sets the clipped hint bit in tess.
 =======================================================================================================================================
 */
 /*
@@ -76,9 +67,8 @@ static qboolean R_CullGrid(srfGridMesh_t *cv) {
 	if (sphereCull == CULL_OUT) {
 		tr.pc.c_sphere_cull_patch_out++;
 		return qtrue;
-	}
 	// check bounding box if necessary
-	else if (sphereCull == CULL_CLIP) {
+	} else if (sphereCull == CULL_CLIP) {
 		tr.pc.c_sphere_cull_patch_clip++;
 
 		boxCull = R_CullLocalBox(cv->bounds);
@@ -86,9 +76,7 @@ static qboolean R_CullGrid(srfGridMesh_t *cv) {
 		if (boxCull == CULL_OUT) {
 			tr.pc.c_box_cull_patch_out++;
 			return qtrue;
-		}
-
-		else if (boxCull == CULL_IN) {
+		} else if (boxCull == CULL_IN) {
 			tr.pc.c_box_cull_patch_in++;
 		} else {
 			tr.pc.c_box_cull_patch_clip++;
@@ -100,8 +88,6 @@ static qboolean R_CullGrid(srfGridMesh_t *cv) {
 	return qfalse;
 }
 */
-
-
 /*
 =======================================================================================================================================
 R_CullSurface
@@ -861,10 +847,9 @@ static void R_UpdateClusterSurfaces() {
 			ClearBounds(bounds[0], bounds[1]);
 			// build triangle indices
 			indexesSize = numTriangles * 3 * sizeof(glIndex_t);
-
 			indexes = (glIndex_t *)ri.Hunk_AllocateTempMemory(indexesSize);
-
 			numTriangles = 0;
+
 			for (l = k; l < numSurfaces; l++) {
 				surface2 = surfacesSorted[l];
 
@@ -1038,7 +1023,7 @@ static void R_MarkLeaves(void) {
 			}
 		}
 	}
-	
+
 	tr.visIndex = (tr.visIndex + 1)% MAX_VISCOUNTS;
 	tr.visCounts[tr.visIndex]++;
 	tr.visClusters[tr.visIndex] = cluster;
@@ -1509,7 +1494,13 @@ static void PullUpVisibility(bspNode_t *node) {
 }
 
 /*
+=======================================================================================================================================
+PushNode
+=======================================================================================================================================
+*/
+/*
 static void PushNode(link_t *traversalStack, bspNode_t *node) {
+
 	if (node->contents != -1) {
 		//DrawLeaf(node, tr.refdef.decalBits);
 	} else {
@@ -1529,9 +1520,7 @@ static void PushNode(link_t *traversalStack, bspNode_t *node) {
 
 			ri.Printf(PRINT_ALL, "--> %i\n", node->children[0] - tr.world->nodes);
 			ri.Printf(PRINT_ALL, "--> %i\n", node->children[1] - tr.world->nodes);
-		}
-
-		else
+		} else
 #endif
 		{
 #if 1
@@ -1755,7 +1744,7 @@ static void R_CoherentHierachicalCulling() {
 	/*
 	ClearLink(&traversalStack);
 	traversalStack.numElements = 0;
-	
+
 	node = &tr.world->nodes[0];
 	InsertLink(&node->visChain, &traversalStack);
 	traversalStack.numElements++;
@@ -1859,6 +1848,7 @@ static void R_CoherentHierachicalCulling() {
 				// identify nodes that we cannot skip queries for
 				bool needsQuery;
 				bool clipsNearPlane = (BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][FRUSTUM_NEAR]) == 3);
+
 				if (clipsNearPlane) {
 					// node clips near plane so avoid the occlusion query test
 					node->occlusionQuerySamples[tr.viewCount] = r_chcVisibilityThreshold->integer + 1;

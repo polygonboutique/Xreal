@@ -1,22 +1,17 @@
 /*
 =======================================================================================================================================
-Copyright(C)2010 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2010 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
 
@@ -400,7 +395,7 @@ public:
 	{
 		return ATTR_BONE_INDEXES|ATTR_BONE_WEIGHTS;
 	}
-	
+
 	void EnableVertexSkinning() {
 		EnableMacro();
 	}
@@ -488,7 +483,7 @@ public:
 			DisableMacro();
 		}
 	}
-	
+
 	void DisableDeformVertexes() {
 		DisableMacro();
 	}
@@ -528,7 +523,7 @@ public:
 	void EnableTCGenEnvironment() {
 		EnableMacro();
 	}
-	
+
 	void DisableTCGenEnvironment() {
 		DisableMacro();
 	}
@@ -541,7 +536,6 @@ public:
 		}
 	}
 };
-
 
 class GLCompileMacro_USE_NORMAL_MAPPING:
 GLCompileMacro
@@ -714,7 +708,7 @@ public:
 	{
 		return EYE_OUTSIDE;
 	}
-	
+
 	void EnableMacro_EYE_OUTSIDE() {
 		EnableMacro();
 	}
@@ -779,7 +773,7 @@ public:
 	{
 		return "LIGHT_DIRECTIONAL";
 	}
-	
+
 	EGLCompileMacro GetType()const
 	{
 		return LIGHT_DIRECTIONAL;

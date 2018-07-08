@@ -1,67 +1,62 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_flares.c
+
 #include "tr_local.h"
 
 /*
 =======================================================================================================================================
-LIGHT FLARES
 
-A light flare is an effect that takes place inside the eye when bright light
-sources are visible.  The size of the flare reletive to the screen is nearly
-constant, irrespective of distance, but the intensity should be proportional to the
-projected area of the light source.
+ LIGHT FLARES
 
-A surface that has been flagged as having a light flare will calculate the depth
-buffer value that it's midpoint should have when the surface is added.
+ A light flare is an effect that takes place inside the eye when bright light sources are visible. The size of the flare reletive to
+ the screen is nearly constant, irrespective of distance, but the intensity should be proportional to the projected area of the light
+ source.
 
-After all opaque surfaces have been rendered, the depth buffer is read back for
-each flare in view.  If the point has not been obscured by a closer surface, the
-flare should be drawn.
+ A surface that has been flagged as having a light flare will calculate the depth buffer value that its midpoint should have when the
+ surface is added.
 
-Surfaces that have a repeated texture should never be flagged as flaring, because
-there will only be a single flare added at the midpoint of the polygon.
+ After all opaque surfaces have been rendered, the depth buffer is read back for each flare in view. If the point has not been obscured
+ by a closer surface, the flare should be drawn.
 
-To prevent abrupt popping, the intensity of the flare is interpolated up and
-down as it changes visibility.  This involves scene to scene state, unlike almost
-all other aspects of the renderer, and is complicated by the fact that a single
-frame may have multiple scenes.
+ Surfaces that have a repeated texture should never be flagged as flaring, because there will only be a single flare added at the
+ midpoint of the polygon.
 
-RB_RenderFlares()will be called once per view(twice in a mirrored scene, potentially
-up to five or more times in a frame with 3D status bar icons).
+ To prevent abrupt popping, the intensity of the flare is interpolated up and down as it changes visibility. This involves scene to
+ scene state, unlike almost all other aspects of the renderer, and is complicated by the fact that a single frame may have multiple
+ scenes.
+
+ RB_RenderFlares() will be called once per view (twice in a mirrored scene, potentially up to five or more times in a frame with 3D
+ status bar icons).
+
 =======================================================================================================================================
 */
 
-// flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
+// flare states maintain visibility over multiple frames for fading
+// layers: view, mirror, menu
 typedef struct flare_s {
-	struct flare_s * next;		// for active chain
+	struct flare_s *next;	// for active chain
 	int addedFrame;
-	qboolean inPortal;	// true if in a portal view of the scene
+	qboolean inPortal;		// true if in a portal view of the scene
 	int frameSceneNum;
 	void *surface;
 	int fogNum;
 	int fadeTime;
-	qboolean visible;	// state of last test
+	qboolean visible;		// state of last test
 	float drawIntensity;	// may be non 0 even if !visible due to fading
 	int windowX, windowY;
 	float eyeZ;
@@ -71,7 +66,7 @@ typedef struct flare_s {
 #define MAX_FLARES 128
 
 flare_t r_flareStructs[MAX_FLARES];
-flare_t *r_activeFlares, * r_inactiveFlares;
+flare_t *r_activeFlares, *r_inactiveFlares;
 
 int flareCoeff;
 
@@ -98,12 +93,12 @@ void R_ClearFlares(void) {
 =======================================================================================================================================
 RB_AddFlare
 
-This is called at surface tesselation time
+This is called at surface tesselation time.
 =======================================================================================================================================
 */
 void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal) {
 	int i;
-	flare_t *f, * oldest;
+	flare_t *f, *oldest;
 	vec3_t local;
 	vec4_t eye, clip, normalized, window;
 	float distBias = 512.0;
@@ -142,8 +137,11 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 		}
 
 		f = r_inactiveFlares;
+
 		r_inactiveFlares = r_inactiveFlares->next;
+
 		f->next = r_activeFlares;
+
 		r_activeFlares = f;
 
 		f->surface = surface;
@@ -322,9 +320,8 @@ void RB_RenderFlare(flare_t *f) {
 		distance = 1.0f;
 	} else {
 		distance = -f->eyeZ;
-	// calculate the flare size
 	}
-
+	// calculate the flare size..
 	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
 	factor = distance + size * sqrt(flareCoeff);
 	intensity = flareCoeff * size * size / (factor * factor);
@@ -422,7 +419,7 @@ void RB_RenderFlares(void) {
 
 	if (!r_flares->integer) {
 		return;
-
+	}
 #if 0
 	if (r_flareCoeff->modified) {
 		if (r_flareCoeff->value == 0.0f) {
@@ -454,7 +451,7 @@ void RB_RenderFlares(void) {
 			r_inactiveFlares = f;
 			continue;
 		}
-		// don't draw any here that aren't from this scene / portal
+		// don't draw any here that aren't from this scene/portal
 		f->drawIntensity = 0;
 
 		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal) {

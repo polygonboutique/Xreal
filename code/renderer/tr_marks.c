@@ -1,28 +1,26 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
-Copyright(C)2008 Oliver McFadden
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2008 Oliver McFadden
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
 
-// tr_marks.c--polygon projection on the world polygons
+/**************************************************************************************************************************************
+ Polygon projection on the world polygons.
+**************************************************************************************************************************************/
+
 #include "tr_local.h"
 
 #define MAX_VERTS_ON_POLY 64
@@ -41,7 +39,7 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	int counts[3];
 	float dot;
 	int i, j;
-	float *p1, * p2, * clip;
+	float *p1, *p2, *clip;
 	float d;
 
 	// don't clip if it might overflow
@@ -89,13 +87,13 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 
 		if (sides[i] == SIDE_ON) {
 			VectorCopy(p1, clip);
-			(*numOutPoints) ++;
+			(*numOutPoints)++;
 			continue;
 		}
 
 		if (sides[i] == SIDE_FRONT) {
 			VectorCopy(p1, clip);
-			(*numOutPoints) ++;
+			(*numOutPoints)++;
 			clip = outPoints[*numOutPoints];
 		}
 
@@ -103,7 +101,7 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 			continue;
 		}
 		// generate a split point
-		p2 = inPoints[(i + 1)% numInPoints];
+		p2 = inPoints[(i + 1) % numInPoints];
 		d = dists[i] - dists[i + 1];
 
 		if (d == 0) {
@@ -116,7 +114,7 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 			clip[j] = p1[j] + dot * (p2[j] - p1[j]);
 		}
 
-		(*numOutPoints) ++;
+		(*numOutPoints)++;
 	}
 }
 
@@ -127,10 +125,10 @@ R_BoxSurfaces_r
 */
 void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **list, int listsize, int *listlength, vec3_t dir) {
 	int s, c;
-	bspSurface_t *surf, * * mark;
+	bspSurface_t *surf, **mark;
 
 	// do the tail recursion in a loop
-	while (node->contents == - 1) {
+	while (node->contents == -1) {
 		s = BoxOnPlaneSide(mins, maxs, node->plane);
 
 		if (s == 1) {
@@ -153,7 +151,7 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 
 		surf = *mark;
 		// check if the surface has NOIMPACT or NOMARKS set
-		if ((surf->shader->surfaceFlags &(SURF_NOIMPACT|SURF_NOMARKS)) || (surf->shader->contentFlags & CONTENTS_FOG)) {
+		if ((surf->shader->surfaceFlags & (SURF_NOIMPACT|SURF_NOMARKS)) || (surf->shader->contentFlags & CONTENTS_FOG)) {
 			surf->viewCount = tr.viewCountNoReset;
 		// extra check for surfaces to avoid list overflows
 		} else if (*(surf->data) == SF_FACE) {
@@ -162,7 +160,7 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 
 			if (s == 1 || s == 2) {
 				surf->viewCount = tr.viewCountNoReset;
-			} else if (DotProduct(((srfSurfaceFace_t *)surf->data) ->plane.normal, dir) > - 0.5) {
+			} else if (DotProduct(((srfSurfaceFace_t *)surf->data) ->plane.normal, dir) > -0.5) {
 				// don't add faces that make sharp angles with the projection direction
 				surf->viewCount = tr.viewCountNoReset;
 			}
@@ -173,7 +171,7 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 		if (surf->viewCount != tr.viewCountNoReset) {
 			surf->viewCount = tr.viewCountNoReset;
 			list[*listlength] = (surfaceType_t *)surf->data;
-			(*listlength) ++;
+			(*listlength)++;
 		}
 
 		mark++;
@@ -183,17 +181,18 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 /*
 =======================================================================================================================================
 R_AddMarkFragments
-
 =======================================================================================================================================
 */
 void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POLY], int numPlanes, vec3_t *normals, float *dists, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer, int *returnedPoints, int *returnedFragments, vec3_t mins, vec3_t maxs) {
 	int pingPong, i;
 	markFragment_t *mf;
+
 	// chop the surface by all the bounding planes of the to be projected polygon
 	pingPong = 0;
 
 	for (i = 0; i < numPlanes; i++) {
 		R_ChopPolyBehindPlane(numClipPoints, clipPoints[pingPong], &numClipPoints, clipPoints[!pingPong], normals[i], dists[i], 0.5);
+
 		pingPong ^= 1;
 
 		if (numClipPoints == 0) {
@@ -210,21 +209,28 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 	}
 	/*
 	// all the clip points should be within the bounding box
-	for(i = 0; i < numClipPoints; i++) {
+	for (i = 0; i < numClipPoints; i++) {
 		int j;
 
-		for(j = 0; j < 3; j++) {
-			if (clipPoints[pingPong][i][j] < mins[j] - 0.5)
-				break;
-			if (clipPoints[pingPong][i][j] > maxs[j] + 0.5)
+		for (j = 0; j < 3; j++) {
+			if (clipPoints[pingPong][i][j] < mins[j] - 0.5) {
 				break;
 			}
-			if (j < 3)
-				break;
-			}
-		if (i < numClipPoints)return;
-	*/
 
+			if (clipPoints[pingPong][i][j] > maxs[j] + 0.5) {
+				break;
+			}
+		}
+
+		if (j < 3) {
+			break;
+		}
+	}
+
+	if (i < numClipPoints) {
+		return;
+	}
+	*/
 	mf = fragmentBuffer + (*returnedFragments);
 	mf->firstPoint = (*returnedPoints);
 	mf->numPoints = numClipPoints;
@@ -234,7 +240,7 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 	Com_Memcpy(pointBuffer + (*returnedPoints) * 3, clipPoints[pingPong], numClipPoints * sizeof(vec3_t));
 #endif
 	(*returnedPoints) += numClipPoints;
-	(*returnedFragments) ++;
+	(*returnedFragments)++;
 }
 
 /*
@@ -276,7 +282,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 		AddPointToBounds(points[i], mins, maxs);
 		VectorAdd(points[i], projection, temp);
 		AddPointToBounds(temp, mins, maxs);
-		// make sure we get all the leafs(also the one(s)in front of the hit surface)
+		// make sure we get all the leafs (also the one(s) in front of the hit surface)
 		VectorMA(points[i], -20, projectionDir, temp);
 		AddPointToBounds(temp, mins, maxs);
 	}
@@ -286,7 +292,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	}
 	// create the bounding planes for the to be projected polygon
 	for (i = 0; i < numPoints; i++) {
-		VectorSubtract(points[(i + 1)% numPoints], points[i], v1);
+		VectorSubtract(points[(i + 1)%numPoints], points[i], v1);
 		VectorAdd(points[i], projection, v2);
 		VectorSubtract(points[i], v2, v2);
 		CrossProduct(v1, v2, normals[i]);
@@ -315,6 +321,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	for (i = 0; i < numsurfaces; i++) {
 		if (*surfaces[i] == SF_GRID) {
 			cv = (srfGridMesh_t *)surfaces[i];
+
 			for (m = 0; m < cv->height - 1; m++) {
 				for (n = 0; n < cv->width - 1; n++) {
 					// We triangulate the grid and chop all triangles within
@@ -331,8 +338,8 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 					// should skip the flagged vertices. This still leaves the
 					// problems with the vertices at the chopped grid edges.
 					//
-					// To avoid issues when LOD applied to "hollow curves"(like
-					// the ones around many jump pads)we now just add a 2 unit
+					// To avoid issues when LOD applied to "hollow curves" (like
+					// the ones around many jump pads) we now just add a 2 unit
 					// offset to the triangle vertices.
 					// The offset is added in the vertex normal vector direction
 					// so all triangles will still fit together.
@@ -388,7 +395,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 		} else if (*surfaces[i] == SF_FACE) {
 			face = (srfSurfaceFace_t *)surfaces[i];
 			// check the normal of this face
-			if (DotProduct(face->plane.normal, projectionDir) > - 0.5) {
+			if (DotProduct(face->plane.normal, projectionDir) > -0.5) {
 				continue;
 			}
 
@@ -397,15 +404,16 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 					v = face->verts[tri->indexes[j]].xyz;
 					VectorMA(v, MARKER_OFFSET, face->plane.normal, clipPoints[0][j]);
 				}
-
 				/*
-				   VectorSubtract(clipPoints[0][0], clipPoints[0][1], v1);
-				   VectorSubtract(clipPoints[0][2], clipPoints[0][1], v2);
-				   CrossProduct(v1, v2, normal);
-				   VectorNormalize(normal);
-				   if (DotProduct(normal, projectionDir) > - 0.5)continue;
-				  */
+				VectorSubtract(clipPoints[0][0], clipPoints[0][1], v1);
+				VectorSubtract(clipPoints[0][2], clipPoints[0][1], v2);
+				CrossProduct(v1, v2, normal);
+				VectorNormalize(normal);
 
+				if (DotProduct(normal, projectionDir) > - 0.5) {
+					continue;
+				}
+				*/
 				// add the fragments of this face
 				R_AddMarkFragments(3, clipPoints, numPlanes, normals, dists, maxPoints, pointBuffer, maxFragments, fragmentBuffer, &returnedPoints, &returnedFragments, mins, maxs);
 
@@ -421,12 +429,15 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 					VectorCopy(trisurf->verts[tri->indexes[j]].xyz, clipPoints[0][j]);
 				}
 				/*
-				   VectorSubtract(clipPoints[0][0], clipPoints[0][1], v1);
-				   VectorSubtract(clipPoints[0][2], clipPoints[0][1], v2);
-				   CrossProduct(v1, v2, normal);
-				   VectorNormalize(normal);
-				   if (DotProduct(normal, projectionDir) > - 0.5)continue;
-				  */
+				VectorSubtract(clipPoints[0][0], clipPoints[0][1], v1);
+				VectorSubtract(clipPoints[0][2], clipPoints[0][1], v2);
+				CrossProduct(v1, v2, normal);
+				VectorNormalize(normal);
+
+				if (DotProduct(normal, projectionDir) > - 0.5) {
+					continue;
+				}
+				*/
 				// add the fragments of this face
 				R_AddMarkFragments(3, clipPoints, numPlanes, normals, dists, maxPoints, pointBuffer, maxFragments, fragmentBuffer, &returnedPoints, &returnedFragments, mins, maxs);
 

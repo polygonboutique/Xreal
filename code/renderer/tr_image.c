@@ -1,26 +1,21 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_image.c
+
 #include "tr_local.h"
 
 static byte s_intensitytable[256];
@@ -82,8 +77,9 @@ long GenerateImageHashValue(const char *fname) {
 	while (fname[i] != '\0') {
 		letter = tolower(fname[i]);
 
-		//if(letter == '.')
-		//  break;              // don't include extension
+		//if (letter == '.') {
+		//  break; // don't include extension
+		//}
 
 		if (letter == '\\') {
 			letter = '/'; // damn path names
@@ -93,7 +89,7 @@ long GenerateImageHashValue(const char *fname) {
 		i++;
 	}
 
-	hash & = (IMAGE_FILE_HASH_SIZE - 1);
+	hash &= (IMAGE_FILE_HASH_SIZE - 1);
 	return hash;
 }
 
@@ -321,7 +317,7 @@ void R_ImageList_f(void) {
 		ri.Printf(PRINT_ALL, " %s\n", image->name);
 	}
 
-	ri.Printf(PRINT_ALL, "- -------\n");
+	ri.Printf(PRINT_ALL, "--------\n");
 	ri.Printf(PRINT_ALL, " %i total texels(not including mipmaps)\n", texels);
 	ri.Printf(PRINT_ALL, " %d.%02d MB total image memory\n", dataSize / (1024 * 1024), (dataSize %(1024 * 1024)) * 100 / (1024 * 1024));
 	ri.Printf(PRINT_ALL, " %i total images\n\n", tr.images.currentElements);
@@ -331,12 +327,11 @@ void R_ImageList_f(void) {
 =======================================================================================================================================
 ResampleTexture
 
-Used to resample images in a more general than quartering fashion.
-This will only be filtered properly if the resampled size is greater than half the original size.
-If a larger shrinking is needed, use the mipmap function before or after.
+Used to resample images in a more general than quartering fashion. This will only be filtered properly if the resampled size is greater
+than half the original size. If a larger shrinking is needed, use the mipmap function before or after.
 =======================================================================================================================================
 */
-static void ResampleTexture(unsigned * in, int inwidth, int inheight, unsigned * out, int outwidth, int outheight, qboolean normalMap) {
+static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *out, int outwidth, int outheight, qboolean normalMap) {
 	int x, y;
 	unsigned *inrow, *inrow2;
 	unsigned frac, fracstep;
@@ -345,8 +340,9 @@ static void ResampleTexture(unsigned * in, int inwidth, int inheight, unsigned *
 	float inv127 = 1.0f / 127.0f;
 	vec3_t n, n2, n3, n4;
 	// NOTE: Tr3B - limitation not needed anymore
-//  if (outwidth > 2048)
+//  if (outwidth > 2048) {
 //      ri.Error(ERR_DROP, "ResampleTexture: max width");
+//	}
 
 	fracstep = inwidth * 0x10000 / outwidth;
 	frac = fracstep >> 2;
@@ -2398,7 +2394,7 @@ static void R_CreateRandomNormalsImage(void) {
 
 			r = random();
 			angle = 2.0 * M_PI * r;// / 360.0;
-	
+
 			VectorSet(n, cos(angle), sin(angle), r);
 			VectorNormalize(n);
 			//VectorSet(n, crandom(), crandom(), crandom());
@@ -3278,17 +3274,3 @@ int RE_GetTextureId(const char *name) {
 //	ri.Printf(PRINT_ALL, "Image not found.\n");
 	return -1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,37 +1,32 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_surface.c
+
 #include "tr_local.h"
 
 /*
 =======================================================================================================================================
 
-	THIS ENTIRE FILE IS BACK END!
+ THIS ENTIRE FILE IS BACK END
 
-	backEnd.currentEntity will be valid.
-	Tess_Begin has already been called for the surface's shader.
-	The modelview matrix will be set.
-	It is safe to actually issue drawing commands here if you don't want to use the shader system.
+ backEnd.currentEntity will be valid.
+ Tess_Begin has already been called for the surface's shader.
+ The modelview matrix will be set.
+ It is safe to actually issue drawing commands here if you don't want to use the shader system.
 
 =======================================================================================================================================
 */
@@ -1055,7 +1050,7 @@ static void Tess_SurfaceGrid(srfGridMesh_t *srf) {
 	float *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
 	GLimp_LogComment("--- Tess_SurfaceGrid ---\n");
-	
+
 	if (r_vboCurves->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader)) {
 		if (tess.multiDrawPrimitives >= MAX_MULTIDRAW_PRIMITIVES) {
 			Tess_EndBegin();
@@ -1195,7 +1190,7 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf) {
 	float *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
 	GLimp_LogComment("--- Tess_SurfaceTriangles ---\n");
-	
+
 	if (r_vboTriangles->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader)) {
 		if (tess.multiDrawPrimitives >= MAX_MULTIDRAW_PRIMITIVES) {
 			Tess_EndBegin();
@@ -1492,6 +1487,7 @@ static void Tess_DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, 
 		v[0] = (right[0] * c + up[0] * s) * scale * spanWidth;
 		v[1] = (right[1] * c + up[1] * s) * scale * spanWidth;
 		v[2] = (right[2] * c + up[2] * s) * scale * spanWidth;
+
 		VectorAdd(start, v, pos[i]);
 
 		if (numSegs > 1) {
@@ -1562,6 +1558,7 @@ static void Tess_SurfaceRailRings(void) {
 	}
 
 	VectorScale(vec, r_railSegmentLength->value, vec);
+
 	Tess_DoRailDiscs(numSegs, start, vec, right, up);
 }
 
@@ -1594,6 +1591,7 @@ static void Tess_SurfaceRailCore(void) {
 	VectorNormalize(v2);
 	CrossProduct(v1, v2, right);
 	VectorNormalize(right);
+
 	Tess_DoRailCore(start, end, right, len, r_railCoreWidth->integer);
 }
 
@@ -2237,25 +2235,25 @@ static void Tess_SurfaceSkip(void *surf) {
 
 //*INDENT-OFF*
 void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES])(void *) = {
-		(void( *)(void *))Tess_SurfaceBad,	// SF_BAD,
-		(void( *)(void *))Tess_SurfaceSkip,	// SF_SKIP,
-		(void( *)(void *))Tess_SurfaceFace,	// SF_FACE,
-		(void( *)(void *))Tess_SurfaceGrid,	// SF_GRID,
-		(void( *)(void *))Tess_SurfaceTriangles,	// SF_TRIANGLES,
-		(void( *)(void *))Tess_SurfacePolychain,	// SF_POLY,
-		(void( *)(void *))Tess_SurfacePolybuffer,	// SF_POLYBUFFER,
-		(void( *)(void *))Tess_SurfaceDecal,	// SF_DECAL
-		(void( *)(void *))Tess_SurfaceMDV,	// SF_MDV, 
+		(void(*)(void*))Tess_SurfaceBad,		// SF_BAD,
+		(void(*)(void*))Tess_SurfaceSkip,		// SF_SKIP,
+		(void(*)(void*))Tess_SurfaceFace,		// SF_FACE,
+		(void(*)(void*))Tess_SurfaceGrid,		// SF_GRID,
+		(void(*)(void*))Tess_SurfaceTriangles,	// SF_TRIANGLES,
+		(void(*)(void*))Tess_SurfacePolychain,	// SF_POLY,
+		(void(*)(void*))Tess_SurfacePolybuffer,	// SF_POLYBUFFER,
+		(void(*)(void*))Tess_SurfaceDecal,		// SF_DECAL
+		(void(*)(void*))Tess_SurfaceMDV,		// SF_MDV, 
 #if defined(COMPAT_ET)
-		(void( *)(void *))Tess_MDM_SurfaceAnim,	// SF_MDM, 
+		(void(*)(void*))Tess_MDM_SurfaceAnim,	// SF_MDM, 
 #endif
-		(void( *)(void *))Tess_SurfaceMD5,	// SF_MD5,
-		(void( *)(void *))Tess_SurfaceFlare,	// SF_FLARE,
-		(void( *)(void *))Tess_SurfaceEntity,	// SF_ENTITY
-		(void( *)(void *))Tess_SurfaceVBOMesh,	// SF_VBO_MESH
-		(void( *)(void *))Tess_SurfaceVBOMD5Mesh,	// SF_VBO_MD5MESH
+		(void(*)(void*))Tess_SurfaceMD5,		// SF_MD5,
+		(void(*)(void*))Tess_SurfaceFlare,		// SF_FLARE,
+		(void(*)(void*))Tess_SurfaceEntity,		// SF_ENTITY
+		(void(*)(void*))Tess_SurfaceVBOMesh,	// SF_VBO_MESH
+		(void(*)(void*))Tess_SurfaceVBOMD5Mesh,	// SF_VBO_MD5MESH
 #if defined(COMPAT_ET)
-		(void( *)(void *))Tess_SurfaceVBOMDMMesh,	// SF_VBO_MD5MESH
+		(void(*)(void*))Tess_SurfaceVBOMDMMesh,	// SF_VBO_MD5MESH
 #endif
-		(void( *)(void *))Tess_SurfaceVBOMDVMesh	// SF_VBO_MDVMESH
+		(void(*)(void*))Tess_SurfaceVBOMDVMesh	// SF_VBO_MDVMESH
 };

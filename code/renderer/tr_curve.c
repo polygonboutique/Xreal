@@ -1,38 +1,33 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_curve.c
+
 #include "tr_local.h"
 
 /*
 =======================================================================================================================================
-This file does all of the processing necessary to turn a raw grid of points
-read from the map file into a srfGridMesh_t ready for rendering.
 
-The level of detail solution is direction independent, based only on subdivided
-distance from the true curve.
+ This file does all of the processing necessary to turn a raw grid of points read from the map file into a srfBspSurface_t ready for
+ rendering.
+ The level of detail solution is direction independent, based only on subdivided distance from the true curve.
+ Only a single entry point:
 
-Only a single entry point:
-R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
+ srfBspSurface_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE*MAX_PATCH_SIZE])
+
 =======================================================================================================================================
 */
 
@@ -128,9 +123,7 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 	qboolean good[8];
 	qboolean wrapWidth, wrapHeight;
 	float len;
-	static int neighbors[8][2] = {
-		{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}
-	};
+	static int neighbors[8][2] = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
 	wrapWidth = qfalse;
 
@@ -166,6 +159,7 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 		for (j = 0; j < height; j++) {
 			count = 0;
 			dv = &ctrl[j][i];
+
 			VectorCopy(dv->xyz, base);
 
 			for (k = 0; k < 8; k++) {
@@ -209,23 +203,25 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 			}
 
 			VectorClear(sum);
+
 			for (k = 0; k < 8; k++) {
-				if (!good[k] || !good[(k + 1)& 7]) {
+				if (!good[k] || !good[(k + 1) & 7]) {
 					continue; // didn't get two points
 				}
 
-				CrossProduct(around[(k + 1)& 7], around[k], normal); 
+				CrossProduct(around[(k + 1) & 7], around[k], normal);
 
 				if (VectorNormalize2(normal, normal) == 0) {
 					continue;
 				}
 
 				VectorAdd(normal, sum, sum);
+
 				count++;
 			}
 
 			if (count == 0) {
-//printf("bad normal\n");
+			//	printf("bad normal\n");
 				count = 1;
 			}
 
@@ -321,6 +317,7 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			int v1, v2, v3, v4;
+
 			// vertex order to be reckognized as tristrips
 			v1 = i * width + j + 1;
 			v2 = v1 - 1;
@@ -480,13 +477,12 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 	Com_Memcpy(copy, errorTable, sizeof(copy));
 
 	for (i = 0; i < width; i++) {
-		errorTable[1][i] = copy[0][i];	//[width - 1 - i];
+		errorTable[1][i] = copy[0][i]; //[width - 1 - i];
 	}
 
 	for (i = 0; i < height; i++) {
 		errorTable[0][i] = copy[1][height - 1 - i];
 	}
-
 }
 
 /*
@@ -565,6 +561,7 @@ static srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height, srfVert_t c
 	grid->width = width;
 	grid->height = height;
 	grid->surfaceType = SF_GRID;
+
 	ClearBounds(grid->bounds[0], grid->bounds[1]);
 
 	for (i = 0; i < width; i++) {
@@ -578,11 +575,13 @@ static srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height, srfVert_t c
 	VectorAdd(grid->bounds[0], grid->bounds[1], grid->origin);
 	VectorScale(grid->origin, 0.5f, grid->origin);
 	VectorSubtract(grid->bounds[0], grid->origin, tmpVec);
+
 	grid->radius = VectorLength(tmpVec);
 
 	VectorCopy(grid->origin, grid->lodOrigin);
+
 	grid->lodRadius = grid->radius;
-	//
+
 	return grid;
 }
 
@@ -623,13 +622,13 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 	}
 
 	for (dir = 0; dir < 2; dir++) {
-
 		for (j = 0; j < MAX_GRID_SIZE; j++) {
 			errorTable[dir][j] = 0;
 		}
 		// horizontal subdivisions
 		for (j = 0; j + 2 < width; j += 2) {
 			// check subdivided midpoints against control points
+
 			// FIXME: also check midpoints of adjacent patches against the control points
 			// this would basically stitch all patches in the same LOD group together.
 			maxLen = 0;
@@ -646,7 +645,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 					midxyz[l] = (ctrl[i][j].xyz[l] + ctrl[i][j + 1].xyz[l] * 2 + ctrl[i][j + 2].xyz[l]) * 0.25f;
 				}
 				// see how far off the line it is using dist-from-line will not account for internal
-				// texture warping, but it gives a lot less polygons thandist-from-midpoint
+				// texture warping, but it gives a lot less polygons than dist-from-midpoint
 				VectorSubtract(midxyz, ctrl[i][j].xyz, midxyz);
 				VectorSubtract(ctrl[i][j + 2].xyz, ctrl[i][j].xyz, dir);
 				VectorNormalize(dir);
@@ -669,7 +668,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 				errorTable[dir][j + 1] = 999;
 				continue;
 			}
-
 			// see if we want to insert subdivided columns
 			if (width + 2 > MAX_GRID_SIZE) {
 				errorTable[dir][j + 1] = 1.0f / maxLen;

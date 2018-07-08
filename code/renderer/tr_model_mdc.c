@@ -2,8 +2,8 @@
 =======================================================================================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright(C)1999 - 2010 id Software LLC, a ZeniMax Media company. 
-Copyright(C)2010 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 2010 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of the Wolfenstein: Enemy Territory GPL Source Code("Wolf ET Source Code").
 
@@ -318,7 +318,6 @@ void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t n
 	(out)[2] = ((float)((ofsVec >> 16)& 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
 #endif
-
 
 /*
 =======================================================================================================================================

@@ -1,28 +1,24 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
 
 #ifndef TR_LOCAL_H
 #define TR_LOCAL_H
+
 #include <q_shared.h>
 #include "../qcommon/qfiles.h"
 #include "../qcommon/qcommon.h"
@@ -91,7 +87,6 @@ typedef enum {
 	RSPEEDS_NEAR_FAR,
 	RSPEEDS_DECALS
 } renderSpeeds_t;
-
 
 #define DS_STANDARD_ENABLED() ((r_deferredShading->integer == DS_STANDARD && glConfig2.maxColorAttachments >= 4 && glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4 && /*glConfig2.framebufferPackedDepthStencilAvailable &&*/ glConfig.driverType != GLDRV_MESA))
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable && glConfig.driverType != GLDRV_MESA))
@@ -661,16 +656,16 @@ typedef enum {
 
 typedef enum {
 	CGEN_BAD,
-	CGEN_IDENTITY_LIGHTING,		// tr.identityLight
-	CGEN_IDENTITY,				// always (1, 1, 1, 1)
-	CGEN_ENTITY,				// grabbed from entity's modulate field
-	CGEN_ONE_MINUS_ENTITY,		// grabbed from 1 - entity.modulate
-	CGEN_VERTEX,				// tess.colors
+	CGEN_IDENTITY_LIGHTING,	// tr.identityLight
+	CGEN_IDENTITY,			// always (1, 1, 1, 1)
+	CGEN_ENTITY,			// grabbed from entity's modulate field
+	CGEN_ONE_MINUS_ENTITY,	// grabbed from 1 - entity.modulate
+	CGEN_VERTEX,			// tess.colors
 	CGEN_ONE_MINUS_VERTEX,
-	CGEN_WAVEFORM,				// programmatically generated
-	CGEN_CONST,					// fixed color
-	CGEN_CUSTOM_RGB,			// like fixed color but generated dynamically, single arithmetic expression
-	CGEN_CUSTOM_RGBs,			// multiple expressions
+	CGEN_WAVEFORM,			// programmatically generated
+	CGEN_CONST,				// fixed color
+	CGEN_CUSTOM_RGB,		// like fixed color but generated dynamically, single arithmetic expression
+	CGEN_CUSTOM_RGBs,		// multiple expressions
 } colorGen_t;
 
 typedef enum {
@@ -788,7 +783,7 @@ typedef enum {
 #define MAX_SHADER_DEFORMS 3
 #define MAX_SHADER_DEFORM_PARMS (1 + MAX_SHADER_DEFORMS + MAX_SHADER_DEFORMS * 8)
 typedef struct {
-	deform_t deformation;	// vertex coordinate modification type
+	deform_t deformation; // vertex coordinate modification type
 	vec3_t moveVector;
 	waveForm_t deformationWave;
 	float deformationSpread;
@@ -890,10 +885,10 @@ typedef struct {
 	expression_t alphaExp;
 	expression_t alphaTestExp;
 	qboolean tcGen_Environment;
-	byte constantColor[4];	// for CGEN_CONST and AGEN_CONST
-	uint32_t stateBits;	// GLS_xxxx mask
+	byte constantColor[4];			// for CGEN_CONST and AGEN_CONST
+	uint32_t stateBits;				// GLS_xxxx mask
 	acff_t adjustColorsForFog;
-	qboolean overrideNoPicMip;	// for images that must always be full resolution
+	qboolean overrideNoPicMip;		// for images that must always be full resolution
 	qboolean overrideFilterType;	// for console fonts, 2D elements, etc.
 	filterType_t filterType;
 	qboolean overrideWrapType;
@@ -915,7 +910,7 @@ typedef struct {
 	expression_t deformMagnitudeExp;
 	expression_t blurMagnitudeExp;
 	expression_t wrapAroundLightingExp;
-	qboolean noFog;		// used only for shaders that have fog disabled, so we can enable it for individual stages
+	qboolean noFog;					// used only for shaders that have fog disabled, so we can enable it for individual stages
 } shaderStage_t;
 
 struct shaderCommands_s;
@@ -927,14 +922,14 @@ typedef enum {
 } cullType_t;
 
 typedef enum {
-	FP_NONE,					// surface is translucent and will just be adjusted properly
-	FP_EQUAL,					// surface is opaque but possibly alpha tested
-	FP_LE						// surface is translucent, but still needs a fog pass (fog surface)
+	FP_NONE,	// surface is translucent and will just be adjusted properly
+	FP_EQUAL,	// surface is opaque but possibly alpha tested
+	FP_LE		// surface is translucent, but still needs a fog pass (fog surface)
 } fogPass_t;
 
 typedef struct {
 	float cloudHeight;
-	image_t *outerbox, * innerbox;
+	image_t *outerbox, *innerbox;
 } skyParms_t;
 
 typedef struct {
@@ -951,27 +946,24 @@ typedef enum {
 } shaderType_t;
 
 typedef struct shader_s {
-	char name[MAX_QPATH];	// game path, including extension
+	char name[MAX_QPATH];				// game path, including extension
 	shaderType_t type;
-	int index;		// this shader == tr.shaders[index]
-	int sortedIndex;	// this shader == tr.sortedShaders[sortedIndex]
-	float sort;		// lower numbered shaders draw before higher numbered
-	qboolean defaultShader;	// we want to return index 0 if the shader failed to
-	// load for some reason, but R_FindShader should
-	// still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again with
-	// the same name, we don't try looking for it again
-	qboolean explicitlyDefined;	// found in a .shader file
-	qboolean createdByGuide;	// created using a shader .guide template
-	int surfaceFlags;	// if explicitlyDefined, this will have SURF_* flags
+	int index;							// this shader == tr.shaders[index]
+	int sortedIndex;					// this shader == tr.sortedShaders[sortedIndex]
+	float sort;							// lower numbered shaders draw before higher numbered
+	qboolean defaultShader;				// we want to return index 0 if the shader failed to load for some reason, but R_FindShader should still keep a name allocated for it,
+										// so if something calls RE_RegisterShader again with the same name, we don't try looking for it again
+	qboolean explicitlyDefined;			// found in a .shader file
+	qboolean createdByGuide;			// created using a shader .guide template
+	int surfaceFlags;					// if explicitlyDefined, this will have SURF_* flags
 	int contentFlags;
-	qboolean entityMergable;	// merge across entites optimizable (smoke, blood)
-	qboolean alphaTest;		// helps merging shadowmap generating surfaces
-	qboolean fogVolume;		// surface encapsulates a fog volume
+	qboolean entityMergable;			// merge across entites optimizable (smoke, blood)
+	qboolean alphaTest;					// helps merging shadowmap generating surfaces
+	qboolean fogVolume;					// surface encapsulates a fog volume
 	fogParms_t fogParms;
-	fogPass_t fogPass;		// draw a blended pass, possibly with depth test equals
+	fogPass_t fogPass;					// draw a blended pass, possibly with depth test equals
 	qboolean noFog;
-	qboolean parallax;		// material has normalmaps suited for parallax mapping
+	qboolean parallax;					// material has normalmaps suited for parallax mapping
 	qboolean noShadows;
 	qboolean fogLight;
 	qboolean blendLight;
@@ -981,32 +973,32 @@ typedef struct shader_s {
 	qboolean forceOpaque;
 	qboolean isSky;
 	skyParms_t sky;
-	float portalRange;	// distance to fog out at
+	float portalRange;					// distance to fog out at
 	qboolean isPortal;
 	collapseType_t collapseType;
-	int collapseTextureEnv;	// 0, GL_MODULATE, GL_ADD (FIXME: put in stage)
-	cullType_t cullType;	// CT_FRONT_SIDED, CT_BACK_SIDED, or CT_TWO_SIDED
-	qboolean polygonOffset;	// set for decals and other items that must be offset
+	int collapseTextureEnv;				// 0, GL_MODULATE, GL_ADD (FIXME: put in stage)
+	cullType_t cullType;				// CT_FRONT_SIDED, CT_BACK_SIDED, or CT_TWO_SIDED
+	qboolean polygonOffset;				// set for decals and other items that must be offset
 	float polygonOffsetValue;
 	qboolean uncompressed;
-	qboolean noPicMip;	// for images that must always be full resolution
-	filterType_t filterType;	// for console fonts, 2D elements, etc.
+	qboolean noPicMip;					// for images that must always be full resolution
+	filterType_t filterType;			// for console fonts, 2D elements, etc.
 	wrapType_t wrapType;
 	// spectrums are used for "invisible writing" that can only be illuminated by a light of matching spectrum
 	qboolean spectrum;
 	int spectrumValue;
-	qboolean interactLight;	// this shader can interact with light shaders
+	qboolean interactLight;				// this shader can interact with light shaders
 	uint8_t numDeforms;
 	deformStage_t deforms[MAX_SHADER_DEFORMS];
 	uint8_t numStages;
 	shaderStage_t *stages[MAX_SHADER_STAGES];
-	int numStates;	// if non - zero this is a state shader
+	int numStates;						// if non-zero this is a state shader
 	struct shader_s * currentShader;	// current state if this is a state shader
-	struct shader_s * parentShader;	// current state if this is a state shader
-	int currentState;	// current state index for cycle purposes
-	long  expireTime;	// time in milliseconds this expires
-	struct shader_s * remappedShader;	// current shader this one is remapped too
-	struct shader_s * next;
+	struct shader_s * parentShader;		// current state if this is a state shader
+	int currentState;					// current state index for cycle purposes
+	long  expireTime;					// time in milliseconds this expires
+	struct shader_s *remappedShader;	// current shader this one is remapped too
+	struct shader_s *next;
 } shader_t;
 
 #if 0
@@ -2542,12 +2534,13 @@ typedef struct srfVBOMDVMesh_s {
 	IBO_t *ibo;
 } srfVBOMDVMesh_t;
 
-
 extern void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES])(void *);
 
 /*
 =======================================================================================================================================
-BRUSH MODELS - in memory representation
+
+	BRUSH MODELS - in memory representation
+
 =======================================================================================================================================
 */
 typedef struct bspSurface_s {
@@ -2573,21 +2566,21 @@ decal_t;
 #define CONTENTS_NODE -1
 typedef struct bspNode_s {
 	// common with leaf and node
-	int contents;	// - 1 for nodes, to differentiate from leafs
+	int contents;					// -1 for nodes, to differentiate from leafs
 	int visCounts[MAX_VISCOUNTS];	// node needs to be traversed if current
 	int lightCount;
-	vec3_t mins, maxs;	// for bounding box culling
-	vec3_t surfMins, surfMaxs;	// ydnar: bounding box including surfaces
-	vec3_t origin;		// center of the bounding box
+	vec3_t mins, maxs;				// for bounding box culling
+	vec3_t surfMins, surfMaxs;		// ydnar: bounding box including surfaces
+	vec3_t origin;					// center of the bounding box
 	struct bspNode_s * parent;
 	qboolean visible[MAX_VIEWS];
 	int lastVisited[MAX_VIEWS];
 	int lastQueried[MAX_VIEWS];
 	qboolean issueOcclusionQuery[MAX_VIEWS];
-	link_t visChain;			// updated every visit
-	link_t occlusionQuery;		// updated every visit
-	link_t occlusionQuery2;	// updated every visit
-	link_t multiQuery;			// CHC++: list of all nodes that are used by the same occlusion query
+	link_t visChain;				// updated every visit
+	link_t occlusionQuery;			// updated every visit
+	link_t occlusionQuery2;			// updated every visit
+	link_t multiQuery;				// CHC++: list of all nodes that are used by the same occlusion query
 	VBO_t *volumeVBO;
 	IBO_t *volumeIBO;
 	int volumeVerts;
@@ -2599,7 +2592,7 @@ typedef struct bspNode_s {
 #endif
 	// node specific
 	cplane_t *plane;
-	struct bspNode_s * children[2];
+	struct bspNode_s *children[2];
 	// leaf specific
 	int cluster;
 	int area;
@@ -2722,7 +2715,7 @@ typedef struct {
 /*
 =======================================================================================================================================
 
-	MDV MODELS - meta format for vertex animation models like .md2, .md3, .mdc
+	MDV MODELS - meta format for vertex animation models like .md2, .md3, .mdc.
 
 =======================================================================================================================================
 */
@@ -2738,7 +2731,7 @@ typedef struct {
 } mdvTag_t;
 
 typedef struct {
-	char name[MAX_QPATH];	// tag name
+	char name[MAX_QPATH]; // tag name
 } mdvTagName_t;
 
 typedef struct {
@@ -2754,14 +2747,14 @@ typedef struct {
 
 typedef struct mdvSurface_s {
 	surfaceType_t surfaceType;
-	char name[MAX_QPATH];	// polyset name
+	char name[MAX_QPATH]; // polyset name
 	shader_t *shader;
 	int numVerts;
 	mdvVertex_t *verts;
 	mdvSt_t *st;
 	int numTriangles;
 	srfTriangle_t *triangles;
-	struct mdvModel_s * model;
+	struct mdvModel_s *model;
 } mdvSurface_t;
 
 typedef struct mdvModel_s {
@@ -2776,7 +2769,6 @@ typedef struct mdvModel_s {
 	srfVBOMDVMesh_t **vboSurfaces;
 	int numSkins;
 } mdvModel_t;
-
 
 /*
 =======================================================================================================================================
@@ -3720,7 +3712,6 @@ void R_InitSkins(void);
 skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 void R_DeleteSurfaceVBOs();
 
-
 /*
 =======================================================================================================================================
 
@@ -3740,7 +3731,6 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image);
 int RE_GetTextureId(const char *name);
 void R_InitFogTable(void);
 float R_FogFactor(float s, float t);
-
 
 /*
 =======================================================================================================================================
@@ -3782,7 +3772,6 @@ void GLimp_WakeRenderer(void *data);
 void GLimp_LogComment(const char *comment);
 // NOTE TTimo linux works with float gamma value, not the gamma table. the params won't be used, getting the r_gamma cvar directly
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
-
 
 /*
 =======================================================================================================================================
@@ -3874,7 +3863,6 @@ void Tess_AddCubeWithNormals(const vec3_t position, const vec3_t minSize, const 
 void Tess_InstantQuad(vec4_t quadVerts[4]);
 void Tess_UpdateVBOs(uint32_t attribBits);
 void RB_ShowImages(void);
-
 
 /*
 =======================================================================================================================================
@@ -3994,7 +3982,6 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid);
 
 int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
-
 /*
 =======================================================================================================================================
 
@@ -4017,7 +4004,6 @@ void R_InitFBOs(void);
 void R_ShutdownFBOs(void);
 void R_FBOList_f(void);
 
-
 /*
 =======================================================================================================================================
 
@@ -4037,7 +4023,6 @@ void R_InitVBOs(void);
 void R_ShutdownVBOs(void);
 void R_VBOList_f(void);
 
-
 /*
 =======================================================================================================================================
 
@@ -4056,7 +4041,6 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspMode
 void R_AddDecalSurface(decal_t *decal);
 void R_AddDecalSurfaces(bspModel_t *bmodel);
 void R_CullDecalProjectors(void);
-
 
 /*
 =======================================================================================================================================
@@ -4137,8 +4121,6 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surfType);
 /*
 =======================================================================================================================================
 
-
-
 =======================================================================================================================================
 */
 
@@ -4152,7 +4134,6 @@ float RB_EvalWaveForm(const waveForm_t *wf);
 float RB_EvalWaveFormClamped(const waveForm_t *wf);
 float RB_EvalExpression(const expression_t *exp, float defaultValue);
 void RB_CalcTexMatrix(const textureBundle_t *bundle, matrix_t matrix);
-
 
 /*
 =======================================================================================================================================

@@ -1,29 +1,24 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_shade_calc.c
+
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)((base) + table[Q_ftol((((phase) + backEnd.refdef.floatTime * (freq)) * FUNCTABLE_SIZE))& FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq) ((base) + table[Q_ftol((((phase) + backEnd.refdef.floatTime * (freq)) * FUNCTABLE_SIZE))& FUNCTABLE_MASK] * (amplitude))
 
 /*
 =======================================================================================================================================
@@ -549,6 +544,7 @@ void RB_CalcBulgeVertexes(deformStage_t *ds) {
 		float scale;
 
 		off = (float)(FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
+
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
 		xyz[0] += normal[0] * scale;
@@ -627,7 +623,7 @@ void DeformText(const char *text) {
 	height[1] = 0;
 	height[2] = (top - bottom) * 0.5f;
 
-	VectorScale(width, height[2] * - 0.75f, width);
+	VectorScale(width, height[2] * -0.75f, width);
 	// determine the starting position
 	len = strlen(text);
 
@@ -639,7 +635,7 @@ void DeformText(const char *text) {
 	// draw each character
 	for (i = 0; i < len; i++) {
 		ch = text[i];
-		ch & = 255;
+		ch &= 255;
 
 		if (ch != ' ') {
 			int row, col;
@@ -674,7 +670,7 @@ static void GlobalVectorToLocal(const vec3_t in, vec3_t out) {
 =======================================================================================================================================
 AutospriteDeform
 
-Assuming all the triangles for this shader are independant quads, rebuild them as forward facing sprites.
+Assuming all the triangles for this shader are independent quads, rebuild them as forward facing sprites.
 =======================================================================================================================================
 */
 static void AutospriteDeform(void) {
@@ -787,7 +783,7 @@ static void Autosprite2Deform(void) {
 		int nums[2];
 		vec3_t mid[2];
 		vec3_t major, minor;
-		float *v1, * v2;
+		float *v1, *v2;
 
 		// find the midpoint
 		xyz = tess.xyz[i];
@@ -830,7 +826,7 @@ static void Autosprite2Deform(void) {
 		// cross this with the view direction to get minor axis
 		CrossProduct(major, forward, minor);
 		VectorNormalize(minor);
-		// re - project the points
+		// re-project the points
 		for (j = 0; j < 2; j++) {
 			float l;
 
@@ -857,10 +853,11 @@ static void Autosprite2Deform(void) {
 
 /*
 =======================================================================================================================================
-
+ShaderRequiresCPUDeforms
 =======================================================================================================================================
 */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader) {
+
 	if (shader->numDeforms) {
 		int i;
 		qboolean cpuDeforms = qfalse;
@@ -868,7 +865,7 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader) {
 		if (glConfig.driverType != GLDRV_OPENGL3 || !r_vboDeformVertexes->integer) {
 			return qtrue;
 		}
-	
+
 		for (i = 0; i < shader->numDeforms; i++) {
 			const deformStage_t *ds = &shader->deforms[0];
 

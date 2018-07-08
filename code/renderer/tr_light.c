@@ -1,26 +1,21 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_light.c
+
 #include "tr_local.h"
 
 /*
@@ -185,7 +180,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin) {
 		gridPoint2 = gridPoint;
 
 		for (j = 0; j < 3; j++) {
-			if (i &(1 << j)) {
+			if (i & (1 << j)) {
 				factor *= frac[j];
 				gridPoint2 += gridStep[j];
 			} else {
@@ -223,7 +218,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin) {
 		ent->ambientLight[1] = r_forceAmbient->value;
 		ent->ambientLight[2] = r_forceAmbient->value;
 	}
-	// cheats?  check for single player?
+	// cheats? check for single player?
 	if (tr.lightGridMulDirected) {
 		VectorScale(ent->directedLight, tr.lightGridMulDirected, ent->directedLight);
 	}
@@ -288,9 +283,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	} else {
 		// trace a sample point down to find ambient light
 		if (ent->e.renderfx & RF_LIGHTING_ORIGIN) {
-			// seperate lightOrigins are needed so an object that is
-			// sinking into the ground can still be lit, and so
-			// multi - part models can be lit identically
+			// separate lightOrigins are needed so an object that is sinking into the ground can still be lit, and so
+			// multi-part models can be lit identically
 			VectorCopy(ent->e.lightingOrigin, lightOrigin);
 		} else {
 			VectorCopy(ent->e.origin, lightOrigin);

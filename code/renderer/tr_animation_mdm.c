@@ -2,7 +2,7 @@
 =======================================================================================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright(C)1999 - 2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999 - 2010 id Software LLC, a ZeniMax Media company. 
 
 This file is part of the Wolfenstein: Enemy Territory GPL Source Code(Wolf ET Source Code).  
 
@@ -25,7 +25,6 @@ If you have questions concerning this license or the applicable additional terms
 
 =======================================================================================================================================
 */
-
 
 #include "tr_local.h"
 
@@ -447,7 +446,6 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent) {
 		R_SetupEntityLighting(&tr.refdef, ent, NULL);
 	}
 
-	
 	// see if we are in a fog volume
 	fogNum = R_FogWorldBox(ent->worldBounds);
 	// draw all surfaces
@@ -566,7 +564,6 @@ void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light) {
 		}
 	}
 }
-
 
 __inline void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_t out) {
 	out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2];
@@ -1203,9 +1200,6 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 
 #endif
 
-
-
-
 	if (parentBone) {
 
 		if (fullTorso) {
@@ -1546,12 +1540,8 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones) 
 #ifdef DBG_PROFILE_BONES
 #define DBG_SHOWTIME    Com_Printf("%i: %i, ", di++, (dt = ri.Milliseconds()) - ldt); ldt = dt;
 #else
-#define DBG_SHOWTIME   ;
+#define DBG_SHOWTIME  ;
 #endif
-
-
-
-
 
 /*
 =======================================================================================================================================
@@ -1601,7 +1591,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface) {
 	render_count = surface->numVerts;
 #else
 	if (refent->reFlags & REFLAG_DEAD_LOD) {
-		if (lodScale < 0.35) {						// allow dead to lod down to 35%(even if below surf->minLod)(%35 is arbitrary and probably not good generally.  worked for the blackguard / infantry as a test though)
+		if (lodScale < 0.35) {						// allow dead to lod down to 35%(even if below surf->minLod)(%35 is arbitrary and probably not good generally. worked for the blackguard / infantry as a test though)
 			lodScale = 0.35;
 		}
 
@@ -1639,7 +1629,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface) {
 		tess.indexes[tess.numIndexes + i * 3 + 1] = tess.numVertexes + tri->indexes[1];
 		tess.indexes[tess.numIndexes + i * 3 + 2] = tess.numVertexes + tri->indexes[2];
 	}
-	
+
 	tess.numIndexes += surface->numTriangles * 3;
 	tess.numVertexes += render_count;
 
@@ -1675,9 +1665,9 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface) {
 			p1 = collapse[tri->indexes[1]];
 			p2 = collapse[tri->indexes[2]];
 			// FIXME
-			// note:  serious optimization opportunity here,
-			//  by sorting the triangles the following "continue"
-			//  could have been made into a "break" statement.
+			// note: serious optimization opportunity here,
+			// by sorting the triangles the following "continue"
+			// could have been made into a "break" statement.
 			if (p0 == p1 || p1 == p2 || p2 == p0) {
 				continue;
 			}
@@ -1726,7 +1716,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface) {
 		tess.texCoords[baseVertex + j][0] = v->texCoords[0];
 		tess.texCoords[baseVertex + j][1] = v->texCoords[1];
 	}
-	
+
 	DBG_SHOWTIME
 
 #if 0
@@ -2031,7 +2021,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface) {
 	mdmModel = surface->mdmModel;
 	mdmSurface = surface->mdmSurface;
 
-	refent = &backEnd.currentEntity->e;	
+	refent = &backEnd.currentEntity->e;
 
 	// RB: R_CalcBones requires the bone references from the original mdmSurface_t because
 	// the GPU vertex skinning only requires a subset which does not reference the parent bones of the vertex weights.
@@ -2056,10 +2046,10 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface) {
 
 		float *m = tess.boneMatrices[i];
 
-		m[0] = row0[0];		m[4] = row0[1];        m[8] = row0[2];  m[12] = trans[0];
-		m[1] = row1[0];		m[5] = row1[1];        m[9] = row1[2];  m[13] = trans[1];
-		m[2] = row2[0];		m[6] = row2[1];        m[10] = row2[2];  m[14] = trans[2];
-		m[3] = 0;              m[7] = 0;              m[11] = 0;		  m[15] = 1;
+		m[0] = row0[0];	m[4] = row0[1];        m[8] = row0[2];  m[12] = trans[0];
+		m[1] = row1[0];	m[5] = row1[1];        m[9] = row1[2];  m[13] = trans[1];
+		m[2] = row2[0];	m[6] = row2[1];        m[10] = row2[2];  m[14] = trans[2];
+		m[3] = 0;              m[7] = 0;              m[11] = 0;	  m[15] = 1;
 #endif
 	}
 

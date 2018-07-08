@@ -1,26 +1,25 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_main.c--main control flow for each frame
+
+/**************************************************************************************************************************************
+ Main control flow for each frame.
+**************************************************************************************************************************************/
+
 #include "tr_local.h"
 
 trGlobals_t tr;
@@ -417,9 +416,9 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3]) {
 	// calculate barycentric basis for the triangle
 	bb = (dv[1]->st[0] - dv[0]->st[0]) * (dv[2]->st[1] - dv[0]->st[1]) - (dv[2]->st[0] - dv[0]->st[0]) * (dv[1]->st[1] - dv[0]->st[1]);
 
-	if (fabs(bb) < 0.00000001f)
+	if (fabs(bb) < 0.00000001f) {
 		return qfalse;
-
+	}
 	// do each vertex
 	for (i = 0; i < 3; i++) {
 		// calculate s tangent vector
@@ -449,7 +448,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3]) {
 		VectorSubtract(dv[i]->binormal, dv[i]->xyz, dv[i]->binormal);
 		VectorNormalize(dv[i]->binormal);
 		// debug code
-		//% Sys_FPrintf(SYS_VRB, "%d S:(%f %f %f)T:(%f %f %f)\n", i,
+		//% Sys_FPrintf(SYS_VRB, "%d S: (%f %f %f) T: (%f %f %f)\n", i,
 		//%     stv[i][0], stv[i][1], stv[i][2], ttv[i][0], ttv[i][1], ttv[i][2]);
 	}
 
@@ -575,8 +574,8 @@ cullResult_t R_CullLocalBox(vec3_t localBounds[2]) {
 	// transform into world space
 	for (i = 0; i < 8; i++) {
 		v[0] = localBounds[i & 1][0];
-		v[1] = localBounds[(i >> 1)& 1][1];
-		v[2] = localBounds[(i >> 2)& 1][2];
+		v[1] = localBounds[(i >> 1) &1][1];
+		v[2] = localBounds[(i >> 2) &1][2];
 
 		R_LocalPointToWorld(v, transformed[i]);
 	}
@@ -592,6 +591,7 @@ cullResult_t R_CullLocalBox(vec3_t localBounds[2]) {
 
 			if (dists[j] > frust->dist) {
 				front = 1;
+
 				if (back) {
 					break; // a point is in front
 				}
@@ -605,7 +605,7 @@ cullResult_t R_CullLocalBox(vec3_t localBounds[2]) {
 			return CULL_OUT;
 		}
 
-		anyBack|= back;
+		anyBack |= back;
 	}
 
 	if (!anyBack) {
@@ -630,8 +630,8 @@ cullResult_t R_CullLocalBox(vec3_t localBounds[2]) {
 
 	for (j = 0; j < 8; j++) {
 		v[0] = localBounds[j & 1][0];
-		v[1] = localBounds[(j >> 1)& 1][1];
-		v[2] = localBounds[(j >> 2)& 1][2];
+		v[1] = localBounds[(j >> 1) &1][1];
+		v[2] = localBounds[(j >> 2) &1][2];
 
 		R_LocalPointToWorld(v, transformed);
 		AddPointToBounds(transformed, worldBounds[0], worldBounds[1]);
@@ -671,6 +671,7 @@ int R_CullLocalPointAndRadius(vec3_t pt, float radius) {
 	vec3_t transformed;
 
 	R_LocalPointToWorld(pt, transformed);
+
 	return R_CullPointAndRadius(transformed, radius);
 }
 
@@ -693,7 +694,7 @@ int R_CullPointAndRadius(vec3_t pt, float radius) {
 		frust = &tr.viewParms.frustums[0][i];
 		dist = DotProduct(pt, frust->normal) - frust->dist;
 
-		if (dist < - radius) {
+		if (dist < -radius) {
 			return CULL_OUT;
 		} else if (dist <= radius) {
 			mightBeClipped = qtrue;
@@ -1649,7 +1650,7 @@ R_PlaneForSurface
 void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane) {
 	srfTriangles_t *tri;
 	srfPoly_t *poly;
-	srfVert_t *v1, * v2, * v3;
+	srfVert_t *v1, *v2, *v3;
 	vec4_t plane4;
 
 	if (!surfType) {
@@ -1686,10 +1687,9 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane) {
 
 /*
 =======================================================================================================================================
-R_GetPortalOrientation
+R_GetPortalOrientations
 
-entityNum is the entity that the portal surface is a part of, which may be moving and rotating.
-Returns qtrue if it should be mirrored.
+entityNum is the entity that the portal surface is a part of, which may be moving and rotating. Returns qtrue if it should be mirrored.
 =======================================================================================================================================
 */
 static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *surface, orientation_t *camera, vec3_t pvsOrigin, qboolean * mirror) {
@@ -1708,7 +1708,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 		tr.currentEntity = drawSurf->entity;
 		// get the orientation of the entity
 		R_RotateEntityForViewParms(tr.currentEntity, &tr.viewParms, &tr.orientation);
-		// rotate the plane, but keep the non - rotated version for matching against the portalSurface entities
+		// rotate the plane, but keep the non-rotated version for matching against the portalSurface entities
 		R_LocalNormalToWorld(originalPlane.normal, plane.normal);
 		plane.dist = originalPlane.dist + DotProduct(plane.normal, tr.orientation.origin);
 		// translate the original plane
@@ -1748,7 +1748,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 
 		d = DotProduct(e->e.origin, originalPlane.normal) - originalPlane.dist;
 
-		if (d > 64 || d < - 64) {
+		if (d > 64 || d < -64) {
 			continue;
 		}
 		// get the pvsOrigin from the entity
@@ -1768,6 +1768,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 		}
 		// project the origin onto the surface plane to get an origin point we can rotate around
 		d = DotProduct(e->e.origin, plane.normal) - plane.dist;
+
 		VectorMA(e->e.origin, -d, surface->axis[0], surface->origin);
 		// now get the camera origin and orientation
 		VectorCopy(e->e.oldorigin, camera->origin);
@@ -1803,13 +1804,12 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 		*mirror = qfalse;
 		return qtrue;
 	}
-	// if we didn't locate a portal entity, don't render anything. We don't want to just treat it as a mirror, because without a
-	// portal entity the server won't have communicated a proper entity set in the snapshot
-	// unfortunately, with local movement prediction it is easily possible to see a surface before the server has communicated the matching
-	// portal surface entity, so we don't want to print anything here...
+	// if we didn't locate a portal entity, don't render anything. we don't want to just treat it as a mirror,
+	// because without a portal entity the server won't have communicated a proper entity set in the snapshot
+	// unfortunately, with local movement prediction it is easily possible to see a surface before the server
+	// has communicated the matching portal surface entity, so we don't want to print anything here...
 
 	//ri.Printf(PRINT_ALL, "Portal surface without a portal entity\n");
-
 	return qfalse;
 }
 
@@ -1830,8 +1830,7 @@ static qboolean IsMirror(const drawSurf_t *drawSurf) {
 	if (tr.currentEntity != &tr.worldEntity) {
 		// get the orientation of the entity
 		R_RotateEntityForViewParms(tr.currentEntity, &tr.viewParms, &tr.orientation);
-		// rotate the plane, but keep the non - rotated version for matching
-		// against the portalSurface entities
+		// rotate the plane, but keep the non-rotated version for matching against the portalSurface entities
 		R_LocalNormalToWorld(originalPlane.normal, plane.normal);
 		plane.dist = originalPlane.dist + DotProduct(plane.normal, tr.orientation.origin);
 		// translate the original plane
@@ -1839,9 +1838,8 @@ static qboolean IsMirror(const drawSurf_t *drawSurf) {
 	} else {
 		plane = originalPlane;
 	}
-	// locate the portal entity closest to this plane.
-	// origin will be the origin of the portal, origin2 will be
-	// the origin of the camera
+	// locate the portal entity closest to this plane
+	// origin will be the origin of the portal, origin2 will be the origin of the camera
 	for (i = 0; i < tr.refdef.numEntities; i++) {
 		e = &tr.refdef.entities[i];
 
@@ -1851,7 +1849,7 @@ static qboolean IsMirror(const drawSurf_t *drawSurf) {
 
 		d = DotProduct(e->e.origin, originalPlane.normal) - originalPlane.dist;
 
-		if (d > 64 || d < - 64) {
+		if (d > 64 || d < -64) {
 			continue;
 		}
 		// if the entity is just a mirror, don't use as a camera point
@@ -1912,22 +1910,22 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 
 		for (j = 0; j < 3; j++) {
 			if (clip[j] >= clip[3]) {
-				pointFlags|= (1 << (j * 2));
-			} else if (clip[j] <= - clip[3]) {
-				pointFlags|= (1 << (j * 2 + 1));
+				pointFlags |= (1 << (j * 2));
+			} else if (clip[j] <= -clip[3]) {
+				pointFlags |= (1 << (j * 2 + 1));
 			}
 		}
 
-		pointAnd & = pointFlags;
-		pointOr|= pointFlags;
+		pointAnd &= pointFlags;
+		pointOr |= pointFlags;
 	}
 	// trivially reject
 	if (pointAnd) {
 		return qtrue;
 	}
-	// determine if this surface is backfaced and also determine the distance to the nearest vertex so we can cull based on portal range. Culling
-	// based on vertex distance isn't 100% correct(we should be checking for range to the surface), but it's good enough for the types of portals
-	// we have in the game right now.
+	// determine if this surface is backfaced and also determine the distance to the nearest vertex so we can cull based on
+	// portal range. Culling based on vertex distance isn't 100% correct (we should be checking for range to the surface),
+	// but it's good enough for the types of portals we have in the game right now.
 	numTriangles = tess.numIndexes / 3;
 
 	for (i = 0; i < tess.numIndexes; i += 3) {
@@ -1938,6 +1936,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 		VectorSubtract(tess.xyz[tess.indexes[i]], tr.orientation.viewOrigin, normal);
 
 		len = VectorLengthSquared(normal); // lose the sqrt
+
 		if (len < shortest) {
 			shortest = len;
 		}
@@ -1951,8 +1950,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 		//ri.Printf(PRINT_ALL, "entity portal surface triangles culled\n");
 		return qtrue;
 	}
-	// mirrors can early out at this point, since we don't do a fade over distance with them 
-(although we could)
+	// mirrors can early out at this point, since we don't do a fade over distance with them (although we could)
 	if (IsMirror(drawSurf)) {
 		return qfalse;
 	}
@@ -1979,20 +1977,21 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf) {
 
 	// don't recursively mirror
 	if (tr.viewParms.isPortal) {
-		ri.Printf(PRINT_DEVELOPER, "WARNING: recursive mirror / portal found\n");
+		ri.Printf(PRINT_DEVELOPER, "WARNING: recursive mirror/portal found\n");
 		return qfalse;
 	}
 
 	if (r_noportals->integer) {
 		return qfalse;
 	}
-	// trivially reject portal / mirror
+	// trivially reject portal/mirror
 	if (SurfIsOffscreen(drawSurf, clipDest)) {
-		//ri.Printf(PRINT_ALL, "WARNING: offscreen mirror / portal surface\n");
+		//ri.Printf(PRINT_ALL, "WARNING: offscreen mirror/portal surface\n");
 		return qfalse;
 	}
 	// save old viewParms so we can return to it after the mirror view
 	oldParms = tr.viewParms;
+
 	newParms = tr.viewParms;
 	newParms.isPortal = qtrue;
 
@@ -2012,6 +2011,7 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf) {
 	R_MirrorVector(oldParms.orientation.axis[1], &surface, &camera, newParms.orientation.axis[1]);
 	R_MirrorVector(oldParms.orientation.axis[2], &surface, &camera, newParms.orientation.axis[2]);
 	// OPTIMIZE: restrict the viewport on the mirrored view
+
 	// render the mirror view
 	R_RenderView(&newParms);
 

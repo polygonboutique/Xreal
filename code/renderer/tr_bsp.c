@@ -1,34 +1,30 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
-Copyright(C)2009 Peter McNeill <n27@bigpond.net.au>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2009 Peter McNeill <n27@bigpond.net.au>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
-// tr_bsp.c
+
 #include "tr_local.h"
 
 /*
 =======================================================================================================================================
-Loads and prepares a map file for scene rendering.
 
-A single entry point: RE_LoadWorldMap(const char *name);
+ Loads and prepares a map file for scene rendering.
+ A single entry point: void RE_LoadWorldMap(const char *name);
+
 =======================================================================================================================================
 */
 
@@ -54,10 +50,8 @@ void HSVtoRGB(float h, float s, float v, float rgb[3]) {
 	float p, q, t;
 
 	h *= 5;
-
 	i = floor(h);
 	f = h - i;
-
 	p = v * (1 - s);
 	q = v * (1 - s * f);
 	t = v * (1 - s * (1 - f));
@@ -252,7 +246,7 @@ static void R_HDRTonemapLightingColors(const vec4_t in, vec4_t out, qboolean app
 =======================================================================================================================================
 R_ProcessLightmap
 
-	returns maxIntensity
+Returns maxIntensity.
 =======================================================================================================================================
 */
 #if defined(COMPAT_Q3A) || defined(COMPAT_ET)
@@ -1485,8 +1479,6 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf) {
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *)grid, grid->verts[0].xyz);
 }
-
-
 
 /*
 =======================================================================================================================================
@@ -2778,7 +2770,6 @@ static void CopyVert(const srfVert_t *in, srfVert_t *out) {
 	out->id = in->id;
 #endif
 }
-
 
 #define EQUAL_EPSILON 0.001
 /*static qboolean CompareWorldVert(const srfVert_t *v1, const srfVert_t *v2) {
@@ -6381,7 +6372,6 @@ static void R_KillRedundantInteractions(trRefLight_t *light) {
 	}
 }
 */
-
 
 /*
 =======================================================================================================================================

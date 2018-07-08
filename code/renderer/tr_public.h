@@ -1,23 +1,18 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999 - 2005 Id Software, Inc.
+Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
 
@@ -36,6 +31,7 @@ typedef struct {
 	void (*Shutdown)(qboolean destroyWindow);
 	// All data that will be used in a level should be registered before rendering any frames to prevent disk hits,
 	// but they can still be registered at a later time if necessary.
+
 	// BeginRegistration makes any existing media pointers invalid and returns the current gl configuration, including screen width
 	// and height, which can be used by the client to intelligently size display elements
 	void (*BeginRegistration)(glconfig_t *config, glconfig2_t *glconfig2);
@@ -49,8 +45,7 @@ typedef struct {
 	void (*SetWorldVisData)(const byte *vis);
 	// EndRegistration will draw a tiny polygon with each texture, forcing them to be loaded into card memory
 	void (*EndRegistration)(void);
-	// a scene is built up by calls to R_ClearScene and the various R_Add functions.
-	// Nothing is drawn until R_RenderScene is called.
+	// a scene is built up by calls to R_ClearScene and the various R_Add functions. Nothing is drawn until R_RenderScene is called.
 	void (*ClearScene)(void);
 	void (*AddRefEntityToScene)(const refEntity_t *re);
 	int (*LightForPoint)(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
@@ -94,14 +89,13 @@ typedef struct {
 	// XreaL END
 	void (*TakeScreenshotPNG)(int x, int y, int width, int height, char *fileName);
 } refexport_t;
-
 // these are the functions imported by the refresh module
 typedef struct {
 	// print message on the local console
-	void (QDECL * Printf)(int printLevel, const char *fmt, ...);
+	void (QDECL *Printf)(int printLevel, const char *fmt, ...);
 	// abort the game
-	void (QDECL * Error)(int errorLevel, const char *fmt, ...);
-	// milliseconds should only be used for profiling, never for anything game related.  Get time from the refdef
+	void (QDECL *Error)(int errorLevel, const char *fmt, ...);
+	// milliseconds should only be used for profiling, never for anything game related. Get time from the refdef
 	int (*Milliseconds)(void);
 	int (*RealTime)(qtime_t *qtime);
 	// stack based memory allocation for per-level things that won't be freed
@@ -135,20 +129,20 @@ typedef struct {
 	byte *(*CM_ClusterPVS)(int cluster);
 	int (*CM_PointContents)(const vec3_t p, clipHandle_t model);
 	void (*CM_DrawDebugSurface)(void (*drawPoly)(int color, int numPoints, float *points));
-	// a - 1 return means the file does not exist
+	// a -1 return means the file does not exist
 	// NULL can be passed for buf to just determine existance
 	int (*FS_FileIsInPAK)(const char *name, int *pChecksum);
-	int (*FS_ReadFile)(const char *name, void ** buf);
+	int (*FS_ReadFile)(const char *name, void **buf);
 	void (*FS_FreeFile)(void *buf);
 	char **(*FS_ListFiles)(const char *name, const char *extension, int *numfilesfound);
 	char **(*FS_ListFilteredFiles)(const char *name, const char *extension, char *filter, int *numfilesfound);
 	void (*FS_FreeFileList)(char **filelist);
 	void (*FS_WriteFile)(const char *qpath, const void *buffer, int size);
-	qboolean(*FS_FileExists)(const char *file);
+	qboolean (*FS_FileExists)(const char *file);
 	// cinematic stuff
 	void (*CIN_UploadCinematic)(int handle);
 	int (*CIN_PlayCinematic)(const char *arg0, int xpos, int ypos, int width, int height, int bits);
-	e_status(*CIN_RunCinematic)(int handle);
+	e_status (*CIN_RunCinematic)(int handle);
 	// XreaL BEGIN
 	void *(*Sys_GetSystemHandles)(void);
 	qboolean(*CL_VideoRecording)(void);

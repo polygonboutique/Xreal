@@ -1,24 +1,20 @@
 /*
 =======================================================================================================================================
-Copyright(C)2010 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2010 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
-XreaL source code is free software; you can redistribute it
-and / or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License, 
-or(at your option)any later version.
+XreaL source code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-XreaL source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+XreaL source code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110 - 1301  USA
+You should have received a copy of the GNU General Public License along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 =======================================================================================================================================
 */
+
 // gl_shader.cpp--GLSL shader handling
 
 #include "gl_shader.h"
@@ -260,7 +256,7 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName, const char 
 			Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", token);
 			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
 		}
-	
+
 		libSize = ri.FS_ReadFile(filename, (void **)&libBuffer);
 
 		if (!libBuffer) {
@@ -899,7 +895,7 @@ void GLShader::CompilePermutations() {
 	int startTime = ri.Milliseconds();
 
 	_shaderPrograms = std::vector<shaderProgram_t>(1 << _compileMacros.size());
-	
+
 	//Com_Memset(_shaderPrograms, 0, sizeof(_shaderPrograms));
 
 	std::string vertexInlines = "";
@@ -1015,7 +1011,7 @@ PrintShaderText
 */
 void GLShader::PrintShaderText(const std::string& shaderText)const {
 	static char msgPart[1024];
-	
+
 	for (size_t i = 0; i < shaderText.length(); i += 1024) {
 		Q_strncpyz(msgPart, shaderText.c_str() + i, sizeof(msgPart));
 		ri.Printf(PRINT_ALL, "%s\n", msgPart);
