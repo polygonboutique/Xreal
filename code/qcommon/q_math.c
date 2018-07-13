@@ -1186,12 +1186,12 @@ __declspec(naked)int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s 
 
 initialized:
 
-		mov edx,dword ptr[4 + 12 + esp]
-		mov ecx,dword ptr[4 + 4 + esp]
-		xor eax,eax
-		mov ebx,dword ptr[4 + 8 + esp]
-		mov al,byte ptr[17 + edx]
-		cmp al,8
+		mov edx, dword ptr[4 + 12 + esp]
+		mov ecx, dword ptr[4 + 4 + esp]
+		xor eax, eax
+		mov ebx, dword ptr[4 + 8 + esp]
+		mov al, byte ptr[17 + edx]
+		cmp al, 8
 		jge Lerror
 		fld dword ptr[0 + edx]
 		fld st(0)
@@ -1211,12 +1211,12 @@ Lcase0:
 		fld st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase1:
 		fmul dword ptr[ecx]
@@ -1233,12 +1233,12 @@ Lcase1:
 		fld st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase2:
 		fmul dword ptr[ebx]
@@ -1255,12 +1255,12 @@ Lcase2:
 		fld st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase3:
 		fmul dword ptr[ecx]
@@ -1277,12 +1277,12 @@ Lcase3:
 		fld st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase4:
 		fmul dword ptr[ebx]
@@ -1299,12 +1299,12 @@ Lcase4:
 		fld st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase5:
 		fmul dword ptr[ecx]
@@ -1321,12 +1321,12 @@ Lcase5:
 		fld st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase6:
 		fmul dword ptr[ebx]
@@ -1343,12 +1343,12 @@ Lcase6:
 		fld st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		jmp LSetSides
 Lcase7:
 		fmul dword ptr[ecx]
@@ -1365,27 +1365,27 @@ Lcase7:
 		fld st(0)
 		fmul dword ptr[8 + ecx]
 		fxch st(5)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fmul dword ptr[8 + ebx]
 		fxch st(1)
-		faddp st(3),st(0)
+		faddp st(3), st(0)
 		fxch st(3)
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 LSetSides:
-		faddp st(2),st(0)
+		faddp st(2), st(0)
 		fcomp dword ptr[12 + edx]
-		xor ecx,ecx
+		xor ecx, ecx
 		fnstsw ax
 		fcomp dword ptr[12 + edx]
-		and ah,1
-		xor ah,1
-		add cl,ah
+		and ah, 1
+		xor ah, 1
+		add cl, ah
 		fnstsw ax
-		and ah,1
-		add ah,ah
-		add cl,ah
+		and ah, 1
+		add ah, ah
+		add cl, ah
 		pop ebx
-		mov eax,ecx
+		mov eax, ecx
 		ret
 Lerror:
 		int 3
@@ -1577,28 +1577,28 @@ vec_t VectorNormalize(vec3_t v) {
 	(
 	// lo 		| hi
 	"movq(%%eax), %%mm0\n"	// v[0] | v[1]
-	"movd 8(%%eax), %%mm1\n"	// v[2] | - 
+	"movd 8(%%eax), %%mm1\n"	// v[2] | -
 	// mm0[lo] = dot product(this)
 	"pfmul %%mm0, %%mm0\n"	// v[0] * v[0] | v[1] * v[1]
-	"pfmul %%mm1, %%mm1\n"	// v[2] * v[2] | - 
-	"pfacc %%mm0, %%mm0\n"	// v[0] * v[0] + v[1] * v[1] | - 
-	"pfadd %%mm1, %%mm0\n"	// v[0] * v[0] + v[1] * v[1] + v[2] * v[2] | - 
+	"pfmul %%mm1, %%mm1\n"	// v[2] * v[2] | -
+	"pfacc %%mm0, %%mm0\n"	// v[0] * v[0] + v[1] * v[1] | -
+	"pfadd %%mm1, %%mm0\n"	// v[0] * v[0] + v[1] * v[1] + v[2] * v[2] | -
 	// mm0[lo] = sqrt(mm0[lo])
-	"pfrsqrt %%mm0, %%mm1\n"	// 1 / sqrt(dot)| 1 / sqrt(dot)(approx)
-	"movq %%mm1, %%mm2\n"	// 1 / sqrt(dot)| 1 / sqrt(dot)(approx)
-	"pfmul %%mm1, %%mm1\n"	// (1 / sqrt(dot))? |(1 / sqrt(dot))? step 1
+	"pfrsqrt %%mm0, %%mm1\n"	// 1 / sqrt(dot) | 1 / sqrt(dot)(approx)
+	"movq %%mm1, %%mm2\n"	// 1 / sqrt(dot) | 1 / sqrt(dot)(approx)
+	"pfmul %%mm1, %%mm1\n"	// (1 / sqrt(dot))? | (1 / sqrt(dot))? step 1
 	"punpckldq %%mm0, %%mm0\n"	// dot | dot(MMX instruction)
 	"pfrsqit1 %%mm0, %%mm1\n"	// intermediate | intermediate step 2
-	"pfrcpit2 %%mm2, %%mm1\n"	// 1 / sqrt(dot)(full 24 - bit precision)| 1 / sqrt(dot)step 3
+	"pfrcpit2 %%mm2, %%mm1\n"	// 1 / sqrt(dot)(full 24-bit precision) | 1 / sqrt(dot)step 3
 	"pfmul %%mm1, %%mm0\n"	// sqrt(dot)| sqrt(dot)
 	// len = mm0[lo]
 	"movd %%mm0, (%%edx)\n"
 	// load this into registers
 	"movq(%%eax), %%mm2\n"	// v[0] | v[1]
-	"movd 8(%%eax), %%mm3\n"	// v[2] | - 
+	"movd 8(%%eax), %%mm3\n"	// v[2] | -
 	// scale this by the reciprocal square root
 	"pfmul %%mm1, %%mm2\n"	// v[0] * 1 / sqrt(dot)| v[1] * 1 / sqrt(dot)
-	"pfmul %%mm1, %%mm3\n"	// v[2] * 1 / sqrt(dot)| - 
+	"pfmul %%mm1, %%mm3\n"	// v[2] * 1 / sqrt(dot)| -
 	// store scaled vector
 	"movq %%mm2, (%%eax)\n"
 	"movd %%mm3, 8(%%eax)\n"
@@ -2043,21 +2043,21 @@ MatrixIdentity
 */
 void MatrixIdentity(matrix_t m) {
 
-	m[0] = 1
-	m[4] = 0
-	m[8] = 0
+	m[0] = 1;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 1
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = 1
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 1;
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -2068,21 +2068,21 @@ MatrixClear
 */
 void MatrixClear(matrix_t m) {
 
-	m[0] = 0
-	m[4] = 0
-	m[8] = 0
+	m[0] = 0;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 0
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 0;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = 0
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 0;
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 0;
 }
 
@@ -2135,21 +2135,21 @@ void MatrixCopy(const matrix_t in, matrix_t out) {
 	: "memory"
 	);
 #else
-	out[0] = in[0]
-	out[4] = in[4]
-	out[8] = in[8]
+	out[0] = in[0];
+	out[4] = in[4];
+	out[8] = in[8];
 	out[12] = in[12];
-	out[1] = in[1]
-	out[5] = in[5]
-	out[9] = in[9]
+	out[1] = in[1];
+	out[5] = in[5];
+	out[9] = in[9];
 	out[13] = in[13];
-	out[2] = in[2]
-	out[6] = in[6]
-	out[10] = in[10]
+	out[2] = in[2];
+	out[6] = in[6];
+	out[10] = in[10];
 	out[14] = in[14];
-	out[3] = in[3]
-	out[7] = in[7]
-	out[11] = in[11]
+	out[3] = in[3];
+	out[7] = in[7];
+	out[11] = in[11];
 	out[15] = in[15];
 #endif
 }
@@ -2228,21 +2228,21 @@ void MatrixTranspose(const matrix_t in, matrix_t out) {
 	: "memory"
 				);
 #else
-	out[0] = in[0]
-	out[1] = in[4]
-	out[2] = in[8]
+	out[0] = in[0];
+	out[1] = in[4];
+	out[2] = in[8];
 	out[3] = in[12];
-	out[4] = in[1]
-	out[5] = in[5]
-	out[6] = in[9]
+	out[4] = in[1];
+	out[5] = in[5];
+	out[6] = in[9];
 	out[7] = in[13];
-	out[8] = in[2]
-	out[9] = in[6]
-	out[10] = in[10]
+	out[8] = in[2];
+	out[9] = in[6];
+	out[10] = in[10];
 	out[11] = in[14];
-	out[12] = in[3]
-	out[13] = in[7]
-	out[14] = in[11]
+	out[12] = in[3];
+	out[13] = in[7];
+	out[14] = in[11];
 	out[15] = in[15];
 #endif
 }
@@ -2391,21 +2391,21 @@ MatrixSetupXRotation
 void MatrixSetupXRotation(matrix_t m, vec_t degrees) {
 	vec_t a = DEG2RAD(degrees);
 
-	m[0] = 1
-	m[4] = 0
-	m[8] = 0
+	m[0] = 1;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = cos(a)
-	m[9] = -sin(a)
+	m[1] = 0;
+	m[5] = cos(a);
+	m[9] = -sin(a);
 	m[13] = 0;
-	m[2] = 0
-	m[6] = sin(a)
-	m[10] = cos(a)
+	m[2] = 0;
+	m[6] = sin(a);
+	m[10] = cos(a);
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -2417,21 +2417,21 @@ MatrixSetupYRotation
 void MatrixSetupYRotation(matrix_t m, vec_t degrees) {
 	vec_t a = DEG2RAD(degrees);
 
-	m[0] = cos(a)
-	m[4] = 0
-	m[8] = sin(a)
+	m[0] = cos(a);
+	m[4] = 0;
+	m[8] = sin(a);
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 1
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = -sin(a)
-	m[6] = 0
-	m[10] = cos(a)
+	m[2] = -sin(a);
+	m[6] = 0;
+	m[10] = cos(a);
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -2443,21 +2443,21 @@ MatrixSetupZRotation
 void MatrixSetupZRotation(matrix_t m, vec_t degrees) {
 	vec_t a = DEG2RAD(degrees);
 
-	m[0] = cos(a)
-	m[4] = -sin(a)
-	m[8] = 0
+	m[0] = cos(a);
+	m[4] = -sin(a);
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = sin(a)
-	m[5] = cos(a)
-	m[9] = 0
+	m[1] = sin(a);
+	m[5] = cos(a);
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = 1
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 1;
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -2467,21 +2467,22 @@ MatrixSetupTranslation
 =======================================================================================================================================
 */
 void MatrixSetupTranslation(matrix_t m, vec_t x, vec_t y, vec_t z) {
-	m[0] = 1
-	m[4] = 0
-	m[8] = 0
+
+	m[0] = 1;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = x;
-	m[1] = 0
-	m[5] = 1
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1;
+	m[9] = 0;
 	m[13] = y;
-	m[2] = 0
-	m[6] = 0
-	m[10] = 1
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 1;
 	m[14] = z;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -2491,21 +2492,22 @@ MatrixSetupScale
 =======================================================================================================================================
 */
 void MatrixSetupScale(matrix_t m, vec_t x, vec_t y, vec_t z) {
-	m[0] = x
-	m[4] = 0
-	m[8] = 0
+
+	m[0] = x;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = y
-	m[9] = 0
+	m[1] = 0;
+	m[5] = y;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = z
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = z;
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -2515,21 +2517,22 @@ MatrixSetupShear
 =======================================================================================================================================
 */
 void MatrixSetupShear(matrix_t m, vec_t x, vec_t y) {
-	m[0] = 1
-	m[4] = x
-	m[8] = 0
+
+	m[0] = 1;
+	m[4] = x;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = y
-	m[5] = 1
-	m[9] = 0
+	m[1] = y;
+	m[5] = 1;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = 1
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 1;
 	m[14] = 0;
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -3336,21 +3339,21 @@ Same as D3DXMatrixPerspectiveOffCenterRH http://msdn.microsoft.com/en-us/library
 */
 void MatrixPerspectiveProjectionRH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
 
-	m[0] = (2 * near) / (right - left)
-	m[4] = 0
-	m[8] = (left + right) / (right - left)
+	m[0] = (2 * near) / (right - left);
+	m[4] = 0;
+	m[8] = (left + right) / (right - left);
 	m[12] = 0;
-	m[1] = 0
-	m[5] = (2 * near) / (top - bottom)
-	m[9] = (top + bottom) / (top - bottom)
+	m[1] = 0;
+	m[5] = (2 * near) / (top - bottom);
+	m[9] = (top + bottom) / (top - bottom);
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = far / (near - far)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = far / (near - far);
 	m[14] = (near * far) / (near - far);
-	m[3] = 0
-	m[7] = 0
-	m[11] = -1
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = -1;
 	m[15] = 0;
 }
 
@@ -3367,21 +3370,21 @@ void MatrixPerspectiveProjectionFovYAspectLH(matrix_t m, vec_t fov, vec_t aspect
 	width = tanf(DEG2RAD(fov * 0.5f));
 	height = width / aspect;
 
-	m[0] = 1 / width
-	m[4] = 0
-	m[8] = 0
+	m[0] = 1 / width;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 1 / height
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1 / height;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = far / (far - near)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = far / (far - near);
 	m[14] = -(near * far) / (far - near);
-	m[3] = 0
-	m[7] = 0
-	m[11] = 1
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 1;
 	m[15] = 0;
 }
 
@@ -3396,21 +3399,21 @@ void MatrixPerspectiveProjectionFovXYLH(matrix_t m, vec_t fovX, vec_t fovY, vec_
 	width = tanf(DEG2RAD(fovX * 0.5f));
 	height = tanf(DEG2RAD(fovY * 0.5f));
 
-	m[0] = 1 / width
-	m[4] = 0
-	m[8] = 0
+	m[0] = 1 / width;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 1 / height
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1 / height;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = far / (far - near)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = far / (far - near);
 	m[14] = -(near * far) / (far - near);
-	m[3] = 0
-	m[7] = 0
-	m[11] = 1
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 1;
 	m[15] = 0;
 }
 
@@ -3425,21 +3428,21 @@ void MatrixPerspectiveProjectionFovXYRH(matrix_t m, vec_t fovX, vec_t fovY, vec_
 	width = tanf(DEG2RAD(fovX * 0.5f));
 	height = tanf(DEG2RAD(fovY * 0.5f));
 
-	m[0] = 1 / width
-	m[4] = 0
-	m[8] = 0
+	m[0] = 1 / width;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 1 / height
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1 / height;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = far / (near - far)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = far / (near - far);
 	m[14] = (near * far) / (near - far);
-	m[3] = 0
-	m[7] = 0
-	m[11] = -1
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = -1;
 	m[15] = 0;
 }
 
@@ -3456,21 +3459,21 @@ void MatrixPerspectiveProjectionFovXYInfiniteRH(matrix_t m, vec_t fovX, vec_t fo
 	width = tanf(DEG2RAD(fovX * 0.5f));
 	height = tanf(DEG2RAD(fovY * 0.5f));
 
-	m[0] = 1 / width
-	m[4] = 0
-	m[8] = 0
+	m[0] = 1 / width;
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = 0;
-	m[1] = 0
-	m[5] = 1 / height
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 1 / height;
+	m[9] = 0;
 	m[13] = 0;
-	m[2] = 0
-	m[6] = 0
-	m[10] = -1
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = -1;
 	m[14] = -2 * near;
-	m[3] = 0
-	m[7] = 0
-	m[11] = -1
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = -1;
 	m[15] = 0;
 }
 
@@ -3483,21 +3486,21 @@ Replacement for glOrtho (see glspec30.pdf chapter 2.12 Coordinate Transformation
 */
 void MatrixOrthogonalProjection(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
 
-	m[0] = 2 / (right - left)
-	m[4] = 0
-	m[8] = 0
+	m[0] = 2 / (right - left);
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = -(right + left) / (right - left);
-	m[1] = 0
-	m[5] = 2 / (top - bottom)
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 2 / (top - bottom);
+	m[9] = 0;
 	m[13] = -(top + bottom) / (top - bottom);
-	m[2] = 0
-	m[6] = 0
-	m[10] = -2 / (far - near)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = -2 / (far - near);
 	m[14] = -(far + near) / (far - near);
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -3510,21 +3513,21 @@ Same as D3DXMatrixOrthoOffCenterLH http://msdn.microsoft.com/en-us/library/bb205
 */
 void MatrixOrthogonalProjectionLH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
 
-	m[0] = 2 / (right - left)
-	m[4] = 0
-	m[8] = 0
+	m[0] = 2 / (right - left);
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = (left + right) / (left - right);
-	m[1] = 0
-	m[5] = 2 / (top - bottom)
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 2 / (top - bottom);
+	m[9] = 0;
 	m[13] = (top + bottom) / (bottom - top);
-	m[2] = 0
-	m[6] = 0
-	m[10] = 1 / (far - near)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 1 / (far - near);
 	m[14] = near / (near - far);
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -3537,21 +3540,21 @@ Same as D3DXMatrixOrthoOffCenterRH http://msdn.microsoft.com/en-us/library/bb205
 */
 void MatrixOrthogonalProjectionRH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
 
-	m[0] = 2 / (right - left)
-	m[4] = 0
-	m[8] = 0
+	m[0] = 2 / (right - left);
+	m[4] = 0;
+	m[8] = 0;
 	m[12] = (left + right) / (left - right);
-	m[1] = 0
-	m[5] = 2 / (top - bottom)
-	m[9] = 0
+	m[1] = 0;
+	m[5] = 2 / (top - bottom);
+	m[9] = 0;
 	m[13] = (top + bottom) / (bottom - top);
-	m[2] = 0
-	m[6] = 0
-	m[10] = 1 / (near - far)
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = 1 / (near - far);
 	m[14] = near / (near - far);
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
@@ -3568,27 +3571,27 @@ void MatrixPlaneReflection(matrix_t m, const vec4_t plane) {
 
 	PlaneNormalize(P);
 	/*
-	 - 2 * P.a * P.a + 1 - 2 * P.b * P.a - 2 * P.c * P.a 0
-	 - 2 * P.a * P.b - 2 * P.b * P.b + 1 - 2 * P.c * P.b 0
-	 - 2 * P.a * P.c - 2 * P.b * P.c - 2 * P.c * P.c + 1 0
-	 - 2 * P.a * P.d - 2 * P.b * P.d - 2 * P.c * P.d 1
+	-2 * P.a * P.a + 1 - 2 * P.b * P.a - 2 * P.c * P.a 0
+	-2 * P.a * P.b - 2 * P.b * P.b + 1 - 2 * P.c * P.b 0
+	-2 * P.a * P.c - 2 * P.b * P.c - 2 * P.c * P.c + 1 0
+	-2 * P.a * P.d - 2 * P.b * P.d - 2 * P.c * P.d 1
 	*/
 	// Quake uses a different plane equation
-	m[0] = -2 * P[0] * P[0] + 1
-	m[4] = -2 * P[0] * P[1]
-	m[8] = -2 * P[0] * P[2]
+	m[0] = -2 * P[0] * P[0] + 1;
+	m[4] = -2 * P[0] * P[1];
+	m[8] = -2 * P[0] * P[2];
 	m[12] = 2 * P[0] * P[3];
-	m[1] = -2 * P[1] * P[0]
-	m[5] = -2 * P[1] * P[1] + 1
-	m[9] = -2 * P[1] * P[2]
+	m[1] = -2 * P[1] * P[0];
+	m[5] = -2 * P[1] * P[1] + 1;
+	m[9] = -2 * P[1] * P[2];
 	m[13] = 2 * P[1] * P[3];
-	m[2] = -2 * P[2] * P[0]
-	m[6] = -2 * P[2] * P[1]
-	m[10] = -2 * P[2] * P[2] + 1
+	m[2] = -2 * P[2] * P[0];
+	m[6] = -2 * P[2] * P[1];
+	m[10] = -2 * P[2] * P[2] + 1;
 	m[14] = 2 * P[2] * P[3];
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 #if 0
 	matrix_t m2;
@@ -3621,21 +3624,21 @@ void MatrixLookAtLH(matrix_t m, const vec3_t eye, const vec3_t dir, const vec3_t
 #endif
 	VectorNormalize2(dir, dirN);
 
-	m[0] = sideN[0]
-	m[4] = sideN[1]
-	m[8] = sideN[2]
+	m[0] = sideN[0];
+	m[4] = sideN[1];
+	m[8] = sideN[2];
 	m[12] = -DotProduct(sideN, eye);
-	m[1] = upN[0]
-	m[5] = upN[1]
-	m[9] = upN[2]
+	m[1] = upN[0];
+	m[5] = upN[1];
+	m[9] = upN[2];
 	m[13] = -DotProduct(upN, eye);
-	m[2] = dirN[0]
-	m[6] = dirN[1]
-	m[10] = dirN[2]
+	m[2] = dirN[0];
+	m[6] = dirN[1];
+	m[10] = dirN[2];
 	m[14] = -DotProduct(dirN, eye);
-	m[3] = 0
-	m[7] = 0
-	m[11] = 0
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
 	m[15] = 1;
 }
 
