@@ -41,23 +41,23 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menulist_s      list;
+	menulist_s list;
 
-	menubitmap_s    back;
-	menubitmap_s    go;
+	menubitmap_s back;
+	menubitmap_s go;
 
-	char            description[NAMEBUFSIZE];
-	char            fs_game[GAMEBUFSIZE];
+	char description[NAMEBUFSIZE];
+	char fs_game[GAMEBUFSIZE];
 
-	char           *descriptionPtr;
-	char           *fs_gamePtr;
+	char *descriptionPtr;
+	char *fs_gamePtr;
 
-	char           *descriptionList[MAX_MODS];
-	char           *fs_gameList[MAX_MODS];
+	char *descriptionList[MAX_MODS];
+	char *fs_gameList[MAX_MODS];
 } mods_t;
 
 static mods_t   s_mods;
@@ -118,9 +118,9 @@ UI_Mods_LoadModsFromFile
 */
 static void UI_Mods_LoadModsFromFile(char *filename)
 {
-	int             len;
+	int len;
 	fileHandle_t    f;
-	char            buf[1024];
+	char buf[1024];
 
 	len = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if(!f)
@@ -157,12 +157,12 @@ UI_Mods_LoadMods
 */
 static void UI_Mods_LoadMods(void)
 {
-	int             numdirs;
-	char            dirlist[2048];
-	char           *dirptr;
-	char           *descptr;
-	int             i;
-	int             dirlen;
+	int numdirs;
+	char dirlist[2048];
+	char *dirptr;
+	char *descptr;
+	int i;
+	int dirlen;
 
 	s_mods.list.itemnames = (const char **)s_mods.descriptionList;
 	s_mods.descriptionPtr = s_mods.description;

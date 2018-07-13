@@ -50,19 +50,19 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menutext_s      graphics;
-	menutext_s      display;
-	menutext_s      sound;
-	menutext_s      network;
+	menutext_s graphics;
+	menutext_s display;
+	menutext_s sound;
+	menutext_s network;
 
-	menuslider_s    brightness;
-	menuslider_s    screensize;
+	menuslider_s brightness;
+	menuslider_s screensize;
 
-	menubitmap_s    back;
+	menubitmap_s back;
 } displayOptionsInfo_t;
 
 static displayOptionsInfo_t displayOptionsInfo;
@@ -122,7 +122,7 @@ UI_DisplayOptionsMenu_Init
 */
 static void UI_DisplayOptionsMenu_Init(void)
 {
-	int             y;
+	int y;
 
 	memset(&displayOptionsInfo, 0, sizeof(displayOptionsInfo));
 

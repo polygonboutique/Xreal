@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -107,17 +107,6 @@ vmCvar_t lua_allowedModules;
 #if defined(USE_BULLET)
 vmCvar_t g_physUseCCD;
 #endif
-#if defined(ACEBOT)
-vmCvar_t ace_debug;
-vmCvar_t ace_showNodes;
-vmCvar_t ace_showLinks;
-vmCvar_t ace_showPath;
-vmCvar_t ace_pickLongRangeGoal;
-vmCvar_t ace_pickShortRangeGoal;
-vmCvar_t ace_attackEnemies;
-vmCvar_t ace_spSkill;
-vmCvar_t ace_botsFile;
-#endif
 
 static cvarTable_t gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -194,16 +183,6 @@ static cvarTable_t gameCvarTable[] = {
 	{&lua_modules, "lua_modules", "", 0, 0, qfalse}, 
 #if defined(USE_BULLET) {&g_physUseCCD, "g_physUseCCD", "1", 0, 0, qfalse}, 
 #endif
-#if defined(ACEBOT) {&ace_debug, "ace_debug", "0", 0, 0, qfalse},
-	{&ace_showNodes, "ace_showNodes", "0", 0, 0, qfalse},
-	{&ace_showLinks, "ace_showLinks", "0", 0, 0, qfalse},
-	{&ace_showPath, "ace_showPath", "0", 0, 0, qfalse},
-	{&ace_pickLongRangeGoal, "ace_pickLongRangeGoal", "1", 0, 0, qfalse},
-	{&ace_pickShortRangeGoal, "ace_pickShortRangeGoal", "1", 0, 0, qfalse},
-	{&ace_attackEnemies, "ace_attackEnemies", "1", 0, 0, qfalse},
-	{&ace_spSkill, "g_spSkill", "3", 0, 0, qfalse}, 	// FIXME rename
-	{&ace_botsFile, "g_botsFile", "3", 0, 0, qfalse}, 	// FIXME rename
-#endif
 };
 
 // bk001129 - made static to avoid aliasing
@@ -218,7 +197,7 @@ void CheckExitRules(void);
 =======================================================================================================================================
 vmMain
 
-This is the only way control passes into the module. This must be the very first function compiled into the .q3vm file
+This is the only way control passes into the module. This must be the very first function compiled into the .qvm file.
 =======================================================================================================================================
 */
 intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11) {
@@ -253,14 +232,7 @@ intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 		case GAME_CONSOLE_COMMAND:
 			return ConsoleCommand();
 		case BOTAI_START_FRAME:
-#if defined(BRAINWORKS)
-			return BotAIStartFrame(arg0);
-#elif defined(ACEBOT)
-			ACEAI_StartFrame(arg0);
 			return 0;
-#else
-			return 0;
-#endif
 	}
 
 	return -1;
@@ -278,16 +250,16 @@ void QDECL G_Printf(const char *fmt, ...) {
 	va_start(argptr, fmt);
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
-#ifdef G_LUA
-	// Lua API callbacks
-	G_LuaHook_Print(text);
-#endif
 	trap_Printf(text);
 }
 
 /*
- * Prints text to 1 client, ent
- */
+=======================================================================================================================================
+G_PrintfClient
+
+Prints text to 1 client, ent.
+=======================================================================================================================================
+*/
 void QDECL G_PrintfClient(gentity_t *ent, const char *fmt, ...) {
 	va_list argptr;
 	char text[1024];
@@ -314,9 +286,6 @@ void QDECL G_Error(const char *fmt, ...) {
 	va_start(argptr, fmt);
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
-#ifdef G_LUA
-	G_LuaShutdown();
-#endif
 #if defined(USE_BULLET)
 	G_ShutdownBulletPhysics();
 #endif
@@ -390,12 +359,33 @@ void G_FindTeams(void) {
 
 /*
 =======================================================================================================================================
+G_RemapTeamShaders
+=======================================================================================================================================
+*/
+void G_RemapTeamShaders(void) {
+	char string[1024];
+	float f = level.time * 0.001;
+
+	Com_sprintf(string, sizeof(string), "team_icon/%s_red", g_redteam.string);
+	AddRemap("textures/ctf2/redteam01", string, f);
+	AddRemap("textures/ctf2/redteam02", string, f);
+
+	Com_sprintf(string, sizeof(string), "team_icon/%s_blue", g_blueteam.string);
+	AddRemap("textures/ctf2/blueteam01", string, f);
+	AddRemap("textures/ctf2/blueteam02", string, f);
+
+	trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
+}
+
+/*
+=======================================================================================================================================
 G_RegisterCvars
 =======================================================================================================================================
 */
 void G_RegisterCvars(void) {
 	int i;
 	cvarTable_t *cv;
+	qboolean remapped = qfalse;
 
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++) {
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
@@ -403,11 +393,19 @@ void G_RegisterCvars(void) {
 		if (cv->vmCvar) {
 			cv->modificationCount = cv->vmCvar->modificationCount;
 		}
+
+		if (cv->teamShader) {
+			remapped = qtrue;
+		}
+	}
+
+	if (remapped) {
+		G_RemapTeamShaders();
 	}
 	// check some things
 	if (g_gametype.integer < 0 || g_gametype.integer >= GT_MAX_GAME_TYPE) {
 		G_Printf("g_gametype %i is out of range, defaulting to 0\n", g_gametype.integer);
-		trap_Cvar_Set("g_gametype", "0");
+		trap_Cvar_SetValue("g_gametype", 0);
 	}
 
 	if (pm_fixedPmoveFPS.integer < 60) {
@@ -427,6 +425,7 @@ G_UpdateCvars
 void G_UpdateCvars(void) {
 	int i;
 	cvarTable_t *cv;
+	qboolean remapped = qfalse;
 
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++) {
 		if (cv->vmCvar) {
@@ -438,8 +437,16 @@ void G_UpdateCvars(void) {
 				if (cv->trackChange) {
 					trap_SendServerCommand(-1, va("print \"Server: %s changed to %s\n\"", cv->cvarName, cv->vmCvar->string));
 				}
+
+				if (cv->teamShader) {
+					remapped = qtrue;
+				}
 			}
 		}
+	}
+
+	if (remapped) {
+		G_RemapTeamShaders();
 	}
 }
 
@@ -488,10 +495,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 #if defined(USE_BULLET)
 	G_InitBulletPhysics();
 #endif
-#ifdef G_LUA
-	G_LuaInit();
-#endif
 	G_InitWorldSession();
+	G_RegisterCommands();
 	// initialize all entities for this game
 	memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));
 
@@ -518,7 +523,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	// general initialization
 	G_FindTeams();
 	// make sure we have flags for CTF, etc.
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		G_CheckTeamItems();
 	}
 
@@ -527,8 +532,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 
 	if (g_gametype.integer == GT_SINGLE_PLAYER || trap_Cvar_VariableIntegerValue("com_buildScript")) {
 		G_ModelIndex(SP_PODIUM_MODEL);
-		G_SoundIndex("sound/player/gurp1.ogg");
-		G_SoundIndex("sound/player/gurp2.ogg");
 	}
 #if defined(BRAINWORKS)
 	if (trap_Cvar_VariableIntegerValue("bot_enable")) {
@@ -536,14 +539,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 		BotAILoadMap(restart);
 		G_InitBots(restart);
 	}
-#elif defined(ACEBOT)
-	ACEND_InitNodes();
-	ACEND_LoadNodes();
-	ACESP_InitBots(restart);
-#endif
-#ifdef G_LUA
-	// Lua API callbacks
-	G_LuaHook_InitGame(levelTime, randomSeed, restart);
 #endif
 }
 
@@ -555,11 +550,6 @@ G_ShutdownGame
 void G_ShutdownGame(int restart) {
 
 	G_Printf("==== ShutdownGame ====\n");
-#if defined(G_LUA)
-	// quad - Lua API
-	G_LuaHook_ShutdownGame(restart);
-	G_LuaShutdown();
-#endif
 #if defined(USE_BULLET)
 	G_ShutdownBulletPhysics();
 #endif
@@ -666,6 +656,30 @@ void AddTournamentPlayer(void) {
 	level.warmupTime = -1;
 	// set them to free-for-all team
 	SetTeam(&g_entities[nextInLine - level.clients], "f");
+}
+
+/*
+=======================================================================================================================================
+AddTournamentQueue
+
+Add client to end of tournament queue.
+=======================================================================================================================================
+*/
+void AddTournamentQueue(gclient_t *client) {
+	int index;
+	gclient_t *curclient;
+
+	for (index = 0; index < level.maxclients; index++) {
+		curclient = &level.clients[index];
+
+		if (curclient->pers.connected != CON_DISCONNECTED) {
+			if (curclient == client) {
+				curclient->sess.spectatorNum = 0;
+			} else if (curclient->sess.sessionTeam == TEAM_SPECTATOR) {
+				curclient->sess.spectatorNum++;
+			}
+		}
+	}
 }
 
 /*
@@ -851,7 +865,7 @@ void CalculateRanks(void) {
 
 	qsort(level.sortedClients, level.numConnectedClients, sizeof(level.sortedClients[0]), SortRanks);
 	// set the rank value for all clients that are connected and not spectators
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		// in team games, rank is just the order of the teams, 0 = red, 1 = blue, 2 = tied
 		for (i = 0; i < level.numConnectedClients; i++) {
 			cl = &level.clients[level.sortedClients[i]];
@@ -890,7 +904,7 @@ void CalculateRanks(void) {
 		}
 	}
 	// set the CS_SCORES1/2 configstrings, which will be visible to everyone
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		trap_SetConfigstring(CS_SCORES1, va("%i", level.teamScores[TEAM_RED]));
 		trap_SetConfigstring(CS_SCORES2, va("%i", level.teamScores[TEAM_BLUE]));
 	} else {
@@ -952,6 +966,8 @@ void MoveClientToIntermission(gentity_t *ent) {
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW) {
 		StopFollowing(ent);
 	}
+
+	FindIntermissionPoint();
 	// move to the spot
 	VectorCopy(level.intermission_origin, ent->s.origin);
 	VectorCopy(level.intermission_origin, ent->client->ps.origin);
@@ -1019,13 +1035,6 @@ void BeginIntermission(void) {
 	}
 
 	level.intermissiontime = level.time;
-
-	FindIntermissionPoint();
-	// if single player game
-	if (g_gametype.integer == GT_SINGLE_PLAYER) {
-		UpdateTournamentInfo();
-		//SpawnModelsOnVictoryPads();
-	}
 	// move all clients to the intermission point
 	for (i = 0; i < level.maxclients; i++) {
 		client = g_entities + i;
@@ -1035,10 +1044,14 @@ void BeginIntermission(void) {
 		}
 		// respawn if dead
 		if (client->health <= 0) {
-			ClientRespawn(client));
+			ClientRespawn(client);
 		}
 
 		MoveClientToIntermission(client);
+	}
+
+	if (g_gametype.integer == GT_SINGLE_PLAYER) {
+		UpdateTournamentInfo();
 	}
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
@@ -1064,7 +1077,7 @@ void ExitLevel(void) {
 	if (g_gametype.integer == GT_TOURNAMENT) {
 		if (!level.restarted) {
 			RemoveTournamentLoser();
-			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
+			trap_Cmd_ExecuteText(EXEC_APPEND, "map_restart 0\n");
 			level.restarted = qtrue;
 			level.changemap = NULL;
 			level.intermissiontime = 0;
@@ -1078,9 +1091,9 @@ void ExitLevel(void) {
 
 	if (!Q_stricmp(nextmap, "map_restart 0") && Q_stricmp(d1, "")) {
 		trap_Cvar_Set("nextmap", "vstr d2");
-		trap_SendConsoleCommand(EXEC_APPEND, "vstr d1\n");
+		trap_Cmd_ExecuteText(EXEC_APPEND, "vstr d1\n");
 	} else {
-		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+		trap_Cmd_ExecuteText(EXEC_APPEND, "vstr nextmap\n");
 	}
 
 	level.changemap = NULL;
@@ -1168,7 +1181,7 @@ void LogExit(const char *string) {
 		numSorted = 32;
 	}
 
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		G_LogPrintf("red:%i  blue:%i\n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
 	}
 
@@ -1188,13 +1201,12 @@ void LogExit(const char *string) {
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 
 		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], ping, level.sortedClients[i], cl->pers.netname);
-#ifdef MISSIONPACK
+
 		if (g_singlePlayer.integer && g_gametype.integer == GT_TOURNAMENT) {
 			if (g_entities[cl - level.clients].r.svFlags & SVF_BOT && cl->ps.persistant[PERS_RANK] == 0) {
 				won = qfalse;
 			}
 		}
-#endif
 #if 0
 		// give everyone a UT 3 style level exit with an orbital camera
 		won = qfalse;
@@ -1203,7 +1215,7 @@ void LogExit(const char *string) {
 			if (cl->ps.persistant[PERS_RANK] == 0) {
 				won = qtrue;
 			}
-		} else if (g_gametype.integer >= GT_TEAM) {
+		} else if (g_gametype.integer > GT_TOURNAMENT) {
 			if (cl->sess.sessionTeam == TEAM_RED) {
 				won = level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE];
 			} else if (cl->sess.sessionTeam == TEAM_BLUE) {
@@ -1316,7 +1328,7 @@ qboolean ScoreIsTied(void) {
 		return qfalse;
 	}
 
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		return level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE];
 	}
 
@@ -1345,7 +1357,7 @@ void CheckExitRules(void) {
 	}
 
 	if (level.intermissionQueued) {
-		int time = (g_gametype.integer == GT_SINGLE_PLAYER) ? SP_INTERMISSION_DELAY_TIME : INTERMISSION_DELAY_TIME;
+		int time = (g_singlePlayer.integer) ? SP_INTERMISSION_DELAY_TIME : INTERMISSION_DELAY_TIME;
 
 		if (level.time - level.intermissionQueued >= time) {
 			level.intermissionQueued = 0;
@@ -1404,7 +1416,7 @@ void CheckExitRules(void) {
 		}
 	}
 
-	if (g_gametype.integer >= GT_CTF && g_capturelimit.integer) {
+	if (g_gametype.integer > GT_TEAM && g_capturelimit.integer) {
 		if (level.teamScores[TEAM_RED] >= g_capturelimit.integer) {
 			trap_SendServerCommand(-1, "print \"Red hit the capturelimit.\n\"");
 			LogExit("Capturelimit hit.");
@@ -1483,8 +1495,8 @@ void CheckTournament(void) {
 		// if the warmup time has counted down, restart
 		if (level.time > level.warmupTime) {
 			level.warmupTime += 10000;
-			trap_Cvar_Set("g_restarted", "1");
-			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
+			trap_Cvar_SetValue("g_restarted", 1);
+			trap_Cmd_ExecuteText(EXEC_APPEND, "map_restart 0\n");
 			level.restarted = qtrue;
 			return;
 		}
@@ -1492,9 +1504,9 @@ void CheckTournament(void) {
 		int counts[TEAM_NUM_TEAMS];
 		qboolean notEnough = qfalse;
 
-		if (g_gametype.integer > GT_TEAM) {
-			counts[TEAM_BLUE] = TeamCount(-1, TEAM_BLUE);
+		if (g_gametype.integer > GT_TOURNAMENT) {
 			counts[TEAM_RED] = TeamCount(-1, TEAM_RED);
+			counts[TEAM_BLUE] = TeamCount(-1, TEAM_BLUE);
 
 			if (counts[TEAM_RED] < 1 || counts[TEAM_BLUE] < 1) {
 				notEnough = qtrue;
@@ -1531,8 +1543,8 @@ void CheckTournament(void) {
 		// if the warmup time has counted down, restart
 		if (level.time > level.warmupTime) {
 			level.warmupTime += 10000;
-			trap_Cvar_Set("g_restarted", "1");
-			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
+			trap_Cvar_SetValue("g_restarted", 1);
+			trap_Cmd_ExecuteText(EXEC_APPEND, "map_restart 0\n");
 			level.restarted = qtrue;
 			return;
 		}
@@ -1548,7 +1560,7 @@ void CheckVote(void) {
 
 	if (level.voteExecuteTime && level.voteExecuteTime < level.time) {
 		level.voteExecuteTime = 0;
-		trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", level.voteString));
+		trap_Cmd_ExecuteText(EXEC_APPEND, va("%s\n", level.voteString));
 	}
 
 	if (!level.voteTime) {
@@ -1701,7 +1713,7 @@ void CheckTeamVote(int team) {
 				// set the team leader
 				SetLeader(team, atoi(level.teamVoteString[cs_offset] + 7));
 			} else {
-				trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", level.teamVoteString[cs_offset]));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("%s\n", level.teamVoteString[cs_offset]));
 			}
 		} else if (level.teamVoteNo[cs_offset] >= level.numteamVotingClients[cs_offset] / 2) {
 			// same behavior as a timeout
@@ -1729,9 +1741,9 @@ void CheckCvars(void) {
 		lastMod = g_password.modificationCount;
 
 		if (*g_password.string && Q_stricmp(g_password.string, "none")) {
-			trap_Cvar_Set("g_needpass", "1");
+			trap_Cvar_SetValue("g_needpass", 1);
 		} else {
-			trap_Cvar_Set("g_needpass", "0");
+			trap_Cvar_SetValue("g_needpass", 0);
 		}
 	}
 }
@@ -1761,12 +1773,7 @@ void G_RunThink(gentity_t *ent) {
 	if (!ent->think) {
 		G_Error("NULL ent->think");
 	}
-#ifdef G_LUA
-	// Lua API callbacks
-	if (ent->luaThink && !ent->client) {
-		G_LuaHook_EntityThink(ent->luaThink, ent->s.number);
-	}
-#endif
+
 	ent->think(ent);
 }
 
@@ -1896,7 +1903,4 @@ void G_RunFrame(int levelTime) {
 
 		trap_Cvar_Set("g_listEntity", "0");
 	}
-#ifdef G_LUA
-	G_LuaHook_RunFrame(levelTime);
-#endif
 }

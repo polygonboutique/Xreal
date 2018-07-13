@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -28,24 +28,19 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #ifndef __G_LOCAL_H
 #define __G_LOCAL_H
-// g_local.h--local definitions for game module
-#include <q_shared.h>
-#include <bg_public.h>
+#include "../qcommon/q_shared.h"
+#include "bg_public.h"
 #include "g_public.h"
 #if defined(USE_BULLET)
 #include <Bullet-C-Api.h>
 #endif
 // the "gameversion" client command will print this plus compile date
 #define GAMEVERSION "XreaL"
-// Tr3B: added this to compile with different bot versions
-// #define GLADIATOR
-// #define BRAINWORKS
-#define ACEBOT
 #define BODY_QUEUE_SIZE 8
 #define INFINITE 1000000
 #define FRAMETIME 100 // msec
 #define CARNAGE_REWARD_TIME 3000
-#define REWARD_SPRITE_TIME 2000
+#define REWARD_TIME 2000
 #define INTERMISSION_DELAY_TIME 1000
 #define SP_INTERMISSION_DELAY_TIME 1000
 // gentity->flags
@@ -200,29 +195,6 @@ struct gentity_s {
 	float random;
 	qboolean suspended;			// item will spawn where it was placed in map and won't drop to the floor
 	gitem_t *item;				// for bonus items
-#if defined(G_LUA)
-	// Lua scripting
-	// like function pointers but pointing to
-	// function names inside the .lua file that is loaded
-	// for each map
-	char *luaThink;
-	char *luaTouch;
-	char *luaUse;
-	char *luaHurt;
-	char *luaDie;
-	char *luaFree;
-	char *luaTrigger;
-	char *luaSpawn;
-	char *luaParam1;
-	char *luaParam2;
-	char *luaParam3;
-	char *luaParam4;
-#endif
-#if defined(ACEBOT)
-	botState_t bs;
-	int node;
-	float weight;
-#endif
 };
 
 typedef enum {
@@ -284,7 +256,6 @@ typedef struct {
 	qboolean predictItemPickup;		// based on cg_predictItems userinfo
 	qboolean pmoveFixed;
 	char netname[MAX_NETNAME];
-	int maxHealth;					// for handicapping
 	int enterTime;					// level.time the client entered the game
 	playerTeamState_t teamState;	// status in teamplay games
 	int voteCount;					// to prevent people from constantly calling votes
@@ -316,26 +287,22 @@ struct gclient_s {
 	int accuracy_hits;		// total number of hits
 	int lastkilled_client;	// last client that this client killed
 	int lasthurt_client;	// last client that damaged this client
+	int lasthurt_time;		// time of the last damage
 	int lasthurt_mod;		// type of damage the client did
 	int lastused_ent;		// entity which was last + activated
 	// timers
 	int respawnTime;		// can respawn when time > this, force after g_forcerespwan
 	int inactivityTime;		// kick players when time > this
 	qboolean inactivityWarning;	// qtrue if the five seoond warning has been given
-	int rewardTime;			// clear the EF_AWARD_IMPRESSIVE, etc when time > this
+	int rewardTime;
 	int airOutTime;
 	int lastKillTime;		// for multiple kill rewards
 	qboolean hookFireHeld;	// used for hook
-	gentity_t *hook;		// grapple hook if out
 	int switchTeamTime;		// time the player switched teams
 	// timeResidual is used to handle events that happen every second like health/armor countdowns and regeneration
 	int timeResidual;
-#ifdef MISSIONPACK
 	gentity_t *persistantPowerup;
-	int portalID;
 	int ammoTimes[WP_NUM_WEAPONS];
-	int invulnerabilityTime;
-#endif
 	char *areabits;
 };
 // this structure is cleared as each map is entered
@@ -364,6 +331,7 @@ typedef struct {
 	int numPlayingClients;			// connected, non-spectators
 	int sortedClients[MAX_CLIENTS];	// sorted by score
 	int follow1, follow2;			// clientNums for auto-follow spectators
+	int snd_fry;					// sound index for standing in lava
 	int warmupModificationCount;	// for detecting if g_warmup is changed
 	// voting state
 	char voteString[MAX_STRING_CHARS];
@@ -397,9 +365,6 @@ typedef struct {
 	gentity_t *locationHead;		// head of the location list
 	int bodyQueIndex;				// dead bodies
 	gentity_t *bodyQue[BODY_QUEUE_SIZE];
-#ifdef MISSIONPACK
-	int portalSequence;
-#endif
 } level_locals_t;
 // g_spawn.c
 qboolean G_SpawnString(const char *key, const char *defaultString, char **out);
@@ -422,14 +387,11 @@ void G_CheckTeamItems(void);
 void G_RunItem(gentity_t *ent);
 void RespawnItem(gentity_t *ent);
 void UseHoldableItem(gentity_t *ent);
-void PrecacheItem(gitem_t *it);
 gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle);
 gentity_t *Launch_Item(gitem_t *item, vec3_t origin, vec3_t velocity);
 void SetRespawn(gentity_t *ent, float delay);
 void G_SpawnItem(gentity_t *ent, gitem_t *item);
 void FinishSpawningItem(gentity_t *ent);
-void Think_Weapon(gentity_t *ent);
-int ArmorIndex(gentity_t *ent);
 void Add_Ammo(gentity_t *ent, int weapon, int count);
 void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace);
 void ClearRegisteredItems(void);
@@ -613,38 +575,6 @@ int BotAIStartFrame(int time);
 void BotAIDebug(void); // brainworks
 //void BotTestAAS(vec3_t origin);
 #endif
-#if defined(ACEBOT)
-#include "acebot.h"
-#endif
-#if defined(G_LUA)
-// g_lua.c
-
-// Callbacks
-void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart);
-void G_LuaHook_ShutdownGame(int restart);
-void G_LuaHook_RunFrame(int levelTime);
-qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot, char *reason);
-void G_LuaHook_ClientDisconnect(int clientNum);
-void G_LuaHook_ClientBegin(int clientNum);
-void G_LuaHook_ClientUserinfoChanged(int clientNum);
-void G_LuaHook_ClientSpawn(int clientNum);
-qboolean G_LuaHook_ClientCommand(int clientNum, char *command);
-qboolean G_LuaHook_ConsoleCommand(char *command);
-void G_LuaHook_Print(char *text);
-qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath, char *customObit);
-qboolean G_LuaHook_EntityThink(char *function, int entity);
-qboolean G_LuaHook_EntityTouch(char *function, int entity, int other);
-qboolean G_LuaHook_EntityUse(char *function, int entity, int other, int activator);
-qboolean G_LuaHook_EntityHurt(char *function, int entity, int inflictor, int attacker);
-qboolean G_LuaHook_EntityDie(char *function, int entity, int inflictor, int attacker, int dmg, int mod);
-qboolean G_LuaHook_EntityFree(char *function, int entity);
-qboolean G_LuaHook_EntityTrigger(char *function, int entity, int other);
-qboolean G_LuaHook_EntitySpawn(char *function, int entity);
-// Other
-void G_LuaStatus(gentity_t *ent);
-qboolean G_LuaInit();
-void G_LuaShutdown();
-#endif // G_LUA
 
 #if defined(USE_BULLET)
 #if defined(__cplusplus)
@@ -730,17 +660,6 @@ extern vmCvar_t lua_allowedModules;
 extern vmCvar_t lua_modules;
 #if defined(USE_BULLET)
 extern vmCvar_t g_physUseCCD;
-#endif
-#if defined(ACEBOT)
-extern vmCvar_t ace_debug;
-extern vmCvar_t ace_showNodes;
-extern vmCvar_t ace_showLinks;
-extern vmCvar_t ace_showPath;
-extern vmCvar_t ace_pickLongRangeGoal;
-extern vmCvar_t ace_pickShortRangeGoal;
-extern vmCvar_t ace_attackEnemies;
-extern vmCvar_t ace_spSkill;
-extern vmCvar_t ace_botsFile;
 #endif
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt);

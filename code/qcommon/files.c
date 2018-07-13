@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -23,7 +23,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 /**************************************************************************************************************************************
- Handle based filesystem for Quake III Arena.
+ Handle based filesystem for Quake Wars.
 **************************************************************************************************************************************/
 
 #include "q_shared.h"
@@ -33,7 +33,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 /*
 =======================================================================================================================================
 
-	QUAKE3 FILESYSTEM
+	QUAKE WARS FILESYSTEM
 
 All of Quake's data access is through a hierarchical file system, but the contents of the file system can be transparently merged from
 several sources.
@@ -52,7 +52,7 @@ base installation is usually readonly, and "home path" points to ~/.q3a or simil
 The user can also install custom mods and content in "home path", so it should be searched along with "home path" and "cd path" for
 game content.
 
-The "base game" is the directory under the paths where data comes from by default, and can be either "baseq3" or "demoq3".
+The "base game" is the directory under the paths where data comes from by default.
 
 The "current game" may be the same as the base game, or it may be the name of another directory under the paths that should be searched
 for files before looking in the base game. This is the basis for addons.
@@ -77,8 +77,8 @@ hit. fs_searchpaths is built with successive calls to FS_AddGameDirectory
 Additionally, we search in several subdirectories:
 current game is the current mode
 base game is a variable to allow mods based on other mods
-(such as baseq3 + missionpack content combination in a mod for instance)
-BASEGAME is the hardcoded base game("baseq3")
+(such as base game + missionpack content combination in a mod for instance)
+BASEGAME is the hardcoded base game("Data")
 
 e.g. the qpath "sound/newstuff/test.wav" would be searched for in the following places:
 
@@ -140,7 +140,7 @@ Read/write config to floppy option.
 
 Different version coexistence?
 
-When building a pak file, make sure a q3config.cfg isn't present in it, or configs will never get loaded from disk!
+When building a pak file, make sure a config.cfg isn't present in it, or configs will never get loaded from disk!
 
   todo:
 
@@ -162,12 +162,12 @@ typedef struct fileInPack_s {
 } fileInPack_t;
 
 typedef struct {
-	char pakPathname[MAX_OSPATH];	// c:\xreal\base
-	char pakFilename[MAX_OSPATH];	// c:\xreal\base\pak0.pk3
+	char pakPathname[MAX_OSPATH];	// c:\Quake Wars\Data
+	char pakFilename[MAX_OSPATH];	// c:\Quake Wars\Data\pak0.pk3
 	char pakBasename[MAX_OSPATH];	// pak0
-	char pakGamename[MAX_OSPATH];	// base
+	char pakGamename[MAX_OSPATH];	// Data
 	unzFile handle;					// handle to zip file
-	int checksum;					// regular checksum
+	int checksum;					// checksum of the zip
 	int pure_checksum;				// checksum for pure
 	int numfiles;					// number of files in pk3
 	int referenced;					// referenced file flags
@@ -177,9 +177,9 @@ typedef struct {
 } pack_t;
 
 typedef struct {
-	char path[MAX_OSPATH];		// c:\xreal
-	char fullpath[MAX_OSPATH];	// c:\xreal\base
-	char gamedir[MAX_OSPATH];	// base
+	char path[MAX_OSPATH];		// c:\Quake Wars
+	char fullpath[MAX_OSPATH];	// c:\Quake Wars\Data
+	char gamedir[MAX_OSPATH];	// Data
 } directory_t;
 
 typedef struct searchpath_s {
@@ -191,7 +191,7 @@ typedef struct searchpath_s {
 static char fs_gamedir[MAX_OSPATH]; // this will be a single file name with no separators
 static cvar_t *fs_debug;
 static cvar_t *fs_homepath;
-#ifdef MACOS_X
+#ifdef __APPLE__
 // also search the .app bundle for .pk3 files
 static cvar_t *fs_apppath;
 #endif
@@ -2236,7 +2236,7 @@ static char **Sys_ConcatenateFileLists(char **list0, char **list1) {
 =======================================================================================================================================
 FS_GetModList
 
-Returns a list of mod directory names. A mod directory is a peer to baseq3 with a pk3 or pk3dir in it.
+Returns a list of mod directory names. A mod directory is a peer to base game with a pk3 or pk3dir in it.
 =======================================================================================================================================
 */
 int FS_GetModList(char *listbuf, int bufsize) {
@@ -2359,7 +2359,7 @@ void FS_Dir_f(void) {
 	int i;
 
 	if (Cmd_Argc() < 2 || Cmd_Argc() > 3) {
-		Com_Printf("usage: dir < directory > [extension]\n");
+		Com_Printf("usage: dir <directory> [extension]\n");
 		return;
 	}
 
@@ -2731,8 +2731,8 @@ void FS_AddGameDirectory(const char *path, const char *dir) {
 			search = Z_Malloc(sizeof(searchpath_t));
 			search->dir = Z_Malloc(sizeof(*search->dir));
 
-			Q_strncpyz(search->dir->path, curpath, sizeof(search->dir->path)); // c:\xreal\base
-			Q_strncpyz(search->dir->fullpath, pakfile, sizeof(search->dir->fullpath)); // c:\xreal\base\mypak.pk3dir
+			Q_strncpyz(search->dir->path, curpath, sizeof(search->dir->path)); // c:\Quake Wars\Data
+			Q_strncpyz(search->dir->fullpath, pakfile, sizeof(search->dir->fullpath)); // c:\Quake Wars\Data\mypak.pk3dir
 			Q_strncpyz(search->dir->gamedir, pakdirs[pakdirsi], sizeof(search->dir->gamedir)); // mypak.pk3dir
 
 			search->next = fs_searchpaths;
@@ -2918,10 +2918,7 @@ void FS_Shutdown(qboolean closemfp) {
 	}
 #endif
 }
-#ifndef STANDALONE
-void Com_AppendCDKey(const char *filename);
-void Com_ReadCDKey(const char *filename);
-#endif
+
 /*
 =======================================================================================================================================
 FS_ReorderPurePaks
@@ -2986,17 +2983,13 @@ static void FS_Startup(const char *gameName) {
 	}
 
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
-#if defined(USE_JAVA) //|| defined(USE_MONO)
-	fs_gamedirvar = Cvar_Get("fs_game", "quaplexity", CVAR_INIT|CVAR_SYSTEMINFO);
-#else
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
-#endif
 	// add search path elements in reverse priority order
 	if (fs_basepath->string[0]) {
 		FS_AddGameDirectory(fs_basepath->string, gameName);
 	}
 	// fs_homepath is somewhat particular to *nix systems, only add if relevant
-#ifdef MACOS_X
+#ifdef __APPLE__
 	fs_apppath = Cvar_Get("fs_apppath", Sys_DefaultAppPath(), CVAR_INIT);
 	// make MacOSX also include the base path included with the .app bundle
 	if (fs_apppath->string[0]) {
@@ -3028,18 +3021,6 @@ static void FS_Startup(const char *gameName) {
 			FS_AddGameDirectory(fs_homepath->string, fs_gamedirvar->string);
 		}
 	}
-#ifndef STANDALONE
-	if (!Cvar_VariableIntegerValue("com_standalone")) {
-		cvar_t *fs;
-
-		Com_ReadCDKey(com_basegame->string);
-		fs = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
-
-		if (fs && fs->string[0] != 0) {
-			Com_AppendCDKey(fs->string);
-		}
-	}
-#endif
 	// add our commands
 	Cmd_AddCommand("path", FS_Path_f);
 	Cmd_AddCommand("dir", FS_Dir_f);
@@ -3259,7 +3240,7 @@ const char *FS_ReferencedPakNames(void) {
 	searchpath_t *search;
 
 	info[0] = 0;
-	// we want to return ALL pk3's from the fs_game path and referenced one's from baseq3
+	// we want to return ALL pk3's from the fs_game path and referenced one's from base game
 	for (search = fs_searchpaths; search; search = search->next) {
 		// is the element a pak file?
 		if (search->pack) {
@@ -3479,7 +3460,7 @@ void FS_Restart(int checksumFeed) {
 	if (Q_stricmp(fs_gamedirvar->string, lastValidGame)) {
 		// skip the xreal.cfg if "safe" is on the command line
 		if (!Com_SafeMode()) {
-			Cbuf_AddText("exec " Q3CONFIG_CFG "\n");
+			Cbuf_AddText("exec " QWCONFIG_CFG "\n");
 		}
 	}
 

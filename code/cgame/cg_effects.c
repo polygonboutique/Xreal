@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -95,6 +95,72 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float spacing) {
 
 /*
 =======================================================================================================================================
+CG_SpawnBubbles
+=======================================================================================================================================
+*/
+int CG_SpawnBubbles(localEntity_t **bubbles, vec3_t origin, float baseSize, int numBubbles) {
+	int i;
+	float rnd;
+	qboolean spawnedLarge;
+
+	spawnedLarge = qfalse;
+
+	for (i = 0; i < numBubbles; i++) {
+		localEntity_t *le;
+		refEntity_t *re;
+
+		le = CG_AllocLocalEntity();
+
+		if (bubbles) {
+			bubbles[i] = le;
+		}
+
+		le->leFlags = LEF_PUFF_DONT_SCALE;
+		le->leType = LE_BUBBLE;
+		le->endTime = cg.time + 8000 + random() * 250;
+		le->startTime = cg.time;
+		le->lifeRate = 1.0 / (le->endTime - le->startTime);
+
+		re = &le->refEntity;
+		re->shaderTime = cg.time;
+		re->reType = RT_SPRITE;
+		re->rotation = 0;
+
+		rnd = random();
+
+		if (rnd > 0.9f && !spawnedLarge) {
+			spawnedLarge = qtrue;
+			re->radius = baseSize * 3;
+		} else {
+			re->radius = baseSize + rnd * baseSize;
+		}
+
+		re->customShader = cgs.media.waterBubbleShader;
+		re->shaderRGBA[0] = 0xff;
+		re->shaderRGBA[1] = 0xff;
+		re->shaderRGBA[2] = 0xff;
+		re->shaderRGBA[3] = 0xff;
+
+		le->color[3] = 1.0;
+		le->pos.trType = TR_LINEAR;
+		le->pos.trTime = cg.time;
+
+		VectorCopy(origin, le->pos.trBase);
+		VectorCopy(origin, re->origin);
+
+		le->pos.trBase[0] += crandom() * baseSize;
+		le->pos.trBase[1] += crandom() * baseSize;
+		le->pos.trBase[2] += crandom() * baseSize;
+		le->pos.trDelta[0] = baseSize * crandom() * 5;
+		le->pos.trDelta[1] = baseSize * crandom() * 5;
+		le->pos.trDelta[2] = 85 + random() * 10;
+	}
+
+	return numBubbles;
+}
+
+/*
+=======================================================================================================================================
 CG_SmokePuff
 
 Adds a smoke puff or blood trail localEntity.
@@ -138,12 +204,10 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel, float radius, floa
 	VectorCopy(p, re->origin);
 
 	re->customShader = hShader;
-
 	re->shaderRGBA[0] = le->color[0] * 0xff;
 	re->shaderRGBA[1] = le->color[1] * 0xff;
 	re->shaderRGBA[2] = le->color[2] * 0xff;
 	re->shaderRGBA[3] = 0xff;
-
 	re->reType = RT_SPRITE;
 	re->radius = le->radius;
 
@@ -215,7 +279,7 @@ void CG_RailExplode(vec3_t org) {
 	le->leFlags = 0;
 	le->leType = LE_RAILEXPLOSION;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 3000; // 2250
+	le->endTime = cg.time + 3000; //2250
 	le->lifeRate = 1.0 / (le->endTime - le->startTime);
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
@@ -270,80 +334,9 @@ void CG_ObeliskPain(vec3_t org) {
 		sfx = cgs.media.obeliskHitSound3;
 	}
 
-	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx);
+	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx, 64);
 }
 
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-CG_InvulnerabilityImpact
-=======================================================================================================================================
-*/
-void CG_InvulnerabilityImpact(vec3_t org, vec3_t angles) {
-	localEntity_t *le;
-	refEntity_t *re;
-	int r;
-	sfxHandle_t sfx;
-
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_INVULIMPACT;
-	le->startTime = cg.time;
-	le->endTime = cg.time + 1000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
-	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
-
-	re = &le->refEntity;
-	re->reType = RT_MODEL;
-	re->shaderTime = -cg.time / 1000.0f;
-	re->hModel = cgs.media.invulnerabilityImpactModel;
-
-	VectorCopy(org, re->origin);
-	AnglesToAxis(angles, re->axis);
-
-	r = rand() & 3;
-
-	if (r < 2) {
-		sfx = cgs.media.invulnerabilityImpactSound1;
-	} else if (r == 2) {
-		sfx = cgs.media.invulnerabilityImpactSound2;
-	} else {
-		sfx = cgs.media.invulnerabilityImpactSound3;
-	}
-
-	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx);
-}
-
-/*
-=======================================================================================================================================
-CG_InvulnerabilityJuiced
-=======================================================================================================================================
-*/
-void CG_InvulnerabilityJuiced(vec3_t org) {
-	localEntity_t *le;
-	refEntity_t *re;
-	vec3_t angles;
-
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_INVULJUICED;
-	le->startTime = cg.time;
-	le->endTime = cg.time + 10000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
-	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
-
-	re = &le->refEntity;
-	re->reType = RT_MODEL;
-	re->shaderTime = -cg.time / 1000.0f;
-	re->hModel = cgs.media.invulnerabilityJuicedModel;
-
-	VectorCopy(org, re->origin);
-	VectorClear(angles);
-	AnglesToAxis(angles, re->axis);
-
-	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, cgs.media.invulnerabilityJuicedSound);
-}
-#endif
 /*
 =======================================================================================================================================
 CG_ScorePlum
@@ -527,6 +520,10 @@ Generated a bunch of gibs launching out from the bodies location.
 void CG_GibPlayer(vec3_t playerOrigin) {
 	vec3_t origin, velocity;
 
+	if (CG_PointContents(playerOrigin, -1) & (CONTENTS_WATER|CONTENTS_SLIME)) {
+		CG_SpawnBubbles(NULL, playerOrigin, 3, 5 + random() * 5);
+	}
+
 	if (!cg_blood.integer) {
 		return;
 	}
@@ -636,7 +633,7 @@ static ID_INLINE void VectorRandom(vec3_t a, const vec3_t mins, const vec3_t max
 
 /*
 =======================================================================================================================================
-VectorRandomUniform(
+VectorRandomUniform
 =======================================================================================================================================
 */
 static ID_INLINE void VectorRandomUniform(vec3_t a, const vec3_t maxs) {

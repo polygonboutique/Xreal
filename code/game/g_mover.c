@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -323,7 +323,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 	// see if any solid entities are inside the final position
 	for (e = 0; e < listedEntities; e++) {
 		check = &g_entities[entityList[e]];
-#ifdef MISSIONPACK
+
 		if (check->s.eType == ET_MISSILE) {
 			// if it is a prox mine
 			if (!strcmp(check->classname, "prox mine")) {
@@ -364,7 +364,6 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 				continue;
 			}
 		}
-#endif
 		// only push items and players
 		if (check->s.eType != ET_ITEM && check->s.eType != ET_PLAYER && !check->physicsObject) {
 			continue;
@@ -586,16 +585,7 @@ void Reached_BinaryMover(gentity_t *ent) {
 
 	// stop the looping sound
 	ent->s.loopSound = ent->soundLoop;
-#ifdef G_LUA
-	// Lua API callbacks
-	if (ent->luaTrigger) {
-		if (ent->activator) {
-			G_LuaHook_EntityTrigger(ent->luaTrigger, ent->s.number, ent->activator->s.number);
-		} else {
-			G_LuaHook_EntityTrigger(ent->luaTrigger, ent->s.number, ENTITYNUM_WORLD);
-		}
-	}
-#endif
+
 	if (ent->moverState == MOVER_1TO2) {
 		// reached pos2
 		SetMoverState(ent, MOVER_POS2, level.time);
@@ -646,12 +636,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 	}
 
 	ent->activator = activator;
-#ifdef G_LUA
-	// Lua API callbacks
-	if (ent->luaTrigger) {
-		G_LuaHook_EntityTrigger(ent->luaTrigger, ent->s.number, activator->s.number);
-	}
-#endif
+
 	if (ent->moverState == MOVER_POS1) {
 		// start moving 50 msec later, because if this was player triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_1TO2, level.time + 50);
@@ -769,7 +754,6 @@ void InitMover(gentity_t *ent) {
 	ent->use = Use_BinaryMover;
 	ent->reached = Reached_BinaryMover;
 	ent->moverState = MOVER_POS1;
-	ent->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	ent->s.eType = ET_MOVER;
 
 	VectorCopy(ent->pos1, ent->r.currentOrigin);
@@ -1307,16 +1291,7 @@ void Reached_Train(gentity_t *ent) {
 	if (!next || !next->nextTrain) {
 		return; // just stop
 	}
-#ifdef G_LUA
-	// Lua API callbacks
-	if (ent->luaTrigger) {
-		G_LuaHook_EntityTrigger(ent->luaTrigger, ent->s.number, -1);
-	}
 
-	if (next->luaTrigger) {
-		G_LuaHook_EntityTrigger(next->luaTrigger, next->s.number, ent->s.number);
-	}
-#endif
 	if (!ent->nextTrain) {
 		return; // check for stopped by lua
 	}

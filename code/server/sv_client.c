@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -38,13 +38,8 @@ A "getchallenge" OOB command has been received.
 Returns a challenge number that can be used in a subsequent connectResponse command. We do this to prevent denial of service attacks
 that flood the server with invalid connection IPs. With a challenge, they must give a valid IP address.
 
-If we are authorizing, a challenge request will cause a packet to be sent to the authorize server.
-When an authorizeip is returned, a challenge response will be sent to that ip.
-
 ioquake3: we added a possibility for clients to add a challenge to their packets, to make it more difficult for malicious servers to
 hi-jack client connections.
-Also, the auth stuff is completely disabled for com_standalone games as well as IPv6 connections, since there is no way to use the
-v4-only auth server for these new types of connections.
 =======================================================================================================================================
 */
 void SV_GetChallenge(netadr_t from) {
@@ -55,7 +50,7 @@ void SV_GetChallenge(netadr_t from) {
 	challenge_t *challenge;
 
 	// ignore if we are in single player
-	if (Cvar_VariableValue("g_gametype") == GT_SINGLE_PLAYER || Cvar_VariableValue("ui_singlePlayerActive")) {
+	if (Com_GameIsSinglePlayer()) {
 		return;
 	}
 
@@ -87,129 +82,11 @@ void SV_GetChallenge(netadr_t from) {
 	// always generate a new challenge number, so the client cannot circumvent sv_maxping
 	challenge->challenge = ((rand() << 16) ^ rand()) ^ svs.time;
 	challenge->wasrefused = qfalse;
-#ifndef STANDALONE
-	// drop the authorize stuff if this client is coming in via v6 as the auth server does not support ipv6.
-	// drop also for addresses coming in on local LAN and for stand-alone games independent from id's assets.
-	if (challenge->adr.type == NA_IP && !Cvar_VariableIntegerValue("com_standalone") && !Sys_IsLANAddress(from)) {
-		// look up the authorize server's IP
-		if (svs.authorizeAddress.type == NA_BAD) {
-			Com_Printf("Resolving %s\n", AUTHORIZE_SERVER_NAME);
-
-			if (NET_StringToAdr(AUTHORIZE_SERVER_NAME, &svs.authorizeAddress, NA_IP)) {
-				svs.authorizeAddress.port = BigShort(PORT_AUTHORIZE);
-				Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", AUTHORIZE_SERVER_NAME, svs.authorizeAddress.ip[0], svs.authorizeAddress.ip[1], svs.authorizeAddress.ip[2], svs.authorizeAddress.ip[3], BigShort(svs.authorizeAddress.port));
-			}
-		}
-		// we couldn't contact the auth server, let them in.
-		if (svs.authorizeAddress.type == NA_BAD) {
-			Com_Printf("Couldn't resolve auth server address\n");
-		// if they have been challenging for a long time and we haven't heard anything from the authorize server, go ahead and
-		// let them in, assuming the id server is down
-		} else if (svs.time - challenge->firstTime > AUTHORIZE_TIMEOUT) {
-			Com_DPrintf("authorize server timed out\n");
-		} else {
-			// otherwise send their ip to the authorize server
-			cvar_t *fs;
-			char game[1024];
-
-			// if the client provided us with a client challenge, store it...
-			if (*clientChallenge) {
-				challenge->clientChallenge = atoi(clientChallenge);
-			}
-
-			Com_DPrintf("sending getIpAuthorize for %s\n", NET_AdrToString(from));
-			strcpy(game, BASEGAME);
-
-			fs = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
-
-			if (fs && fs->string[0] != 0) {
-				strcpy(game, fs->string);
-			}
-			// the 0 is for backwards compatibility with obsolete sv_allowanonymous flags
-			// getIpAuthorize <challenge> <IP> <game> 0 <auth-flag>
-			NET_OutOfBandPrint(NS_SERVER, svs.authorizeAddress, "getIpAuthorize %i %i.%i.%i.%i %s 0 %s", challenge->challenge, from.ip[0], from.ip[1], from.ip[2], from.ip[3], game, sv_strictAuth->string);
-			return;
-		}
-	}
-#endif
 	challenge->pingTime = svs.time;
 
 	NET_OutOfBandPrint(NS_SERVER, challenge->adr, "challengeResponse %i %s", challenge->challenge, clientChallenge);
 }
-#ifndef STANDALONE
-/*
-=======================================================================================================================================
-SV_AuthorizeIpPacket
 
-A packet has been returned from the authorize server.
-If we have a challenge adr for that ip, send the challengeResponse to it.
-=======================================================================================================================================
-*/
-void SV_AuthorizeIpPacket(netadr_t from) {
-	int challenge;
-	int i;
-	char *s;
-	char *r;
-	challenge_t *challengeptr;
-
-	if (!NET_CompareBaseAdr(from, svs.authorizeAddress)) {
-		Com_Printf("SV_AuthorizeIpPacket: not from authorize server\n");
-		return;
-	}
-
-	challenge = atoi(Cmd_Argv(1));
-
-	for (i = 0; i < MAX_CHALLENGES; i++) {
-		if (svs.challenges[i].challenge == challenge) {
-			break;
-		}
-	}
-
-	if (i == MAX_CHALLENGES) {
-		Com_Printf("SV_AuthorizeIpPacket: challenge not found\n");
-		return;
-	}
-
-	challengeptr = &svs.challenges[i];
-	// send a packet back to the original client
-	challengeptr->pingTime = svs.time;
-
-	s = Cmd_Argv(2);
-	r = Cmd_Argv(3); // reason
-
-	if (!Q_stricmp(s, "demo")) {
-		// they are a demo client trying to connect to a real server
-		NET_OutOfBandPrint(NS_SERVER, challengeptr->adr, "print\nServer is not a demo server\n");
-		// clear the challenge record so it won't timeout and let them through
-		Com_Memset(challengeptr, 0, sizeof(*challengeptr));
-		return;
-	}
-
-	if (!Q_stricmp(s, "accept")) {
-		NET_OutOfBandPrint(NS_SERVER, challengeptr->adr, "challengeResponse %d %d", challengeptr->challenge, challengeptr->clientChallenge);
-		return;
-	}
-
-	if (!Q_stricmp(s, "unknown")) {
-		if (!r) {
-			NET_OutOfBandPrint(NS_SERVER, challengeptr->adr, "print\nAwaiting CD key authorization\n");
-		} else {
-			NET_OutOfBandPrint(NS_SERVER, challengeptr->adr, "print\n%s\n", r);
-		}
-		// clear the challenge record so it won't timeout and let them through
-		Com_Memset(challengeptr, 0, sizeof(*challengeptr));
-		return;
-	}
-	// authorization failed
-	if (!r) {
-		NET_OutOfBandPrint(NS_SERVER, challengeptr->adr, "print\nSomeone is using this CD Key\n");
-	} else {
-		NET_OutOfBandPrint(NS_SERVER, challengeptr->adr, "print\n%s\n", r);
-	}
-	// clear the challenge record so it won't timeout and let them through
-	Com_Memset(challengeptr, 0, sizeof(*challengeptr));
-}
-#endif
 /*
 =======================================================================================================================================
 SV_IsBanned
@@ -452,15 +329,6 @@ gotnewcl:
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 	// get the game a chance to reject this connection or modify the userinfo
-#if defined(USE_JAVA)
-	denied = Java_G_ClientConnect(clientNum, qtrue, qfalse); // firstTime = qtrue
-
-	if (denied) {
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", denied);
-		Com_DPrintf("Game rejected a connection: %s.\n", denied);
-		return;
-	}
-#else
 	denied = VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse); // firstTime = qtrue
 
 	if (denied) {
@@ -471,7 +339,7 @@ gotnewcl:
 		Com_DPrintf("Game rejected a connection: %s.\n", str);
 		return;
 	}
-#endif
+
 	SV_UserinfoChanged(newcl);
 	// send the connect packet to the client
 	NET_OutOfBandPrint(NS_SERVER, from, "connectResponse");
@@ -537,11 +405,7 @@ void SV_DropClient(client_t *drop, const char *reason) {
 	}
 	// call the prog function for removing a client
 	// this will remove the body, among other things
-#if defined(USE_JAVA)
-	Java_G_ClientDisconnect(drop - svs.clients);
-#else
 	VM_Call(gvm, GAME_CLIENT_DISCONNECT, drop - svs.clients);
-#endif
 	// add the disconnect command
 	SV_SendServerCommand(drop, "disconnect\"%s\"", reason);
 
@@ -662,11 +526,7 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd) {
 	client->nextSnapshotTime = svs.time; // generate a snapshot immediately
 	client->lastUsercmd = *cmd;
 	// call the game begin function
-#if defined(USE_JAVA)
-	Java_G_ClientBegin(client - svs.clients);
-#else
 	VM_Call(gvm, GAME_CLIENT_BEGIN, client - svs.clients);
-#endif
 }
 
 /*
@@ -1223,16 +1083,6 @@ void SV_UserinfoChanged(client_t *cl) {
 			cl->rate = 3000;
 		}
 	}
-
-	val = Info_ValueForKey(cl->userinfo, "handicap");
-
-	if (strlen(val)) {
-		i = atoi(val);
-
-		if (i <= 0 || i > 100 || strlen(val) > 4) {
-			Info_SetValueForKey(cl->userinfo, "handicap", "100");
-		}
-	}
 	// snaps command
 	val = Info_ValueForKey(cl->userinfo, "snaps");
 
@@ -1250,7 +1100,7 @@ void SV_UserinfoChanged(client_t *cl) {
 		cl->snapshotMsec = 50;
 	}
 #ifdef USE_VOIP
-	// in the future, (val)will be a protocol version string, so only accept explicitly 1, not generally non - zero.
+	// in the future, (val) will be a protocol version string, so only accept explicitly 1, not generally non - zero.
 	val = Info_ValueForKey(cl->userinfo, "cl_voip");
 	cl->hasVoip = (atoi(val) == 1) ? qtrue : qfalse;
 #endif
@@ -1287,11 +1137,7 @@ static void SV_UpdateUserinfo_f(client_t *cl) {
 	Q_strncpyz(cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo));
 	SV_UserinfoChanged(cl);
 	// call prog code to allow overrides
-#if defined(USE_JAVA)
-	Java_G_ClientUserInfoChanged(cl - svs.clients);
-#else
 	VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients);
-#endif
 }
 #ifdef USE_VOIP
 /*
@@ -1374,11 +1220,7 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK) {
 		// pass unknown strings to the game
 		if (!u->name && sv.state == SS_GAME) {
 			Cmd_Args_Sanitize();
-#if defined(USE_JAVA)
-			Java_G_ClientCommand(cl - svs.clients);
-#else
 			VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
-#endif
 		}
 	} else if (!bProcessed) {
 		Com_DPrintf("client text ignored for %s: %s\n", cl->name, Cmd_Argv(0));
@@ -1443,11 +1285,8 @@ void SV_ClientThink(client_t *cl, usercmd_t *cmd) {
 	if (cl->state != CS_ACTIVE) {
 		return; // may have been kicked during the last usercmd
 	}
-#if defined(USE_JAVA)
-	Java_G_ClientThink(cl - svs.clients);
-#else
+
 	VM_Call(gvm, GAME_CLIENT_THINK, cl - svs.clients);
-#endif
 }
 
 /*

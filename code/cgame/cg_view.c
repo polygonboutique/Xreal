@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -372,7 +372,6 @@ static void CG_AddTestModel(void) {
 			cg.testModelEntity.origin[i] += cg.refdef.viewaxis[2][i] * cg_gunZ.value;
 		}
 	}
-
 #if 0
 	if (cg.testAnimation) {
 		int max = trap_R_AnimNumFrames(cg.testAnimation);
@@ -570,11 +569,11 @@ static void CG_CalcVrect(void) {
 	} else {
 		// bound normal viewsize
 		if (cg_viewsize.integer < 30) {
-			trap_Cvar_Set("cg_viewsize", "30");
 			size = 30;
+			trap_Cvar_SetValue("cg_viewsize", size);
 		} else if (cg_viewsize.integer > 100) {
-			trap_Cvar_Set("cg_viewsize", "100");
 			size = 100;
+			trap_Cvar_SetValue("cg_viewsize", size);
 		} else {
 			size = cg_viewsize.integer;
 		}
@@ -599,8 +598,8 @@ static void CG_OffsetThirdPersonView(void) {
 	vec3_t view;
 	vec3_t focusAngles;
 	trace_t trace;
-	static vec3_t mins = {-8, -8, -8};
-	static vec3_t maxs = {8, 8, 8};
+	static vec3_t mins = {-6, -6, -6};
+	static vec3_t maxs = {6, 6, 6};
 	vec3_t focusPoint;
 	float focusDist;
 	float forwardScale, sideScale;
@@ -640,7 +639,7 @@ static void CG_OffsetThirdPersonView(void) {
 
 	VectorMA(view, -cg_thirdPersonRange.value * forwardScale, forward, view);
 	VectorMA(view, -cg_thirdPersonRange.value * sideScale, right, view);
-	// trace a ray from the origin to the viewpoint to make sure the view isn't in a solid block. Use an 8 by 8 block to prevent the
+	// trace a ray from the origin to the viewpoint to make sure the view isn't in a solid block. Use a 12 by 12 block to prevent the
 	// view from near clipping anything
 	if (!cg_cameraMode.integer) {
 		CG_Trace(&trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID);
@@ -791,6 +790,8 @@ static void CG_OffsetFirstPersonView(void) {
 	angles[PITCH] += delta * cg_runpitch.value;
 	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[1]);
 	angles[ROLL] -= delta * cg_runroll.value;
+	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[0]);
+	angles[YAW] -= delta * cg_runyaw.value;
 	// add angles based on bob, make sure the bob is visible even at low speeds
 	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
 	// pitch
@@ -813,6 +814,18 @@ static void CG_OffsetFirstPersonView(void) {
 	}
 
 	angles[ROLL] += delta;
+	// yaw
+	delta = cg.bobfracsin * cg_bobyaw.value * speed;
+
+	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
+		delta *= 2; // crouching accentuates roll
+	}
+
+	if (cg.bobcycle & 1) {
+		delta = -delta;
+	}
+
+	angles[YAW] += delta;
 	// add view height
 	// TA: when wall climbing the viewheight is not straight up
 	if (cg.predictedPlayerState.pm_flags & PMF_WALLCLIMBING) {
@@ -970,6 +983,15 @@ static int CG_CalcFov(void) {
 		}
 	}
 
+	if (cg_fovAspectAdjust.integer) {
+		// based on LordHavoc's code for Darkplaces -> http://www.quakeworld.nu/forum/topic/53/what-does-your-qw-look-like/page/30
+		const float baseAspect = 0.75f; // 3 / 4
+		const float aspect = (float)cg.refdef.width / (float)cg.refdef.height;
+		const float desiredFov = fov_x;
+
+		fov_x = atan2(tan(desiredFov * M_PI / 360.0f) * baseAspect * aspect, 1) * 360.0f / M_PI;
+	}
+
 	x = cg.refdef.width / tan(fov_x / 360 * M_PI);
 	fov_y = atan2(cg.refdef.height, x);
 	fov_y = fov_y * 360 / M_PI;
@@ -1016,10 +1038,6 @@ static void CG_DamageBlendBlob(void) {
 	//if (cg.cameraMode) {
 	//	return;
 	//}
-	// ragePro systems can't fade blends, so don't obscure the screen
-	if (cgs.glconfig.hardwareType == GLHW_RAGEPRO) {
-		return;
-	}
 
 	maxTime = DAMAGE_TIME;
 	t = cg.time - cg.damageTime;
@@ -1270,14 +1288,6 @@ static int CG_CalcViewValues(void) {
 		}
 	}
 */
-#if defined(USE_JAVA) {
-		VectorCopy(ps->origin, cg.refdef.vieworg);
-		VectorCopy(ps->viewangles, cg.refdefViewAngles);
-		AnglesToAxis(cg.refdefViewAngles, cg.refdef.viewaxis);
-
-		return CG_CalcFov();
-	}
-#endif
 	// intermission view
 	if (ps->pm_type == PM_INTERMISSION) {
 		VectorCopy(ps->origin, cg.refdef.vieworg);
@@ -1313,10 +1323,7 @@ static int CG_CalcViewValues(void) {
 #endif
 
 	if (cg_cameraOrbit.integer) {
-		if (cg.time > cg.nextOrbitTime) {
-			cg.nextOrbitTime = cg.time + cg_cameraOrbitDelay.integer;
-			cg_thirdPersonAngle.value += cg_cameraOrbit.value;
-		}
+		cg_thirdPersonAngle.value += cg_cameraOrbit.value * cg.frametime * 0.001f;
 	}
 	// add error decay
 	if (cg_errorDecay.value > 0) {
@@ -1372,7 +1379,7 @@ static void CG_PowerupTimerSounds(void) {
 		}
 
 		if ((t - cg.time) / POWERUP_BLINK_TIME != (t - cg.oldTime) / POWERUP_BLINK_TIME) {
-			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_ITEM, cgs.media.wearOffSound);
+			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_ITEM, cgs.media.wearOffSound, 48);
 		}
 	}
 }
@@ -1411,6 +1418,101 @@ static void CG_PlayBufferedSounds(void) {
 			cg.soundTime = cg.time + 750;
 		}
 	}
+}
+
+/*
+=======================================================================================================================================
+
+	FRUSTUM CODE
+
+=======================================================================================================================================
+*/
+
+// some culling bits
+typedef struct plane_s {
+	vec3_t normal;
+	float dist;
+} plane_t;
+
+static plane_t frustum[4];
+
+/*
+=======================================================================================================================================
+CG_SetupFrustum
+=======================================================================================================================================
+*/
+void CG_SetupFrustum(void) {
+	int i;
+	float xs, xc;
+	float ang;
+
+	ang = cg.refdef.fov_x / 180 * M_PI * 0.5f;
+	xs = sin(ang);
+	xc = cos(ang);
+
+	VectorScale(cg.refdef.viewaxis[0], xs, frustum[0].normal);
+	VectorMA(frustum[0].normal, xc, cg.refdef.viewaxis[1], frustum[0].normal);
+
+	VectorScale(cg.refdef.viewaxis[0], xs, frustum[1].normal);
+	VectorMA(frustum[1].normal, -xc, cg.refdef.viewaxis[1], frustum[1].normal);
+
+	ang = cg.refdef.fov_y / 180 * M_PI * 0.5f;
+	xs = sin(ang);
+	xc = cos(ang);
+
+	VectorScale(cg.refdef.viewaxis[0], xs, frustum[2].normal);
+	VectorMA(frustum[2].normal, xc, cg.refdef.viewaxis[2], frustum[2].normal);
+
+	VectorScale(cg.refdef.viewaxis[0], xs, frustum[3].normal);
+	VectorMA(frustum[3].normal, -xc, cg.refdef.viewaxis[2], frustum[3].normal);
+
+	for (i = 0; i < 4; i++) {
+		frustum[i].dist = DotProduct(cg.refdef.vieworg, frustum[i].normal);
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_CullPoint
+
+Returns true if culled.
+=======================================================================================================================================
+*/
+qboolean CG_CullPoint(vec3_t pt) {
+	int i;
+	plane_t *frust;
+
+	// check against frustum planes
+	for (i = 0; i < 4; i++) {
+		frust = &frustum[i];
+
+		if ((DotProduct(pt, frust->normal) - frust->dist) < 0) {
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
+CG_CullPointAndRadius
+=======================================================================================================================================
+*/
+qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius) {
+	int i;
+	plane_t *frust;
+
+	// check against frustum planes
+	for (i = 0; i < 4; i++) {
+		frust = &frustum[i];
+
+		if ((DotProduct(pt, frust->normal) - frust->dist) < -radius) {
+			return qtrue;
+		}
+	}
+
+	return qfalse;
 }
 
 /*

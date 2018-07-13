@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -656,6 +656,7 @@ void S_Base_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t
 		ch->fixed_origin = qfalse;
 	}
 
+	ch->range = range ? range : SOUND_RANGE_DEFAULT;
 	ch->master_vol = 127;
 	ch->entnum = entityNum;
 	ch->thesfx = sfx;
@@ -783,7 +784,7 @@ S_Base_AddLoopingSound
 Called during entity generation for a frame. Include velocity in case I get around to doing doppler...
 =======================================================================================================================================
 */
-void S_Base_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfxHandle) {
+void S_Base_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfxHandle, int range) {
 	sfx_t *sfx;
 
 	if (!s_soundStarted || s_soundMuted) {
@@ -814,6 +815,7 @@ void S_Base_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t vel
 	loopSounds[entityNum].oldDopplerScale = 1.0;
 	loopSounds[entityNum].dopplerScale = 1.0;
 	loopSounds[entityNum].sfx = sfx;
+	loopSounds[entityNum].range = range ? range : SOUND_RANGE_DEFAULT;
 
 	if (s_doppler->integer && VectorLengthSquared(velocity) > 0.0) {
 		vec3_t out;
@@ -851,7 +853,7 @@ S_Base_AddRealLoopingSound
 Called during entity generation for a frame. Include velocity in case I get around to doing doppler...
 =======================================================================================================================================
 */
-void S_Base_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfxHandle) {
+void S_Base_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfxHandle, int range) {
 	sfx_t *sfx;
 
 	if (!s_soundStarted || s_soundMuted) {
@@ -877,6 +879,7 @@ void S_Base_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t
 	VectorCopy(velocity, loopSounds[entityNum].velocity);
 
 	loopSounds[entityNum].sfx = sfx;
+	loopSounds[entityNum].range = range ? range : SOUND_RANGE_DEFAULT;
 	loopSounds[entityNum].active = qtrue;
 	loopSounds[entityNum].kill = qfalse;
 	loopSounds[entityNum].doppler = qfalse;
@@ -909,9 +912,9 @@ void S_AddLoopSounds(void) {
 		}
 
 		if (loop->kill) {
-			S_SpatializeOrigin(loop->origin, 127, &left_total, &right_total); // 3d
+			S_SpatializeOrigin(loop->origin, 127, &left_total, &right_total, loop->range); // 3d
 		} else {
-			S_SpatializeOrigin(loop->origin, 90, &left_total, &right_total); // sphere
+			S_SpatializeOrigin(loop->origin, 90, &left_total, &right_total, loop->range); // sphere
 		}
 
 		loop->sfx->lastTimeUsed = time;
@@ -926,9 +929,9 @@ void S_AddLoopSounds(void) {
 			loop2->mergeFrame = loopFrame;
 
 			if (loop2->kill) {
-				S_SpatializeOrigin(loop2->origin, 127, &left, &right); // 3d
+				S_SpatializeOrigin(loop2->origin, 127, &left, &right, loop->range); // 3d
 			} else {
-				S_SpatializeOrigin(loop2->origin, 90, &left, &right); // sphere
+				S_SpatializeOrigin(loop2->origin, 90, &left, &right, loop->range); // sphere
 			}
 
 			loop2->sfx->lastTimeUsed = time;
@@ -1161,7 +1164,7 @@ void S_Base_Respatialize(int entityNum, const vec3_t head, vec3_t axis[3], int i
 				VectorCopy(loopSounds[ch->entnum].origin, origin);
 			}
 
-			S_SpatializeOrigin(origin, ch->master_vol, &ch->leftvol, &ch->rightvol);
+			S_SpatializeOrigin(origin, ch->master_vol, &ch->leftvol, &ch->rightvol, ch->range);
 		}
 	}
 	// add loopsounds

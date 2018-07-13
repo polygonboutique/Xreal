@@ -71,29 +71,29 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menulist_s      gametype;
-	menubitmap_s    mappics[MAX_MAPSPERPAGE];
-	menubitmap_s    mapbuttons[MAX_MAPSPERPAGE];
-	menubitmap_s    arrows;
-	menubitmap_s    prevpage;
-	menubitmap_s    nextpage;
-	menubitmap_s    back;
-	menubitmap_s    next;
+	menulist_s gametype;
+	menubitmap_s mappics[MAX_MAPSPERPAGE];
+	menubitmap_s mapbuttons[MAX_MAPSPERPAGE];
+	menubitmap_s arrows;
+	menubitmap_s prevpage;
+	menubitmap_s nextpage;
+	menubitmap_s back;
+	menubitmap_s next;
 
-	menutext_s      mapname;
-	menubitmap_s    item_null;
+	menutext_s mapname;
+	menubitmap_s item_null;
 
 	qboolean        multiplayer;
-	int             currentmap;
-	int             nummaps;
-	int             page;
-	int             maxpages;
-	char            maplist[MAX_SERVERMAPS][MAX_NAMELENGTH];
-	int             mapGamebits[MAX_SERVERMAPS];
+	int currentmap;
+	int nummaps;
+	int page;
+	int maxpages;
+	char maplist[MAX_SERVERMAPS][MAX_NAMELENGTH];
+	int mapGamebits[MAX_SERVERMAPS];
 } startserver_t;
 
 static startserver_t s_startserver;
@@ -109,8 +109,8 @@ static const char *gametype_items[] = {
 	0
 };
 
-static int      gametype_remap[] = { GT_FFA, GT_TEAM, GT_TOURNAMENT, GT_CTF, GT_1FCTF, GT_OBELISK, GT_HARVESTER };
-static int      gametype_remap2[] = { 0, 2, 0, 1, 3, 4, 5, 6 };
+static int gametype_remap[] = { GT_FFA, GT_TEAM, GT_TOURNAMENT, GT_CTF, GT_1FCTF, GT_OBELISK, GT_HARVESTER };
+static int gametype_remap2[] = { 0, 2, 0, 1, 3, 4, 5, 6 };
 
 static void     UI_ServerOptionsMenu(qboolean multiplayer);
 
@@ -122,9 +122,9 @@ GametypeBits
 */
 static int GametypeBits(char *string)
 {
-	int             bits;
-	char           *p;
-	char           *token;
+	int bits;
+	char *p;
+	char *token;
 
 	bits = 0;
 	p = string;
@@ -196,9 +196,9 @@ StartServer_Update
 */
 static void StartServer_Update(void)
 {
-	int             i;
-	int             top;
-	static char     picname[MAX_MAPSPERPAGE][64];
+	int i;
+	int top;
+	static char picname[MAX_MAPSPERPAGE][64];
 
 	top = s_startserver.page * MAX_MAPSPERPAGE;
 
@@ -281,11 +281,11 @@ StartServer_GametypeEvent
 */
 static void StartServer_GametypeEvent(void *ptr, int event)
 {
-	int             i;
-	int             count;
-	int             gamebits;
-	int             matchbits;
-	const char     *info;
+	int i;
+	int count;
+	int gamebits;
+	int matchbits;
+	const char *info;
 
 	if(event != QM_ACTIVATED)
 	{
@@ -371,15 +371,15 @@ StartServer_LevelshotDraw
 */
 static void StartServer_LevelshotDraw(void *self)
 {
-	menubitmap_s   *b;
-	int             x;
-	int             y;
-	int             w;
-	int             h;
-	int             n;
+	menubitmap_s *b;
+	int x;
+	int y;
+	int w;
+	int h;
+	int n;
 	qboolean        focus;
-	int             style;
-	float          *color;
+	int style;
+	float *color;
 
 	b = (menubitmap_s *) self;
 
@@ -455,10 +455,10 @@ StartServer_MenuInit
 */
 static void StartServer_MenuInit(void)
 {
-	int             i;
-	int             x;
-	int             y;
-	static char     mapnamebuffer[64];
+	int i;
+	int x;
+	int y;
+	static char mapnamebuffer[64];
 
 	// zero set all our globals
 	memset(&s_startserver, 0, sizeof(startserver_t));
@@ -644,9 +644,9 @@ StartServer_Cache
 */
 void StartServer_Cache(void)
 {
-	int             i;
-	const char     *info;
-	//char            picname[64];
+	int i;
+	const char *info;
+	//char picname[64];
 
 	trap_R_RegisterShaderNoMip(GAMESERVER_BACK0);
 	trap_R_RegisterShaderNoMip(GAMESERVER_BACK1);
@@ -719,37 +719,37 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
+	menutext_s banner;
 
-	menubitmap_s    mappic;
-	menubitmap_s    picframe;
+	menubitmap_s mappic;
+	menubitmap_s picframe;
 
-	menulist_s      dedicated;
-	menufield_s     timelimit;
-	menufield_s     fraglimit;
-	menufield_s     flaglimit;
+	menulist_s dedicated;
+	menufield_s timelimit;
+	menufield_s fraglimit;
+	menufield_s flaglimit;
 	menuradiobutton_s friendlyfire;
-	menufield_s     hostname;
+	menufield_s hostname;
 	menuradiobutton_s pure;
-	menulist_s      botSkill;
+	menulist_s botSkill;
 
-	menutext_s      player0;
-	menulist_s      playerType[PLAYER_SLOTS];
-	menutext_s      playerName[PLAYER_SLOTS];
-	menulist_s      playerTeam[PLAYER_SLOTS];
+	menutext_s player0;
+	menulist_s playerType[PLAYER_SLOTS];
+	menutext_s playerName[PLAYER_SLOTS];
+	menulist_s playerTeam[PLAYER_SLOTS];
 
-	menubitmap_s    go;
-	menubitmap_s    next;
-	menubitmap_s    back;
+	menubitmap_s go;
+	menubitmap_s next;
+	menubitmap_s back;
 
 	qboolean        multiplayer;
-	int             gametype;
-	char            mapnamebuffer[32];
-	char            playerNameBuffers[PLAYER_SLOTS][16];
+	int gametype;
+	char mapnamebuffer[32];
+	char playerNameBuffers[PLAYER_SLOTS][16];
 
 	qboolean        newBot;
-	int             newBotIndex;
-	char            newBotName[16];
+	int newBotIndex;
+	char newBotName[16];
 } serveroptions_t;
 
 static serveroptions_t s_serveroptions;
@@ -791,7 +791,7 @@ BotAlreadySelected
 */
 static qboolean BotAlreadySelected(const char *checkName)
 {
-	int             n;
+	int n;
 
 	for(n = 1; n < PLAYER_SLOTS; n++)
 	{
@@ -799,7 +799,7 @@ static qboolean BotAlreadySelected(const char *checkName)
 		{
 			continue;
 		}
-		if((s_serveroptions.gametype >= GT_TEAM) &&
+		if((s_serveroptions.gametype > GT_TOURNAMENT) &&
 		   (s_serveroptions.playerTeam[n].curvalue != s_serveroptions.playerTeam[s_serveroptions.newBotIndex].curvalue))
 		{
 			continue;
@@ -821,16 +821,16 @@ ServerOptions_Start
 */
 static void ServerOptions_Start(void)
 {
-	int             timelimit;
-	int             fraglimit;
-	int             maxclients;
-	int             dedicated;
-	int             friendlyfire;
-	int             flaglimit;
-	int             pure;
-	int             skill;
-	int             n;
-	char            buf[64];
+	int timelimit;
+	int fraglimit;
+	int maxclients;
+	int dedicated;
+	int friendlyfire;
+	int flaglimit;
+	int pure;
+	int skill;
+	int n;
+	char buf[64];
 
 
 	timelimit = atoi(s_serveroptions.timelimit.field.buffer);
@@ -909,7 +909,7 @@ static void ServerOptions_Start(void)
 		{
 			continue;
 		}
-		if(s_serveroptions.gametype >= GT_TEAM)
+		if(s_serveroptions.gametype > GT_TOURNAMENT)
 		{
 			Com_sprintf(buf, sizeof(buf), "addbot %s %i %s\n", s_serveroptions.playerNameBuffers[n], skill,
 						playerTeam_list[s_serveroptions.playerTeam[n].curvalue]);
@@ -922,7 +922,7 @@ static void ServerOptions_Start(void)
 	}
 
 	// set player's team
-	if(dedicated == 0 && s_serveroptions.gametype >= GT_TEAM)
+	if(dedicated == 0 && s_serveroptions.gametype > GT_TOURNAMENT)
 	{
 		trap_Cmd_ExecuteText(EXEC_APPEND, va("wait 5; team %s\n", playerTeam_list[s_serveroptions.playerTeam[0].curvalue]));
 	}
@@ -936,8 +936,8 @@ ServerOptions_InitPlayerItems
 */
 static void ServerOptions_InitPlayerItems(void)
 {
-	int             n;
-	int             v;
+	int n;
+	int v;
 
 	// init types
 	if(s_serveroptions.multiplayer)
@@ -974,7 +974,7 @@ static void ServerOptions_InitPlayerItems(void)
 	}
 
 	// init teams
-	if(s_serveroptions.gametype >= GT_TEAM)
+	if(s_serveroptions.gametype > GT_TOURNAMENT)
 	{
 		for(n = 0; n < (PLAYER_SLOTS / 2); n++)
 		{
@@ -1002,8 +1002,8 @@ ServerOptions_SetPlayerItems
 */
 static void ServerOptions_SetPlayerItems(void)
 {
-	int             start;
-	int             n;
+	int start;
+	int n;
 
 	// types
 //  for( n = 0; n < PLAYER_SLOTS; n++ ) {
@@ -1108,7 +1108,7 @@ static void ServerOptions_Event(void *ptr, int event)
 
 static void ServerOptions_PlayerNameEvent(void *ptr, int event)
 {
-	int             n;
+	int n;
 
 	if(event != QM_ACTIVATED)
 	{
@@ -1143,9 +1143,9 @@ ServerOptions_LevelshotDraw
 */
 static void ServerOptions_LevelshotDraw(void *self)
 {
-	menubitmap_s   *b;
-	int             x;
-	int             y;
+	menubitmap_s *b;
+	int x;
+	int y;
 
 	// strange place for this, but it works
 	if(s_serveroptions.newBot)
@@ -1188,15 +1188,15 @@ static void ServerOptions_LevelshotDraw(void *self)
 
 static void StartServer_LevelshotDraw(void *self)
 {
-	menubitmap_s   *b;
-	int             x;
-	int             y;
-	int             w;
-	int             h;
-	int             n;
+	menubitmap_s *b;
+	int x;
+	int y;
+	int w;
+	int h;
+	int n;
 	qboolean	focus;
 	int		style;
-	float          *color;
+	float *color;
 
 	b = (menubitmap_s *) self;
 
@@ -1289,15 +1289,15 @@ static void StartServer_LevelshotDraw(void *self)
 
 static void ServerOptions_InitBotNames(void)
 {
-	int             count;
-	int             n;
-	const char     *arenaInfo;
-	const char     *botInfo;
-	char           *p;
-	char           *bot;
-	char            bots[MAX_INFO_STRING];
+	int count;
+	int n;
+	const char *arenaInfo;
+	const char *botInfo;
+	char *p;
+	char *bot;
+	char bots[MAX_INFO_STRING];
 
-	if(s_serveroptions.gametype >= GT_TEAM)
+	if(s_serveroptions.gametype > GT_TOURNAMENT)
 	{
 		Q_strncpyz(s_serveroptions.playerNameBuffers[1], "acebot1", 16);
 		Q_strncpyz(s_serveroptions.playerNameBuffers[2], "acebot2", 16);
@@ -1399,7 +1399,7 @@ ServerOptions_SetMenuItems
 */
 static void ServerOptions_SetMenuItems(void)
 {
-	static char     picname[64];
+	static char picname[64];
 
 	switch (s_serveroptions.gametype)
 	{
@@ -1466,10 +1466,10 @@ PlayerName_Draw
 */
 static void PlayerName_Draw(void *item)
 {
-	menutext_s     *s;
-	float          *color;
-	int             x, y;
-	int             style;
+	menutext_s *s;
+	float *color;
+	int x, y;
+	int style;
 	qboolean        focus;
 
 	s = (menutext_s *) item;
@@ -1532,8 +1532,8 @@ ServerOptions_MenuInit
 
 static void ServerOptions_MenuInit(qboolean multiplayer)
 {
-	int             y;
-	int             n;
+	int y;
+	int n;
 
 	memset(&s_serveroptions, 0, sizeof(serveroptions_t));
 	s_serveroptions.multiplayer = multiplayer;
@@ -1602,7 +1602,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer)
 	s_serveroptions.timelimit.field.widthInChars = 3;
 	s_serveroptions.timelimit.field.maxchars = 3;
 
-	if(s_serveroptions.gametype >= GT_TEAM)
+	if(s_serveroptions.gametype > GT_TOURNAMENT)
 	{
 		y += BIGCHAR_HEIGHT + 2;
 		s_serveroptions.friendlyfire.generic.type = MTYPE_RADIOBUTTON;
@@ -1755,7 +1755,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer)
 			Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.playerType[n]);
 		}
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.playerName[n]);
-		if(s_serveroptions.gametype >= GT_TEAM)
+		if(s_serveroptions.gametype > GT_TOURNAMENT)
 		{
 			Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.playerTeam[n]);
 		}
@@ -1770,7 +1770,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer)
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.flaglimit);
 	}
 	Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.timelimit);
-	if(s_serveroptions.gametype >= GT_TEAM)
+	if(s_serveroptions.gametype > GT_TOURNAMENT)
 	{
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.friendlyfire);
 	}
@@ -1851,26 +1851,26 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
+	menutext_s banner;
 
-	menubitmap_s    pics[MAX_MODELSPERPAGE];
-	menubitmap_s    picbuttons[MAX_MODELSPERPAGE];
-	menutext_s      picnames[MAX_MODELSPERPAGE];
+	menubitmap_s pics[MAX_MODELSPERPAGE];
+	menubitmap_s picbuttons[MAX_MODELSPERPAGE];
+	menutext_s picnames[MAX_MODELSPERPAGE];
 
-	menubitmap_s    arrows;
-	menubitmap_s    left;
-	menubitmap_s    right;
+	menubitmap_s arrows;
+	menubitmap_s left;
+	menubitmap_s right;
 
-	menubitmap_s    go;
-	menubitmap_s    back;
+	menubitmap_s go;
+	menubitmap_s back;
 
-	int             numBots;
-	int             modelpage;
-	int             numpages;
-	int             selectedmodel;
-	int             sortedBotNums[MAX_BOTS];
-	char            boticons[MAX_MODELSPERPAGE][MAX_QPATH];
-	char            botnames[MAX_MODELSPERPAGE][16];
+	int numBots;
+	int modelpage;
+	int numpages;
+	int selectedmodel;
+	int sortedBotNums[MAX_BOTS];
+	char boticons[MAX_MODELSPERPAGE][MAX_QPATH];
+	char botnames[MAX_MODELSPERPAGE][16];
 } botSelectInfo_t;
 
 static botSelectInfo_t botSelectInfo;
@@ -1883,9 +1883,9 @@ UI_BotSelectMenu_SortCompare
 */
 static int QDECL UI_BotSelectMenu_SortCompare(const void *arg1, const void *arg2)
 {
-	int             num1, num2;
-	const char     *info1, *info2;
-	const char     *name1, *name2;
+	int num1, num2;
+	const char *info1, *info2;
+	const char *name1, *name2;
 
 	num1 = *(int *)arg1;
 	num2 = *(int *)arg2;
@@ -1907,7 +1907,7 @@ UI_BotSelectMenu_BuildList
 */
 static void UI_BotSelectMenu_BuildList(void)
 {
-	int             n;
+	int n;
 
 	botSelectInfo.modelpage = 0;
 	botSelectInfo.numBots = UI_GetNumBots();
@@ -1936,8 +1936,8 @@ ServerPlayerIcon
 */
 static void ServerPlayerIcon(const char *modelAndSkin, char *iconName, int iconNameMaxSize)
 {
-	char           *skin;
-	char            model[MAX_QPATH];
+	char *skin;
+	char model[MAX_QPATH];
 
 	Q_strncpyz(model, modelAndSkin, sizeof(model));
 	skin = Q_strrchr(model, '/');
@@ -1966,9 +1966,9 @@ UI_BotSelectMenu_UpdateGrid
 */
 static void UI_BotSelectMenu_UpdateGrid(void)
 {
-	const char     *info;
-	int             i;
-	int             j;
+	const char *info;
+	int i;
+	int j;
 
 	j = botSelectInfo.modelpage * MAX_MODELSPERPAGE;
 	for(i = 0; i < (PLAYERGRID_ROWS * PLAYERGRID_COLS); i++, j++)
@@ -2044,10 +2044,10 @@ UI_BotSelectMenu_Default
 */
 static void UI_BotSelectMenu_Default(char *bot)
 {
-	const char     *botInfo;
-	const char     *test;
-	int             n;
-	int             i;
+	const char *botInfo;
+	const char *test;
+	int n;
+	int i;
 
 	for(n = 0; n < botSelectInfo.numBots; n++)
 	{
@@ -2128,7 +2128,7 @@ UI_BotSelectMenu_BotEvent
 */
 static void UI_BotSelectMenu_BotEvent(void *ptr, int event)
 {
-	int             i;
+	int i;
 
 	if(event != QM_ACTIVATED)
 	{
@@ -2203,8 +2203,8 @@ void UI_BotSelectMenu_Cache(void)
 
 static void UI_BotSelectMenu_Init(char *bot)
 {
-	int             i, j, k;
-	int             x, y;
+	int i, j, k;
+	int x, y;
 
 	memset(&botSelectInfo, 0, sizeof(botSelectInfo));
 	botSelectInfo.menu.wrapAround = qtrue;

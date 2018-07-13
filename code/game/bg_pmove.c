@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -26,8 +26,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  Both games player movement code. Takes a playerstate and a usercmd as input and returns a modifed playerstate.
 **************************************************************************************************************************************/
 
-#include <q_shared.h>
-#include <bg_public.h>
+#include "../qcommon/q_shared.h"
+#include "bg_public.h"
 #include "bg_local.h"
 #if 0
 const vec3_t playerMins = {- 15, -15, -24};
@@ -260,10 +260,6 @@ static void PM_Friction(void) {
 	if (pm->waterlevel) {
 		drop += speed * pm_waterfriction * pm->waterlevel * pml.frametime;
 	}
-	// apply flying friction
-	if (pm->ps->powerups[PW_FLIGHT]) {
-		drop += speed * pm_flightfriction * pml.frametime;
-	}
 
 	if (pm->ps->pm_type == PM_SPECTATOR) {
 		drop += speed * pm_spectatorfriction * pml.frametime;
@@ -368,6 +364,30 @@ static float PM_CmdScale(usercmd_t *cmd) {
 
 	if (pm->ps->pm_type == PM_NOCLIP) {
 		scale *= 3;
+	}
+	// apply speed scale for strafing and going backwards
+	if (cmd->forwardmove < 0) {
+		scale *= 0.75f;
+	} else if (cmd->rightmove) {
+		scale *= 0.9f;
+	}
+	// running
+	if (!(pm->cmd.buttons & BUTTON_WALKING)) {
+		// apply weapon speed scale
+		switch (pm->ps->weapon) {
+			case WP_GAUNTLET:
+				scale *= 1.15f;
+				break;
+			case WP_RAILGUN:
+			case WP_BFG:
+				scale *= 0.9f;
+				break;
+			default:
+				break;
+		}
+	// walking
+	} else {
+		scale *= 0.75f;
 	}
 
 	return scale;
@@ -531,7 +551,7 @@ static qboolean PM_CheckWaterJump(void) {
 	spot[2] += 16;
 	cont = pm->pointcontents(spot, pm->ps->clientNum);
 
-	if (cont) {
+	if (cont & (CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BODY)) {
 		return qfalse;
 	}
 	// jump out of water
@@ -582,20 +602,19 @@ static void PM_WaterMove(void) {
 		PM_WaterJumpMove();
 		return;
 	}
-#if 0
 	// jump = head for surface
 	if (pm->cmd.upmove >= 10) {
 		if (pm->ps->velocity[2] > -300) {
-			if (pm->watertype == CONTENTS_WATER) {
+			if (pm->watertype & CONTENTS_WATER) {
 				pm->ps->velocity[2] = 100;
-			} else if (pm->watertype == CONTENTS_SLIME) {
+			} else if (pm->watertype & CONTENTS_SLIME) {
 				pm->ps->velocity[2] = 80;
 			} else {
-				pm->ps->velocity[2] = 50;
+				pm->ps->velocity[2] = 40;
 			}
 		}
 	}
-#endif
+
 	PM_Friction();
 
 	scale = PM_CmdScale(&pm->cmd);
@@ -632,28 +651,10 @@ static void PM_WaterMove(void) {
 
 	PM_SlideMove(qfalse);
 }
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-PM_InvulnerabilityMove
 
-Only with the invulnerability powerup.
-=======================================================================================================================================
-*/
-static void PM_InvulnerabilityMove(void) {
-
-	pm->cmd.forwardmove = 0;
-	pm->cmd.rightmove = 0;
-	pm->cmd.upmove = 0;
-
-	VectorClear(pm->ps->velocity);
-}
-#endif
 /*
 =======================================================================================================================================
 PM_FlyMove
-
-Only with the flight powerup.
 =======================================================================================================================================
 */
 static void PM_FlyMove(void) {
@@ -805,34 +806,6 @@ static void PM_AirMove(void) {
 	}
 #endif
 	PM_StepSlideMove(qtrue, qfalse);
-}
-
-/*
-=======================================================================================================================================
-PM_GrappleMove
-=======================================================================================================================================
-*/
-static void PM_GrappleMove(void) {
-	vec3_t vel, v;
-	float vlen;
-
-	VectorScale(pml.forward, -16, v);
-	VectorAdd(pm->ps->grapplePoint, v, v);
-	VectorSubtract(v, pm->ps->origin, vel);
-
-	vlen = VectorLength(vel);
-
-	VectorNormalize(vel);
-
-	if (vlen <= 100) {
-		VectorScale(vel, 10 * vlen, vel);
-	} else {
-		VectorScale(vel, 800, vel);
-	}
-
-	VectorCopy(vel, pm->ps->velocity);
-
-	pml.groundPlane = qfalse;
 }
 
 /*
@@ -1144,10 +1117,245 @@ static int PM_FootstepForSurface(void) {
 
 	if (pml.groundTrace.surfaceFlags & SURF_NOSTEPS) {
 		return 0;
-	} else if (pml.groundTrace.surfaceFlags & SURF_METALSTEPS) {
-		return EV_FOOTSTEP_METAL;
 	} else if (pml.groundTrace.surfaceFlags & SURF_WALLWALK) {
 		return EV_FOOTSTEP_WALLWALK;
+	}
+	switch (pml.groundTrace.surfaceFlags & SURF_MATERIAL_MASK) {
+		default:
+		// sound defaults to hard, dry materials
+/*
+		case MAT_NONE:
+		case MAT_STONE_GR_COL_01:
+		case MAT_STONE_GR_COL_02:
+		case MAT_STONE_GR_COL_03:
+		case MAT_STONE_GR_COL_04:
+		case MAT_STONE_HOT:
+		case MAT_LAVACRACKS:
+		case MAT_TILES_BROWN:
+		case MAT_TILES_CYAN:
+		case MAT_TILES_GREEN:
+		case MAT_TILES_GREY:
+		case MAT_TILES_RED:
+		case MAT_TILES_YELLOW:
+		case MAT_TILES_WHITE:
+		case MAT_CONCRETE:
+		case MAT_ASPHALT:
+		case MAT_BRICK_BLACK:
+		case MAT_BRICK_BROWN:
+		case MAT_BRICK_GREY:
+		case MAT_BRICK_RED:
+		case MAT_METAL_SOLID:
+		case MAT_METAL_SOLID_PAINTED:
+		case MAT_POT:
+		case MAT_INSULATION_01:
+		case MAT_INSULATION_02:
+		case MAT_WALLPAPER:
+		case MAT_GLASS:
+		case MAT_PLASTIC_HARD:
+		case MAT_COMPUTER:
+		case MAT_BONES:
+		case MAT_PORCELAIN:
+*/
+			return EV_FOOTSTEP_HARD;
+		case MAT_STONE_FROZEN:
+		case MAT_TILES_BROWN_FROZEN:
+		case MAT_TILES_CYAN_FROZEN:
+		case MAT_TILES_GREEN_FROZEN:
+		case MAT_TILES_GREY_FROZEN:
+		case MAT_TILES_RED_FROZEN:
+		case MAT_TILES_YELLOW_FROZEN:
+		case MAT_TILES_WHITE_FROZEN:
+		case MAT_CONCRETE_FROZEN:
+		case MAT_ASPHALT_FROZEN:
+		case MAT_METAL_SOLID_FROZEN:
+		case MAT_WOOD_SOLID_DARK_FROZEN:
+			return EV_FOOTSTEP_HARD_FROZEN;
+		case MAT_STONE_SNOW:
+		case MAT_TILES_BROWN_SNOW:
+		case MAT_TILES_CYAN_SNOW:
+		case MAT_TILES_GREEN_SNOW:
+		case MAT_TILES_GREY_SNOW:
+		case MAT_TILES_RED_SNOW:
+		case MAT_TILES_YELLOW_SNOW:
+		case MAT_TILES_WHITE_SNOW:
+		case MAT_CONCRETE_SNOW:
+		case MAT_ASPHALT_SNOW:
+		case MAT_METAL_SOLID_SNOW:
+		case MAT_WOOD_SOLID_DARK_SNOW:
+		case MAT_SNOW_GR_COL_01:
+		case MAT_SNOW_GR_COL_02:
+		case MAT_SNOW_GR_COL_03:
+		case MAT_SNOW_GR_COL_04:
+			return EV_FOOTSTEP_HARD_SNOW;
+		case MAT_STONE_SLUSH:
+		case MAT_TILES_BROWN_SLUSH:
+		case MAT_TILES_CYAN_SLUSH:
+		case MAT_TILES_GREEN_SLUSH:
+		case MAT_TILES_GREY_SLUSH:
+		case MAT_TILES_RED_SLUSH:
+		case MAT_TILES_YELLOW_SLUSH:
+		case MAT_TILES_WHITE_SLUSH:
+		case MAT_CONCRETE_SLUSH:
+		case MAT_ASPHALT_SLUSH:
+		case MAT_METAL_SOLID_SLUSH:
+		case MAT_WOOD_SOLID_DARK_SLUSH:
+			return EV_FOOTSTEP_HARD_SLUSH;
+		case MAT_STONE_SPLASH:
+		case MAT_TILES_BROWN_SPLASH:
+		case MAT_TILES_CYAN_SPLASH:
+		case MAT_TILES_GREEN_SPLASH:
+		case MAT_TILES_GREY_SPLASH:
+		case MAT_TILES_RED_SPLASH:
+		case MAT_TILES_YELLOW_SPLASH:
+		case MAT_TILES_WHITE_SPLASH:
+		case MAT_CONCRETE_SPLASH:
+		case MAT_ASPHALT_SPLASH:
+		case MAT_METAL_SOLID_SPLASH:
+		case MAT_WOOD_SOLID_DARK_SPLASH:
+		case MAT_PUDDLE_GR_COL_01:
+		case MAT_PUDDLE_GR_COL_02:
+		case MAT_PUDDLE_GR_COL_03:
+		case MAT_PUDDLE_GR_COL_04:
+			return EV_FOOTSTEP_PUDDLE;
+		case MAT_LEAVES_01_GR_COL_01:
+		case MAT_LEAVES_01_GR_COL_02:
+		case MAT_LEAVES_01_GR_COL_03:
+		case MAT_LEAVES_01_GR_COL_04:
+			return EV_FOOTSTEP_LEAVES;
+		case MAT_BUSH_01_GR_COL_01:
+		case MAT_BUSH_01_GR_COL_02:
+		case MAT_BUSH_01_GR_COL_03:
+		case MAT_BUSH_01_GR_COL_04:
+		case MAT_BUSH_02_GR_COL_01:
+		case MAT_BUSH_02_GR_COL_02:
+		case MAT_BUSH_02_GR_COL_03:
+		case MAT_BUSH_02_GR_COL_04:
+			return EV_FOOTSTEP_BUSH;
+		case MAT_SHORTGRASS_01_GR_COL_01:
+		case MAT_SHORTGRASS_01_GR_COL_02:
+		case MAT_SHORTGRASS_01_GR_COL_03:
+		case MAT_SHORTGRASS_01_GR_COL_04:
+		case MAT_SHORTGRASS_02_GR_COL_01:
+		case MAT_SHORTGRASS_02_GR_COL_02:
+		case MAT_SHORTGRASS_02_GR_COL_03:
+		case MAT_SHORTGRASS_02_GR_COL_04:
+			return EV_FOOTSTEP_GRASS;
+		case MAT_LONGGRASS_01_GR_COL_01:
+		case MAT_LONGGRASS_01_GR_COL_02:
+		case MAT_LONGGRASS_01_GR_COL_03:
+		case MAT_LONGGRASS_01_GR_COL_04:
+		case MAT_LONGGRASS_02_GR_COL_01:
+		case MAT_LONGGRASS_02_GR_COL_02:
+		case MAT_LONGGRASS_02_GR_COL_03:
+		case MAT_LONGGRASS_02_GR_COL_04:
+			return EV_FOOTSTEP_LONGGRASS;
+		case MAT_LONGGRASS_MUD_GR_COL_01:
+		case MAT_LONGGRASS_MUD_GR_COL_02:
+		case MAT_LONGGRASS_MUD_GR_COL_03:
+		case MAT_LONGGRASS_MUD_GR_COL_04:
+			return EV_FOOTSTEP_LONGGRASS_MUD;
+		case MAT_SAND_GR_COL_01:
+		case MAT_SAND_GR_COL_02:
+		case MAT_SAND_GR_COL_03:
+		case MAT_SAND_GR_COL_04:
+			return EV_FOOTSTEP_SAND;
+		case MAT_GRAVEL_GR_COL_01:
+		case MAT_GRAVEL_GR_COL_02:
+		case MAT_GRAVEL_GR_COL_03:
+		case MAT_GRAVEL_GR_COL_04:
+			return EV_FOOTSTEP_GRAVEL;
+		case MAT_RUBBLE_GR_COL_01:
+		case MAT_RUBBLE_GR_COL_02:
+		case MAT_RUBBLE_GR_COL_03:
+		case MAT_RUBBLE_GR_COL_04:
+			return EV_FOOTSTEP_RUBBLE;
+		case MAT_RUBBLE_WET_GR_COL_01:
+		case MAT_RUBBLE_WET_GR_COL_02:
+		case MAT_RUBBLE_WET_GR_COL_03:
+		case MAT_RUBBLE_WET_GR_COL_04:
+			return EV_FOOTSTEP_RUBBLE_WET;
+		case MAT_SOIL_GR_COL_01:
+		case MAT_SOIL_GR_COL_02:
+		case MAT_SOIL_GR_COL_03:
+		case MAT_SOIL_GR_COL_04:
+			return EV_FOOTSTEP_SOIL;
+		case MAT_MUD_GR_COL_01:
+		case MAT_MUD_GR_COL_02:
+		case MAT_MUD_GR_COL_03:
+		case MAT_MUD_GR_COL_04:
+			return EV_FOOTSTEP_MUD;
+		case MAT_SNOW_DEEP_GR_COL_01:
+		case MAT_SNOW_DEEP_GR_COL_02:
+		case MAT_SNOW_DEEP_GR_COL_03:
+		case MAT_SNOW_DEEP_GR_COL_04:
+			return EV_FOOTSTEP_SNOW_DEEP;
+		case MAT_ICE:
+			return EV_FOOTSTEP_ICE;
+		case MAT_METAL_HOLLOW:
+		case MAT_METAL_HOLLOW_PAINTED:
+		case MAT_METAL_COPPER:
+		case MAT_BARREL:
+			return EV_FOOTSTEP_METAL_HOLLOW;
+		case MAT_METAL_HOLLOW_FROZEN:
+			return EV_FOOTSTEP_METAL_HOLLOW_FROZEN;
+		case MAT_METAL_HOLLOW_SNOW:
+			return EV_FOOTSTEP_METAL_HOLLOW_SNOW;
+		case MAT_METAL_HOLLOW_SLUSH:
+			return EV_FOOTSTEP_METAL_HOLLOW_SLUSH;
+		case MAT_METAL_HOLLOW_SPLASH:
+			return EV_FOOTSTEP_METAL_HOLLOW_SPLASH;
+		case MAT_GRATE_01:
+			return EV_FOOTSTEP_GRATE_01;
+		case MAT_GRATE_02:
+			return EV_FOOTSTEP_GRATE_02;
+		case MAT_DUCT:
+			return EV_FOOTSTEP_DUCT;
+		case MAT_PLATE:
+			return EV_FOOTSTEP_PLATE;
+		case MAT_FENCE:
+			return EV_FOOTSTEP_FENCE;
+		case MAT_WOOD_HOLLOW_DARK:
+		case MAT_WOOD_HOLLOW_BRIGHT:
+		case MAT_SHINGLES_WOOD:
+			return EV_FOOTSTEP_WOOD_HOLLOW;
+		case MAT_WOOD_HOLLOW_FROZEN:
+			return EV_FOOTSTEP_WOOD_HOLLOW_FROZEN;
+		case MAT_WOOD_HOLLOW_SNOW:
+			return EV_FOOTSTEP_WOOD_HOLLOW_SNOW;
+		case MAT_WOOD_HOLLOW_SLUSH:
+			return EV_FOOTSTEP_WOOD_HOLLOW_SLUSH;
+		case MAT_WOOD_HOLLOW_SPLASH:
+			return EV_FOOTSTEP_WOOD_HOLLOW_SPLASH;
+		case MAT_WOOD_SOLID_DARK:
+		case MAT_WOOD_SOLID_BRIGHT:
+			return EV_FOOTSTEP_WOOD_SOLID;
+		case MAT_WOOD_CREAKING_DARK:
+		case MAT_WOOD_CREAKING_BRIGHT:
+			return EV_FOOTSTEP_WOOD_CREAKING;
+		case MAT_ROOF:
+			return EV_FOOTSTEP_ROOF;
+		case MAT_SHINGLES_CERAMIC_RED:
+		case MAT_SHINGLES_CERAMIC_GREY:
+			return EV_FOOTSTEP_SHINGLES;
+		case MAT_TEXTILES:
+		case MAT_CARPET:
+		case MAT_PLASTIC_SOFT:
+		case MAT_CANVAS:
+		case MAT_RUBBER:
+		case MAT_FLESH:
+			return EV_FOOTSTEP_SOFT;
+		case MAT_GLASS_SHARDS:
+			return EV_FOOTSTEP_GLASS_SHARDS;
+		case MAT_TRASH_GLASS:
+			return EV_FOOTSTEP_TRASH_GLASS;
+		case MAT_TRASH_DEBRIS:
+			return EV_FOOTSTEP_TRASH_DEBRIS;
+		case MAT_TRASH_WIRE:
+			return EV_FOOTSTEP_TRASH_WIRE;
+		case MAT_TRASH_PACKING:
+			return EV_FOOTSTEP_TRASH_PACKING;
+		case MAT_TRASH_PLASTIC:
+			return EV_FOOTSTEP_TRASH_PLASTIC;
 	}
 
 	return EV_FOOTSTEP;
@@ -1808,23 +2016,6 @@ Sets mins, maxs, and pm->ps->viewheight.
 static void PM_CheckDuck(void) {
 	trace_t trace;
 
-	if (pm->ps->powerups[PW_INVULNERABILITY]) {
-		if (pm->ps->pm_flags & PMF_INVULEXPAND) {
-			// invulnerability sphere has a 42 units radius
-			VectorSet(pm->mins, -42, -42, -42);
-			VectorSet(pm->maxs, 42, 42, 42);
-		} else {
-			// Tr3B: use global player size constants
-			VectorCopy(playerMins, pm->mins);
-			VectorCopy(playerMaxs, pm->maxs);
-		}
-
-		pm->ps->pm_flags |= PMF_DUCKED;
-		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
-		return;
-	}
-
-	pm->ps->pm_flags &= ~PMF_INVULEXPAND;
 	// Tr3B: use global player size constants
 	VectorCopy(playerMins, pm->mins);
 	VectorCopy(playerMaxs, pm->maxs);
@@ -1870,16 +2061,14 @@ static void PM_Footsteps(void) {
 
 	// calculate speed and cycle to be used for all cyclic walking effects
 	if (pml.groundPlane) {
-		// TA: FIXME: yes yes i know this is wrong
+		// FIXME: yes yes i know this is wrong
 		pm->xyspeed = VectorLength(pm->ps->velocity);
 	} else {
 		pm->xyspeed = sqrt(pm->ps->velocity[0] * pm->ps->velocity[0] + pm->ps->velocity[1] * pm->ps->velocity[1]);
 	}
 
+	// in the air
 	if (pm->ps->groundEntityNum == ENTITYNUM_NONE) {
-		if (pm->ps->powerups[PW_INVULNERABILITY]) {
-			PM_ContinueLegsAnim(LEGS_IDLECR);
-		}
 		// airborne leaves position in cycle intact, but doesn't advance
 		if (pm->waterlevel > 1) {
 			PM_ContinueLegsAnim(LEGS_SWIM);
@@ -2112,7 +2301,7 @@ static void PM_Weapon(void) {
 	// check for item using
 	if (pm->cmd.buttons & BUTTON_USE_HOLDABLE) {
 		if (!(pm->ps->pm_flags & PMF_USE_ITEM_HELD)) {
-			if (bg_itemlist[pm->ps->stats[STAT_HOLDABLE_ITEM]].giTag == HI_MEDKIT && pm->ps->stats[STAT_HEALTH] >= (pm->ps->stats[STAT_MAX_HEALTH] + 25)) {
+			if (bg_itemlist[pm->ps->stats[STAT_HOLDABLE_ITEM]].giTag == HI_MEDKIT && pm->ps->stats[STAT_HEALTH] >= 100) {
 				// don't use medkit if at max health
 			} else {
 				pm->ps->pm_flags |= PMF_USE_ITEM_HELD;
@@ -2169,7 +2358,7 @@ static void PM_Weapon(void) {
 		switch (pm->ps->weapon) {
 			// case WP_GAUNTLET:
 			case WP_FLAK_CANNON:
-			// case WP_ROCKET_LAUNCHER:
+			// case WP_ROCKETLAUNCHER:
 			case WP_RAILGUN:
 				break;
 			default:
@@ -2224,14 +2413,17 @@ static void PM_Weapon(void) {
 		case WP_GAUNTLET:
 			addTime = 400;
 			break;
-		case WP_LIGHTNING:
-			addTime = 50;
+		case WP_MACHINEGUN:
+			addTime = 100;
+			break;
+		case WP_CHAINGUN:
+			addTime = 30;
 			break;
 		case WP_SHOTGUN:
 			addTime = 1000;
 			break;
-		case WP_MACHINEGUN:
-			addTime = 100;
+		case WP_PROXLAUNCHER:
+			addTime = 800;
 			break;
 		case WP_FLAK_CANNON:
 			if (pm->cmd.buttons & BUTTON_ATTACK2) {
@@ -2241,11 +2433,11 @@ static void PM_Weapon(void) {
 			}
 
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			addTime = 800;
 			break;
-		case WP_PLASMAGUN:
-			addTime = 100;
+		case WP_BEAMGUN:
+			addTime = 50;
 			break;
 		case WP_RAILGUN:
 			if (pm->cmd.buttons & BUTTON_ATTACK2) {
@@ -2255,27 +2447,12 @@ static void PM_Weapon(void) {
 			}
 
 			break;
+		case WP_PLASMAGUN:
+			addTime = 100;
+			break;
 		case WP_BFG:
 			addTime = 200;
 			break;
-#ifdef MISSIONPACK
-		case WP_PROX_LAUNCHER:
-			addTime = 800;
-			break;
-		case WP_CHAINGUN:
-			addTime = 30;
-			break;
-#endif
-	}
-#ifdef MISSIONPACK
-	if (bg_itemlist[pm->ps->stats[STAT_PERSISTANT_POWERUP]].giTag == PW_SCOUT) {
-		addTime /= 1.5;
-	} else if (bg_itemlist[pm->ps->stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN) {
-		addTime /= 1.3;
-	} else
-#endif
-	if (pm->ps->powerups[PW_HASTE]) {
-		addTime /= 1.3;
 	}
 
 	pm->ps->weaponTime += addTime;
@@ -2294,7 +2471,6 @@ static void PM_Animate(void) {
 			pm->ps->torsoTimer = TIMER_GESTURE;
 			PM_AddEvent(EV_TAUNT);
 		}
-#ifdef MISSIONPACK
 	} else if (pm->cmd.buttons & BUTTON_GETFLAG) {
 		if (pm->ps->torsoTimer == 0) {
 			PM_StartTorsoAnim(TORSO_GETFLAG);
@@ -2325,7 +2501,6 @@ static void PM_Animate(void) {
 			PM_StartTorsoAnim(TORSO_NEGATIVE);
 			pm->ps->torsoTimer = 600; // TIMER_GESTURE;
 		}
-#endif
 	}
 }
 
@@ -2573,19 +2748,8 @@ void PmoveSingle(pmove_t *pmove) {
 	}
 
 	PM_DropTimers();
-#ifdef MISSIONPACK
-	if (pm->ps->powerups[PW_INVULNERABILITY]) {
-		PM_InvulnerabilityMove();
-	} else
-#endif
-	if (pm->ps->powerups[PW_FLIGHT]) {
-		// flight powerup doesn't allow jump and has different friction
-		PM_FlyMove();
-	} else if (pm->ps->pm_flags & PMF_GRAPPLE_PULL) {
-		PM_GrappleMove();
-		// we can wiggle a bit
-		PM_AirMove();
-	} else if (pm->ps->pm_flags & PMF_TIME_WATERJUMP) {
+
+	if (pm->ps->pm_flags & PMF_TIME_WATERJUMP) {
 		PM_WaterJumpMove();
 	} else if (pm->waterlevel > 1) {
 		// swimming

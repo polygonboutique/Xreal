@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -26,7 +26,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  Primary header for client.
 **************************************************************************************************************************************/
 
-#include <q_shared.h>
+#include "../qcommon/q_shared.h"
 #include <cg_public.h>
 #include <bg_public.h>
 #include <ui_public.h>
@@ -485,12 +485,6 @@ void CL_CGameRendering(stereoFrame_t stereo);
 void CL_SetCGameTime(void);
 void CL_FirstSnapshot(void);
 void CL_ShaderStateChanged(void);
-#if defined(USE_JAVA)
-void Java_CG_KeyEvent(int key, qboolean down);
-void Java_CG_MouseEvent(int dx, int dy);
-int Java_CG_CrosshairPlayer();
-int Java_CG_LastAttacker();
-#endif
 // cl_ui.c
 void CL_InitUI(void);
 void CL_ShutdownUI(void);
@@ -498,17 +492,6 @@ int Key_GetCatcher(void);
 void Key_SetCatcher(int catcher);
 void LAN_LoadCachedServers(void);
 void LAN_SaveServersToCache(void);
-#if defined(USE_JAVA)
-void Java_UI_Init(void);
-void Java_UI_Shutdown(void);
-void Java_UI_KeyEvent(int key, qboolean down);
-void Java_UI_MouseEvent(int dx, int dy);
-void Java_UI_Refresh(int time);
-qboolean Java_UI_IsFullscreen(void);
-void Java_UI_SetActiveMenu(uiMenuCommand_t menu);
-void Java_UI_DrawConnectScreen(qboolean overlay);
-qboolean Java_UI_ConsoleCommand(int realTime);
-#endif
 // cl_net_chan.c
 void CL_Netchan_Transmit(netchan_t *chan, msg_t *msg); //int length, const byte *data
 void CL_Netchan_TransmitNextFragment(netchan_t *chan);

@@ -25,10 +25,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void UI_SPArena_Start(const char *arenaInfo)
 {
-	char           *map;
-	int             level;
-	int             n;
-	char           *txt;
+	char *map;
+	int level;
+	int n;
+	char *txt;
 
 	n = (int)trap_Cvar_VariableValue("sv_maxclients");
 	if(n < 8)

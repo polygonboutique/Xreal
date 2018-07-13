@@ -29,7 +29,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 typedef struct {
 	unsigned int dwColorSpaceLowValue;	// low boundary of color space that is to
 	// be treated as Color Key, inclusive
-
 	unsigned int dwColorSpaceHighValue;	// high boundary of color space that is
 	// to be treated as Color Key, inclusive
 } DDCOLORKEY_t;
@@ -199,14 +198,14 @@ typedef struct {
 
 #endif
 
-#define FOURCC_DDS		MAKEFOURCC('D','D','S',' ')
+#define FOURCC_DDS MAKEFOURCC('D','D','S',' ')
 
 //FOURCC codes for DXTn compressed - texture pixel formats
-#define FOURCC_DXT1		MAKEFOURCC('D','X','T','1')
-#define FOURCC_DXT2		MAKEFOURCC('D','X','T','2')
-#define FOURCC_DXT3		MAKEFOURCC('D','X','T','3')
-#define FOURCC_DXT4		MAKEFOURCC('D','X','T','4')
-#define FOURCC_DXT5		MAKEFOURCC('D','X','T','5')
+#define FOURCC_DXT1 MAKEFOURCC('D','X','T','1')
+#define FOURCC_DXT2 MAKEFOURCC('D','X','T','2')
+#define FOURCC_DXT3 MAKEFOURCC('D','X','T','3')
+#define FOURCC_DXT4 MAKEFOURCC('D','X','T','4')
+#define FOURCC_DXT5 MAKEFOURCC('D','X','T','5')
 
 #define R_LoadDDSImage_MAX_MIPS 16
 
@@ -215,9 +214,9 @@ static ID_INLINE void UnpackRGB565(byte rgb[3], uint16_t cl) {
 	byte g = (byte)((cl >> 5)& 0x3F);
 	byte b = (byte)(cl & 0x1F);
 
-	rgb[0] = (r << 3)|(r >> 2);	//multiply by 8.22-> 8.25
-	rgb[1] = (g << 2)|(g >> 4);	//multiply by 4.047-> 4.0625
-	rgb[2] = (b << 3)|(b >> 2);	//multiply by 8.22-> 8.25
+	rgb[0] = (r << 3)|(r >> 2); //multiply by 8.22-> 8.25
+	rgb[1] = (g << 2)|(g >> 4); //multiply by 4.047-> 4.0625
+	rgb[2] = (b << 3)|(b >> 2); //multiply by 8.22-> 8.25
 }
 
 static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int iw, int ih, const void *image_base) {
@@ -238,7 +237,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 			blocksize = 16;
 			break;
-
 		default:
 			ri.Printf(PRINT_WARNING, "invalid compressed image format\n");
 			return;
@@ -250,7 +248,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 			color_base = block_base;
-
 			alpha_base = NULL;
 			break;
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
@@ -276,27 +273,22 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			if (c0 <= c1)
 				rgba[3][3] = 0;
 			//fallthrough
-
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 			if (c0 <= c1) {
 				rgba[2][0] = (byte)((rgba[0][0] + rgba[1][0]) / 2);
 				rgba[2][1] = (byte)((rgba[0][1] + rgba[1][1]) / 2);
 				rgba[2][2] = (byte)((rgba[0][2] + rgba[1][2]) / 2);
-
 				rgba[3][0] = 0;
 				rgba[3][1] = 0;
 				rgba[3][2] = 0;
-
 				break;
 			}
 			//fallthrough
-
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 			rgba[2][0] = (byte)((rgba[0][0] * 2 + rgba[1][0]) / 3);
 			rgba[2][1] = (byte)((rgba[0][1] * 2 + rgba[1][1]) / 3);
 			rgba[2][2] = (byte)((rgba[0][2] * 2 + rgba[1][2]) / 3);
-
 			rgba[3][0] = (byte)((rgba[1][0] * 2 + rgba[0][0]) / 3);
 			rgba[3][1] = (byte)((rgba[1][1] * 2 + rgba[0][1]) / 3);
 			rgba[3][2] = (byte)((rgba[1][2] * 2 + rgba[0][2]) / 3);
@@ -322,19 +314,17 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			for (y = 0; y < 4; y++) {
 				for (x = 0; x < 4; x++) {
 					byte b = (alpha_base[(y * 2) + (x / 2)] >>((x & 1) * 4))& 0x0F;
-
 					out[y][x][3] = b |(b << 4);	//multiply by 17, this one works out exactly
 				}
 			}
+
 			break;
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		{
 			byte a[8];
-
 			int idxs;
 
 			a[0] = alpha_base[0];
-
 			a[1] = alpha_base[1];
 
 			if (a[0] > a[1]) {
@@ -352,7 +342,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 				a[6] = 0;
 				a[7] = 1;
 			}
-
 			//do 2 sets of 3 bytes at a time(easier to cope with 3 - bit indices crossing byte boundaries)
 			idxs = alpha_base[2] |(alpha_base[3] << 8)|(alpha_base[4] << 16);
 
@@ -373,6 +362,7 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 					out[y + 2][x][3] = a[idx];
 				}
 			}
+
 			break;
 		}
 	}
@@ -404,15 +394,12 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	}
 }*/
 
-static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, GLenum int_fmat, int width, int height,
-									   const void *data, void (*decoder)(byte out[4][4][4], int bx, int by, int format, int iw,
-																		  int ih, const void *image_base)) {
+static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, GLenum int_fmat, int width, int height, const void *data, void (*decoder)(byte out[4][4][4], int bx, int by, int format, int iw, int ih, const void *image_base)) {
 	int x, y;
-	byte block[4][4][4];	//y, x, rgba
+	byte block[4][4][4]; //y, x, rgba
 
 	glTexImage2D(target, level, int_fmat, width, height, 0, GL_RGBA, GL_BYTE, NULL);
-
-	//decode the data
+	// decode the data
 	for (y = 0; y < height; y += 4) {
 		for (x = 0; x < width; x += 4) {
 			int uw = width - x;
@@ -431,9 +418,8 @@ static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, 
 	}
 }
 
-static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GLenum format, int width, int height, int size,
-									  const void *data) {
-	GLenum          int_fmat;
+static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GLenum format, int width, int height, int size, const void *data) {
+	GLenum int_fmat;
 
 	if (glConfig2.ARBTextureCompressionAvailable && glConfig.textureCompression == TC_S3TC) {
 		glCompressedTexImage2DARB(target, level, format, width, height, 0, size, data);
@@ -449,7 +435,6 @@ static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GL
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 			int_fmat = GL_RGBA;
 			break;
-
 		default:
 			ri.Printf(PRINT_WARNING, "invalid compressed image format\n");
 			return;
@@ -491,8 +476,7 @@ static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GL
 	R_UploadEncodedImageDirect(target, level, format, int_fmat, width, height, data, R_DecodeS3TCBlock);
 }
 
-static void R_UploadImage2D(image_t *img, GLenum target, int level, GLenum int_fmat,
-							int width, int height, GLenum format, GLenum type, const void *data) {
+static void R_UploadImage2D(image_t *img, GLenum target, int level, GLenum int_fmat, int width, int height, GLenum format, GLenum type, const void *data) {
 
 /*
 #ifdef Q3_BIG_ENDIAN
@@ -514,7 +498,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	byte *buff;
 
-	DDSURFACEDESC2_t *ddsd;		//used to get at the dds header in the read buffer
+	DDSURFACEDESC2_t *ddsd; //used to get at the dds header in the read buffer
 
 	//based on texture type:
 	//  cube        width != 0, height == 0, depth == 0
@@ -661,19 +645,15 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 				break;
 
 			default:
-				ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported FOURCC 0x%16x, \"%s\"\n",
-						  ddsd->u4.ddpfPixelFormat.dwFourCC, name);
+				ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported FOURCC 0x%16x, \"%s\"\n", ddsd->u4.ddpfPixelFormat.dwFourCC, name);
 				goto ret_error;
 		}
 
 		//get mip offsets
 		if (format) {
 			int w = width;
-
 			int h = height;
-
 			int offset = 0;
-
 			int i;
 
 			if (h == 0)
@@ -730,9 +710,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 						//must be A1R5G5B5
 						ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported format, 5551 \"%s\"\n", name);
 						goto ret_error;
-					}
-					else
-					{
+					} else {
 						//find out if it's X1R5G5B5 or R5G6B5
 
 						internal_format = GL_RGB5;
@@ -752,24 +730,16 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 					ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported RGB bit depth \"%s\"\n", name);
 					goto ret_error;
 			}
-		}
-
-		else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_LUMINANCE) {
+		} else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_LUMINANCE) {
 			internal_format = usingAlpha ? GL_LUMINANCE8_ALPHA8 : GL_LUMINANCE8;
 			format = usingAlpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE;
-		}
-
-		else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_ALPHA) {
+		} else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_ALPHA) {
 			internal_format = GL_ALPHA8;
 			format = GL_ALPHA;
-		}
-
-		else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED4) {
+		} else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED4) {
 			internal_format = usingAlpha ? GL_RGB5_A1 : GL_RGB5;
 			format = GL_COLOR_INDEX4_EXT;
-		}
-
-		else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED8) {
+		} else if (ddsd->u4.ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED8) {
 			internal_format = usingAlpha ? GL_RGBA : GL_RGB;
 			format = GL_COLOR_INDEX8_EXT;
 		} else {
@@ -779,17 +749,13 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		if (format) {
 			int offset = 0;
-
 			int w = width;
-
 			int h = height;
-
 			int d = depth;
-
 			int i;
 
 			if (h == 0)
-				h = w;			//cube map
+				h = w; //cube map
 
 			for (i = 0;(i < mipLevels) && (w || h || d); i++) {
 				mipOffsets[i] = buff + 4 + sizeof(DDSURFACEDESC2_t) + offset;
@@ -824,10 +790,8 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 	ret->uploadWidth = ret->width = width;
 	ret->uploadHeight = ret->height = height;
-
 	ret->internalFormat = internal_format;
 //	ret->hasAlpha = usingAlpha;
-
 	ret->filterType = ((filterType == FT_DEFAULT) && (mipLevels > 1)) ? FT_DEFAULT : FT_LINEAR;
 
 	if (ret->filterType == FT_LINEAR)

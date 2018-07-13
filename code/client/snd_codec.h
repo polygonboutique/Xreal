@@ -1,7 +1,7 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
-Copyright (C) 2005 Stuart Dalton (badcdev@gmail.com)
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2005 Stuart Dalton (badcdev@gmail.com).
 
 This file is part of Spearmint Source Code.
 
@@ -26,7 +26,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifndef _SND_CODEC_H_
 #define _SND_CODEC_H_
 
-#include <q_shared.h>
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
 typedef struct snd_info_s {

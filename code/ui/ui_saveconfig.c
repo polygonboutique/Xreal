@@ -45,11 +45,11 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    background;
-	menufield_s     savename;
-	menubitmap_s    back;
-	menubitmap_s    save;
+	menutext_s banner;
+	menubitmap_s background;
+	menufield_s savename;
+	menubitmap_s back;
+	menubitmap_s save;
 } saveConfig_t;
 
 static saveConfig_t saveConfig;
@@ -78,7 +78,7 @@ UI_SaveConfigMenu_SaveEvent
 */
 static void UI_SaveConfigMenu_SaveEvent(void *ptr, int event)
 {
-	char            configname[MAX_QPATH];
+	char configname[MAX_QPATH];
 
 	if(event != QM_ACTIVATED)
 	{
@@ -103,9 +103,9 @@ UI_SaveConfigMenu_SavenameDraw
 */
 static void UI_SaveConfigMenu_SavenameDraw(void *self)
 {
-	menufield_s    *f;
-	int             style;
-	float          *color;
+	menufield_s *f;
+	int style;
+	float *color;
 
 	f = (menufield_s *) self;
 

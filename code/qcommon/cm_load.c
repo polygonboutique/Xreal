@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -27,8 +27,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cm_local.h"
-
-
 
 // to allow boxes to be treated as brush models, we allocate some extra indexes along with those needed by the map
 #define BOX_BRUSHES 1
@@ -850,7 +848,7 @@ void CM_LoadMap(const char *name, qboolean clientload, int *checksum) {
 		((int *)&header)[i] = LittleLong(((int *)&header)[i]);
 	}
 
-	if (header.version != BSP_VERSION) {
+	if (header.version != BSP_VERSION && header.version != WOLF_BSP_VERSION) { // Tobias HACK: temporarely stop checking AAS/BSP checksums
 		Com_Error(ERR_DROP, "CM_LoadMap: %s has wrong version number (%i should be %i)", name, header.version, BSP_VERSION);
 	}
 

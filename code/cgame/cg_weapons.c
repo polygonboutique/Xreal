@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -858,7 +858,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/gauntlet/slashkut.ogg");
 			cgs.media.lightningShader = trap_R_RegisterShader("lightningBolt");
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			MAKERGB(weaponInfo->flashLightColor, 0.6f, 0.6f, 1.0f);
 			weaponInfo->readySound = trap_S_RegisterSound("sound/weapons/lightning/lg_hum.ogg");
 			weaponInfo->firingSound = trap_S_RegisterSound("sound/weapons/lightning/lg_fire_hum.ogg");
@@ -894,7 +894,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/shotgun/sshotf1b.ogg");
 			weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			weaponInfo->projectileModel = trap_R_RegisterModel("models/projectiles/missile/missile.md3");
 			weaponInfo->projectileSound = trap_S_RegisterSound("sound/weapons/rocket/rockfly.ogg");
 			weaponInfo->projectileTrailFunc = CG_RocketTrail;
@@ -907,7 +907,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			cgs.media.rocketExplosionShader = trap_R_RegisterShader("rocketExplosion");
 			break;
 #ifdef MISSIONPACK
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			weaponInfo->projectileModel = trap_R_RegisterModel("models/weaphits/proxmine.md3");
 			weaponInfo->projectileTrailFunc = CG_GrenadeTrail;
 			weaponInfo->wiTrailTime = 700;
@@ -1170,7 +1170,7 @@ static void CG_RunWeaponLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int weaponN
 
 		f = (lf->frameTime - lf->animationStartTime) / anim->frameTime;
 		f *= lf->animationScale;
-		f *= speedScale;		// adjust for haste, etc
+		f *= speedScale;		// adjust for haste, etc.
 
 		//CG_Printf("CG_RunWeaponLerpFrame: lf->frameTime = %i anim->frameTime = %i startTime = %i frame = %i weapon = %i\n", lf->frameTime, anim->frameTime, lf->animationStartTime, f, weaponNumber);
 
@@ -1394,7 +1394,7 @@ static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
 	vec3_t right;
 	int target;
 
-	if (cent->currentState.weapon != WP_LIGHTNING) {
+	if (cent->currentState.weapon != WP_BEAMGUN) {
 		return;
 	}
 
@@ -1476,7 +1476,7 @@ static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
 	vec3_t surfNormal;
 	int anim;
 
-	if (cent->currentState.weapon != WP_LIGHTNING) {
+	if (cent->currentState.weapon != WP_BEAMGUN) {
 		return;
 	}
 
@@ -1810,7 +1810,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		}
 	}
 	// add the flash
-	if ((weaponNum == WP_LIGHTNING || weaponNum == WP_GAUNTLET) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
+	if ((weaponNum == WP_BEAMGUN || weaponNum == WP_GAUNTLET) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
 		// continuous flash
 	} else {
 		// impulse flash
@@ -1993,7 +1993,7 @@ void CG_AddViewWeapon(playerState_t *ps) {
 
 		addFlash = qfalse;
 		// add the flash
-		if ((weaponNum == WP_LIGHTNING || weaponNum == WP_GAUNTLET) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
+		if ((weaponNum == WP_BEAMGUN || weaponNum == WP_GAUNTLET) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
 			// continuous flash
 			addFlash = qtrue;
 		} else {
@@ -2533,7 +2533,7 @@ void CG_FireWeapon(centity_t *cent) {
 	// mark the entity as muzzle flashing, so when it is added it will append the flash to the weapon model
 	cent->muzzleFlashTime = cg.time;
 	// lightning gun only does this this on initial press
-	if (ent->weapon == WP_LIGHTNING) {
+	if (ent->weapon == WP_BEAMGUN) {
 		if (cent->pe.lightningFiring) {
 			return;
 		}
@@ -2706,7 +2706,7 @@ void CG_MissileHitWall(int weapon, int entityType, int clientNum, vec3_t origin,
 
 	switch (weapon) {
 		default:
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			mark = cgs.media.holeMarkShader;
 			r = rand()& 3;
 
@@ -2731,7 +2731,7 @@ void CG_MissileHitWall(int weapon, int entityType, int clientNum, vec3_t origin,
 			sfx = cgs.media.hookImpactSound;
 			break;
 #ifdef MISSIONPACK
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			shader = cgs.media.grenadeExplosionShader;
 			sfx = cgs.media.sfx_proxexp;
@@ -2775,7 +2775,7 @@ void CG_MissileHitWall(int weapon, int entityType, int clientNum, vec3_t origin,
 			}
 
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			shader = cgs.media.rocketExplosionShader;
 			sfx = cgs.media.sfx_rockexp;
@@ -2958,11 +2958,11 @@ void CG_MissileHitPlayer(int weapon, int entityType, vec3_t origin, vec3_t dir, 
 	switch (weapon) {
 		case WP_GAUNTLET:
 		case WP_FLAK_CANNON:
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 #ifdef MISSIONPACK
 		case WP_NAILGUN:
 		case WP_CHAINGUN:
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 #endif
 			CG_MissileHitWall(weapon, entityType, 0, origin, dir, IMPACTSOUND_FLESH);
 			break;

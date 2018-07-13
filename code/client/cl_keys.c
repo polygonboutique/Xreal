@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -1182,60 +1182,36 @@ void CL_KeyDownEvent(int key, unsigned time) {
 		// escape always gets out of CGAME stuff
 		if (Key_GetCatcher() & KEYCATCH_CGAME) {
 			Key_SetCatcher(Key_GetCatcher() & ~KEYCATCH_CGAME);
-#if defined(USE_JAVA)
-			Java_CG_EventHandling(CGAME_EVENT_NONE);
-#else
 			VM_Call(cgvm, CG_EVENT_HANDLING, CGAME_EVENT_NONE);
-#endif
 			return;
 		}
 
 		if (!(Key_GetCatcher() & KEYCATCH_UI)) {
 			if (cls.state == CA_ACTIVE && !clc.demoplaying) {
-#if defined(USE_JAVA)
-				Java_UI_SetActiveMenu(UIMENU_INGAME);
-#else
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_INGAME);
-#endif
 			} else if (cls.state != CA_DISCONNECTED) {
 				CL_Disconnect_f();
 				S_StopAllSounds();
-#if defined(USE_JAVA)
-				Java_UI_SetActiveMenu(UIMENU_MAIN);
-#else
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
-#endif
 			}
 
 			return;
 		}
 
-#if defined(USE_JAVA)
-		Java_UI_KeyEvent(key, qtrue);
-#else
 		VM_Call(uivm, UI_KEY_EVENT, key, qtrue);
-#endif
 		return;
 	}
 	// distribute the key down event to the apropriate handler
 	if (Key_GetCatcher() & KEYCATCH_CONSOLE) {
 		Console_Key(key);
 	} else if (Key_GetCatcher() & KEYCATCH_UI) {
-#if defined(USE_JAVA)
-		Java_UI_KeyEvent(key, qtrue);
-#else
 		if (uivm) {
 			VM_Call(uivm, UI_KEY_EVENT, key, qtrue);
 		}
-#endif
 	} else if (Key_GetCatcher() & KEYCATCH_CGAME) {
-#if defined(USE_JAVA)
-		Java_CG_KeyEvent(key, qtrue);
-#else
 		if (cgvm) {
 			VM_Call(cgvm, CG_KEY_EVENT, key, qtrue);
 		}
-#endif
 	} else if (Key_GetCatcher() & KEYCATCH_MESSAGE) {
 		Message_Key(key);
 	} else if (cls.state == CA_DISCONNECTED) {
@@ -1276,21 +1252,13 @@ void CL_KeyUpEvent(int key, unsigned time) {
 	}
 
 	if (Key_GetCatcher() & KEYCATCH_UI) {
-#if defined(USE_JAVA)
-		Java_UI_KeyEvent(key, qfalse);
-#else
 		if (uivm) {
 			VM_Call(uivm, UI_KEY_EVENT, key, qfalse);
 		}
-#endif
 	} else if (Key_GetCatcher() & KEYCATCH_CGAME) {
-#if defined(USE_JAVA)
-		Java_CG_KeyEvent(key, qfalse);
-#else
 		if (cgvm) {
 			VM_Call(cgvm, CG_KEY_EVENT, key, qfalse);
 		}
-#endif
 	}
 }
 
@@ -1327,11 +1295,7 @@ void CL_CharEvent(int key) {
 	if (Key_GetCatcher() & KEYCATCH_CONSOLE) {
 		Field_CharEvent(&g_consoleField, key);
 	} else if (Key_GetCatcher() & KEYCATCH_UI) {
-#if defined(USE_JAVA)
-		Java_UI_KeyEvent(key|K_CHAR_FLAG, qtrue);
-#else
 		VM_Call(uivm, UI_KEY_EVENT, key|K_CHAR_FLAG, qtrue);
-#endif
 	} else if (Key_GetCatcher() & KEYCATCH_MESSAGE) {
 		Field_CharEvent(&chatField, key);
 	} else if (cls.state == CA_DISCONNECTED) {
@@ -1387,7 +1351,7 @@ void Key_SetCatcher(int catcher) {
 
 // this must not exceed MAX_CMD_LINE
 #define MAX_CONSOLE_SAVE_BUFFER 1024
-#define CONSOLE_HISTORY_FILE "q3history"
+#define CONSOLE_HISTORY_FILE "history"
 static char consoleSaveBuffer[MAX_CONSOLE_SAVE_BUFFER];
 static int consoleSaveBufferSize = 0;
 
@@ -1463,7 +1427,7 @@ void CL_LoadConsoleHistory(void) {
 =======================================================================================================================================
 CL_SaveConsoleHistory
 
-Save the console history into the cvar cl_consoleHistory so that it persists across invocations of q3.
+Save the console history into the cvar cl_consoleHistory so that it persists across invocations of qw.
 =======================================================================================================================================
 */
 void CL_SaveConsoleHistory(void) {

@@ -25,15 +25,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifndef __Q_PLATFORM_H
 #define __Q_PLATFORM_H
 
-// various feature defines
-#ifndef CG_LUA
-#define CG_LUA 1
-#endif
-
-#ifndef G_LUA
-#define G_LUA 1
-#endif
-
 // this is for determining if we have an asm version of a C function
 #ifdef Q3_VM
 
@@ -171,9 +162,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #endif
 
 #define DLL_EXT ".dylib"
-
-#undef G_LUA
-#undef CG_LUA
 
 #endif
 

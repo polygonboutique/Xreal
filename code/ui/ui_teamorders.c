@@ -44,18 +44,18 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    frame;
+	menutext_s banner;
+	menubitmap_s frame;
 
-	menulist_s      list;
+	menulist_s list;
 
-	menubitmap_s    back;
+	menubitmap_s back;
 
-	int             gametype;
-	int             numBots;
-	int             selectedBot;
-	char           *bots[9];
-	char            botNames[9][16];
+	int gametype;
+	int numBots;
+	int selectedBot;
+	char *bots[9];
+	char botNames[9][16];
 } teamOrdersMenuInfo_t;
 
 static teamOrdersMenuInfo_t teamOrdersMenuInfo;
@@ -158,10 +158,10 @@ UI_TeamOrdersMenu_Key
 */
 sfxHandle_t UI_TeamOrdersMenu_Key(int key)
 {
-	menulist_s     *l;
-	int             x;
-	int             y;
-	int             index;
+	menulist_s *l;
+	int x;
+	int y;
+	int index;
 
 	l = (menulist_s *) Menu_ItemAtCursor(&teamOrdersMenuInfo.menu);
 	if(l != &teamOrdersMenuInfo.list)
@@ -228,13 +228,13 @@ UI_TeamOrdersMenu_ListDraw
 */
 static void UI_TeamOrdersMenu_ListDraw(void *self)
 {
-	menulist_s     *l;
-	int             x;
-	int             y;
-	int             i;
-	float          *color;
+	menulist_s *l;
+	int x;
+	int y;
+	int i;
+	float *color;
 	qboolean        hasfocus;
-	int             style;
+	int style;
 
 	l = (menulist_s *) self;
 
@@ -271,9 +271,9 @@ UI_TeamOrdersMenu_ListEvent
 */
 static void UI_TeamOrdersMenu_ListEvent(void *ptr, int event)
 {
-	int             id;
-	int             selection;
-	char            message[256];
+	int id;
+	int selection;
+	char message[256];
 
 	if(event != QM_ACTIVATED)
 		return;
@@ -319,12 +319,12 @@ UI_TeamOrdersMenu_BuildBotList
 static void UI_TeamOrdersMenu_BuildBotList(void)
 {
 	uiClientState_t cs;
-	int             numPlayers;
-	int             isBot;
-	int             n;
-	char            playerTeam = '3';
-	char            botTeam;
-	char            info[MAX_INFO_STRING];
+	int numPlayers;
+	int isBot;
+	int n;
+	char playerTeam = '3';
+	char botTeam;
+	char info[MAX_INFO_STRING];
 
 	for(n = 0; n < 9; n++)
 	{
@@ -466,8 +466,8 @@ UI_TeamOrdersMenu_f
 void UI_TeamOrdersMenu_f(void)
 {
 	uiClientState_t cs;
-	char            info[MAX_INFO_STRING];
-	int             team;
+	char info[MAX_INFO_STRING];
+	int team;
 
 	// make sure it's a team game
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));

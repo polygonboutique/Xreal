@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -126,14 +126,14 @@ void CG_BloodTrail(localEntity_t *le) {
 	vec3_t newOrigin;
 	localEntity_t *blood;
 
-	step = 75;
+	step = 150;
 	t = step * ((cg.time - cg.frametime + step) / step);
 	t2 = step * (cg.time / step);
 
 	for (; t <= t2; t += step) {
 		BG_EvaluateTrajectory(&le->pos, t, newOrigin);
 
-		blood = CG_SmokePuff(newOrigin, vec3_origin, 10, 1, 1, 1, 1, 2000, t, 0, 0, cgs.media.bloodTrailShader);
+		blood = CG_SmokePuff(newOrigin, vec3_origin, 20, 1, 1, 1, 1, 2000, t, 0, 0, cgs.media.bloodTrailShader);
 		// use the optimized version
 		blood->leType = LE_FALL_SCALE_FADE;
 		// drop a total of 40 units over its lifetime
@@ -147,11 +147,11 @@ CG_FragmentBounceMark
 =======================================================================================================================================
 */
 void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace) {
-	int radius, r = 0;
+	int markRadius, r = 0;
 	qhandle_t h;
 
 	if (le->leMarkType == LEMT_BLOOD) {
-		radius = 16 + (rand()&31);
+		markRadius = 16 + (rand()&31);
 		r = rand()& 3;
 
 		if (r == 0) {
@@ -164,8 +164,8 @@ void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace) {
 
 		CG_ImpactMark(h, trace->endpos, trace->plane.normal, random() * 360, 1, 1, 1, 1, qtrue, radius, qfalse);
 	} else if (le->leMarkType == LEMT_BURN) {
-		radius = 8 + (rand()&15);
-		CG_ImpactMark(cgs.media.burnMarkShader, trace->endpos, trace->plane.normal, random() * 360, 1, 1, 1, 1, qtrue, radius, qfalse);
+		markRadius = 8 + (rand()&15);
+		CG_ImpactMark(cgs.media.burnMarkShader, trace->endpos, trace->plane.normal, random() * 360, 1, 1, 1, 1, qtrue, markRadius, qfalse);
 	}
 	// don't allow a fragment to make multiple marks, or they pile up while settling
 	le->leMarkType = LEMT_NONE;
@@ -192,7 +192,7 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace) {
 				s = cgs.media.gibBounce3Sound;
 			}
 
-			trap_S_StartSound(trace->endpos, ENTITYNUM_WORLD, CHAN_AUTO, s);
+			trap_S_StartSound(trace->endpos, ENTITYNUM_WORLD, CHAN_AUTO, s, 48);
 		}
 	} else if (le->leBounceSoundType == LEBS_BRASS) {
 
@@ -313,6 +313,39 @@ void CG_AddFragment(localEntity_t *le) {
 		}
 
 		return;
+	}
+	// fragment inside mover, find the direction/origin of impact
+	if (trace.allsolid && cg_entities[trace.entityNum].currentState.eType == ET_MOVER) {
+		vec3_t origin, angles, dir;
+		float dist;
+		int oldTime;
+		trace_t tr;
+
+		// get last location
+		if (cg.time == le->pos.trTime) {
+			// fragment was added this frame. no good way to fix this.
+			CG_FreeLocalEntity(le);
+			return;
+		} else {
+			oldTime = le->pos.trTime;
+		}
+
+		BG_EvaluateTrajectory(&le->pos, oldTime, origin);
+		VectorClear(angles);
+		// add the distance mover has moved since then
+		CG_AdjustPositionForMover(origin, trace.entityNum, oldTime, cg.time, origin, angles, angles);
+		// nudge the origin farther to avoid being co-planar
+		VectorSubtract(origin, newOrigin, dir);
+
+		dist = VectorNormalize(dir);
+
+		VectorMA(origin, dist, dir, origin);
+		CG_Trace(&tr, origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
+		// found impact. restore allsolid because trace fraction won't work correct in CG_ReflectVelocity
+		if (!tr.allsolid) {
+			trace = tr;
+			trace.allsolid = qtrue;
+		}
 	}
 	// if it is in a nodrop zone, remove it
 	// this keeps gibs from waiting at the bottom of pits of death and floating levels
@@ -811,39 +844,6 @@ static void CG_AddRailExplosion(localEntity_t *le) {
 		trap_R_AddRefEntityToScene(&shockwave);
 	}
 }
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-CG_AddInvulnerabilityImpact
-=======================================================================================================================================
-*/
-void CG_AddInvulnerabilityImpact(localEntity_t *le) {
-	trap_R_AddRefEntityToScene(&le->refEntity);
-}
-
-/*
-=======================================================================================================================================
-CG_AddInvulnerabilityJuiced
-=======================================================================================================================================
-*/
-void CG_AddInvulnerabilityJuiced(localEntity_t *le) {
-	int t;
-
-	t = cg.time - le->startTime;
-
-	if (t > 3000) {
-		le->refEntity.axis[0][0] = (float)1.0 + 0.3 * (t - 3000) / 2000;
-		le->refEntity.axis[1][1] = (float)1.0 + 0.3 * (t - 3000) / 2000;
-		le->refEntity.axis[2][2] = (float)0.7 + 0.3 * (2000 - (t - 3000)) / 2000;
-	}
-
-	if (t > 5000) {
-		le->endTime = 0;
-		CG_GibPlayer(le->refEntity.origin);
-	} else {
-		trap_R_AddRefEntityToScene(&le->refEntity);
-	}
-}
 
 /*
 =======================================================================================================================================
@@ -859,7 +859,7 @@ void CG_AddRefEntity(localEntity_t *le) {
 
 	trap_R_AddRefEntityToScene(&le->refEntity);
 }
-#endif
+
 #define NUMBER_SIZE 8
 /*
 =======================================================================================================================================
@@ -950,12 +950,42 @@ void CG_AddScorePlum(localEntity_t *le) {
 
 /*
 =======================================================================================================================================
+CG_BubbleThink
+=======================================================================================================================================
+*/
+void CG_BubbleThink(localEntity_t *le) {
+	int contents;
+	vec3_t newOrigin;
+	trace_t trace;
+
+	// calculate new position
+	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin);
+	// trace a line from previous position to new position
+	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
+
+	contents = CG_PointContents(trace.endpos, -1);
+
+	if (!(contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
+		// Bubble isn't in liquid anymore, remove it.
+		CG_FreeLocalEntity(le);
+		return;
+	}
+
+	CG_AddMoveScaleFade(le);
+}
+
+/*
+=======================================================================================================================================
 CG_AddLocalEntities
 =======================================================================================================================================
 */
 void CG_AddLocalEntities(void) {
 	localEntity_t *le, *next;
+	int oldPhysicsTime;
 
+	// have local entities interact with movers (submodels) at their render position
+	oldPhysicsTime = cg.physicsTime;
+	cg.physicsTime = cg.time;
 	// walk the list backwards, so any new local entities generated (trails, marks, etc.) will be present this frame
 	le = cg_activeLocalEntities.prev;
 
@@ -972,19 +1002,22 @@ void CG_AddLocalEntities(void) {
 			default:
 				CG_Error("Bad leType: %i", le->leType);
 				break;
-			case LE_MARK:
-				break;
 			case LE_SPRITE_EXPLOSION:
 				CG_AddSpriteExplosion(le);
 				break;
 			case LE_EXPLOSION:
 				CG_AddExplosion(le);
 				break;
+			case LE_KAMIKAZE:
+				CG_AddKamikaze(le);
+				break;
+			case LE_MARK:
+				break;
 			case LE_FRAGMENT: // gibs and brass
 				CG_AddFragment(le);
 				break;
-			case LE_MOVE_SCALE_FADE: // water bubbles
-				CG_AddMoveScaleFade(le);
+			case LE_SCALE_FADE: // rocket trails
+				CG_AddScaleFade(le);
 				break;
 			case LE_FADE_RGB: // teleporters, railtrails
 				CG_AddFadeRGB(le);
@@ -992,14 +1025,14 @@ void CG_AddLocalEntities(void) {
 			case LE_FALL_SCALE_FADE: // gib blood trails
 				CG_AddFallScaleFade(le);
 				break;
-			case LE_SCALE_FADE: // rocket trails
-				CG_AddScaleFade(le);
+			case LE_MOVE_SCALE_FADE: // water bubbles
+				CG_AddMoveScaleFade(le);
+				break;
+			case LE_BUBBLE:
+				CG_BubbleThink(le);
 				break;
 			case LE_SCOREPLUM:
 				CG_AddScorePlum(le);
-				break;
-			case LE_KAMIKAZE:
-				CG_AddKamikaze(le);
 				break;
 			case LE_RAILEXPLOSION:
 				CG_AddRailExplosion(le);
@@ -1007,18 +1040,11 @@ void CG_AddLocalEntities(void) {
 			case LE_FIRE:
 				CG_AddFire(le);
 				break;
-
-#ifdef MISSIONPACK
-			case LE_INVULIMPACT:
-				CG_AddInvulnerabilityImpact(le);
-				break;
-			case LE_INVULJUICED:
-				CG_AddInvulnerabilityJuiced(le);
-				break;
 			case LE_SHOWREFENTITY:
 				CG_AddRefEntity(le);
 				break;
-#endif
 		}
 	}
+
+	cg.physicsTime = oldPhysicsTime;
 }

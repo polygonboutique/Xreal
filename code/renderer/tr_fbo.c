@@ -1,7 +1,7 @@
 /*
 =======================================================================================================================================
 Copyright (C) 2006 Kirk Barnes
-Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2006-2008 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of Spearmint Source Code.
 
@@ -52,32 +52,32 @@ qboolean R_CheckFBO(const FBO_t *fbo) {
 		case GL_FRAMEBUFFER_COMPLETE_EXT:
 			break;
 		case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Unsupported framebuffer format\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s)Unsupported framebuffer format\n", fbo->name);
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete attachment\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete attachment\n", fbo->name);
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete, missing attachment\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, missing attachment\n", fbo->name);
 			break;
 		//case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-		//	ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete, duplicate attachment\n", fbo->name);
+		//	ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, duplicate attachment\n", fbo->name);
 		//	break;
 		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete, attached images must have same dimensions\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same dimensions\n", fbo->name);
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete, attached images must have same format\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, attached images must have same format\n", fbo->name);
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete, missing draw buffer\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, missing draw buffer\n", fbo->name);
 			break;
 		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)Framebuffer incomplete, missing read buffer\n", fbo->name);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, missing read buffer\n", fbo->name);
 			break;
 		default:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO:(%s)unknown error 0x%X\n", fbo->name, code);
-			//ri.Error(ERR_FATAL, "R_CheckFBO:(%s)unknown error 0x%X", fbo->name, code);
+			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) unknown error 0x%X\n", fbo->name, code);
+			//ri.Error(ERR_FATAL, "R_CheckFBO: (%s) unknown error 0x%X", fbo->name, code);
 			//assert(0);
 			break;
 	}
@@ -149,7 +149,7 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index) {
 	}
 #if 0
 	if (format != GL_RGB && format != GL_RGBA && format != GL_RGB16F_ARB && format != GL_RGBA16F_ARB && format != GL_RGB32F_ARB && format != GL_RGBA32F_ARB) {
-		ri.Printf(PRINT_WARNING, "R_CreateFBOColorBuffer: format %i is not color - renderable\n", format);
+		ri.Printf(PRINT_WARNING, "R_CreateFBOColorBuffer: format %i is not color-renderable\n", format);
 		//return;
 	}
 #endif
@@ -776,7 +776,7 @@ void R_ShutdownFBOs(void) {
 	int i, j;
 	FBO_t *fbo;
 
-	ri.Printf(PRINT_ALL, "------- R_ShutdownFBOs ---- ---\n");
+	ri.Printf(PRINT_ALL, "------- R_ShutdownFBOs -------\n");
 #if !defined(USE_D3D10)
 	if (!glConfig2.framebufferObjectAvailable) {
 		return;
@@ -825,7 +825,7 @@ void R_FBOList_f(void) {
 	}
 #endif
 	ri.Printf(PRINT_ALL, "             size       name\n");
-	ri.Printf(PRINT_ALL, "------------------------------------------------------- ---\n");
+	ri.Printf(PRINT_ALL, "----------------------------------------------------------\n");
 
 	for (i = 0; i < tr.numFBOs; i++) {
 		fbo = tr.fbos[i];

@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -128,6 +128,41 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader) 
 	CG_AdjustFrom640(&x, &y, &width, &height);
 	trap_R_DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }
+
+/*
+=======================================================================================================================================
+CG_SetClipRegion
+=======================================================================================================================================
+*/
+void CG_SetClipRegion(float x, float y, float w, float h) {
+	vec4_t clip;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+
+	clip[0] = x;
+	clip[1] = y;
+	clip[2] = x + w;
+	clip[3] = y + h;
+
+	trap_R_SetClipRegion(clip);
+}
+
+/*
+=======================================================================================================================================
+CG_ClearClipRegion
+=======================================================================================================================================
+*/
+void CG_ClearClipRegion(void) {
+	trap_R_SetClipRegion(NULL);
+}
+
+/*
+=======================================================================================================================================
+
+	TEXT DRAWING
+
+=======================================================================================================================================
+*/
 
 /*
 =======================================================================================================================================
@@ -461,14 +496,6 @@ void CG_ColorForHealth(vec4_t hcolor) {
 	CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], cg.snap->ps.stats[STAT_ARMOR], hcolor);
 }
 
-// bk001205 - code below duplicated in q3_ui / ui - atoms.c
-// bk001205 - FIXME: does this belong in ui_shared.c?
-/*
-=======================================================================================================================================
-UI_DrawProportionalString2
-=======================================================================================================================================
-*/
-// *INDENT - OFF* 
 int propMap1[128][3] = {
 	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
 	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
@@ -604,7 +631,6 @@ static int propMap2[26][3] = {
 #define PROP2_GAP_WIDTH 4
 #define PROP2_SPACE_WIDTH 12
 #define PROP2_HEIGHT 36
-// *INDENT - ON* 
 
 /*
 =======================================================================================================================================
@@ -743,7 +769,7 @@ UI_DrawProportionalString2
 */
 static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t color, float sizeScale, qhandle_t charset) {
 	const char *s;
-	unsigned char ch; // bk001204 - unsigned
+	unsigned char ch;
 	float ax;
 	float ay;
 	float aw;

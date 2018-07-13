@@ -47,15 +47,15 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menutext_s      graphics;
-	menutext_s      display;
-	menutext_s      sound;
-	menutext_s      network;
-	menubitmap_s    back;
+	menutext_s graphics;
+	menutext_s display;
+	menutext_s sound;
+	menutext_s network;
+	menubitmap_s back;
 } optionsmenu_t;
 
 static optionsmenu_t s_options;
@@ -116,7 +116,7 @@ Options_MenuInit
 */
 void Options_MenuInit(void)
 {
-	int             y;
+	int y;
 	uiClientState_t cstate;
 
 	memset(&s_options, 0, sizeof(optionsmenu_t));

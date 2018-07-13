@@ -56,22 +56,22 @@ ADD BOTS MENU
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    arrows;
-	menubitmap_s    up;
-	menubitmap_s    down;
-	menutext_s      bots[7];
-	menutext_s      banner;
-	menulist_s      skill;
-	menulist_s      team;
-	menubitmap_s    go;
-	menubitmap_s    back;
+	menubitmap_s arrows;
+	menubitmap_s up;
+	menubitmap_s down;
+	menutext_s bots[7];
+	menutext_s banner;
+	menulist_s skill;
+	menulist_s team;
+	menubitmap_s go;
+	menubitmap_s back;
 
-	int             numBots;
-	int             delay;
-	int             baseBotNum;
-	int             selectedBotNum;
-	int             sortedBotNums[MAX_BOTS];
-	char            botnames[7][32];
+	int numBots;
+	int delay;
+	int baseBotNum;
+	int selectedBotNum;
+	int sortedBotNums[MAX_BOTS];
+	char botnames[7][32];
 } addBotsMenuInfo_t;
 
 static addBotsMenuInfo_t addBotsMenuInfo;
@@ -84,8 +84,8 @@ UI_AddBotsMenu_FightEvent
 */
 static void UI_AddBotsMenu_FightEvent(void *ptr, int event)
 {
-	const char     *team;
-	int             skill;
+	const char *team;
+	int skill;
 
 	if(event != QM_ACTIVATED)
 	{
@@ -143,8 +143,8 @@ UI_AddBotsMenu_SetBotNames
 */
 static void UI_AddBotsMenu_SetBotNames(void)
 {
-	int             n;
-	const char     *info;
+	int n;
+	const char *info;
 
 	for(n = 0; n < 7; n++)
 	{
@@ -202,9 +202,9 @@ UI_AddBotsMenu_GetSortedBotNums
 */
 static int QDECL UI_AddBotsMenu_SortCompare(const void *arg1, const void *arg2)
 {
-	int             num1, num2;
-	const char     *info1, *info2;
-	const char     *name1, *name2;
+	int num1, num2;
+	const char *info1, *info2;
+	const char *name1, *name2;
 
 	num1 = *(int *)arg1;
 	num2 = *(int *)arg2;
@@ -220,7 +220,7 @@ static int QDECL UI_AddBotsMenu_SortCompare(const void *arg1, const void *arg2)
 
 static void UI_AddBotsMenu_GetSortedBotNums(void)
 {
-	int             n;
+	int n;
 
 	// initialize the array
 	for(n = 0; n < addBotsMenuInfo.numBots; n++)
@@ -275,11 +275,11 @@ static const char *teamNames2[] = {
 
 static void UI_AddBotsMenu_Init(void)
 {
-	int             n;
-	int             y;
-	int             gametype;
-	int             count;
-	char            info[MAX_INFO_STRING];
+	int n;
+	int y;
+	int gametype;
+	int count;
+	char info[MAX_INFO_STRING];
 
 	trap_GetConfigString(CS_SERVERINFO, info, MAX_INFO_STRING);
 	gametype = atoi(Info_ValueForKey(info, "g_gametype"));
@@ -360,7 +360,7 @@ static void UI_AddBotsMenu_Init(void)
 	addBotsMenuInfo.team.generic.y = y;
 	addBotsMenuInfo.team.generic.name = "Team: ";
 	addBotsMenuInfo.team.generic.id = ID_TEAM;
-	if(gametype >= GT_TEAM)
+	if(gametype > GT_TOURNAMENT)
 	{
 		addBotsMenuInfo.team.itemnames = teamNames2;
 	}

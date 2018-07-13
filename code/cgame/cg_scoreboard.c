@@ -243,7 +243,7 @@ int headline_blue[] = {12 + SCOREBOARD_BLUE, 100 + SCOREBOARD_BLUE, 146 + SCOREB
 void CG_DrawScoreboardHeadlineNew(int pos[]) {
 	const char *s;
 
-	if (cgs.gametype >= GT_TEAM)
+	if (cgs.gametype > GT_TOURNAMENT)
 		s = va("Player");
 	} else {
 	s = va("Player(%i / %i)", cg.numScores, cgs.maxclients);
@@ -292,7 +292,7 @@ void CG_DrawScoreboardUnderlineNew(void) {
 		}
 	}
 
-	if (cgs.gametype >= GT_TEAM)	// team based scoreboard
+	if (cgs.gametype > GT_TOURNAMENT)	// team based scoreboard
 	{
 		// current players
 		s = va("Players: %i / %i", cg.numScores, cgs.maxclients);
@@ -304,7 +304,7 @@ void CG_DrawScoreboardUnderlineNew(void) {
 			CG_Text_PaintAligned(344, 408, ts, 0.2f, UI_LEFT|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
 		}
 
-		if (cgs.gametype >= GT_CTF) {
+		if (cgs.gametype > GT_TEAM) {
 			if (cgs.gametype == GT_1FCTF) {
 				s = va("One Flag CTF on %s", mapname);
 			} else if (cgs.gametype == GT_OBELISK) {
@@ -505,7 +505,7 @@ qboolean CG_DrawScoreboardNew(void) {
 	max_display = SCOREBOARD_DISPLAY;
 
 	// FIXME: displaying more then 32 players causes the display to disappear. is this a bug of the scoreboard ?
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		max_display *= 2;
 		max_height *= 2;
 		// FIXME: scrolling does not work for teamscores
@@ -536,7 +536,7 @@ qboolean CG_DrawScoreboardNew(void) {
 	fontsize = height / 72.0f;
 
 
-	if (cgs.gametype >= GT_TEAM)	// team based scoreboard
+	if (cgs.gametype > GT_TOURNAMENT)	// team based scoreboard
 	{
 		// Titlebar
 
@@ -688,7 +688,7 @@ qboolean CG_DrawOldScoreboard(void) {
 		bottomBorderSize = 16;
 	}
 
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		// teamplay scoreboard
 		y += lineHeight / 2;
 
@@ -796,7 +796,7 @@ void CG_DrawOldTourneyScoreboard(void) {
 	// print the two scores
 	y = 160;
 
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		// teamplay scoreboard
 		CG_DrawStringExt(8, y, "Red Team", color, qtrue, qtrue, GIANT_WIDTH, GIANT_HEIGHT, 0);
 

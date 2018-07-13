@@ -97,9 +97,9 @@ cvars
 typedef struct
 {
 	vmCvar_t       *vmCvar;
-	char           *cvarName;
-	char           *defaultString;
-	int             cvarFlags;
+	char *cvarName;
+	char *defaultString;
+	int cvarFlags;
 } cvarTable_t;
 
 vmCvar_t        ui_ffa_fraglimit;
@@ -216,7 +216,7 @@ static cvarTable_t cvarTable[] = {
 };
 
 // bk001129 - made static to avoid aliasing
-static int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+static int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
 
 /*
@@ -226,7 +226,7 @@ UI_RegisterCvars
 */
 void UI_RegisterCvars(void)
 {
-	int             i;
+	int i;
 	cvarTable_t    *cv;
 
 	for(i = 0, cv = cvarTable; i < cvarTableSize; i++, cv++)
@@ -242,7 +242,7 @@ UI_UpdateCvars
 */
 void UI_UpdateCvars(void)
 {
-	int             i;
+	int i;
 	cvarTable_t    *cv;
 
 	for(i = 0, cv = cvarTable; i < cvarTableSize; i++, cv++)

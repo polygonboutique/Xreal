@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -595,6 +595,27 @@ void Cvar_Set(const char *var_name, const char *value) {
 
 /*
 =======================================================================================================================================
+Cvar_SetSafe
+=======================================================================================================================================
+*/
+void Cvar_SetSafe(const char *var_name, const char *value) {
+	int flags = Cvar_Flags(var_name);
+
+	if ((flags != CVAR_NONEXISTENT) && (flags & CVAR_PROTECTED)) {
+		if (value) {
+			Com_Error(ERR_DROP, "Restricted source tried to set \"%s\" to \"%s\"", var_name, value);
+		} else {
+			Com_Error(ERR_DROP, "Restricted source tried to modify \"%s\"", var_name);
+		}
+
+		return;
+	}
+
+	Cvar_Set(var_name, value);
+}
+
+/*
+=======================================================================================================================================
 Cvar_SetLatched
 =======================================================================================================================================
 */
@@ -617,6 +638,23 @@ void Cvar_SetValue(const char *var_name, float value) {
 	}
 
 	Cvar_Set(var_name, val);
+}
+
+/*
+=======================================================================================================================================
+Cvar_SetValueSafe
+=======================================================================================================================================
+*/
+void Cvar_SetValueSafe(const char *var_name, float value) {
+	char val[32];
+
+	if (Q_isintegral(value)) {
+		Com_sprintf(val, sizeof(val), "%i", (int)value);
+	} else {
+		Com_sprintf(val, sizeof(val), "%f", value);
+	}
+
+	Cvar_SetSafe(var_name, val);
 }
 
 /*
@@ -836,7 +874,7 @@ void Cvar_WriteVariables(fileHandle_t f) {
 	char buffer[1024];
 
 	for (var = cvar_vars; var; var = var->next) {
-		if (!var->name || Q_stricmp(var->name, "cl_cdkey") == 0) {
+		if (!var->name) {
 			continue;
 		}
 
@@ -1142,7 +1180,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	cvar_t *cv;
 
 	// there is code in Cvar_Get to prevent CVAR_ROM cvars being changed by the user. In other words CVAR_ARCHIVE and CVAR_ROM are
-	// mutually exclusive flags. Unfortunately some historical game code (including single player baseq3) sets both flags.
+	// mutually exclusive flags. Unfortunately some historical game code (including single player base game) sets both flags.
 	// we unset CVAR_ROM for such cvars.
 	if ((flags &(CVAR_ARCHIVE|CVAR_ROM)) == (CVAR_ARCHIVE|CVAR_ROM)) {
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: Unsetting CVAR_ROM from cvar '%s', since it is also CVAR_ARCHIVE\n", varName);

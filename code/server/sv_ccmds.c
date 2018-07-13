@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -155,13 +155,13 @@ Restart the server on a different map.
 static void SV_Map_f(void) {
 	char *cmd;
 	char *map;
-	qboolean killBots, cheat;
 	char expanded[MAX_QPATH];
 	char mapname[MAX_QPATH];
 
 	map = Cmd_Argv(1);
 
-	if (!map) {
+	if (!*map) {
+		Com_Printf("Usage: %s <mapname>\n", Cmd_Argv(0));
 		return;
 	}
 	// make sure the level exists before trying to change, so that a typo at the server console won't end the game
@@ -183,32 +183,22 @@ static void SV_Map_f(void) {
 		Cvar_SetLatched("sv_maxclients", "8");
 
 		cmd += 2;
-		cheat = qfalse;
-		killBots = qtrue;
 	} else {
-		if (!Q_stricmp(cmd, "devmap") || !Q_stricmp(cmd, "spdevmap")) {
-			cheat = qtrue;
-			killBots = qtrue;
-		} else {
-			cheat = qfalse;
-			killBots = qfalse;
-		}
-
 		if (sv_gametype->integer == GT_SINGLE_PLAYER) {
 			Cvar_SetValue("g_gametype", GT_FFA);
 		}
 	}
-	// save the map name here cause on a map restart we reload the q3config.cfg and thus nuke the arguments of the map command
+	// save the map name here cause on a map restart we reload the config.cfg and thus nuke the arguments of the map command
 	Q_strncpyz(mapname, map, sizeof(mapname));
 	// start up the map
-	SV_SpawnServer(mapname, killBots);
+	SV_SpawnServer(mapname);
 	// set the cheat value
 	// if the level was started with "map <levelname>", then cheats will not be allowed. If started with "devmap <levelname>"
 	// then cheats will be allowed
-	if (cheat) {
-		Cvar_Set("sv_cheats", "1");
+	if (!Q_stricmp(cmd, "devmap")) {
+		Cvar_SetValue("sv_cheats", 1);
 	} else {
-		Cvar_Set("sv_cheats", "0");
+		Cvar_SetValue("sv_cheats", 0);
 	}
 }
 
@@ -259,7 +249,7 @@ static void SV_MapRestart_f(void) {
 		Com_Printf("variable change -- restarting.\n");
 		// restart the map the slow way
 		Q_strncpyz(mapname, Cvar_VariableString("mapname"), sizeof(mapname));
-		SV_SpawnServer(mapname, qfalse);
+		SV_SpawnServer(mapname);
 		return;
 	}
 	// toggle the server bit so clients can detect that a map_restart has happened
@@ -285,11 +275,8 @@ static void SV_MapRestart_f(void) {
 	SV_RestartGameProgs();
 	// run a few frames to allow everything to settle
 	for (i = 0; i < 3; i++) {
-#if defined(USE_JAVA)
-		Java_G_RunFrame(sv.time);
-#else
 		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-#endif
+
 		sv.time += 100;
 		svs.time += 100;
 	}
@@ -312,11 +299,8 @@ static void SV_MapRestart_f(void) {
 		// add the map_restart command
 		SV_AddServerCommand(client, "map_restart\n");
 		// connect the client again, without the firstTime flag
-#if defined(USE_JAVA)
-		denied = Java_G_ClientConnect(i, qfalse, isBot);
-#else
 		denied = VM_ExplicitArgPtr(gvm, VM_Call(gvm, GAME_CLIENT_CONNECT, i, qfalse, isBot));
-#endif
+
 		if (denied) {
 			// this generally shouldn't happen, because the client was connected before the level change
 			SV_DropClient(client, denied);
@@ -329,11 +313,8 @@ static void SV_MapRestart_f(void) {
 		SV_ClientEnterWorld(client, &client->lastUsercmd);
 	}
 	// run another frame to allow things to look at all the players
-#if defined(USE_JAVA)
-	Java_G_RunFrame(sv.time);
-#else
 	VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-#endif
+
 	sv.time += 100;
 	svs.time += 100;
 }
@@ -524,6 +505,11 @@ static void SV_RehashBans_f(void) {
 	char *textbuf, *curpos, *maskpos, *newlinepos, *endpos;
 	char filepath[MAX_QPATH];
 
+	// make sure server is running
+	if (!com_sv_running->integer) {
+		return;
+	}
+
 	serverBansCount = 0;
 
 	if (!sv_banFile->string || !*sv_banFile->string) {
@@ -703,6 +689,12 @@ static void SV_AddBanToList(qboolean isexception) {
 	int index, argc, mask;
 	serverBan_t *curban;
 
+	// make sure server is running
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running.\n");
+		return;
+	}
+
 	argc = Cmd_Argc();
 
 	if (argc < 2 || argc > 3) {
@@ -726,10 +718,6 @@ static void SV_AddBanToList(qboolean isexception) {
 	} else {
 		client_t *cl;
 
-		if (!com_sv_running->integer) {
-			Com_Printf("Server is not running.\n");
-			return;
-		}
 		// client num
 		cl = SV_GetPlayerByNum();
 
@@ -816,6 +804,12 @@ static void SV_DelBanFromList(qboolean isexception) {
 	netadr_t ip;
 	char *banstring;
 
+	// make sure server is running
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running.\n");
+		return;
+	}
+
 	if (Cmd_Argc() != 2) {
 		Com_Printf("Usage: %s (ip[/subnet]|num)\n", Cmd_Argv(0));
 		return;
@@ -878,6 +872,11 @@ static void SV_ListBans_f(void) {
 	int index, count;
 	serverBan_t *ban;
 
+	// make sure server is running
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running.\n");
+		return;
+	}
 	// list all bans
 	for (index = count = 0; index < serverBansCount; index++) {
 		ban = &serverBans[index];
@@ -906,6 +905,12 @@ Delete all bans and exceptions.
 =======================================================================================================================================
 */
 static void SV_FlushBans_f(void) {
+
+	// make sure server is running
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running.\n");
+		return;
+	}
 
 	serverBansCount = 0;
 	// empty the ban file.
@@ -1110,6 +1115,12 @@ Examine the serverinfo string.
 =======================================================================================================================================
 */
 static void SV_Serverinfo_f(void) {
+
+	// make sure server is running
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running.\n");
+		return;
+	}
 
 	Com_Printf("Server info settings:\n");
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO));

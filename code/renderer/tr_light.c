@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -298,7 +297,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		}
 	}
 	*/
-	// if NOWORLDMODEL, only use dynamic lights(menu system, etc)
+	// if NOWORLDMODEL, only use dynamic lights(menu system, etc.)
 	if (!(refdef->rdflags & RDF_NOWORLDMODEL) && tr.world && tr.world->lightGridData) {
 		R_SetupEntityLightingGrid(ent, forcedOrigin);
 	} else {
@@ -343,7 +342,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		ent->ambientLight[0] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
 		ent->ambientLight[1] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
 		ent->ambientLight[2] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
-	} else if ((ent->e.renderfx & RF_MINLIGHT)) // && VectorLength(ent->ambientLight) <= 0) {
+	} else if ((ent->e.renderfx & RF_MINLIGHT)) // && VectorLength(ent->ambientLight) <= 0)
+	{
 		// give everything a minimum light add
 		ent->ambientLight[0] += tr.identityLight * 0.125f;
 		ent->ambientLight[1] += tr.identityLight * 0.125f;
@@ -364,7 +364,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 #endif
 	// Tr3B: keep it in world space
-
 	// transform the direction to local space
 	//% d = VectorLength(ent->directedLight);
 	//% VectorScale(ent->lightDir, d, lightDir);
@@ -489,7 +488,6 @@ void R_SetupLightLocalBounds(trRefLight_t *light) {
 					AddPointToBounds(farCorners[j], light->localBounds[0], light->localBounds[1]);
 					AddPointToBounds(nearCorners[j], light->localBounds[0], light->localBounds[1]);
 				}
-
 			} else {
 				vec3_t top;
 
@@ -500,9 +498,9 @@ void R_SetupLightLocalBounds(trRefLight_t *light) {
 					AddPointToBounds(farCorners[j], light->localBounds[0], light->localBounds[1]);
 				}
 			}
+
 			break;
 		}
-
 		default:
 			break;
 	}
@@ -548,7 +546,6 @@ void R_SetupLightView(trRefLight_t *light) {
 			MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
 			break;
 		}
-
 		/*
 		case RL_PROJ:
 		{
@@ -836,8 +833,7 @@ void R_SetupLightProjection(trRefLight_t *light) {
 			float uLen;
 			float a, b, ofs, dist;
 			vec4_t targetGlobal;
-			// This transformation remaps the X, Y coordinates from [-1..1] to [0..1],
-			// presumably needed because the up / right vectors extend symmetrically
+			// this transformation remaps the X, Y coordinates from [-1..1] to [0..1], presumably needed because the up/right vectors extend symmetrically
 			// either side of the target point.
 			//MatrixSetupTranslation(proj, 0.5f, 0.5f, 0);
 			//MatrixMultiplyScale(proj, 0.5f, 0.5f, 1);
@@ -934,10 +930,8 @@ void R_SetupLightProjection(trRefLight_t *light) {
 			// calculate the new projection matrix from the frustum planes
 			MatrixFromPlanes(proj, frustum[FRUSTUM_LEFT], frustum[FRUSTUM_RIGHT], frustum[FRUSTUM_BOTTOM], frustum[FRUSTUM_TOP], frustum[FRUSTUM_NEAR], frustum[FRUSTUM_FAR]);
 			//MatrixMultiply2(proj, newProjection);
-			// scale the falloff texture coordinate so that 0.5 is at the apex and 0.0
-			// as at the base of the pyramid.
-			// TODO: I don't like hacking the matrix like this, but all attempts to use
-			// a transformation seemed to affect too many other things.
+			// scale the falloff texture coordinate so that 0.5 is at the apex and 0.0 as at the base of the pyramid.
+			// TODO: I don't like hacking the matrix like this, but all attempts to use a transformation seemed to affect too many other things.
 			//proj[10] *= 0.5f;
 			// normalise all frustum planes
 			for (i = 0; i < 6; i++) {
@@ -1335,6 +1329,7 @@ void R_SetupLightScissor(trRefLight_t *light) {
 
 			break;
 		}
+
 		default:
 			break;
 	}
@@ -1575,7 +1570,6 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2]) {
 
 	return cubeSideBits;
 }
-//*INDENT - ON*
 
 /*
 =======================================================================================================================================

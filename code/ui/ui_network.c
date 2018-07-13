@@ -54,20 +54,20 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	//menubitmap_s    framel;
-	//menubitmap_s    framer;
+	menutext_s banner;
+	//menubitmap_s framel;
+	//menubitmap_s framer;
 
-	menubitmap_s    graphics;
-	//menubitmap_s      display;
-	menubitmap_s    sound;
-	menubitmap_s    network;
+	menubitmap_s graphics;
+	//menubitmap_s display;
+	menubitmap_s sound;
+	menubitmap_s network;
 
-	menulist_s      rate;
-	menuslider_s    packetdup;
-	menuslider_s    maxpackets;
+	menulist_s rate;
+	menuslider_s packetdup;
+	menuslider_s maxpackets;
 
-	menubitmap_s    back;
+	menubitmap_s back;
 } networkOptionsInfo_t;
 
 static networkOptionsInfo_t networkOptionsInfo;
@@ -134,8 +134,8 @@ UI_NetworkOptionsMenu_Init
 */
 static void UI_NetworkOptionsMenu_Init(void)
 {
-	int             y;
-	int             rate;
+	int y;
+	int rate;
 
 	memset(&networkOptionsInfo, 0, sizeof(networkOptionsInfo));
 

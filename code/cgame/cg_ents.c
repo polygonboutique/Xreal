@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -65,6 +65,7 @@ void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 	orientation_t lerped;
 	vec3_t tempAxis[3];
 
+	//AxisClear(entity->axis);
 	// lerp the tag
 	trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
 	// FIXME: allow origin offsets along tag?
@@ -533,20 +534,12 @@ static void CG_Projectile(centity_t *cent) {
 	ent.skinNum = cg.clientFrame & 1;
 	ent.hModel = weapon->projectileModel;
 	ent.renderfx = weapon->projectileRenderfx|RF_NOSHADOW;
-#ifdef MISSIONPACK
-	if (cent->currentState.weapon == WP_PROX_LAUNCHER) {
+
+	if (cent->currentState.weapon == WP_PROXLAUNCHER) {
 		if (s1->generic1 == TEAM_BLUE) {
 			ent.hModel = cgs.media.blueProxMine;
 		}
 	}
-#endif
-#if defined(USE_JAVA) {
-		vec3_t angles;
-		// VectorToAngles(s1->pos.trDelta, angles);
-		// AnglesToAxis(angles, ent.axis);
-		AnglesToAxis(cent->lerpAngles, ent.axis);
-	}
-#else
 	// convert direction of travel into axis
 	if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0) {
 		ent.axis[0][2] = 1;
@@ -555,16 +548,12 @@ static void CG_Projectile(centity_t *cent) {
 	if (s1->pos.trType != TR_STATIONARY) {
 		RotateAroundDirection(ent.axis, cg.time / 4);
 	} else {
-#ifdef MISSIONPACK
-		if (s1->weapon == WP_PROX_LAUNCHER) {
+		if (s1->weapon == WP_PROXLAUNCHER) {
 			AnglesToAxis(cent->lerpAngles, ent.axis);
-		} else
-#endif
-		{
+		} else {
 			RotateAroundDirection(ent.axis, s1->time);
 		}
 	}
-#endif
 	// add to refresh list
 	trap_R_AddRefEntityToScene(&ent);
 }
@@ -635,7 +624,7 @@ static void CG_Projectile2(centity_t *cent) {
 	ent.hModel = weapon->projectileModel2;
 	ent.renderfx = weapon->projectileRenderfx2|RF_NOSHADOW;
 #ifdef MISSIONPACK
-	if (cent->currentState.weapon == WP_PROX_LAUNCHER) {
+	if (cent->currentState.weapon == WP_PROXLAUNCHER) {
 		if (s1->generic1 == TEAM_BLUE) {
 			ent.hModel = cgs.media.blueProxMine;
 		}
@@ -650,7 +639,7 @@ static void CG_Projectile2(centity_t *cent) {
 		RotateAroundDirection(ent.axis, cg.time / 4);
 	} else {
 #ifdef MISSIONPACK
-		if (s1->weapon == WP_PROX_LAUNCHER) {
+		if (s1->weapon == WP_PROXLAUNCHER) {
 			AnglesToAxis(cent->lerpAngles, ent.axis);
 		} else
 #endif
@@ -1312,7 +1301,7 @@ static void CG_TeamBase(centity_t *cent) {
 			// show the target
 			if (t > h) {
 				if (!cent->muzzleFlashTime) {
-					trap_S_StartSound(cent->lerpOrigin, ENTITYNUM_NONE, CHAN_BODY, cgs.media.obeliskRespawnSound);
+					trap_S_StartSound(cent->lerpOrigin, ENTITYNUM_NONE, CHAN_BODY, cgs.media.obeliskRespawnSound[rand()&2], 64);
 					cent->muzzleFlashTime = 1;
 				}
 
@@ -1330,7 +1319,7 @@ static void CG_TeamBase(centity_t *cent) {
 				model.shaderRGBA[1] = 0xff;
 				model.shaderRGBA[2] = 0xff;
 				model.shaderRGBA[3] = 0xff;
-				model.origin[2] += 56;
+				model.origin[2] += OBELISK_TARGET_HEIGHT;
 				model.hModel = cgs.media.overloadTargetModel;
 
 				trap_R_AddRefEntityToScene(&model);
@@ -1352,7 +1341,7 @@ static void CG_TeamBase(centity_t *cent) {
 
 			trap_R_AddRefEntityToScene(&model);
 			// show the target
-			model.origin[2] += 56;
+			model.origin[2] += OBELISK_TARGET_HEIGHT;
 			model.hModel = cgs.media.overloadTargetModel;
 
 			trap_R_AddRefEntityToScene(&model);
@@ -1399,21 +1388,11 @@ static void CG_AddCEntity(centity_t *cent) {
 	CG_EntityEffects(cent);
 
 	switch (cent->currentState.eType) {
-		default:
-			CG_Error("Bad entity type: %i\n", cent->currentState.eType);
-			break;
-		case ET_INVISIBLE:
-		case ET_PUSH_TRIGGER:
-		case ET_TELEPORT_TRIGGER:
-			break;
 		case ET_GENERAL:
 			CG_General(cent);
 			break;
 		case ET_PLAYER:
 			CG_Player(cent);
-			break;
-		case ET_ITEM:
-			CG_Item(cent);
 			break;
 		case ET_PROJECTILE:
 			CG_Projectile(cent);
@@ -1421,29 +1400,27 @@ static void CG_AddCEntity(centity_t *cent) {
 		case ET_PROJECTILE2:
 			CG_Projectile2(cent);
 			break;
+		case ET_TEAM:
+			CG_TeamBase(cent);
+			break;
+		case ET_ITEM:
+			CG_Item(cent);
+			break;
 		case ET_MOVER:
 			CG_Mover(cent);
-			break;
-		case ET_BEAM:
-			CG_Beam(cent);
-			break;
-		case ET_PORTAL:
-			CG_Portal(cent);
 			break;
 		case ET_SPEAKER:
 			CG_Speaker(cent);
 			break;
-		case ET_GRAPPLE:
-			CG_Grapple(cent);
+		case ET_PORTAL:
+			CG_Portal(cent);
 			break;
-		case ET_TEAM:
-			CG_TeamBase(cent);
+		case ET_BEAM:
+			CG_Beam(cent);
 			break;
-		case ET_AI_NODE:
-			CG_AI_Node(cent);
-			break;
-		case ET_AI_LINK:
-			CG_AI_Link(cent);
+		case ET_TELEPORT_TRIGGER:
+		case ET_PUSH_TRIGGER:
+		case ET_INVISIBLE:
 			break;
 		case ET_EXPLOSIVE:
 			CG_Mover(cent);
@@ -1453,6 +1430,16 @@ static void CG_AddCEntity(centity_t *cent) {
 			break;
 		case ET_PHYSICS_BOX:
 			CG_Physics_Box(cent);
+			break;
+		case ET_AI_NODE:
+			CG_AI_Node(cent);
+			break;
+		case ET_AI_LINK:
+			CG_AI_Link(cent);
+			break;
+		default:
+			CG_Error("Bad entity type: %i\n", cent->currentState.eType);
+			break;
 			break;
 	}
 }
@@ -1496,7 +1483,7 @@ void CG_AddPacketEntities(void) {
 
 	BG_PlayerStateToEntityState(ps, &cg.predictedPlayerEntity.currentState, qfalse);
 	CG_AddCEntity(&cg.predictedPlayerEntity);
-	// lerp the non-predicted value for lightning gun origins
+	// lerp the non-predicted value for beam gun origins
 	CG_CalcEntityLerpPositions(&cg_entities[cg.snap->ps.clientNum]);
 	// add each entity sent over by the server
 	for (num = 0; num < cg.snap->numEntities; num++) {

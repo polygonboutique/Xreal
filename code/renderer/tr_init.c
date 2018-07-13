@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2005 Id Software, Inc.
 
 This file is part of Spearmint Source Code.
 
@@ -23,7 +22,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-// tr_init.c--functions that are not called every frame
+/**************************************************************************************************************************************
+ Functions that are not called every frame.
+**************************************************************************************************************************************/
+
 #include "tr_local.h"
 
 #if defined (__cplusplus)
@@ -322,13 +324,14 @@ static void InitOpenGL(void) {
 	char renderer_buffer[1024];
 
 	// initialize OS specific portions of the renderer
+
 	// GLimp_Init directly or indirectly references the following cvars:
-	//      - r_fullscreen
-	//      - r_glDriver
-	//      - r_mode
-	//      - r_(color|depth|stencil)bits
-	//      - r_ignorehwgamma
-	//      - r_gamma
+	//		- r_fullscreen
+	//		- r_glDriver
+	//		- r_mode
+	//		- r_(color|depth|stencil)bits
+	//		- r_ignorehwgamma
+	//		- r_gamma
 
 	if (glConfig.vidWidth == 0) {
 		GLint temp;
@@ -425,26 +428,26 @@ typedef struct vidmode_s {
 } vidmode_t;
 
 static const vidmode_t r_vidModes[] = {
-	{" 320x240",           320,  240, 1},
-	{" 400x300",           400,  300, 1},
-	{" 512x384",           512,  384, 1},
-	{" 640x480",           640,  480, 1},
-	{" 800x600",           800,  600, 1},
-	{" 960x720",           960,  720, 1},
-	{"1024x768",          1024,  768, 1},
-	{"1152x864",          1152,  864, 1},
-	{"1280x720(16:9)",  1280,  720, 1},
-	{"1280x768(16:10)", 1280,  768, 1},
-	{"1280x800(16:10)", 1280,  800, 1},
-	{"1280x1024",         1280, 1024, 1},
-	{"1360x768(16:9)",  1360,  768,  1},
-	{"1440x900(16:10)", 1440,  900, 1},
-	{"1680x1050(16:10)", 1680, 1050, 1},
-	{"1600x1200",         1600, 1200, 1},
-	{"1920x1080(16:9)",  1920, 1080, 1},
-	{"1920x1200(16:10)", 1920, 1200, 1},
-	{"2048x1536",         2048, 1536, 1},
-	{"2560x1600(16:10)", 2560, 1600, 1}, 
+	{" 320x240",			320,	240, 1},
+	{" 400x300",			400,	300, 1},
+	{" 512x384",			512,	384, 1},
+	{" 640x480",			640,	480, 1},
+	{" 800x600",			800,	600, 1},
+	{" 960x720",			960,	720, 1},
+	{"1024x768",			1024,	768, 1},
+	{"1152x864",			1152,	864, 1},
+	{"1280x720 (16:9)",		1280,	720, 1},
+	{"1280x768 (16:10)",	1280,	768, 1},
+	{"1280x800 (16:10)",	1280,	800, 1},
+	{"1280x1024",			1280,	1024, 1},
+	{"1360x768 (16:9)",		1360,	768, 1},
+	{"1440x900 (16:10)",	1440,	900, 1},
+	{"1680x1050 (16:10)",	1680,	1050, 1},
+	{"1600x1200",			1600,	1200, 1},
+	{"1920x1080(16:9)",		1920,	1080, 1},
+	{"1920x1200 (16:10)",	1920,	1200, 1},
+	{"2048x1536",			2048,	1536, 1},
+	{"2560x1600 (16:10)",	2560,	1600, 1}, 
 };
 
 static const int s_numVidModes = (sizeof(r_vidModes) / sizeof(r_vidModes[0]));
@@ -457,7 +460,7 @@ R_GetModeInfo
 qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode) {
 	const vidmode_t *vm;
 
-	if (mode < - 1) {
+	if (mode < -1) {
 		return qfalse;
 	}
 
@@ -465,7 +468,7 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode) {
 		return qfalse;
 	}
 
-	if (mode == - 1) {
+	if (mode == -1) {
 		*width = r_customwidth->integer;
 		*height = r_customheight->integer;
 		*windowAspect = r_customaspect->value;
@@ -502,12 +505,10 @@ static void R_ModeList_f(void) {
 
 						SCREEN SHOTS
 
-screenshots get written in fs_homepath + fs_gamedir
-.. base / screenshots\ * . * 
-
-three commands: "screenshot", "screenshotJPEG" and "screenshotPNG"
-
-the format is xreal - YYYY_MM_DD - HH_MM_SS - MS.tga / jpeg / png
+	screenshots get written in fs_homepath + fs_gamedir
+	base/screenshots/shot000*.tga
+	three commands: "screenshot", "screenshotJPEG" and "screenshotPNG"
+	the format is xreal-YYYY_MM_DD-HH_MM_SS-MS.tga/jpeg/png
 
 =======================================================================================================================================
 */
@@ -522,7 +523,7 @@ The returned buffer must be freed with ri.Hunk_FreeTempMemory().
 =======================================================================================================================================
 */
 static byte *RB_ReadPixels(int x, int y, int width, int height, size_t offset) {
-	byte *buffer, * pixels;
+	byte *buffer, *pixels;
 #if defined (USE_D3D10)
 	// TODO
 #else
@@ -534,11 +535,11 @@ static byte *RB_ReadPixels(int x, int y, int width, int height, size_t offset) {
 
 	lineLen = width * 3;
 	paddedLineLen = PAD(lineLen, packAlign);
-	// Allocate a few more bytes so that we can choose an alignment we like
+	// allocate a few more bytes so that we can choose an alignment we like
 	buffer = (byte *)ri.Hunk_AllocateTempMemory(offset + (paddedLineLen * height) + packAlign);
 	pixels = (byte *)PADP(buffer + offset, packAlign);
 	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-	// Drop alignment and line padding bytes
+	// drop alignment and line padding bytes
 	for (i = 0; i < height;++i) {
 		memmove(buffer + offset + (i * lineLen), pixels + (i * paddedLineLen), lineLen);
 	}
@@ -554,7 +555,7 @@ R_TakeScreenshot
 static void RB_TakeScreenshot(int x, int y, int width, int height, char *fileName) {
 	byte *buffer;
 	size_t dataSize;
-	byte *end, * p;
+	byte *end, *p;
 
 	// with 18 bytes for the TGA file header
 	buffer = RB_ReadPixels(x, y, width, height, 18);
@@ -648,7 +649,7 @@ R_TakeScreenshot
 =======================================================================================================================================
 */
 void R_TakeScreenshot(const char *name, ssFormat_t format) {
-	static char fileName[MAX_OSPATH]; // bad things may happen if two screenshots per frame are taken.
+	static char fileName[MAX_OSPATH]; // bad things may happen if two screenshots per frame are taken
 	screenshotCommand_t *cmd;
 	int lastNumber;
 
@@ -666,7 +667,7 @@ void R_TakeScreenshot(const char *name, ssFormat_t format) {
 		ri.RealTime(&t);
 		// scan for a free filename
 		for (lastNumber = 0; lastNumber <= 999; lastNumber++) {
-			Com_sprintf(fileName, sizeof(fileName), "screenshots / " PRODUCT_NAME_LOWER " - %04d%02d%02d - %02d%02d%02d - %03d.%s", 1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, lastNumber, name);
+			Com_sprintf(fileName, sizeof(fileName), "screenshots/" PRODUCT_NAME_LOWER "-%04d%02d%02d-%02d%02d%02d-%03d.%s", 1900 + t.tm_year, 1 + t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, lastNumber, name);
 
 			if (!ri.FS_FileExists(fileName)) {
 				break; // file doesn't exist
@@ -726,30 +727,32 @@ static void R_ScreenShotPNG_f(void) {
 =======================================================================================================================================
 R_LevelShot
 
-levelshots are specialized 128 * 128 thumbnails for
-the menu system, sampled down from full screen distorted images
+Levelshots are specialized 128 * 128 thumbnails for the menu system, sampled down from full screen distorted images.
 =======================================================================================================================================
 */
-/*static void R_LevelShot(void) {
+/*
+static void R_LevelShot(void) {
 	char checkname[MAX_OSPATH];
 	byte *buffer;
 	byte *source;
-	byte *src, * dst;
+	byte *src, *dst;
 	int x, y;
 	int r, g, b;
 	float xScale, yScale;
 	int xx, yy;
 
-	sprintf(checkname, "levelshots / %s.tga", tr.world->baseName);
+	sprintf(checkname, "levelshots/%s.tga", tr.world->baseName);
 
 	source = ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight * 3);
 
 	buffer = ri.Hunk_AllocateTempMemory(128 * 128 * 3 + 18);
+
 	Com_Memset(buffer, 0, 18);
-	buffer[2] = 2;				// uncompressed type
+
+	buffer[2] = 2; // uncompressed type
 	buffer[12] = 128;
 	buffer[14] = 128;
-	buffer[16] = 24;			// pixel size
+	buffer[16] = 24; // pixel size
 
 	glReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_RGB, GL_UNSIGNED_BYTE, source);
 	// resample from source
@@ -759,6 +762,7 @@ the menu system, sampled down from full screen distorted images
 	for (y = 0; y < 128; y++) {
 		for (x = 0; x < 128; x++) {
 			r = g = b = 0;
+
 			for (yy = 0; yy < 3; yy++) {
 				for (xx = 0; xx < 4; xx++) {
 					src = source + 3 * (glConfig.vidWidth * (int)((y * 3 + yy) * yScale) + (int)((x * 4 + xx) * xScale));
@@ -780,32 +784,35 @@ the menu system, sampled down from full screen distorted images
 	}
 
 	ri.FS_WriteFile(checkname, buffer, 128 * 128 * 3 + 18);
-
 	ri.Hunk_FreeTempMemory(buffer);
 	ri.Hunk_FreeTempMemory(source);
-
 	ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
-}*/
+}
+*/
 
 /*
+=======================================================================================================================================
+MaterialNameCompare
+=======================================================================================================================================
+*/
+/*
 static int QDECL MaterialNameCompare(const void *a, const void *b) {
-	char *s1, * s2;
+	char *s1, *s2;
 	int c1, c2;
 
 	s1 = *(char **)a;
 	s2 = *(char **)b;
 
-	do
-	{
+	do {
 		c1 = *s1++;
 		c2 = *s2++;
 
 		if (c1 >= 'a' && c1 <= 'z') {
-			c1 -= ('a'-'A');
+			c1 -= ('a' - 'A');
 		}
 
 		if (c2 >= 'a' && c2 <= 'z') {
-			c2 -= ('a'-'A');
+			c2 -= ('a' - 'A');
 		}
 
 		if (c1 == '\\' || c1 == ':') {
@@ -831,6 +838,11 @@ static int QDECL MaterialNameCompare(const void *a, const void *b) {
 */
 
 /*
+=======================================================================================================================================
+R_GenerateMaterialFile_f
+=======================================================================================================================================
+*/
+/*
 static void R_GenerateMaterialFile_f(void) {
 	char **dirnames;
 	int ndirs;
@@ -852,7 +864,6 @@ static void R_GenerateMaterialFile_f(void) {
 	}
 
 	Q_strncpyz(path, ri.Cmd_Argv(1), sizeof(path));
-
 	Q_strncpyz(extension, ri.Cmd_Argv(2), sizeof(extension));
 	Q_strreplace(extension, sizeof(extension), ".", "");
 	Q_strncpyz(fileName, ri.Cmd_Argv(1), sizeof(fileName));
@@ -881,8 +892,8 @@ static void R_GenerateMaterialFile_f(void) {
 		Q_strreplace(cleanName, sizeof(cleanName), "&", "_");
 
 		if (strcmp(fileName, cleanName)) {
-			Com_sprintf(fileName2, sizeof(fileName2), "%s / %s", path, fileName);
-			Com_sprintf(cleanName2, sizeof(cleanName2), "%s / %s", path, cleanName);
+			Com_sprintf(fileName2, sizeof(fileName2), "%s/%s", path, fileName);
+			Com_sprintf(cleanName2, sizeof(cleanName2), "%s/%s", path, cleanName);
 			Com_Printf("renaming '%s' into '%s'\n", fileName2, cleanName2);
 			FS_Rename(fileName2, cleanName2);
 		}
@@ -893,34 +904,34 @@ static void R_GenerateMaterialFile_f(void) {
 			Q_strncpyz(baseName, cleanName, sizeof(baseName));
 			Q_strreplace(baseName, sizeof(baseName), "_diffuse", "");
 
-			FS_Printf(f, "%s / %s\n", path, baseName);
+			FS_Printf(f, "%s/%s\n", path, baseName);
 			FS_Printf(f, "{\n");
-			FS_Printf(f, "\t qer_editorImage\t %s / %s.%s\n", path, cleanName, extension);
+			FS_Printf(f, "\t qer_editorImage\t %s/%s.%s\n", path, cleanName, extension);
 			FS_Printf(f, "\n");
 			FS_Printf(f, "\t parallax\n");
 			FS_Printf(f, "\n");
-			FS_Printf(f, "\t diffuseMap\t\t %s / %s.%s\n", path, baseName, extension);
+			FS_Printf(f, "\t diffuseMap\t\t %s/%s.%s\n", path, baseName, extension);
 
-			Com_sprintf(fileName, sizeof(fileName), "%s / %s_nm.%s", path, baseName, extension);
+			Com_sprintf(fileName, sizeof(fileName), "%s/%s_nm.%s", path, baseName, extension);
 
 			if (ri.FS_ReadFile(fileName, NULL) > 0) {
-				FS_Printf(f, "\t normalMap\t\t %s / %s_nm.%s\n", path, baseName, extension);
+				FS_Printf(f, "\t normalMap\t\t %s/%s_nm.%s\n", path, baseName, extension);
 			}
 
 			Q_strncpyz(baseName2, baseName, sizeof(baseName2));
 			len = strlen(baseName);
 			baseName2[len - 1] = '\0';
 
-			Com_sprintf(fileName, sizeof(fileName), "%s / speculars / %s_s.%s", path, baseName2, extension);
+			Com_sprintf(fileName, sizeof(fileName), "%s / speculars/%s_s.%s", path, baseName2, extension);
 
 			if (ri.FS_ReadFile(fileName, NULL) > 0) {
-				FS_Printf(f, "\t specularMap\t %s / speculars / %s_s.%s\n", path, baseName2, extension);
+				FS_Printf(f, "\t specularMap\t %s / speculars/%s_s.%s\n", path, baseName2, extension);
 			}
 
-			Com_sprintf(fileName, sizeof(fileName), "%s / %s.blend.%s", path, baseName, extension);
+			Com_sprintf(fileName, sizeof(fileName), "%s/%s.blend.%s", path, baseName, extension);
 
 			if (ri.FS_ReadFile(fileName, NULL) > 0) {
-				FS_Printf(f, "\t glowMap\t\t %s / %s.blend.%s\n", path, baseName, extension);
+				FS_Printf(f, "\t glowMap\t\t %s/%s.blend.%s\n", path, baseName, extension);
 			}
 
 			FS_Printf(f, "}\n\n");
@@ -931,7 +942,6 @@ static void R_GenerateMaterialFile_f(void) {
 	ri.FS_FCloseFile(f);
 }
 */
-
 /*
 =======================================================================================================================================
 RB_TakeVideoFrameCmd
@@ -943,7 +953,7 @@ const void *RB_TakeVideoFrameCmd(const void *data) {
 	int i;
 
 	cmd = (const videoFrameCommand_t *)data;
-	// RB: it is possible to we still have a videoFrameCommand_t but we already stopped video recording
+	//  it is possible to we still have a videoFrameCommand_t but we already stopped video recording
 	if (ri.CL_VideoRecording()) {
 		glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB, GL_UNSIGNED_BYTE, cmd->captureBuffer);
 		// gamma correct
@@ -996,8 +1006,7 @@ void GL_SetDefaultState(void) {
 	glVertexAttrib4fARB(ATTR_INDEX_COLOR, 1, 1, 1, 1);
 
 	GL_CheckErrors();
-	// initialize downstream texture units if we're running
-	// in a multitexture environment
+	// initialize downstream texture units if we're running in a multitexture environment
 	if (glConfig.driverType == GLDRV_OPENGL3) {
 		for (i = 31; i >= 0; i--) {
 			GL_SelectTexture(i);
@@ -1134,9 +1143,9 @@ void GfxInfo_f(void) {
 	}
 
 	if (glConfig.deviceSupportsGamma) {
-		ri.Printf(PRINT_ALL, "GAMMA: hardware w / %d overbright bits\n", tr.overbrightBits);
+		ri.Printf(PRINT_ALL, "GAMMA: hardware w/%d overbright bits\n", tr.overbrightBits);
 	} else {
-		ri.Printf(PRINT_ALL, "GAMMA: software w / %d overbright bits\n", tr.overbrightBits);
+		ri.Printf(PRINT_ALL, "GAMMA: software w/%d overbright bits\n", tr.overbrightBits);
 	}
 
 	ri.Printf(PRINT_ALL, "texturemode: %s\n", r_textureMode->string);
@@ -1193,6 +1202,11 @@ void GfxInfo_f(void) {
 	}
 }
 #if !defined (USE_D3D10)
+/*
+=======================================================================================================================================
+GLSL_restart_f
+=======================================================================================================================================
+*/
 static void GLSL_restart_f(void) {
 	// make sure the render thread is stopped
 	R_SyncRenderThread();
@@ -1200,7 +1214,6 @@ static void GLSL_restart_f(void) {
 	GLSL_InitGPUShaders();
 }
 #endif
-
 /*
 =======================================================================================================================================
 R_Register
@@ -1278,10 +1291,8 @@ void R_Register(void) {
 #endif
 	r_reflectionMapping = ri.Cvar_Get("r_reflectionMapping", "0", CVAR_CHEAT);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE|CVAR_LATCH);
-
 	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.125", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
-
 	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE|CVAR_LATCH);
 	// temporary latched variables that can only change over a restart
 	r_displayRefresh = ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
@@ -1293,12 +1304,10 @@ void R_Register(void) {
 	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_CHEAT|CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "0", CVAR_CHEAT|CVAR_LATCH);
 #endif
-	AssertCvarRange(r_overBrightBits, 0, 1, qtrue);	// ydnar: limit to overbrightbits 1(sorry 1337 players)
+	AssertCvarRange(r_overBrightBits, 0, 1, qtrue); // ydnar: limit to overbrightbits 1(sorry 1337 players)
 	AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
-
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
 	AssertCvarRange(r_intensity, 0, 1.5, qfalse);
-
 	r_singleShader = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT|CVAR_LATCH);
 	r_stitchCurves = ri.Cvar_Get("r_stitchCurves", "1", CVAR_CHEAT|CVAR_LATCH);
 	r_debugShadowMaps = ri.Cvar_Get("r_debugShadowMaps", "0", CVAR_CHEAT|CVAR_SHADER);
@@ -1310,7 +1319,6 @@ void R_Register(void) {
 	r_parallelShadowSplitWeight = ri.Cvar_Get("r_parallelShadowSplitWeight", "0.9", CVAR_CHEAT);
 	r_parallelShadowSplits = ri.Cvar_Get("r_parallelShadowSplits", "2", CVAR_CHEAT|CVAR_SHADER);
 	AssertCvarRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
-
 	r_lightSpacePerspectiveWarping = ri.Cvar_Get("r_lightSpacePerspectiveWarping", "1", CVAR_CHEAT);
 	// archived variables that can change at any time
 	r_lodBias = ri.Cvar_Get("r_lodBias", "0", CVAR_ARCHIVE);
@@ -1431,64 +1439,46 @@ void R_Register(void) {
 	r_rimLighting = ri.Cvar_Get("r_rimLighting", "1", CVAR_ARCHIVE|CVAR_LATCH|CVAR_SHADER);
 	r_rimExponent = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT);
 	AssertCvarRange(r_rimExponent, 0.5, 8.0, qfalse);
-
 	r_drawBuffer = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
 	r_lockpvs = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
 	r_noportals = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
-
 	r_shadows = ri.Cvar_Get("cg_shadows", "1", CVAR_ARCHIVE|CVAR_LATCH|CVAR_SHADER);
 	AssertCvarRange(r_shadows, 0, SHADOWING_EVSM32, qtrue);
-
 	r_softShadows = ri.Cvar_Get("r_softShadows", "0", CVAR_ARCHIVE|CVAR_SHADER);
 	AssertCvarRange(r_softShadows, 0, 6, qtrue);
-
 	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "2", CVAR_ARCHIVE|CVAR_SHADER);
-
 	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapQuality, 0, 4, qtrue);
-
 	r_shadowMapSizeUltra = ri.Cvar_Get("r_shadowMapSizeUltra", "1024", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeUltra, 32, 2048, qtrue);
-
 	r_shadowMapSizeVeryHigh = ri.Cvar_Get("r_shadowMapSizeVeryHigh", "512", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeVeryHigh, 32, 2048, qtrue);
-
 	r_shadowMapSizeHigh = ri.Cvar_Get("r_shadowMapSizeHigh", "256", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeHigh, 32, 2048, qtrue);
-
 	r_shadowMapSizeMedium = ri.Cvar_Get("r_shadowMapSizeMedium", "128", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeMedium, 32, 2048, qtrue);
-
 	r_shadowMapSizeLow = ri.Cvar_Get("r_shadowMapSizeLow", "64", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeLow, 32, 2048, qtrue);
-
 	shadowMapResolutions[0] = r_shadowMapSizeUltra->integer;
 	shadowMapResolutions[1] = r_shadowMapSizeVeryHigh->integer;
 	shadowMapResolutions[2] = r_shadowMapSizeHigh->integer;
 	shadowMapResolutions[3] = r_shadowMapSizeMedium->integer;
 	shadowMapResolutions[4] = r_shadowMapSizeLow->integer;
-
 	r_shadowMapSizeSunUltra = ri.Cvar_Get("r_shadowMapSizeSunUltra", "1024", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunUltra, 32, 2048, qtrue);
-
 	r_shadowMapSizeSunVeryHigh = ri.Cvar_Get("r_shadowMapSizeSunVeryHigh", "1024", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunVeryHigh, 512, 2048, qtrue);
-
 	r_shadowMapSizeSunHigh = ri.Cvar_Get("r_shadowMapSizeSunHigh", "1024", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunHigh, 512, 2048, qtrue);
-
 	r_shadowMapSizeSunMedium = ri.Cvar_Get("r_shadowMapSizeSunMedium", "1024", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunMedium, 512, 2048, qtrue);
-
 	r_shadowMapSizeSunLow = ri.Cvar_Get("r_shadowMapSizeSunLow", "1024", CVAR_ARCHIVE|CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunLow, 512, 2048, qtrue);
-
 	sunShadowMapResolutions[0] = r_shadowMapSizeSunUltra->integer;
 	sunShadowMapResolutions[1] = r_shadowMapSizeSunVeryHigh->integer;
 	sunShadowMapResolutions[2] = r_shadowMapSizeSunHigh->integer;
 	sunShadowMapResolutions[3] = r_shadowMapSizeSunMedium->integer;
 	sunShadowMapResolutions[4] = r_shadowMapSizeSunLow->integer;
-
 	r_shadowOffsetFactor = ri.Cvar_Get("r_shadowOffsetFactor", "0", CVAR_CHEAT);
 	r_shadowOffsetUnits = ri.Cvar_Get("r_shadowOffsetUnits", "0", CVAR_CHEAT);
 	r_shadowLodBias = ri.Cvar_Get("r_shadowLodBias", "0", CVAR_CHEAT);
@@ -1499,13 +1489,10 @@ void R_Register(void) {
 	r_cullShadowPyramidTriangles = ri.Cvar_Get("r_cullShadowPyramidTriangles", "1", CVAR_CHEAT);
 	r_noShadowFrustums = ri.Cvar_Get("r_noShadowFrustums", "0", CVAR_CHEAT);
 	r_noLightFrustums = ri.Cvar_Get("r_noLightFrustums", "0", CVAR_CHEAT);
-
-	r_maxPolys = ri.Cvar_Get("r_maxpolys", "10000", 0);	// 600 in vanilla Q3A
+	r_maxPolys = ri.Cvar_Get("r_maxpolys", "10000", 0); // 600 in vanilla Q3A
 	AssertCvarRange(r_maxPolys, 600, 30000, qtrue);
-
-	r_maxPolyVerts = ri.Cvar_Get("r_maxpolyverts", "100000", 0);	// 3000 in vanilla Q3A
+	r_maxPolyVerts = ri.Cvar_Get("r_maxpolyverts", "100000", 0); // 3000 in vanilla Q3A
 	AssertCvarRange(r_maxPolyVerts, 3000, 200000, qtrue);
-
 	r_showTris = ri.Cvar_Get("r_showTris", "0", CVAR_CHEAT);
 	r_showSky = ri.Cvar_Get("r_showSky", "0", CVAR_CHEAT);
 	r_showShadowVolumes = ri.Cvar_Get("r_showShadowVolumes", "0", CVAR_CHEAT);
@@ -1662,11 +1649,11 @@ void R_Init(void) {
 		sd.SampleDesc.Quality = 0;
 		sd.Windowed = TRUE;
 #if 1
-		// Look for 'NVIDIA PerfHUD' adapter
-		// If it is present, override default settings
+		// look for 'NVIDIA PerfHUD' adapter
+		// if it is present, override default settings
 		IDXGIFactory * pDXGIFactory;
 		hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void **)&pDXGIFactory);
-		// Search for a PerfHUD adapter.
+		// search for a PerfHUD adapter.
 		UINT nAdapter = 0;
 		IDXGIAdapter * adapter = NULL;
 		IDXGIAdapter * selectedAdapter = NULL;
@@ -1681,7 +1668,7 @@ void R_Init(void) {
 				if (SUCCEEDED(adapter->GetDesc(&adaptDesc))) {
 					const bool isPerfHUD = wcscmp(adaptDesc.Description, L"NVIDIA PerfHUD") == 0;
 
-					// Select the first adapter in normal circumstances or the PerfHUD one if it exists.
+					// select the first adapter in normal circumstances or the PerfHUD one if it exists.
 					if (nAdapter == 0 || isPerfHUD) {
 						selectedAdapter = adapter;
 					}
@@ -1712,8 +1699,10 @@ void R_Init(void) {
 			for (i = 0; i < numDriverTypes; i++) {
 				dx.driverType = driverTypes[i];
 				hr = D3D10CreateDeviceAndSwapChain(NULL, dx.driverType, NULL, createDeviceFlags, D3D10_SDK_VERSION, &sd, &dx.swapChain, &dx.d3dDevice);
-				if (SUCCEEDED(hr))
+
+				if (SUCCEEDED(hr)) {
 					break;
+				}
 			}
 
 			if (FAILED(hr)) {
@@ -1747,7 +1736,7 @@ void R_Init(void) {
 		vp.TopLeftY = 0;
 		dx.d3dDevice->RSSetViewports(1, &vp);
 #if 0
-		 // create the effect
+		// create the effect
 		DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 #if defined (DEBUG) || defined (_DEBUG)
 		// Set the D3D10_SHADER_DEBUG flag to embed debug information in the shaders.
@@ -1816,7 +1805,7 @@ void R_Init(void) {
 		// set primitive topology
 		dx.d3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 #endif
-		ri.Printf(PRINT_ALL, "---------------------------- -------\n");
+		ri.Printf(PRINT_ALL, "-----------------------------------\n");
 	}
 	// init command buffers and SMP
 	R_InitCommandBuffers();
@@ -1939,7 +1928,7 @@ void RE_Shutdown(qboolean destroyWindow) {
 	// Tr3B: this should be always executed if we want to avoid some GLSL problems with SMP
 	// Update: Having the JVM running with all its threads can cause problems with an old OpenGL context.
 	// Maybe an OpenGL driver problem. It is safer to destroy the context in that case or you will get really weird crashes when rendering stuff.
-#if !defined (SMP) // && !defined (USE_JAVA)
+#if !defined (SMP)
 	if (destroyWindow)
 #endif
 	{

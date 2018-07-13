@@ -43,16 +43,16 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menubitmap_s    no;
-	menubitmap_s    yes;
+	menubitmap_s no;
+	menubitmap_s yes;
 
-	//int             slashX;
-	const char     *question;
+	//int slashX;
+	const char *question;
 	void            (*draw) (void);
 	void            (*action) (qboolean result);
 
-	int             style;
-	const char    **lines;
+	int style;
+	const char **lines;
 } confirmMenu_t;
 
 
@@ -129,7 +129,7 @@ MessaheMenu_Draw
 */
 static void MessageMenu_Draw(void)
 {
-	int             i, y;
+	int i, y;
 
 //  UI_DrawNamedPic(142, 118, 359, 256, ART_CONFIRM_FRAME);
 
@@ -193,8 +193,8 @@ void UI_ConfirmMenu_Style(const char *question, int style, void (*draw) (void), 
 {
 	uiClientState_t cstate;
 
-//  int             n1, n2, n3;
-//  int             l1, l2, l3;
+//  int n1, n2, n3;
+//  int l1, l2, l3;
 
 	// zero set all our globals
 	memset(&s_confirm, 0, sizeof(s_confirm));
@@ -314,7 +314,7 @@ hacked over from Confirm stuff
 void UI_Message(const char **lines)
 {
 	uiClientState_t cstate;
-	int             n1, l1;
+	int n1, l1;
 
 	// zero set all our globals
 	memset(&s_confirm, 0, sizeof(s_confirm));

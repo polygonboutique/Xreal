@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -31,13 +31,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 int nonansicast = 0;
 
-// *INDENT-OFF*
-vec3_t vec3_origin = { 0, 0, 0 };
-vec3_t axisDefault[3] = {{ 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }};
+vec3_t vec3_origin = {0, 0, 0};
+vec3_t axisDefault[3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
 matrix_t matrixIdentity = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-
-quat_t quatIdentity = { 0, 0, 0, 1 };
+quat_t quatIdentity = {0, 0, 0, 1};
 
 vec4_t colorBlack = {0, 0, 0, 1};
 vec4_t colorRed = {1, 0, 0, 1};
@@ -63,89 +61,169 @@ const vec4_t g_color_table[8] = {
 };
 
 vec3_t bytedirs[NUMVERTEXNORMALS] = {
-	{ - 0.525731f, 0.000000f, 0.850651f}, { - 0.442863f, 0.238856f, 0.864188f},
-	{ - 0.295242f, 0.000000f, 0.955423f}, { - 0.309017f, 0.500000f, 0.809017f},
-	{ - 0.162460f, 0.262866f, 0.951056f}, {0.000000f, 0.000000f, 1.000000f},
-	{0.000000f, 0.850651f, 0.525731f}, { - 0.147621f, 0.716567f, 0.681718f},
-	{0.147621f, 0.716567f, 0.681718f}, {0.000000f, 0.525731f, 0.850651f},
-	{0.309017f, 0.500000f, 0.809017f}, {0.525731f, 0.000000f, 0.850651f},
-	{0.295242f, 0.000000f, 0.955423f}, {0.442863f, 0.238856f, 0.864188f},
-	{0.162460f, 0.262866f, 0.951056f}, { - 0.681718f, 0.147621f, 0.716567f},
-	{ - 0.809017f, 0.309017f, 0.500000f},{ - 0.587785f, 0.425325f, 0.688191f},
-	{ - 0.850651f, 0.525731f, 0.000000f},{ - 0.864188f, 0.442863f, 0.238856f},
-	{ - 0.716567f, 0.681718f, 0.147621f},{ - 0.688191f, 0.587785f, 0.425325f},
-	{ - 0.500000f, 0.809017f, 0.309017f}, { - 0.238856f, 0.864188f, 0.442863f},
-	{ - 0.425325f, 0.688191f, 0.587785f}, { - 0.716567f, 0.681718f, - 0.147621f},
-	{ - 0.500000f, 0.809017f, - 0.309017f}, { - 0.525731f, 0.850651f, 0.000000f},
-	{0.000000f, 0.850651f, - 0.525731f}, { - 0.238856f, 0.864188f, - 0.442863f},
-	{0.000000f, 0.955423f, - 0.295242f}, { - 0.262866f, 0.951056f, - 0.162460f},
-	{0.000000f, 1.000000f, 0.000000f}, {0.000000f, 0.955423f, 0.295242f},
-	{ - 0.262866f, 0.951056f, 0.162460f}, {0.238856f, 0.864188f, 0.442863f},
-	{0.262866f, 0.951056f, 0.162460f}, {0.500000f, 0.809017f, 0.309017f},
-	{0.238856f, 0.864188f, - 0.442863f},{0.262866f, 0.951056f, - 0.162460f},
-	{0.500000f, 0.809017f, - 0.309017f},{0.850651f, 0.525731f, 0.000000f},
-	{0.716567f, 0.681718f, 0.147621f}, {0.716567f, 0.681718f, - 0.147621f},
-	{0.525731f, 0.850651f, 0.000000f}, {0.425325f, 0.688191f, 0.587785f},
-	{0.864188f, 0.442863f, 0.238856f}, {0.688191f, 0.587785f, 0.425325f},
-	{0.809017f, 0.309017f, 0.500000f}, {0.681718f, 0.147621f, 0.716567f},
-	{0.587785f, 0.425325f, 0.688191f}, {0.955423f, 0.295242f, 0.000000f},
-	{1.000000f, 0.000000f, 0.000000f}, {0.951056f, 0.162460f, 0.262866f},
-	{0.850651f, - 0.525731f, 0.000000f},{0.955423f, - 0.295242f, 0.000000f},
-	{0.864188f, - 0.442863f, 0.238856f}, {0.951056f, - 0.162460f, 0.262866f},
-	{0.809017f, - 0.309017f, 0.500000f}, {0.681718f, - 0.147621f, 0.716567f},
-	{0.850651f, 0.000000f, 0.525731f}, {0.864188f, 0.442863f, - 0.238856f},
-	{0.809017f, 0.309017f, - 0.500000f}, {0.951056f, 0.162460f, - 0.262866f},
-	{0.525731f, 0.000000f, - 0.850651f}, {0.681718f, 0.147621f, - 0.716567f},
-	{0.681718f, - 0.147621f, - 0.716567f},{0.850651f, 0.000000f, - 0.525731f},
-	{0.809017f, - 0.309017f, - 0.500000f}, {0.864188f, - 0.442863f, - 0.238856f},
-	{0.951056f, - 0.162460f, - 0.262866f}, {0.147621f, 0.716567f, - 0.681718f},
-	{0.309017f, 0.500000f, - 0.809017f}, {0.425325f, 0.688191f, - 0.587785f},
-	{0.442863f, 0.238856f, - 0.864188f}, {0.587785f, 0.425325f, - 0.688191f},
-	{0.688191f, 0.587785f, - 0.425325f}, { - 0.147621f, 0.716567f, - 0.681718f},
-	{ - 0.309017f, 0.500000f, - 0.809017f}, {0.000000f, 0.525731f, - 0.850651f},
-	{ - 0.525731f, 0.000000f, - 0.850651f}, { - 0.442863f, 0.238856f, - 0.864188f},
-	{ - 0.295242f, 0.000000f, - 0.955423f}, { - 0.162460f, 0.262866f, - 0.951056f},
-	{0.000000f, 0.000000f, - 1.000000f}, {0.295242f, 0.000000f, - 0.955423f},
-	{0.162460f, 0.262866f, - 0.951056f}, { - 0.442863f, - 0.238856f, - 0.864188f},
-	{ - 0.309017f, - 0.500000f, - 0.809017f}, { - 0.162460f, - 0.262866f, - 0.951056f},
-	{0.000000f, - 0.850651f, - 0.525731f}, { - 0.147621f, - 0.716567f, - 0.681718f},
-	{0.147621f, - 0.716567f, - 0.681718f}, {0.000000f, - 0.525731f, - 0.850651f},
-	{0.309017f, - 0.500000f, - 0.809017f}, {0.442863f, - 0.238856f, - 0.864188f},
-	{0.162460f, - 0.262866f, - 0.951056f}, {0.238856f, - 0.864188f, - 0.442863f},
-	{0.500000f, - 0.809017f, - 0.309017f}, {0.425325f, - 0.688191f, - 0.587785f},
-	{0.716567f, - 0.681718f, - 0.147621f}, {0.688191f, - 0.587785f, - 0.425325f},
-	{0.587785f, - 0.425325f, - 0.688191f}, {0.000000f, - 0.955423f, - 0.295242f},
-	{0.000000f, - 1.000000f, 0.000000f}, {0.262866f, - 0.951056f, - 0.162460f},
-	{0.000000f, - 0.850651f, 0.525731f}, {0.000000f, - 0.955423f, 0.295242f},
-	{0.238856f, - 0.864188f, 0.442863f}, {0.262866f, - 0.951056f, 0.162460f},
-	{0.500000f, - 0.809017f, 0.309017f}, {0.716567f, - 0.681718f, 0.147621f},
-	{0.525731f, - 0.850651f, 0.000000f}, { - 0.238856f, - 0.864188f, - 0.442863f},
-	{ - 0.500000f, - 0.809017f, - 0.309017f}, { - 0.262866f, - 0.951056f, - 0.162460f},
-	{ - 0.850651f, - 0.525731f, 0.000000f}, { - 0.716567f, - 0.681718f, - 0.147621f},
-	{ - 0.716567f, - 0.681718f, 0.147621f}, { - 0.525731f, - 0.850651f, 0.000000f},
-	{ - 0.500000f, - 0.809017f, 0.309017f}, { - 0.238856f, - 0.864188f, 0.442863f},
-	{ - 0.262866f, - 0.951056f, 0.162460f}, { - 0.864188f, - 0.442863f, 0.238856f},
-	{ - 0.809017f, - 0.309017f, 0.500000f}, { - 0.688191f, - 0.587785f, 0.425325f},
-	{ - 0.681718f, - 0.147621f, 0.716567f}, { - 0.442863f, - 0.238856f, 0.864188f},
-	{ - 0.587785f, - 0.425325f, 0.688191f}, { - 0.309017f, - 0.500000f, 0.809017f},
-	{ - 0.147621f, - 0.716567f, 0.681718f}, { - 0.425325f, - 0.688191f, 0.587785f},
-	{ - 0.162460f, - 0.262866f, 0.951056f}, {0.442863f, - 0.238856f, 0.864188f},
-	{0.162460f, - 0.262866f, 0.951056f}, {0.309017f, - 0.500000f, 0.809017f},
-	{0.147621f, - 0.716567f, 0.681718f}, {0.000000f, - 0.525731f, 0.850651f},
-	{0.425325f, - 0.688191f, 0.587785f}, {0.587785f, - 0.425325f, 0.688191f},
-	{0.688191f, - 0.587785f, 0.425325f}, { - 0.955423f, 0.295242f, 0.000000f},
-	{ - 0.951056f, 0.162460f, 0.262866f}, { - 1.000000f, 0.000000f, 0.000000f},
-	{ - 0.850651f, 0.000000f, 0.525731f}, { - 0.955423f, - 0.295242f, 0.000000f},
-	{ - 0.951056f, - 0.162460f, 0.262866f}, { - 0.864188f, 0.442863f, - 0.238856f},
-	{ - 0.951056f, 0.162460f, - 0.262866f}, { - 0.809017f, 0.309017f, - 0.500000f},
-	{ - 0.864188f, - 0.442863f, - 0.238856f}, { - 0.951056f, - 0.162460f, - 0.262866f},
-	{ - 0.809017f, - 0.309017f, - 0.500000f}, { - 0.681718f, 0.147621f, - 0.716567f},
-	{ - 0.681718f, - 0.147621f, - 0.716567f}, { - 0.850651f, 0.000000f, - 0.525731f},
-	{ - 0.688191f, 0.587785f, - 0.425325f}, { - 0.587785f, 0.425325f, - 0.688191f},
-	{ - 0.425325f, 0.688191f, - 0.587785f}, { - 0.425325f, - 0.688191f, - 0.587785f},
-	{ - 0.587785f, - 0.425325f, - 0.688191f}, { - 0.688191f, - 0.587785f, - 0.425325f}
+	{-0.525731f, 0.000000f, 0.850651f},
+	{-0.442863f, 0.238856f, 0.864188f},
+	{-0.295242f, 0.000000f, 0.955423f},
+	{-0.309017f, 0.500000f, 0.809017f},
+	{-0.162460f, 0.262866f, 0.951056f},
+	{0.000000f, 0.000000f, 1.000000f},
+	{0.000000f, 0.850651f, 0.525731f},
+	{-0.147621f, 0.716567f, 0.681718f},
+	{0.147621f, 0.716567f, 0.681718f},
+	{0.000000f, 0.525731f, 0.850651f},
+	{0.309017f, 0.500000f, 0.809017f},
+	{0.525731f, 0.000000f, 0.850651f},
+	{0.295242f, 0.000000f, 0.955423f},
+	{0.442863f, 0.238856f, 0.864188f},
+	{0.162460f, 0.262866f, 0.951056f},
+	{-0.681718f, 0.147621f, 0.716567f},
+	{-0.809017f, 0.309017f, 0.500000f},
+	{-0.587785f, 0.425325f, 0.688191f},
+	{-0.850651f, 0.525731f, 0.000000f},
+	{-0.864188f, 0.442863f, 0.238856f},
+	{-0.716567f, 0.681718f, 0.147621f},
+	{-0.688191f, 0.587785f, 0.425325f},
+	{-0.500000f, 0.809017f, 0.309017f},
+	{-0.238856f, 0.864188f, 0.442863f},
+	{-0.425325f, 0.688191f, 0.587785f},
+	{-0.716567f, 0.681718f, -0.147621f},
+	{-0.500000f, 0.809017f, -0.309017f},
+	{-0.525731f, 0.850651f, 0.000000f},
+	{0.000000f, 0.850651f, -0.525731f},
+	{-0.238856f, 0.864188f, -0.442863f},
+	{0.000000f, 0.955423f, -0.295242f},
+	{-0.262866f, 0.951056f, -0.162460f},
+	{0.000000f, 1.000000f, 0.000000f},
+	{0.000000f, 0.955423f, 0.295242f},
+	{-0.262866f, 0.951056f, 0.162460f},
+	{0.238856f, 0.864188f, 0.442863f},
+	{0.262866f, 0.951056f, 0.162460f},
+	{0.500000f, 0.809017f, 0.309017f},
+	{0.238856f, 0.864188f, -0.442863f},
+	{0.262866f, 0.951056f, -0.162460f},
+	{0.500000f, 0.809017f, -0.309017f},
+	{0.850651f, 0.525731f, 0.000000f},
+	{0.716567f, 0.681718f, 0.147621f},
+	{0.716567f, 0.681718f, -0.147621f},
+	{0.525731f, 0.850651f, 0.000000f},
+	{0.425325f, 0.688191f, 0.587785f},
+	{0.864188f, 0.442863f, 0.238856f},
+	{0.688191f, 0.587785f, 0.425325f},
+	{0.809017f, 0.309017f, 0.500000f},
+	{0.681718f, 0.147621f, 0.716567f},
+	{0.587785f, 0.425325f, 0.688191f},
+	{0.955423f, 0.295242f, 0.000000f},
+	{1.000000f, 0.000000f, 0.000000f},
+	{0.951056f, 0.162460f, 0.262866f},
+	{0.850651f, -0.525731f, 0.000000f},
+	{0.955423f, -0.295242f, 0.000000f},
+	{0.864188f, -0.442863f, 0.238856f},
+	{0.951056f, -0.162460f, 0.262866f},
+	{0.809017f, -0.309017f, 0.500000f},
+	{0.681718f, -0.147621f, 0.716567f},
+	{0.850651f, 0.000000f, 0.525731f},
+	{0.864188f, 0.442863f, -0.238856f},
+	{0.809017f, 0.309017f, -0.500000f},
+	{0.951056f, 0.162460f, -0.262866f},
+	{0.525731f, 0.000000f, -0.850651f},
+	{0.681718f, 0.147621f, -0.716567f},
+	{0.681718f, -0.147621f, -0.716567f},
+	{0.850651f, 0.000000f, -0.525731f},
+	{0.809017f, -0.309017f, -0.500000f},
+	{0.864188f, -0.442863f, -0.238856f},
+	{0.951056f, -0.162460f, -0.262866f},
+	{0.147621f, 0.716567f, -0.681718f},
+	{0.309017f, 0.500000f, -0.809017f},
+	{0.425325f, 0.688191f, -0.587785f},
+	{0.442863f, 0.238856f, -0.864188f},
+	{0.587785f, 0.425325f, -0.688191f},
+	{0.688191f, 0.587785f, -0.425325f},
+	{-0.147621f, 0.716567f, -0.681718f},
+	{-0.309017f, 0.500000f, -0.809017f},
+	{0.000000f, 0.525731f, -0.850651f},
+	{-0.525731f, 0.000000f, -0.850651f},
+	{-0.442863f, 0.238856f, -0.864188f},
+	{-0.295242f, 0.000000f, -0.955423f},
+	{-0.162460f, 0.262866f, -0.951056f},
+	{0.000000f, 0.000000f, -1.000000f},
+	{0.295242f, 0.000000f, -0.955423f},
+	{0.162460f, 0.262866f, -0.951056f},
+	{-0.442863f, -0.238856f, -0.864188f},
+	{-0.309017f, -0.500000f, -0.809017f},
+	{-0.162460f, -0.262866f, -0.951056f},
+	{0.000000f, -0.850651f, -0.525731f},
+	{-0.147621f, -0.716567f, -0.681718f},
+	{0.147621f, -0.716567f, -0.681718f},
+	{0.000000f, -0.525731f, -0.850651f},
+	{0.309017f, -0.500000f, -0.809017f},
+	{0.442863f, -0.238856f, -0.864188f},
+	{0.162460f, -0.262866f, -0.951056f},
+	{0.238856f, -0.864188f, -0.442863f},
+	{0.500000f, -0.809017f, -0.309017f},
+	{0.425325f, -0.688191f, -0.587785f},
+	{0.716567f, -0.681718f, -0.147621f},
+	{0.688191f, -0.587785f, -0.425325f},
+	{0.587785f, -0.425325f, -0.688191f},
+	{0.000000f, -0.955423f, -0.295242f},
+	{0.000000f, -1.000000f, 0.000000f},
+	{0.262866f, -0.951056f, -0.162460f},
+	{0.000000f, -0.850651f, 0.525731f},
+	{0.000000f, -0.955423f, 0.295242f},
+	{0.238856f, -0.864188f, 0.442863f},
+	{0.262866f, -0.951056f, 0.162460f},
+	{0.500000f, -0.809017f, 0.309017f},
+	{0.716567f, -0.681718f, 0.147621f},
+	{0.525731f, -0.850651f, 0.000000f},
+	{-0.238856f, -0.864188f, -0.442863f},
+	{-0.500000f, -0.809017f, -0.309017f},
+	{-0.262866f, -0.951056f, -0.162460f},
+	{-0.850651f, -0.525731f, 0.000000f},
+	{-0.716567f, -0.681718f, -0.147621f},
+	{-0.716567f, -0.681718f, 0.147621f},
+	{-0.525731f, -0.850651f, 0.000000f},
+	{-0.500000f, -0.809017f, 0.309017f},
+	{-0.238856f, -0.864188f, 0.442863f},
+	{-0.262866f, -0.951056f, 0.162460f},
+	{-0.864188f, -0.442863f, 0.238856f},
+	{-0.809017f, -0.309017f, 0.500000f},
+	{-0.688191f, -0.587785f, 0.425325f},
+	{-0.681718f, -0.147621f, 0.716567f},
+	{-0.442863f, -0.238856f, 0.864188f},
+	{-0.587785f, -0.425325f, 0.688191f},
+	{-0.309017f, -0.500000f, 0.809017f},
+	{-0.147621f, -0.716567f, 0.681718f},
+	{-0.425325f, -0.688191f, 0.587785f},
+	{-0.162460f, -0.262866f, 0.951056f},
+	{0.442863f, -0.238856f, 0.864188f},
+	{0.162460f, -0.262866f, 0.951056f},
+	{0.309017f, -0.500000f, 0.809017f},
+	{0.147621f, -0.716567f, 0.681718f},
+	{0.000000f, -0.525731f, 0.850651f},
+	{0.425325f, -0.688191f, 0.587785f},
+	{0.587785f, -0.425325f, 0.688191f},
+	{0.688191f, -0.587785f, 0.425325f},
+	{-0.955423f, 0.295242f, 0.000000f},
+	{-0.951056f, 0.162460f, 0.262866f},
+	{-1.000000f, 0.000000f, 0.000000f},
+	{-0.850651f, 0.000000f, 0.525731f},
+	{-0.955423f, -0.295242f, 0.000000f},
+	{-0.951056f, -0.162460f, 0.262866f},
+	{-0.864188f, 0.442863f, -0.238856f},
+	{-0.951056f, 0.162460f, -0.262866f},
+	{-0.809017f, 0.309017f, -0.500000f},
+	{-0.864188f, -0.442863f, -0.238856f},
+	{-0.951056f, -0.162460f, -0.262866f},
+	{-0.809017f, -0.309017f, -0.500000f},
+	{-0.681718f, 0.147621f, -0.716567f},
+	{-0.681718f, -0.147621f, -0.716567f},
+	{-0.850651f, 0.000000f, -0.525731f},
+	{-0.688191f, 0.587785f, -0.425325f},
+	{-0.587785f, 0.425325f, -0.688191f},
+	{-0.425325f, 0.688191f, -0.587785f},
+	{-0.425325f, -0.688191f, -0.587785f},
+	{-0.587785f, -0.425325f, -0.688191f},
+	{-0.688191f, -0.587785f, -0.425325f}
 };
-// *INDENT-ON*
 
 /*
 =======================================================================================================================================
@@ -163,7 +241,7 @@ Q_random
 =======================================================================================================================================
 */
 float Q_random(int *seed) {
-	return (Q_rand(seed)& 0xffff) / (float)0x10000;
+	return (Q_rand(seed) & 0xffff) / (float)0x10000;
 }
 
 /*
@@ -229,8 +307,13 @@ signed short ClampShort(int i) {
 	return i;
 }
 
+/*
+=======================================================================================================================================
+DirToByte
 
- // this isn't a real cheap function to call!
+This isn't a real cheap function to call!
+=======================================================================================================================================
+*/
 int DirToByte(vec3_t dir) {
 	int i, best;
 	float d, bestd;
@@ -261,7 +344,7 @@ ByteToDir
 */
 void ByteToDir(int b, vec3_t dir) {
 
-	if (b < 0 || b>= NUMVERTEXNORMALS) {
+	if (b < 0 || b >= NUMVERTEXNORMALS) {
 		VectorCopy(vec3_origin, dir);
 		return;
 	}
@@ -271,16 +354,15 @@ void ByteToDir(int b, vec3_t dir) {
 
 /*
 =======================================================================================================================================
-olorBytes3
+ColorBytes3
 =======================================================================================================================================
 */
 unsigned ColorBytes3(float r, float g, float b) {
 	unsigned i;
 
-	((byte *)& i)[0] = r * 255;
-	((byte *)& i)[1] = g * 255;
-	((byte *)& i)[2] = b * 255;
-
+	((byte *)&i)[0] = r * 255;
+	((byte *)&i)[1] = g * 255;
+	((byte *)&i)[2] = b * 255;
 	return i;
 }
 
@@ -292,11 +374,10 @@ ColorBytes4
 unsigned ColorBytes4(float r, float g, float b, float a) {
 	unsigned i;
 
-	((byte *)& i)[0] = r * 255;
-	((byte *)& i)[1] = g * 255;
-	((byte *)& i)[2] = b * 255;
-	((byte *)& i)[3] = a * 255;
-
+	((byte *)&i)[0] = r * 255;
+	((byte *)&i)[1] = g * 255;
+	((byte *)&i)[2] = b * 255;
+	((byte *)&i)[3] = a * 255;
 	return i;
 }
 
@@ -338,46 +419,61 @@ void ClampColor(vec4_t color) {
 	int i;
 
 	for (i = 0; i < 4; i++) {
-		if (color[i] < 0)
+		if (color[i] < 0) {
 			color[i] = 0;
+		}
 
-		if (color[i] > 1)
+		if (color[i] > 1) {
 			color[i] = 1;
+		}
 	}
 }
 
- // Rounds the argument to the next integer. Used by SnapVector.
+/*
+=======================================================================================================================================
+init_tonextint
+
+Rounds the argument to the next integer. Used by SnapVector.
+=======================================================================================================================================
+*/
 /*
 void init_tonextint() {
 	float decimal = 0.9f;
 
 	nonansicast = (int)decimal;
 }
-
+*/
 /*
 =======================================================================================================================================
 tonextint
 =======================================================================================================================================
 */
+/*
 float tonextint(float x) {
 	int casted;
 	float rest;
 
-	if (nonansicast)
+	if (nonansicast) {
 		return (int)x;
+	}
 
 	casted = (int)x;
 	rest = x - (float)casted;
 
-	if (rest>= 0.5f)
+	if (rest>= 0.5f) {
 		return casted + 1;
-	else if (rest<= -0.5f)
+	} else if (rest<= -0.5f) {
 		return casted - 1;
-	else
+	} else {
 		return casted;
+	}
 }
 */
-
+/*
+=======================================================================================================================================
+PlaneNormalize
+=======================================================================================================================================
+*/
 vec_t PlaneNormalize(vec4_t plane) {
 	vec_t length, ilength;
 
@@ -401,7 +497,7 @@ vec_t PlaneNormalize(vec4_t plane) {
 =======================================================================================================================================
 PlaneFromPoints
 
-Returns false if the triangle is degenrate.
+Returns false if the triangle is degenrated.
 =======================================================================================================================================
 */
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c, qboolean cw) {
@@ -427,11 +523,11 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 /*
 =======================================================================================================================================
 PlanesGetIntersectionPoint
+
+//http://www.cgafaq.info/wiki/Intersection_of_three_planes
 =======================================================================================================================================
 */
 qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t out) {
-	//http://www.cgafaq.info/wiki/Intersection_of_three_planes
-
 	vec3_t n1, n2, n3;
 	vec3_t n1n2, n2n3, n3n1;
 	vec_t denom;
@@ -445,10 +541,9 @@ qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, co
 	CrossProduct(n3, n1, n3n1);
 
 	denom = DotProduct(n1, n2n3);
-
 	// check if the denominator is zero(which would mean that no intersection is to be found
 	if (denom == 0) {
-		// no intersection could be found, return < 0,0,0 > 
+		// no intersection could be found, return <0, 0, 0>
 		VectorClear(out);
 		return qfalse;
 	}
@@ -566,7 +661,7 @@ the msvc acos doesn't always return a value between - PI and PI:
 
 int i;
 i = 1065353246;
-acos(*(float *)&i) == - 1.#IND0
+acos(*(float *)&i) == -1.#IND0
 =======================================================================================================================================
 */
 float Q_acos(float c) {
@@ -614,6 +709,7 @@ void VectorToAngles(const vec3_t value1, vec3_t angles) {
 
 	if (value1[1] == 0 && value1[0] == 0) {
 		yaw = 0;
+
 		if (value1[2] > 0) {
 			pitch = 90;
 		} else {
@@ -627,6 +723,7 @@ void VectorToAngles(const vec3_t value1, vec3_t angles) {
 		} else {
 			yaw = 270;
 		}
+
 		if (yaw < 0) {
 			yaw += 360;
 		}
@@ -648,7 +745,7 @@ void VectorToAngles(const vec3_t value1, vec3_t angles) {
 =======================================================================================================================================
 AxisToAngles
 
-Takes an axis(forward + right + up) and returns angles--including a roll.
+Takes an axis (forward + right + up) and returns angles--including a roll.
 =======================================================================================================================================
 */
 void AxisToAngles(vec3_t axis[3], vec3_t angles) {
@@ -671,6 +768,7 @@ void AxisToAngles(vec3_t axis[3], vec3_t angles) {
 		} else {
 			yaw = 270;
 		}
+
 		if (yaw < 0) {
 			yaw += 360;
 		}
@@ -712,6 +810,7 @@ AxisClear
 =======================================================================================================================================
 */
 void AxisClear(vec3_t axis[3]) {
+
 	axis[0][0] = 1;
 	axis[0][1] = 0;
 	axis[0][2] = 0;
@@ -729,6 +828,7 @@ AxisCopy
 =======================================================================================================================================
 */
 void AxisCopy(vec3_t in[3], vec3_t out[3]) {
+
 	VectorCopy(in[0], out[0]);
 	VectorCopy(in[1], out[1]);
 	VectorCopy(in[2], out[2]);
@@ -766,15 +866,14 @@ Given a normalized forward vector, create two other perpendicular vectors.
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up) {
 	float d;
 
-	// this rotate and negate guarantees a vector
-	// not colinear with the original
+	// this rotate and negate guarantees a vector not colinear with the original
 	right[1] = -forward[0];
 	right[2] = forward[1];
 	right[0] = forward[2];
 
 	d = DotProduct(right, forward);
 
-	VectorMA(right, - d, forward, right);
+	VectorMA(right, -d, forward, right);
 	VectorNormalize(right);
 	CrossProduct(right, forward, up);
 }
@@ -784,7 +883,7 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up) {
 VectorRotate
 =======================================================================================================================================
 */
-void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out) 
+void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out) {
 
 	out[0] = DotProduct(in, matrix[0]);
 	out[1] = DotProduct(in, matrix[1]);
@@ -812,12 +911,11 @@ float LerpAngle(float from, float to, float frac) {
 	return a;
 }
 
-
 /*
 =======================================================================================================================================
 AngleSubtract
 
-Always returns a value from - 180 to 180´.
+Always returns a value from -180 to 180.
 =======================================================================================================================================
 */
 float AngleSubtract(float a1, float a2) {
@@ -856,15 +954,14 @@ Returns angle normalized to the range [0 <= angle < 360].
 =======================================================================================================================================
 */
 float AngleNormalize360(float angle) {
-	return (360.0 / 65536) * ((int)(angle * (65536 / 360.0))& 65535);
+	return (360.0 / 65536) * ((int)(angle * (65536 / 360.0)) & 65535);
 }
-
 
 /*
 =======================================================================================================================================
 AngleNormalize180
 
-Returns angle normalized to the range [- 180 < angle <= 180].
+Returns angle normalized to the range [-180 < angle <= 180].
 =======================================================================================================================================
 */
 float AngleNormalize180(float angle) {
@@ -891,7 +988,6 @@ float AngleNormalize180(float angle) {
 	return angle;
 }
 
-
 /*
 =======================================================================================================================================
 AngleDelta
@@ -908,7 +1004,7 @@ float AngleDelta(float angle1, float angle2) {
 =======================================================================================================================================
 AngleBetweenVectors
 
-Returns the angle between two vectors normalized to the range [0<= angle<= 180].
+Returns the angle between two vectors normalized to the range [0 <= angle <= 180].
 =======================================================================================================================================
 */
 float AngleBetweenVectors(const vec3_t a, const vec3_t b) {
@@ -917,17 +1013,13 @@ float AngleBetweenVectors(const vec3_t a, const vec3_t b) {
 	alen = VectorLength(a);
 	blen = VectorLength(b);
 
-	if (!alen || !blen)
+	if (!alen || !blen) {
 		return 0;
-
+	}
 	// complete dot product of two vectors a, b is |a| * |b| * cos(angle)
-	// this results in:
-	// angle = acos((a * b) / (|a| * |b|))
+	// this results in: angle = acos((a * b) / (|a| * |b|))
 	return RAD2DEG(Q_acos(DotProduct(a, b) / (alen * blen)));
 }
-
-
- //============================================================
 
 /*
 =======================================================================================================================================
@@ -949,14 +1041,15 @@ void SetPlaneSignbits(cplane_t *out) {
 	out->signbits = bits;
 }
 
-
 /*
 =======================================================================================================================================
 BoxOnPlaneSide
 
-Returns 1, 2, or 1 + 2
-
- // this is the slow, general version
+Returns 1, 2, or 1 + 2.
+This is the slow, general version.
+=======================================================================================================================================
+*/
+/*
 int BoxOnPlaneSide2(vec3_t mins, vec3_t maxs, vec4_t plane) {
 	int i;
 	float dist1, dist2;
@@ -977,38 +1070,42 @@ int BoxOnPlaneSide2(vec3_t mins, vec3_t maxs, vec4_t plane) {
 	dist2 = DotProduct(plane, corners[1]) - plane[3];
 
 	sides = 0;
-	if (dist1>= 0)
+
+	if (dist1 >= 0) {
 		sides = 1;
-	if (dist2 < 0)
+	}
+
+	if (dist2 < 0) {
 		sides |= 2;
+	}
 
 	return sides;
 }
-
-=======================================================================================================================================
 */
-
 #if !(defined(_MSC_VER) && id386) || defined(SSEVEC3_T)
-
 /*
 =======================================================================================================================================
 BoxOnPlaneSide
 =======================================================================================================================================
 */
-int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s * p) {
+int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p) {
 	float dist1, dist2;
 	int sides;
 
 	// fast axial cases
 	if (p->type < 3) {
-		if (p->dist<= emins[p->type])
+		if (p->dist <= emins[p->type]) {
 			return 1;
-		if (p->dist>= emaxs[p->type])
+		}
+
+		if (p->dist >= emaxs[p->type]) {
 			return 2;
+		}
+
 		return 3;
 	}
 	// general case
-	switch(p->signbits) {
+	switch (p->signbits) {
 		case 0:
 			dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
 			dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
@@ -1042,30 +1139,31 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s * p) {
 			dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
 			break;
 		default:
-			dist1 = dist2 = 0;	// shut up compiler
+			dist1 = dist2 = 0; // shut up compiler
 			break;
 	}
 
 	sides = 0;
 
-	if (dist1>= p->dist)
+	if (dist1 >= p->dist) {
 		sides = 1;
-	if (dist2 < p->dist)
+	}
+
+	if (dist2 < p->dist) {
 		sides |= 2;
+	}
 
 	return sides;
 }
 #else
 #pragma warning(disable: 4035)
 
- // *INDENT - OFF *
-
 /*
 =======================================================================================================================================
 BoxOnPlaneSide
 =======================================================================================================================================
 */
-__declspec(naked)int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s * p) {
+__declspec(naked)int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p) {
 	static int bops_initialized;
 	static int Ljmptab[8];
 
@@ -1293,9 +1391,8 @@ Lerror:
 		int 3
 	}
 }
- // *INDENT - ON * 
-#pragma warning(default: 4035)
 
+#pragma warning(default: 4035)
 #endif
 
 /*
@@ -1323,6 +1420,7 @@ ZeroBounds
 =======================================================================================================================================
 */
 void ZeroBounds(vec3_t mins, vec3_t maxs) {
+
 	mins[0] = mins[1] = mins[2] = 0;
 	maxs[0] = maxs[1] = maxs[2] = 0;
 }
@@ -1333,6 +1431,7 @@ ClearBounds
 =======================================================================================================================================
 */
 void ClearBounds(vec3_t mins, vec3_t maxs) {
+
 	mins[0] = mins[1] = mins[2] = 99999;
 	maxs[0] = maxs[1] = maxs[2] = -99999;
 }
@@ -1455,14 +1554,19 @@ void SnapVectorTowards(vec3_t v, vec3_t to) {
 	int i;
 
 	for (i = 0; i < 3; i++) {
-		if (to[i] <= v[i])
+		if (to[i] <= v[i]) {
 			v[i] = (int)v[i];
-		else
+		} else {
 			v[i] = (int)v[i] + 1;
+		}
 	}
 }
 
- // *INDENT - OFF * 
+/*
+=======================================================================================================================================
+VectorNormalize
+=======================================================================================================================================
+*/
 vec_t VectorNormalize(vec3_t v) {
 #if id386_3dnow && defined __GNUC__ && 0
  // #error VectorNormalize
@@ -1471,7 +1575,7 @@ vec_t VectorNormalize(vec3_t v) {
 	femms();
 	asm volatile
 	(
-													// lo 		| hi
+	// lo 		| hi
 	"movq(%%eax), %%mm0\n"	// v[0] | v[1]
 	"movd 8(%%eax), %%mm1\n"	// v[2] | - 
 	// mm0[lo] = dot product(this)
@@ -1488,7 +1592,7 @@ vec_t VectorNormalize(vec3_t v) {
 	"pfrcpit2 %%mm2, %%mm1\n"	// 1 / sqrt(dot)(full 24 - bit precision)| 1 / sqrt(dot)step 3
 	"pfmul %%mm1, %%mm0\n"	// sqrt(dot)| sqrt(dot)
 	// len = mm0[lo]
-	"movd %%mm0,(%%edx)\n"
+	"movd %%mm0, (%%edx)\n"
 	// load this into registers
 	"movq(%%eax), %%mm2\n"	// v[0] | v[1]
 	"movd 8(%%eax), %%mm3\n"	// v[2] | - 
@@ -1496,7 +1600,7 @@ vec_t VectorNormalize(vec3_t v) {
 	"pfmul %%mm1, %%mm2\n"	// v[0] * 1 / sqrt(dot)| v[1] * 1 / sqrt(dot)
 	"pfmul %%mm1, %%mm3\n"	// v[2] * 1 / sqrt(dot)| - 
 	// store scaled vector
-	"movq %%mm2,(%%eax)\n"
+	"movq %%mm2, (%%eax)\n"
 	"movd %%mm3, 8(%%eax)\n"
 	:
 	:"a"(v), "d"(&length)
@@ -1521,7 +1625,6 @@ vec_t VectorNormalize(vec3_t v) {
 	return length;
 #endif
 }
- // *INDENT - ON * 
 
 /*
 =======================================================================================================================================
@@ -1569,15 +1672,12 @@ int Q_log2(int val) {
 
 	answer = 0;
 
-	while ((val >>= 1)!= 0) {
+	while ((val >>= 1) != 0) {
 		answer++;
 	}
 
 	return answer;
 }
-
-
-
 
 /*
 =======================================================================================================================================
@@ -1622,11 +1722,9 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up) 
 	angle = angles[YAW] * (M_PI * 2 / 360);
 	sy = sin(angle);
 	cy = cos(angle);
-
 	angle = angles[PITCH] * (M_PI * 2 / 360);
 	sp = sin(angle);
 	cp = cos(angle);
-
 	angle = angles[ROLL] * (M_PI * 2 / 360);
 	sr = sin(angle);
 	cr = cos(angle);
@@ -1652,9 +1750,33 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up) 
 
 /*
 =======================================================================================================================================
+AngleVectorsForward
+
+Optimized version of 'AngleVectors'.
+=======================================================================================================================================
+*/
+void AngleVectorsForward(const vec3_t angles, vec3_t forward) {
+	float angle;
+	static float sp, sy, cp, cy;
+
+	// static to help MS compiler fp bugs
+	angle = angles[YAW] * (M_PI * 2 / 360);
+	sy = sin(angle);
+	cy = cos(angle);
+	angle = angles[PITCH] * (M_PI * 2 / 360);
+	sp = sin(angle);
+	cp = cos(angle);
+
+	forward[0] = cp * cy;
+	forward[1] = cp * sy;
+	forward[2] = -sp;
+}
+
+/*
+=======================================================================================================================================
 PerpendicularVector
 
-assumes "src" is normalized.
+Assumes "src" is normalized.
 =======================================================================================================================================
 */
 void PerpendicularVector(vec3_t dst, const vec3_t src) {
@@ -1663,9 +1785,7 @@ void PerpendicularVector(vec3_t dst, const vec3_t src) {
 	float minelem = 1.0F;
 	vec3_t tempvec;
 
-	/*
-	** find the smallest magnitude axially aligned vector
-	*/
+	// find the smallest magnitude axially aligned vector
 	for (pos = 0, i = 0; i < 3; i++) {
 		if (fabs(src[i]) < minelem) {
 			pos = i;
@@ -1694,15 +1814,16 @@ float pointToLineDistance(const vec3_t p0, const vec3_t p1, const vec3_t p2) {
 
 	VectorSubtract(p2, p1, v);
 	VectorSubtract(p1, p0, w);
-
 	CrossProduct(w, v, y);
+
 	c1 = VectorLength(y);
 	c2 = VectorLength(v);
 
-	if (c2 == 0.0f)
+	if (c2 == 0.0f) {
 		return 0.0f;
-	else
+	} else {
 		return c1 / c2;
+	}
 }
 
 /*
@@ -1750,11 +1871,13 @@ Return the biggest component of some vector.
 float VectorMaxComponent(vec3_t v) {
 	float biggest = v[0];
 
-	if (v[1] > biggest)
+	if (v[1] > biggest) {
 		biggest = v[1];
+	}
 
-	if (v[2] > biggest)
+	if (v[2] > biggest) {
 		biggest = v[2];
+	}
 
 	return biggest;
 }
@@ -1769,18 +1892,19 @@ Return the smallest component of some vector.
 float VectorMinComponent(vec3_t v) {
 	float smallest = v[0];
 
-	if (v[1] < smallest)
+	if (v[1] < smallest) {
 		smallest = v[1];
+	}
 
-	if (v[2] < smallest)
+	if (v[2] < smallest) {
 		smallest = v[2];
+	}
 
 	return smallest;
 }
 
 
-#define LINE_DISTANCE_EPSILON 1e - 05f
-
+#define LINE_DISTANCE_EPSILON 1e-05f
 /*
 =======================================================================================================================================
 DistanceBetweenLineSegmentsSquared
@@ -1808,8 +1932,8 @@ vec_t DistanceBetweenLineSegmentsSquared(const vec3_t sP0, const vec3_t sP1, con
 
 	if (D < LINE_DISTANCE_EPSILON) {
 		// the lines are almost parallel
-		sN = 0.0;				// force using point P0 on segment S1
-		sD = 1.0;				// to prevent possible division by 0.0 later
+		sN = 0.0; // force using point P0 on segment S1
+		sD = 1.0; // to prevent possible division by 0.0 later
 		tN = e;
 		tD = c;
 	} else {
@@ -1835,11 +1959,11 @@ vec_t DistanceBetweenLineSegmentsSquared(const vec3_t sP0, const vec3_t sP1, con
 		tN = 0.0;
 
 		// recompute sN for this edge
-		if ( - d < 0.0)
+		if (-d < 0.0) {
 			sN = 0.0;
-		else if ( - d > a)
+		} else if (-d > a) {
 			sN = sD;
-		else {
+		} else {
 			sN = -d;
 			sD = a;
 		}
@@ -1848,16 +1972,16 @@ vec_t DistanceBetweenLineSegmentsSquared(const vec3_t sP0, const vec3_t sP1, con
 		tN = tD;
 
 		// recompute sN for this edge
-		if (( - d + b) < 0.0)
+		if ((-d + b) < 0.0) {
 			sN = 0;
-		else if (( - d + b) > a)
+		} else if ((-d + b) > a) {
 			sN = sD;
-		else {
+		} else {
 			sN = (-d + b);
 			sD = a;
 		}
 	}
-	// finally do the division to get * s and * t
+	// finally do the division to get *s and *t
 	*s = (fabs(sN) < LINE_DISTANCE_EPSILON ? 0.0 : sN / sD);
 	*t = (fabs(tN) < LINE_DISTANCE_EPSILON ? 0.0 : tN / tD);
 	// get the difference of the two closest points
@@ -1904,17 +2028,37 @@ vec_t VectorDistanceSquared(vec3_t v1, vec3_t v2) {
 	return VectorLengthSquared(dir);
 }
 
- // RB: XreaL matrix math functions
+/*
+=======================================================================================================================================
 
+	XreaL matrix math functions
 
+=======================================================================================================================================
+*/
 
- // *INDENT - OFF * 
+/*
+=======================================================================================================================================
+MatrixIdentity
+=======================================================================================================================================
+*/
 void MatrixIdentity(matrix_t m) {
 
-	m[0] = 1; m[4] = 0; m[8] = 0; m[12] = 0;
-	m[1] = 0; m[5] = 1; m[9] = 0; m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = 1; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = 1
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 1
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = 1
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -1924,10 +2068,22 @@ MatrixClear
 */
 void MatrixClear(matrix_t m) {
 
-	m[0] = 0; m[4] = 0; m[8] = 0; m[12] = 0;
-	m[1] = 0; m[5] = 0; m[9] = 0; m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = 0; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 0;
+	m[0] = 0
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 0
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = 0
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 0;
 }
 
 /*
@@ -1944,7 +2100,7 @@ void MatrixCopy(const matrix_t in, matrix_t out) {
 	"movups 0x20(%%edx), %%xmm2\n"
 	"movups 0x30(%%edx), %%xmm3\n"
 
-	"movups %%xmm0,(%%eax)\n"
+	"movups %%xmm0, (%%eax)\n"
 	"movups %%xmm1, 0x10(%%eax)\n"
 	"movups %%xmm2, 0x20(%%eax)\n"
 	"movups %%xmm3, 0x30(%%eax)\n"
@@ -1965,7 +2121,7 @@ void MatrixCopy(const matrix_t in, matrix_t out) {
 	"movq 48(%%edx), %%mm6\n"
 	"movq 56(%%edx), %%mm7\n"
 
-	"movq %%mm0,(%%eax)\n"
+	"movq %%mm0, (%%eax)\n"
 	"movq %%mm1, 8(%%eax)\n"
 	"movq %%mm2, 16(%%eax)\n"
 	"movq %%mm3, 24(%%eax)\n"
@@ -1979,10 +2135,22 @@ void MatrixCopy(const matrix_t in, matrix_t out) {
 	: "memory"
 	);
 #else
-	out[0] = in[0]; out[4] = in[4]; out[8] = in[8]; out[12] = in[12];
-	out[1] = in[1]; out[5] = in[5]; out[9] = in[9]; out[13] = in[13];
-	out[2] = in[2]; out[6] = in[6]; out[10] = in[10]; out[14] = in[14];
-	out[3] = in[3]; out[7] = in[7]; out[11] = in[11]; out[15] = in[15];
+	out[0] = in[0]
+	out[4] = in[4]
+	out[8] = in[8]
+	out[12] = in[12];
+	out[1] = in[1]
+	out[5] = in[5]
+	out[9] = in[9]
+	out[13] = in[13];
+	out[2] = in[2]
+	out[6] = in[6]
+	out[10] = in[10]
+	out[14] = in[14];
+	out[3] = in[3]
+	out[7] = in[7]
+	out[11] = in[11]
+	out[15] = in[15];
 #endif
 }
 
@@ -1990,7 +2158,8 @@ void MatrixCopy(const matrix_t in, matrix_t out) {
 =======================================================================================================================================
 MatrixCompare
 =======================================================================================================================================
-*/qboolean MatrixCompare(const matrix_t a, const matrix_t b) {
+*/
+qboolean MatrixCompare(const matrix_t a, const matrix_t b) {
 	return (a[0] == b[0] && a[4] == b[4] && a[8] == b[8] && a[12] == b[12] && a[1] == b[1] && a[5] == b[5] && a[9] == b[9] && a[13] == b[13] && a[2] == b[2] && a[6] == b[6] && a[10] == b[10] && a[14] == b[14] && a[3] == b[3] && a[7] == b[7] && a[11] == b[11] && a[15] == b[15]);
 }
 
@@ -2045,12 +2214,12 @@ MatrixTranspose
 */
 void MatrixTranspose(const matrix_t in, matrix_t out) {
 #if id386_sse && defined __GNUC__ && 0
- // transpose the matrix into the xmm4 - 7
+ // transpose the matrix into the xmm4-7
  MatrixTransposeIntoXMM(in);
 
  asm volatile
 				(
-				"movups %%xmm4,(%%eax)\n"
+				"movups %%xmm4, (%%eax)\n"
 				"movups %%xmm5, 0x10(%%eax)\n"
 				"movups %%xmm6, 0x20(%%eax)\n"
 				"movups %%xmm7, 0x30(%%eax)\n"
@@ -2059,127 +2228,159 @@ void MatrixTranspose(const matrix_t in, matrix_t out) {
 	: "memory"
 				);
 #else
-	out[0] = in[0]; out[1] = in[4]; out[2] = in[8]; out[3] = in[12];
-	out[4] = in[1]; out[5] = in[5]; out[6] = in[9]; out[7] = in[13];
-	out[8] = in[2]; out[9] = in[6]; out[10] = in[10]; out[11] = in[14];
-	out[12] = in[3]; out[13] = in[7]; out[14] = in[11]; out[15] = in[15];
+	out[0] = in[0]
+	out[1] = in[4]
+	out[2] = in[8]
+	out[3] = in[12];
+	out[4] = in[1]
+	out[5] = in[5]
+	out[6] = in[9]
+	out[7] = in[13];
+	out[8] = in[2]
+	out[9] = in[6]
+	out[10] = in[10]
+	out[11] = in[14];
+	out[12] = in[3]
+	out[13] = in[7]
+	out[14] = in[11]
+	out[15] = in[15];
 #endif
 }
 
+/*
+=======================================================================================================================================
 
- // helper functions for MatrixInverse from GtkRadiant C mathlib
+	Helper functions for MatrixInverse from GtkRadiant C mathlib.
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
+m3_det
+=======================================================================================================================================
+*/
 static float m3_det(matrix3x3_t mat) {
 	float det;
 
 	det = mat[0] * (mat[4] * mat[8] - mat[7] * mat[5]) - mat[1] * (mat[3] * mat[8] - mat[6] * mat[5]) + mat[2] * (mat[3] * mat[7] - mat[6] * mat[4]);
-
 	return (det);
 }
 
-/*static int m3_inverse(matrix3x3_t mr, matrix3x3_t ma) {
- float det = m3_det(ma);
+/*
+=======================================================================================================================================
+m3_inverse
+=======================================================================================================================================
+*/
+/*
+static int m3_inverse(matrix3x3_t mr, matrix3x3_t ma) {
+	float det = m3_det(ma);
 
- if(det == 0)
- {
- return 1;
- }
+	if (det == 0) {
+		return 1;
+	}
 
 
- mr[0] = ma[4] * ma[8] - ma[5] * ma[7] / det;
- mr[1] = -(ma[1] * ma[8] - ma[7] * ma[2]) / det;
- mr[2] = ma[1] * ma[5] - ma[4] * ma[2] / det;
+	mr[0] = ma[4] * ma[8] - ma[5] * ma[7] / det;
+	mr[1] = -(ma[1] * ma[8] - ma[7] * ma[2]) / det;
+	mr[2] = ma[1] * ma[5] - ma[4] * ma[2] / det;
 
- mr[3] = -(ma[3] * ma[8] - ma[5] * ma[6]) / det;
- mr[4] = ma[0] * ma[8] - ma[6] * ma[2] / det;
- mr[5] = -(ma[0] * ma[5] - ma[3] * ma[2]) / det;
+	mr[3] = -(ma[3] * ma[8] - ma[5] * ma[6]) / det;
+	mr[4] = ma[0] * ma[8] - ma[6] * ma[2] / det;
+	mr[5] = -(ma[0] * ma[5] - ma[3] * ma[2]) / det;
 
- mr[6] = ma[3] * ma[7] - ma[6] * ma[4] / det;
- mr[7] = -(ma[0] * ma[7] - ma[6] * ma[1]) / det;
- mr[8] = ma[0] * ma[4] - ma[1] * ma[3] / det;
+	mr[6] = ma[3] * ma[7] - ma[6] * ma[4] / det;
+	mr[7] = -(ma[0] * ma[7] - ma[6] * ma[1]) / det;
+	mr[8] = ma[0] * ma[4] - ma[1] * ma[3] / det;
 
- return 0;
+	return 0;
 }*/
 
 /*
 =======================================================================================================================================
 m4_submat
+
+Tobias CHECK: WARNING was ugly formatted!
 =======================================================================================================================================
 */
 static void m4_submat(matrix_t mr, matrix3x3_t mb, int i, int j) {
- int ti, tj, idst = 0, jdst = 0;
+	int ti, tj, idst = 0, jdst = 0;
 
- for(ti = 0; ti < 4; ti++)
- {
- if(ti < i)
- idst = ti;
- else
- if(ti > i)
- idst = ti - 1;
 
- for(tj = 0; tj < 4; tj++)
- {
- if(tj < j)
- jdst = tj;
- else
- if(tj > j)
- jdst = tj - 1;
+	for (ti = 0; ti < 4; ti++) {
+		if (ti < i) {
+			idst = ti;
+		} else {
+			if (ti > i) {
+				idst = ti - 1;
+			}
+		}
 
- if(ti != i && tj != j)
- mb[idst * 3 + jdst] = mr[ti * 4 + tj];
- }
- }
+		for (tj = 0; tj < 4; tj++) {
+			if (tj < j)
+				jdst = tj;
+			} else {
+				if (tj > j) {
+					jdst = tj - 1;
+				}
+			}
+
+			if (ti != i && tj != j) {
+				mb[idst * 3 + jdst] = mr[ti * 4 + tj];
+			}
+		}
+	}
 }
 
 /*
 =======================================================================================================================================
 m4_det
+
+Tobias CHECK: WARNING was ugly formatted!
 =======================================================================================================================================
 */
 static float m4_det(matrix_t mr) {
- float det, result = 0, i = 1;
- matrix3x3_t msub3;
- int n;
+	float det, result = 0, i = 1;
+	matrix3x3_t msub3;
+	int n;
 
- for(n = 0; n < 4; n++, i *= - 1)
- {
- m4_submat(mr, msub3, 0, n);
+	for (n = 0; n < 4; n++, i *= -1) {
+		m4_submat(mr, msub3, 0, n);
+		det = m3_det(msub3);
+		result += mr[n] * det * i;
+	}
 
- det = m3_det(msub3);
- result += mr[n] * det * i;
- }
-
- return result;
+	return result;
 }
 
 /*
 =======================================================================================================================================
 MatrixInverse
+
+Tobias CHECK: WARNING was ugly formatted!
 =======================================================================================================================================
-*/qboolean MatrixInverse(matrix_t matrix) {
- float mdet = m4_det(matrix);
- matrix3x3_t mtemp;
- int i, j, sign;
- matrix_t m4x4_temp;
-
+*/
+qboolean MatrixInverse(matrix_t matrix) {
+	float mdet = m4_det(matrix);
+	matrix3x3_t mtemp;
+	int i, j, sign;
+	matrix_t m4x4_temp;
 #if 0
- if(fabs(mdet) < 0.0000000001)
- return qtrue;
+	if (fabs(mdet) < 0.0000000001) {
+		return qtrue;
+	}
 #endif
+	MatrixCopy(matrix, m4x4_temp);
 
- MatrixCopy(matrix, m4x4_temp);
+	for (i = 0; i < 4; i++)
+		for(j = 0; j < 4; j++) {
+			sign = 1 - ((i + j)% 2) * 2;
+			m4_submat(m4x4_temp, mtemp, i, j);
+			// FIXME: try using * inverse det and see if speed/accuracy are good enough
+			matrix[i + j * 4] = (m3_det(mtemp) * sign) / mdet;
+		}
 
- for(i = 0; i < 4; i++)
- for(j = 0; j < 4; j++)
- {
- sign = 1 - ((i + j)% 2) * 2;
-
- m4_submat(m4x4_temp, mtemp, i, j);
-
-	// FIXME: try using * inverse det and see if speed / accuracy are good enough
- matrix[i + j * 4] = (m3_det(mtemp) * sign) / mdet;
- }
-
- return qfalse;
+		return qfalse;
 }
 
 /*
@@ -2190,10 +2391,22 @@ MatrixSetupXRotation
 void MatrixSetupXRotation(matrix_t m, vec_t degrees) {
 	vec_t a = DEG2RAD(degrees);
 
-	m[0] = 1; m[4] = 0; m[8] = 0; m[12] = 0;
-	m[1] = 0; m[5] = cos(a); m[9] = -sin(a); m[13] = 0;
-	m[2] = 0; m[6] = sin(a); m[10] = cos(a); m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = 1
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = cos(a)
+	m[9] = -sin(a)
+	m[13] = 0;
+	m[2] = 0
+	m[6] = sin(a)
+	m[10] = cos(a)
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -2204,10 +2417,22 @@ MatrixSetupYRotation
 void MatrixSetupYRotation(matrix_t m, vec_t degrees) {
 	vec_t a = DEG2RAD(degrees);
 
-	m[0] = cos(a); m[4] = 0; m[8] = sin(a); m[12] = 0;
-	m[1] = 0; m[5] = 1; m[9] = 0; m[13] = 0;
-	m[2] = -sin(a); m[6] = 0; m[10] = cos(a); m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = cos(a)
+	m[4] = 0
+	m[8] = sin(a)
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 1
+	m[9] = 0
+	m[13] = 0;
+	m[2] = -sin(a)
+	m[6] = 0
+	m[10] = cos(a)
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -2218,10 +2443,22 @@ MatrixSetupZRotation
 void MatrixSetupZRotation(matrix_t m, vec_t degrees) {
 	vec_t a = DEG2RAD(degrees);
 
-	m[0] = cos(a); m[4] = -sin(a); m[8] = 0; m[12] = 0;
-	m[1] = sin(a); m[5] = cos(a); m[9] = 0; m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = 1; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = cos(a)
+	m[4] = -sin(a)
+	m[8] = 0
+	m[12] = 0;
+	m[1] = sin(a)
+	m[5] = cos(a)
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = 1
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -2230,10 +2467,22 @@ MatrixSetupTranslation
 =======================================================================================================================================
 */
 void MatrixSetupTranslation(matrix_t m, vec_t x, vec_t y, vec_t z) {
-	m[0] = 1; m[4] = 0; m[8] = 0; m[12] = x;
-	m[1] = 0; m[5] = 1; m[9] = 0; m[13] = y;
-	m[2] = 0; m[6] = 0; m[10] = 1; m[14] = z;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = 1
+	m[4] = 0
+	m[8] = 0
+	m[12] = x;
+	m[1] = 0
+	m[5] = 1
+	m[9] = 0
+	m[13] = y;
+	m[2] = 0
+	m[6] = 0
+	m[10] = 1
+	m[14] = z;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -2242,10 +2491,22 @@ MatrixSetupScale
 =======================================================================================================================================
 */
 void MatrixSetupScale(matrix_t m, vec_t x, vec_t y, vec_t z) {
-	m[0] = x; m[4] = 0; m[8] = 0; m[12] = 0;
-	m[1] = 0; m[5] = y; m[9] = 0; m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = z; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = x
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = y
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = z
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -2254,10 +2515,22 @@ MatrixSetupShear
 =======================================================================================================================================
 */
 void MatrixSetupShear(matrix_t m, vec_t x, vec_t y) {
-	m[0] = 1; m[4] = x; m[8] = 0; m[12] = 0;
-	m[1] = y; m[5] = 1; m[9] = 0; m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = 1; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = 1
+	m[4] = x
+	m[8] = 0
+	m[12] = 0;
+	m[1] = y
+	m[5] = 1
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = 1
+	m[14] = 0;
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -2295,10 +2568,9 @@ void MatrixMultiply(const matrix_t a, const matrix_t b, matrix_t out) {
 
 		_mm_storeu_ps(&out[i * 4], _t3);
 	}
-
 #else
- out[0] = b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12];
- out[1] = b[0] * a[1] + b[1] * a[5] + b[2] * a[9] + b[3] * a[13];
+		out[0] = b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12];
+		out[1] = b[0] * a[1] + b[1] * a[5] + b[2] * a[9] + b[3] * a[13];
 		out[2] = b[0] * a[2] + b[1] * a[6] + b[2] * a[10] + b[3] * a[14];
 		out[3] = b[0] * a[3] + b[1] * a[7] + b[2] * a[11] + b[3] * a[15];
 
@@ -2390,10 +2662,18 @@ void MatrixMultiplyScale(matrix_t m, vec_t x, vec_t y, vec_t z) {
 	MatrixSetupScale(scale, x, y, z);
 	MatrixMultiply(tmp, scale, m);
 #else
-	m[0] *= x; m[4] *= y; m[8] *= z;
-	m[1] *= x; m[5] *= y; m[9] *= z;
-	m[2] *= x; m[6] *= y; m[10] *= z;
-	m[3] *= x; m[7] *= y; m[11] *= z;
+	m[0] *= x;
+	m[4] *= y;
+	m[8] *= z;
+	m[1] *= x;
+	m[5] *= y;
+	m[9] *= z;
+	m[2] *= x;
+	m[6] *= y;
+	m[10] *= z;
+	m[3] *= x;
+	m[7] *= y;
+	m[11] *= z;
 #endif
 }
 
@@ -2439,23 +2719,23 @@ void MatrixToAngles(const matrix_t m, vec3_t angles) {
 		angles[ROLL] = RAD2DEG(atan2(m[6], m[10]));
 	} else {
 		angles[PITCH] = RAD2DEG(theta);
-		angles[YAW] = RAD2DEG( - atan2(m[4], m[5]));
+		angles[YAW] = RAD2DEG(-atan2(m[4], m[5]));
 		angles[ROLL] = 0;
 	}
 #else
 	double a;
 	double ca;
 
-	a = asin( - m[2]);
+	a = asin(-m[2]);
 	ca = cos(a);
 
-	if (fabs(ca) > 0.005) { // Gimbal lock?
+	if (fabs(ca) > 0.005) {// Gimbal lock?
 		angles[PITCH] = RAD2DEG(atan2(m[6] / ca, m[10] / ca));
 		angles[YAW] = RAD2DEG(a);
 		angles[ROLL] = RAD2DEG(atan2(m[1] / ca, m[0] / ca));
 	} else {
 		// Gimbal lock has occurred
-		angles[PITCH] = RAD2DEG(atan2( - m[9], m[5]));
+		angles[PITCH] = RAD2DEG(atan2(-m[9], m[5]));
 		angles[YAW] = RAD2DEG(a);
 		angles[ROLL] = 0;
 	}
@@ -2480,10 +2760,22 @@ void MatrixFromAngles(matrix_t m, vec_t pitch, vec_t yaw, vec_t roll) {
 	sr = sin(DEG2RAD(roll));
 	cr = cos(DEG2RAD(roll));
 
-	m[0] = cp * cy; m[4] = (sr * sp * cy + cr * - sy); m[8] = (cr * sp * cy + -sr * - sy); m[12] = 0;
-	m[1] = cp * sy; m[5] = (sr * sp * sy + cr * cy); m[9] = (cr * sp * sy + -sr * cy); m[13] = 0;
-	m[2] = -sp; m[6] = sr * cp; m[10] = cr * cp; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = cp * cy;
+	m[4] = (sr * sp * cy + cr * - sy);
+	m[8] = (cr * sp * cy + -sr * - sy);
+	m[12] = 0;
+	m[1] = cp * sy;
+	m[5] = (sr * sp * sy + cr * cy);
+	m[9] = (cr * sp * sy + -sr * cy);
+	m[13] = 0;
+	m[2] = -sp;
+	m[6] = sr * cp;
+	m[10] = cr * cp;
+	m[14] = 0;
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2493,10 +2785,22 @@ MatrixFromVectorsFLU
 */
 void MatrixFromVectorsFLU(matrix_t m, const vec3_t forward, const vec3_t left, const vec3_t up) {
 
-	m[0] = forward[0]; m[4] = left[0]; m[8] = up[0]; m[12] = 0;
-	m[1] = forward[1]; m[5] = left[1]; m[9] = up[1]; m[13] = 0;
-	m[2] = forward[2]; m[6] = left[2]; m[10] = up[2]; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = forward[0];
+	m[4] = left[0];
+	m[8] = up[0];
+	m[12] = 0;
+	m[1] = forward[1];
+	m[5] = left[1];
+	m[9] = up[1];
+	m[13] = 0;
+	m[2] = forward[2];
+	m[6] = left[2];
+	m[10] = up[2];
+	m[14] = 0;
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2506,10 +2810,22 @@ MatrixFromVectorsFRU
 */
 void MatrixFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up) {
 
-	m[0] = forward[0]; m[4] = -right[0]; m[8] = up[0]; m[12] = 0;
-	m[1] = forward[1]; m[5] = -right[1]; m[9] = up[1]; m[13] = 0;
-	m[2] = forward[2]; m[6] = -right[2]; m[10] = up[2]; m[14] = 0;
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = forward[0];
+	m[4] = -right[0];
+	m[8] = up[0];
+	m[12] = 0;
+	m[1] = forward[1];
+	m[5] = -right[1];
+	m[9] = up[1];
+	m[13] = 0;
+	m[2] = forward[2];
+	m[6] = -right[2];
+	m[10] = up[2];
+	m[14] = 0;
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2565,54 +2881,50 @@ void MatrixFromQuat(matrix_t m, const quat_t q) {
 
 #else
 	/*
-	http: // www.gamedev.net / reference / articles / article1691.asp#Q54
+	http://www.gamedev.net/reference/articles/article1691.asp#Q54
 	Q54. How do I convert a quaternion to a rotation matrix?
 
 	Assuming that a quaternion has been created in the form:
 
- Q = |X Y Z W|
+	Q = |X Y Z W|
 
- Then the quaternion can then be converted into a 4x4 rotation
- matrix using the following expression(Warning: you might have to
- transpose this matrix if you(do not)follow the OpenGL order!):
+	Then the quaternion can then be converted into a 4x4 rotation matrix using the following expression(Warning: you might have to
+	transpose this matrix if you(do not)follow the OpenGL order!):
 
- ? 2 2 ?
- ? 1 - (2Y + 2Z)2XY - 2ZW 2XZ + 2YW ?
- ? ?
- ? 2 2 ?
- M = ? 2XY + 2ZW 1 - (2X + 2Z)2YZ - 2XW ?
- ? ?
- ? 2 2 ?
- ? 2XZ - 2YW 2YZ + 2XW 1 - (2X + 2Y)?
- ? ?
+		?        2     2                                      ?
+		? 1 - (2Y  + 2Z )   2XY - 2ZW         2XZ + 2YW       ?
+		?                                                     ?
+		?                          2     2                    ?
+	M = ? 2XY + 2ZW         1 - (2X  + 2Z )   2YZ - 2XW       ?
+		?                                                     ?
+		?                                            2     2  ?
+		? 2XZ - 2YW         2YZ + 2XW         1 - (2X  + 2Y ) ?
+		?                                                     ?
 	*/
-
-	// http: // www.euclideanspace.com / maths / geometry / rotations / conversions / quaternionToMatrix / index.htm
-
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
 	float xx, xy, xz, xw, yy, yz, yw, zz, zw;
 
 	xx = q[0] * q[0];
- xy = q[0] * q[1];
- xz = q[0] * q[2];
- xw = q[0] * q[3];
- yy = q[1] * q[1];
- yz = q[1] * q[2];
- yw = q[1] * q[3];
- zz = q[2] * q[2];
- zw = q[2] * q[3];
+	xy = q[0] * q[1];
+	xz = q[0] * q[2];
+	xw = q[0] * q[3];
+	yy = q[1] * q[1];
+	yz = q[1] * q[2];
+	yw = q[1] * q[3];
+	zz = q[2] * q[2];
+	zw = q[2] * q[3];
 
- m[0] = 1 - 2 * (yy + zz);
- m[1] = 2 * (xy + zw);
- m[2] = 2 * (xz - yw);
- m[4] = 2 * (xy - zw);
- m[5] = 1 - 2 * (xx + zz);
- m[6] = 2 * (yz + xw);
- m[8] = 2 * (xz + yw);
- m[9] = 2 * (yz - xw);
- m[10] = 1 - 2 * (xx + yy);
-
- m[3] = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
- m[15] = 1;
+	m[0] = 1 - 2 * (yy + zz);
+	m[1] = 2 * (xy + zw);
+	m[2] = 2 * (xz - yw);
+	m[4] = 2 * (xy - zw);
+	m[5] = 1 - 2 * (xx + zz);
+	m[6] = 2 * (yz + xw);
+	m[8] = 2 * (xz + yw);
+	m[9] = 2 * (yz - xw);
+	m[10] = 1 - 2 * (xx + yy);
+	m[3] = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
+	m[15] = 1;
 #endif
 }
 
@@ -2622,6 +2934,7 @@ MatrixFromPlanes
 =======================================================================================================================================
 */
 void MatrixFromPlanes(matrix_t m, const vec4_t left, const vec4_t right, const vec4_t bottom, const vec4_t top, const vec4_t near, const vec4_t far) {
+
 	m[0] = (right[0] - left[0]) / 2;
 	m[1] = (top[0] - bottom[0]) / 2;
 	m[2] = (far[0] - near[0]) / 2;
@@ -2636,7 +2949,6 @@ void MatrixFromPlanes(matrix_t m, const vec4_t left, const vec4_t right, const v
 	m[9] = (top[2] - bottom[2]) / 2;
 	m[10] = (far[2] - near[2]) / 2;
 	m[11] = right[2] - (right[2] - left[2]) / 2;
-
 #if 0
 	m[12] = (right[3] - left[3]) / 2;
 	m[13] = (top[3] - bottom[3]) / 2;
@@ -2646,7 +2958,7 @@ void MatrixFromPlanes(matrix_t m, const vec4_t left, const vec4_t right, const v
 	m[12] = (-right[3]--left[3]) / 2;
 	m[13] = (-top[3]--bottom[3]) / 2;
 	m[14] = (-far[3]--near[3]) / 2;
-	m[15] = -right[3] - ( - right[3]--left[3]) / 2;
+	m[15] = -right[3] - (-right[3]--left[3]) / 2;
 #endif
 }
 
@@ -2663,7 +2975,7 @@ void MatrixToVectorsFLU(const matrix_t m, vec3_t forward, vec3_t left, vec3_t up
 		forward[2] = m[2]; // - sp;
 	}
 
-	if(left) {
+	if (left) {
 		left[0] = m[4]; // sr * sp * cy + cr * - sy;
 		left[1] = m[5]; // sr * sp * sy + cr * cy;
 		left[2] = m[6]; // sr * cp;
@@ -2709,10 +3021,22 @@ MatrixSetupTransformFromVectorsFLU
 */
 void MatrixSetupTransformFromVectorsFLU(matrix_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin) {
 
-	m[0] = forward[0]; m[4] = left[0]; m[8] = up[0]; m[12] = origin[0];
-	m[1] = forward[1]; m[5] = left[1]; m[9] = up[1]; m[13] = origin[1];
-	m[2] = forward[2]; m[6] = left[2]; m[10] = up[2]; m[14] = origin[2];
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = forward[0];
+	m[4] = left[0];
+	m[8] = up[0];
+	m[12] = origin[0];
+	m[1] = forward[1];
+	m[5] = left[1];
+	m[9] = up[1];
+	m[13] = origin[1];
+	m[2] = forward[2];
+	m[6] = left[2];
+	m[10] = up[2];
+	m[14] = origin[2];
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2722,10 +3046,22 @@ MatrixSetupTransformFromVectorsFRU
 */
 void MatrixSetupTransformFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin) {
 
-	m[0] = forward[0]; m[4] = -right[0]; m[8] = up[0]; m[12] = origin[0];
-	m[1] = forward[1]; m[5] = -right[1]; m[9] = up[1]; m[13] = origin[1];
-	m[2] = forward[2]; m[6] = -right[2]; m[10] = up[2]; m[14] = origin[2];
-	m[3] = 0; m[7] = 0; 	 m[11] = 0; m[15] = 1;
+	m[0] = forward[0];
+	m[4] = -right[0];
+	m[8] = up[0];
+	m[12] = origin[0];
+	m[1] = forward[1];
+	m[5] = -right[1];
+	m[9] = up[1];
+	m[13] = origin[1];
+	m[2] = forward[2];
+	m[6] = -right[2];
+	m[10] = up[2];
+	m[14] = origin[2];
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2735,10 +3071,22 @@ MatrixSetupTransformFromRotation
 */
 void MatrixSetupTransformFromRotation(matrix_t m, const matrix_t rot, const vec3_t origin) {
 
-	m[0] = rot[0]; m[4] = rot[4]; m[8] = rot[8]; m[12] = origin[0];
-	m[1] = rot[1]; m[5] = rot[5]; m[9] = rot[9]; m[13] = origin[1];
-	m[2] = rot[2]; m[6] = rot[6]; m[10] = rot[10]; m[14] = origin[2];
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = rot[0];
+	m[4] = rot[4];
+	m[8] = rot[8];
+	m[12] = origin[0];
+	m[1] = rot[1];
+	m[5] = rot[5];
+	m[9] = rot[9];
+	m[13] = origin[1];
+	m[2] = rot[2];
+	m[6] = rot[6];
+	m[10] = rot[10];
+	m[14] = origin[2];
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2751,10 +3099,22 @@ void MatrixSetupTransformFromQuat(matrix_t m, const quat_t quat, const vec3_t or
 
 	MatrixFromQuat(rot, quat);
 
-	m[0] = rot[0]; m[4] = rot[4]; m[8] = rot[8]; m[12] = origin[0];
-	m[1] = rot[1]; m[5] = rot[5]; m[9] = rot[9]; m[13] = origin[1];
-	m[2] = rot[2]; m[6] = rot[6]; m[10] = rot[10]; m[14] = origin[2];
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+	m[0] = rot[0];
+	m[4] = rot[4];
+	m[8] = rot[8];
+	m[12] = origin[0];
+	m[1] = rot[1];
+	m[5] = rot[5];
+	m[9] = rot[9];
+	m[13] = origin[1];
+	m[2] = rot[2];
+	m[6] = rot[6];
+	m[10] = rot[10];
+	m[14] = origin[2];
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -2768,10 +3128,19 @@ void MatrixAffineInverse(const matrix_t in, matrix_t out) {
 	MatrixInverse(out);
 #else
 	// Tr3B - cleaned up
-	out[0] = in[0]; out[4] = in[1]; out[8] = in[2];
-	out[1] = in[4]; out[5] = in[5]; out[9] = in[6];
-	out[2] = in[8]; out[6] = in[9]; out[10] = in[10];
-	out[3] = 0; out[7] = 0; out[11] = 0; out[15] = 1;
+	out[0] = in[0];
+	out[4] = in[1];
+	out[8] = in[2];
+	out[1] = in[4];
+	out[5] = in[5];
+	out[9] = in[6];
+	out[2] = in[8];
+	out[6] = in[9];
+	out[10] = in[10];
+	out[3] = 0;
+	out[7] = 0;
+	out[11] = 0;
+	out[15] = 1;
 
 	out[12] = -(in[12] * out[0] + in[13] * out[4] + in[14] * out[8]);
 	out[13] = -(in[12] * out[1] + in[13] * out[5] + in[14] * out[9]);
@@ -2840,7 +3209,7 @@ MatrixTransform4
 */
 void MatrixTransform4(const matrix_t m, const vec4_t in, vec4_t out) {
 #if id386_sse
- // #error MatrixTransform4
+	// #error MatrixTransform4
 
 	__m128 _t0, _t1, _t2, _x, _y, _z, _w, _m0, _m1, _m2, _m3;
 
@@ -2904,47 +3273,93 @@ void MatrixTransformPlane2(const matrix_t m, vec4_t inout) {
 	Vector4Copy(tmp, inout);
 }
 
-
 /*
-replacement for glFrustum
-see glspec30.pdf chapter 2.12 Coordinate Transformations
+=======================================================================================================================================
+MatrixPerspectiveProjection
+
+Replacement for glFrustum (see glspec30.pdf chapter 2.12 Coordinate Transformations).
+=======================================================================================================================================
 */
 void MatrixPerspectiveProjection(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
-	m[0] = (2 * near) / (right - left);	m[4] = 0; m[8] = (right + left) / (right - left); m[12] = 0;
-	m[1] = 0; m[5] = (2 * near) / (top - bottom);	m[9] = (top + bottom) / (top - bottom); m[13] = 0;
+
+	m[0] = (2 * near) / (right - left);
+	m[4] = 0;
+	m[8] = (right + left) / (right - left);
+	m[12] = 0;
+	m[1] = 0;
+	m[5] = (2 * near) / (top - bottom);
+	m[9] = (top + bottom) / (top - bottom);
+	m[13] = 0;
 	m[2] = 0;
-	m[6] = 0; m[10] = -(far + near) / (far - near); m[14] = -(2 * far * near) / (far - near);
-	m[3] = 0; m[7] = 0; m[11] = -1; m[15] = 0;
+	m[6] = 0;
+	m[10] = -(far + near) / (far - near);
+	m[14] = -(2 * far * near) / (far - near);
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = -1;
+	m[15] = 0;
 }
 
 /*
-same as D3DXMatrixPerspectiveOffCenterLH
+=======================================================================================================================================
+MatrixPerspectiveProjectionLH
 
-http: // msdn.microsoft.com / en - us / library / bb205353(VS.85).aspx
+Same as D3DXMatrixPerspectiveOffCenterLH http://msdn.microsoft.com/en-us/library/bb205353(VS.85).aspx
+=======================================================================================================================================
 */
 void MatrixPerspectiveProjectionLH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
-	m[0] = (2 * near) / (right - left);	m[4] = 0; m[8] = (left + right) / (left - right); m[12] = 0;
-	m[1] = 0; m[5] = (2 * near) / (top - bottom);	m[9] = (top + bottom) / (bottom - top); m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = far / (far - near); m[14] = (near * far) / (near - far);
-	m[3] = 0; m[7] = 0; m[11] = 1; m[15] = 0;
+
+	m[0] = (2 * near) / (right - left);
+	m[4] = 0;
+	m[8] = (left + right) / (left - right);
+	m[12] = 0;
+	m[1] = 0;
+	m[5] = (2 * near) / (top - bottom);
+	m[9] = (top + bottom) / (bottom - top);
+	m[13] = 0;
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = far / (far - near);
+	m[14] = (near * far) / (near - far);
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 1;
+	m[15] = 0;
 }
 
 /*
-same as D3DXMatrixPerspectiveOffCenterRH
+=======================================================================================================================================
+MatrixPerspectiveProjectionRH
 
-http: // msdn.microsoft.com / en - us / library / bb205354(VS.85).aspx
+Same as D3DXMatrixPerspectiveOffCenterRH http://msdn.microsoft.com/en-us/library/bb205354(VS.85).aspx
+=======================================================================================================================================
 */
 void MatrixPerspectiveProjectionRH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
-	m[0] = (2 * near) / (right - left);	m[4] = 0; m[8] = (left + right) / (right - left); m[12] = 0;
-	m[1] = 0; m[5] = (2 * near) / (top - bottom);	m[9] = (top + bottom) / (top - bottom); m[13] = 0;
-	m[2] = 0; m[6] = 0; m[10] = far / (near - far); m[14] = (near * far) / (near - far);
-	m[3] = 0; m[7] = 0; m[11] = -1; m[15] = 0;
+
+	m[0] = (2 * near) / (right - left)
+	m[4] = 0
+	m[8] = (left + right) / (right - left)
+	m[12] = 0;
+	m[1] = 0
+	m[5] = (2 * near) / (top - bottom)
+	m[9] = (top + bottom) / (top - bottom)
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = far / (near - far)
+	m[14] = (near * far) / (near - far);
+	m[3] = 0
+	m[7] = 0
+	m[11] = -1
+	m[15] = 0;
 }
 
 /*
-same as D3DXMatrixPerspectiveFovLH
+=======================================================================================================================================
+MatrixPerspectiveProjectionFovYAspectLH
 
-http: // msdn.microsoft.com / en - us / library / bb205350(VS.85).aspx
+Same as D3DXMatrixPerspectiveFovLH http://msdn.microsoft.com/en-us/library/bb205350(VS.85).aspx
+=======================================================================================================================================
 */
 void MatrixPerspectiveProjectionFovYAspectLH(matrix_t m, vec_t fov, vec_t aspect, vec_t near, vec_t far) {
 	vec_t width, height;
@@ -2952,10 +3367,22 @@ void MatrixPerspectiveProjectionFovYAspectLH(matrix_t m, vec_t fov, vec_t aspect
 	width = tanf(DEG2RAD(fov * 0.5f));
 	height = width / aspect;
 
-	m[0] = 1 / width;	m[4] = 0; 	m[8] = 0; 	m[12] = 0;
-	m[1] = 0; 	m[5] = 1 / height;	m[9] = 0; 	m[13] = 0;
-	m[2] = 0; 	m[6] = 0; 	m[10] = far / (far - near); m[14] = -(near * far) / (far - near);
-	m[3] = 0; 	m[7] = 0; 	m[11] = 1; 	m[15] = 0;
+	m[0] = 1 / width
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 1 / height
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = far / (far - near)
+	m[14] = -(near * far) / (far - near);
+	m[3] = 0
+	m[7] = 0
+	m[11] = 1
+	m[15] = 0;
 }
 
 /*
@@ -2969,10 +3396,22 @@ void MatrixPerspectiveProjectionFovXYLH(matrix_t m, vec_t fovX, vec_t fovY, vec_
 	width = tanf(DEG2RAD(fovX * 0.5f));
 	height = tanf(DEG2RAD(fovY * 0.5f));
 
-	m[0] = 1 / width;	m[4] = 0; 	m[8] = 0; 	m[12] = 0;
-	m[1] = 0; 	m[5] = 1 / height;	m[9] = 0; 	m[13] = 0;
-	m[2] = 0; 	m[6] = 0; 	m[10] = far / (far - near); m[14] = -(near * far) / (far - near);
-	m[3] = 0; 	m[7] = 0; 	m[11] = 1; 	m[15] = 0;
+	m[0] = 1 / width
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 1 / height
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = far / (far - near)
+	m[14] = -(near * far) / (far - near);
+	m[3] = 0
+	m[7] = 0
+	m[11] = 1
+	m[15] = 0;
 }
 
 /*
@@ -2986,84 +3425,171 @@ void MatrixPerspectiveProjectionFovXYRH(matrix_t m, vec_t fovX, vec_t fovY, vec_
 	width = tanf(DEG2RAD(fovX * 0.5f));
 	height = tanf(DEG2RAD(fovY * 0.5f));
 
-	m[0] = 1 / width;	m[4] = 0; 	m[8] = 0; 	m[12] = 0;
-	m[1] = 0; 	m[5] = 1 / height;	m[9] = 0; 	m[13] = 0;
-	m[2] = 0; 	m[6] = 0; 	m[10] = far / (near - far); m[14] = (near * far) / (near - far);
-	m[3] = 0; 	m[7] = 0; 	m[11] = -1; 	m[15] = 0;
+	m[0] = 1 / width
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 1 / height
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = far / (near - far)
+	m[14] = (near * far) / (near - far);
+	m[3] = 0
+	m[7] = 0
+	m[11] = -1
+	m[15] = 0;
 }
 
- // Tr3B: far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+/*
+=======================================================================================================================================
+MatrixPerspectiveProjectionFovXYInfiniteRH
+
+Far plane at infinity, see RobustShadowVolumes.pdf by Nvidia.
+=======================================================================================================================================
+*/
 void MatrixPerspectiveProjectionFovXYInfiniteRH(matrix_t m, vec_t fovX, vec_t fovY, vec_t near) {
 	vec_t width, height;
 
 	width = tanf(DEG2RAD(fovX * 0.5f));
 	height = tanf(DEG2RAD(fovY * 0.5f));
 
-	m[0] = 1 / width;	m[4] = 0; 	m[8] = 0; 	m[12] = 0;
-	m[1] = 0; 	m[5] = 1 / height;	m[9] = 0; 	m[13] = 0;
-	m[2] = 0; 	m[6] = 0; 	m[10] = -1; 	m[14] = -2 * near;
-	m[3] = 0; 	m[7] = 0; 	m[11] = -1; 	m[15] = 0;
+	m[0] = 1 / width
+	m[4] = 0
+	m[8] = 0
+	m[12] = 0;
+	m[1] = 0
+	m[5] = 1 / height
+	m[9] = 0
+	m[13] = 0;
+	m[2] = 0
+	m[6] = 0
+	m[10] = -1
+	m[14] = -2 * near;
+	m[3] = 0
+	m[7] = 0
+	m[11] = -1
+	m[15] = 0;
 }
 
 /*
-replacement for glOrtho
-see glspec30.pdf chapter 2.12 Coordinate Transformations
+=======================================================================================================================================
+MatrixOrthogonalProjection
+
+Replacement for glOrtho (see glspec30.pdf chapter 2.12 Coordinate Transformations).
+=======================================================================================================================================
 */
 void MatrixOrthogonalProjection(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
-	m[0] = 2 / (right - left);	m[4] = 0; m[8] = 0; m[12] = -(right + left) / (right - left);
-	m[1] = 0; m[5] = 2 / (top - bottom);	m[9] = 0; m[13] = -(top + bottom) / (top - bottom);
-	m[2] = 0; m[6] = 0; m[10] = -2 / (far - near);	m[14] = -(far + near) / (far - near);
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+
+	m[0] = 2 / (right - left)
+	m[4] = 0
+	m[8] = 0
+	m[12] = -(right + left) / (right - left);
+	m[1] = 0
+	m[5] = 2 / (top - bottom)
+	m[9] = 0
+	m[13] = -(top + bottom) / (top - bottom);
+	m[2] = 0
+	m[6] = 0
+	m[10] = -2 / (far - near)
+	m[14] = -(far + near) / (far - near);
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
-same as D3DXMatrixOrthoOffCenterLH
+=======================================================================================================================================
+MatrixOrthogonalProjectionLH
 
-http: // msdn.microsoft.com / en - us / library / bb205347(VS.85).aspx
+Same as D3DXMatrixOrthoOffCenterLH http://msdn.microsoft.com/en-us/library/bb205347(VS.85).aspx
+=======================================================================================================================================
 */
 void MatrixOrthogonalProjectionLH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
-	m[0] = 2 / (right - left);	m[4] = 0; m[8] = 0; m[12] = (left + right) / (left - right);
-	m[1] = 0; m[5] = 2 / (top - bottom);	m[9] = 0; m[13] = (top + bottom) / (bottom - top);
-	m[2] = 0; m[6] = 0; m[10] = 1 / (far - near);	m[14] = near / (near - far);
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+
+	m[0] = 2 / (right - left)
+	m[4] = 0
+	m[8] = 0
+	m[12] = (left + right) / (left - right);
+	m[1] = 0
+	m[5] = 2 / (top - bottom)
+	m[9] = 0
+	m[13] = (top + bottom) / (bottom - top);
+	m[2] = 0
+	m[6] = 0
+	m[10] = 1 / (far - near)
+	m[14] = near / (near - far);
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
-same as D3DXMatrixOrthoOffCenterRH
+=======================================================================================================================================
+MatrixOrthogonalProjectionRH
 
-http: // msdn.microsoft.com / en - us / library / bb205348(VS.85).aspx
+Same as D3DXMatrixOrthoOffCenterRH http://msdn.microsoft.com/en-us/library/bb205348(VS.85).aspx
+=======================================================================================================================================
 */
 void MatrixOrthogonalProjectionRH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t near, vec_t far) {
-	m[0] = 2 / (right - left);	m[4] = 0; m[8] = 0; m[12] = (left + right) / (left - right);
-	m[1] = 0; m[5] = 2 / (top - bottom);	m[9] = 0; m[13] = (top + bottom) / (bottom - top);
-	m[2] = 0; m[6] = 0; m[10] = 1 / (near - far);	m[14] = near / (near - far);
-	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
+
+	m[0] = 2 / (right - left)
+	m[4] = 0
+	m[8] = 0
+	m[12] = (left + right) / (left - right);
+	m[1] = 0
+	m[5] = 2 / (top - bottom)
+	m[9] = 0
+	m[13] = (top + bottom) / (bottom - top);
+	m[2] = 0
+	m[6] = 0
+	m[10] = 1 / (near - far)
+	m[14] = near / (near - far);
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
-same as D3DXMatrixReflect
+=======================================================================================================================================
+MatrixPlaneReflection
 
-http: // msdn.microsoft.com / en - us / library / bb205356%28v = VS.85%29.aspx
+Same as D3DXMatrixReflect http://msdn.microsoft.com/en-us/library/bb205356%28v=VS.85%29.aspx
+=======================================================================================================================================
 */
 void MatrixPlaneReflection(matrix_t m, const vec4_t plane) {
 	vec4_t P;
 	Vector4Copy(plane, P);
 
 	PlaneNormalize(P);
-
 	/*
 	 - 2 * P.a * P.a + 1 - 2 * P.b * P.a - 2 * P.c * P.a 0
 	 - 2 * P.a * P.b - 2 * P.b * P.b + 1 - 2 * P.c * P.b 0
 	 - 2 * P.a * P.c - 2 * P.b * P.c - 2 * P.c * P.c + 1 0
 	 - 2 * P.a * P.d - 2 * P.b * P.d - 2 * P.c * P.d 1
 	*/
-
 	// Quake uses a different plane equation
-	m[0] = -2 * P[0] * P[0] + 1;	m[4] = -2 * P[0] * P[1]; 	m[8] = -2 * P[0] * P[2]; m[12] = 2 * P[0] * P[3];
-	m[1] = -2 * P[1] * P[0]; m[5] = -2 * P[1] * P[1] + 1; m[9] = -2 * P[1] * P[2]; m[13] = 2 * P[1] * P[3];
-	m[2] = -2 * P[2] * P[0]; m[6] = -2 * P[2] * P[1]; 	m[10] = -2 * P[2] * P[2] + 1;	m[14] = 2 * P[2] * P[3];
-	m[3] = 0; 	m[7] = 0; m[11] = 0; 	m[15] = 1;
-
+	m[0] = -2 * P[0] * P[0] + 1
+	m[4] = -2 * P[0] * P[1]
+	m[8] = -2 * P[0] * P[2]
+	m[12] = 2 * P[0] * P[3];
+	m[1] = -2 * P[1] * P[0]
+	m[5] = -2 * P[1] * P[1] + 1
+	m[9] = -2 * P[1] * P[2]
+	m[13] = 2 * P[1] * P[3];
+	m[2] = -2 * P[2] * P[0]
+	m[6] = -2 * P[2] * P[1]
+	m[10] = -2 * P[2] * P[2] + 1
+	m[14] = 2 * P[2] * P[3];
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 #if 0
 	matrix_t m2;
 	MatrixCopy(m, m2);
@@ -3095,10 +3621,22 @@ void MatrixLookAtLH(matrix_t m, const vec3_t eye, const vec3_t dir, const vec3_t
 #endif
 	VectorNormalize2(dir, dirN);
 
-	m[0] = sideN[0];	m[4] = sideN[1];		m[8] = sideN[2];		m[12] = -DotProduct(sideN, eye);
-	m[1] = upN[0];		m[5] = upN[1];			m[9] = upN[2];			m[13] = -DotProduct(upN, eye);
-	m[2] = dirN[0];	m[6] = dirN[1];		m[10] = dirN[2];		m[14] = -DotProduct(dirN, eye);
-	m[3] = 0;			m[7] = 0;				m[11] = 0;				m[15] = 1;
+	m[0] = sideN[0]
+	m[4] = sideN[1]
+	m[8] = sideN[2]
+	m[12] = -DotProduct(sideN, eye);
+	m[1] = upN[0]
+	m[5] = upN[1]
+	m[9] = upN[2]
+	m[13] = -DotProduct(upN, eye);
+	m[2] = dirN[0]
+	m[6] = dirN[1]
+	m[10] = dirN[2]
+	m[14] = -DotProduct(dirN, eye);
+	m[3] = 0
+	m[7] = 0
+	m[11] = 0
+	m[15] = 1;
 }
 
 /*
@@ -3117,10 +3655,22 @@ void MatrixLookAtRH(matrix_t m, const vec3_t eye, const vec3_t dir, const vec3_t
 	VectorNormalize(upN);
 	VectorNormalize2(dir, dirN);
 
-	m[0] = sideN[0];	m[4] = sideN[1];		m[8] = sideN[2];		m[12] = -DotProduct(sideN, eye);
-	m[1] = upN[0];		m[5] = upN[1];			m[9] = upN[2];			m[13] = -DotProduct(upN, eye);
-	m[2] = -dirN[0];	m[6] = -dirN[1];		m[10] = -dirN[2];		m[14] = DotProduct(dirN, eye);
-	m[3] = 0;			m[7] = 0;				m[11] = 0;				m[15] = 1;
+	m[0] = sideN[0];
+	m[4] = sideN[1];
+	m[8] = sideN[2];
+	m[12] = -DotProduct(sideN, eye);
+	m[1] = upN[0];
+	m[5] = upN[1];
+	m[9] = upN[2];
+	m[13] = -DotProduct(upN, eye);
+	m[2] = -dirN[0];
+	m[6] = -dirN[1];
+	m[10] = -dirN[2];
+	m[14] = DotProduct(dirN, eye);
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
 /*
@@ -3129,6 +3679,7 @@ MatrixScaleTranslateToUnitCube
 =======================================================================================================================================
 */
 void MatrixScaleTranslateToUnitCube(matrix_t m, const vec3_t mins, const vec3_t maxs) {
+
 	m[0] = 2 / (maxs[0] - mins[0]);
 	m[4] = 0;
 	m[8] = 0;
@@ -3168,19 +3719,31 @@ void MatrixCrop(matrix_t m, const vec3_t mins, const vec3_t maxs) {
 	scaleZ = 1.0f / (maxs[2] - mins[2]);
 	offsetZ = -mins[2] * scaleZ;
 
-	m[0] = scaleX;		m[4] = 0;			m[8] = 0; 	m[12] = offsetX;
-	m[1] = 0;			m[5] = scaleY;		m[9] = 0; 	m[13] = offsetY;
-	m[2] = 0;			m[6] = 0; 	m[10] = scaleZ;		m[14] = offsetZ;
-	m[3] = 0;			m[7] = 0;			m[11] = 0;			m[15] = 1;
+	m[0] = scaleX;
+	m[4] = 0;
+	m[8] = 0;
+	m[12] = offsetX;
+	m[1] = 0;
+	m[5] = scaleY;
+	m[9] = 0;
+	m[13] = offsetY;
+	m[2] = 0;
+	m[6] = 0;
+	m[10] = scaleZ;
+	m[14] = offsetZ;
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
 }
 
+/*
+=======================================================================================================================================
 
- //=============================================
+	XreaL quaternion math functions
 
- // RB: XreaL quaternion math functions
-
-
- // *INDENT - ON * 
+=======================================================================================================================================
+*/
 
 /*
 =======================================================================================================================================
@@ -3228,10 +3791,10 @@ void QuatFromAngles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll) {
 	sr = sin(DEG2RAD(roll));
 	cr = cos(DEG2RAD(roll));
 
-	q[0] = sr * cp * cy - cr * sp * sy;	// x
-	q[1] = cr * sp * cy + sr * cp * sy;	// y
-	q[2] = cr * cp * sy - sr * sp * cy;	// z
-	q[3] = cr * cp * cy + sr * sp * sy;	// w
+	q[0] = sr * cp * cy - cr * sp * sy; // x
+	q[1] = cr * sp * cy + sr * cp * sy; // y
+	q[2] = cr * cp * sy - sr * sp * cy; // z
+	q[3] = cr * cp * cy + sr * sp * sy; // w
 #endif
 }
 
@@ -3243,11 +3806,10 @@ QuatFromMatrix
 void QuatFromMatrix(quat_t q, const matrix_t m) {
 #if 1
 	/*
-	 From Quaternion to Matrix and Back
-	 February 27th 2005
-	 J.M.P. van Waveren
-
-	 http: // www.intel.com / cd / ids / developer / asmo - na / eng / 293748.htm
+	From Quaternion to Matrix and Back
+	February 27th 2005
+	J.M.P. van Waveren
+	http://www.intel.com/cd/ids/developer/asmo-na/eng/293748.htm
 	*/
 	float t, s;
 
@@ -3284,12 +3846,10 @@ void QuatFromMatrix(quat_t q, const matrix_t m) {
 		q[0] = (m[8] + m[2]) * s;
 		q[1] = (m[6] + m[9]) * s;
 	}
-
 #else
 	float trace;
 
-	// http: // www.euclideanspace.com / maths / geometry / rotations / conversions / matrixToQuaternion / index.htm
-
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 	trace = 1.0f + m[0] + m[5] + m[10];
 
 	if (trace > 0.0f) {
@@ -3380,9 +3940,9 @@ void QuatToAngles(const quat_t q, vec3_t angles) {
 	q2[2] = q[2] * q[2];
 	q2[3] = q[3] * q[3];
 
-	angles[PITCH] = RAD2DEG(asin( - 2 * (q[2] * q[0] - q[3] * q[1])));
-	angles[YAW] = RAD2DEG(atan2(2 * (q[2] * q[3] + q[0] * q[1]),(q2[2] - q2[3] - q2[0] + q2[1])));
-	angles[ROLL] = RAD2DEG(atan2(2 * (q[3] * q[0] + q[2] * q[1]),( - q2[2] - q2[3] + q2[0] + q2[1])));
+	angles[PITCH] = RAD2DEG(asin(-2 * (q[2] * q[0] - q[3] * q[1])));
+	angles[YAW] = RAD2DEG(atan2(2 * (q[2] * q[3] + q[0] * q[1]), (q2[2] - q2[3] - q2[0] + q2[1])));
+	angles[ROLL] = RAD2DEG(atan2(2 * (q[3] * q[0] + q[2] * q[1]), (-q2[2] - q2[3] + q2[0] + q2[1])));
 }
 
 /*
@@ -3404,14 +3964,12 @@ QuatMultiply1
 */
 void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc) {
 	/*
-	 from matrix and quaternion faq
-	 x = w1x2 + x1w2 + y1z2 - z1y2
-	 y = w1y2 + y1w2 + z1x2 - x1z2
-	 z = w1z2 + z1w2 + x1y2 - y1x2
-
-	 w = w1w2 - x1x2 - y1y2 - z1z2
+	from matrix and quaternion faq
+	x = w1x2 + x1w2 + y1z2 - z1y2
+	y = w1y2 + y1w2 + z1x2 - x1z2
+	z = w1z2 + z1w2 + x1y2 - y1x2
+	w = w1w2 - x1x2 - y1y2 - z1z2
 	*/
-
 	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] - qa[2] * qb[1];
 	qc[1] = qa[3] * qb[1] + qa[1] * qb[3] + qa[2] * qb[0] - qa[0] * qb[2];
 	qc[2] = qa[3] * qb[2] + qa[2] * qb[3] + qa[0] * qb[1] - qa[1] * qb[0];
@@ -3494,11 +4052,10 @@ void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out) {
 	out[3] = scale0 * from[3] + scale1 * to1[3];
 #else
 	/*
-	 Slerping Clock Cycles
-	 February 27th 2005
-	 J.M.P. van Waveren
-
-	 http://www.intel.com/cd/ids/developer/asmo-na/eng/293747.htm
+	Slerping Clock Cycles
+	February 27th 2005
+	J.M.P. van Waveren
+	http://www.intel.com/cd/ids/developer/asmo-na/eng/293747.htm
 	*/
 	float cosom, absCosom, sinom, sinSqr, omega, scale0, scale1;
 
@@ -3524,7 +4081,6 @@ void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out) {
 		sinSqr = 1.0f - absCosom * absCosom;
 		sinom = 1.0f / sqrt(sinSqr);
 		omega = atan2(sinSqr * sinom, absCosom);
-
 		scale0 = sin((1.0f - frac) * omega) * sinom;
 		scale1 = sin(frac * omega) * sinom;
 	} else {

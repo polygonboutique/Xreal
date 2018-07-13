@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -29,7 +29,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define PERS_SCORE 0 // !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
 #define MAX_ENT_CLUSTERS 16
-
 #ifdef USE_VOIP
 typedef struct voipServerPacket_s {
 	int generation;
@@ -74,15 +73,11 @@ typedef struct {
 	svEntity_t svEntities[MAX_GENTITIES];
 	char *entityParsePoint;	// used during game VM init
 	// the game virtual machine will update these on init and changes
-#if !defined(USE_JAVA)
 	sharedEntity_t *gentities;
 	int gentitySize;
-#endif
 	int numEntities;		// current number, <= MAX_GENTITIES
-#if !defined(USE_JAVA)
 	playerState_t *gameClients;
 	int gameClientSize;		// will be > sizeof(playerState_t) due to game private data
-#endif
 	int restartTime;
 	int time;
 } server_t;
@@ -172,8 +167,6 @@ typedef struct client_s {
 // MAX_CHALLENGES is made large to prevent a denial of service attack that could cycle all of them out before legitimate users connected
 #define MAX_CHALLENGES 1024
 
-#define AUTHORIZE_TIMEOUT 5000
-
 typedef struct {
 	netadr_t adr;
 	int challenge;
@@ -211,9 +204,8 @@ typedef struct {
 
 extern serverStatic_t svs;	// persistant server info across maps
 extern server_t sv;			// cleared each map
-#if !defined(USE_JAVA)
 extern vm_t *gvm;			// game virtual machine
-#endif
+
 #define MAX_MASTER_SERVERS 5
 
 extern cvar_t *sv_fps;
@@ -299,19 +291,6 @@ void SV_InitGameProgs(void);
 void SV_ShutdownGameProgs(void);
 void SV_RestartGameProgs(void);
 qboolean SV_inPVS(const vec3_t p1, const vec3_t p2);
-#if defined(USE_JAVA)
-void Java_G_InitGame(int levelTime, int randomSeed, qboolean restart);
-void Java_G_ShutdownGame(qboolean restart);
-char *Java_G_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
-void Java_G_ClientBegin(int clientNum);
-void Java_G_ClientUserInfoChanged(int clientNum);
-void Java_G_ClientDisconnect(int clientNum);
-void Java_G_ClientCommand(int clientNum);
-void Java_G_ClientThink(int clientNum);
-void Java_G_RunFrame(int time);
-void Java_G_RunAIFrame(int time);
-qboolean Java_G_ConsoleCommand(void);
-#endif
 // sv_bot.c
 void SV_BotFrame(int time);
 int SV_BotAllocateClient(void);

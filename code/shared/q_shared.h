@@ -1542,10 +1542,10 @@ typedef struct cvar_s {
 	qboolean integral;
 	float min;
 	float max;
-	struct cvar_s  * next;
-	struct cvar_s  * prev;
-	struct cvar_s  * hashNext;
-	struct cvar_s  * hashPrev;
+	struct cvar_s * next;
+	struct cvar_s * prev;
+	struct cvar_s * hashNext;
+	struct cvar_s * hashPrev;
 	int hashIndex;
 } cvar_t;
 
@@ -1674,13 +1674,13 @@ typedef struct {
 // other channels will allways override a playing sound on that channel
 typedef enum {
 	CHAN_AUTO,
-	CHAN_LOCAL, 					// menu sounds, etc
+	CHAN_LOCAL, 					// menu sounds, etc.
 	CHAN_WEAPON,
 	CHAN_VOICE,
 	CHAN_ITEM,
 	CHAN_BODY,
-	CHAN_LOCAL_SOUND, 			// chat messages, etc
-	CHAN_ANNOUNCER				// announcer voices, etc
+	CHAN_LOCAL_SOUND, 			// chat messages, etc.
+	CHAN_ANNOUNCER				// announcer voices, etc.
 } soundChannel_t;
 
 
@@ -1733,7 +1733,7 @@ typedef enum {
 // these are the only configstrings that the system reserves, all the
 // other ones are strictly for servergame to clientgame communication
 #define CS_SERVERINFO		0	// an info string with all the serverinfo cvars
-#define CS_SYSTEMINFO		1	// an info string for server system to client system configuration(timescale, etc)
+#define CS_SYSTEMINFO		1	// an info string for server system to client system configuration(timescale, etc.)
 
 #define RESERVED_CONFIGSTRINGS	2	// game can't modify below this, only the system can
 
@@ -1772,7 +1772,7 @@ typedef struct playerState_s {
 	int commandTime;	// cmd->serverTime of last executed command
 	int pm_type;
 	int bobCycle;	// for view bobbing and footstep generation
-	int pm_flags;	// ducked, jump_held, etc
+	int pm_flags;	// ducked, jump_held, etc.
 	int pm_time;
 	vec3_t origin;
 	vec3_t velocity;
@@ -1886,9 +1886,9 @@ typedef struct {
 	trType_t trType;
 	int trTime;
 	int trDuration;	// if non 0, trTime + trDuration = stop time
-	float trAcceleration;	// gravity factor, etc
+	float trAcceleration;	// gravity factor, etc.
 	vec4_t trBase;		// Tr3B: changed from vec3_t to vec4_t to support quaternions
-	vec4_t trDelta;	// velocity, etc - Tr3B: changed from vec3_t to vec4_t to support quaternions
+	vec4_t trDelta;	// velocity, etc. - Tr3B: changed from vec3_t to vec4_t to support quaternions
 } trajectory_t;
 
 // entityState_t is the information conveyed from the server
@@ -1911,7 +1911,7 @@ typedef struct entityState_s {
 	vec3_t origin2;
 	vec3_t angles;
 	vec3_t angles2;
-	int otherEntityNum;	// shotgun sources, etc
+	int otherEntityNum;	// shotgun sources, etc.
 	int otherEntityNum2;
 	int groundEntityNum;	// -1 = in air
 	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
@@ -1921,12 +1921,12 @@ typedef struct entityState_s {
 	int clientNum;	// 0 to(MAX_CLIENTS - 1), for players and corpses
 	int frame;
 	int solid;		// for client side prediction, trap_linkentity sets this properly
-	int event;		// impulse events--muzzle flashes, footsteps, etc
+	int event;		// impulse events--muzzle flashes, footsteps, etc.
 	int eventParm;
 
 	// for players
 	int powerups;	// bit flags
-	int weapon;		// determines weapon and flash model, etc
+	int weapon;		// determines weapon and flash model, etc.
 	int legsAnim;	// mask off ANIM_TOGGLEBIT
 	int torsoAnim;	// mask off ANIM_TOGGLEBIT
 	int generic1;

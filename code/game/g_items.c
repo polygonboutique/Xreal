@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -39,7 +39,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define RESPAWN_HEALTH 35
 #define RESPAWN_AMMO 40
 #define RESPAWN_HOLDABLE 60
-#define RESPAWN_MEGAHEALTH 35 // 120
 #define RESPAWN_POWERUP 120
 
 /*
@@ -85,7 +84,7 @@ int Pickup_Powerup(gentity_t *ent, gentity_t *other) {
 			continue;
 		}
 		// if same team in team game, no sound (cannot use OnSameTeam as it expects to g_entities, not clients)
-		if (g_gametype.integer >= GT_TEAM && other->client->sess.sessionTeam == client->sess.sessionTeam) {
+		if (g_gametype.integer > GT_TOURNAMENT && other->client->sess.sessionTeam == client->sess.sessionTeam) {
 			continue;
 		}
 		// if too far away, no sound
@@ -97,7 +96,7 @@ int Pickup_Powerup(gentity_t *ent, gentity_t *other) {
 			continue;
 		}
 		// if not facing, no sound
-		AngleVectors(client->ps.viewangles, forward, NULL, NULL);
+		AngleVectorsForward(client->ps.viewangles, forward);
 
 		if (DotProduct(delta, forward) < 0.4) {
 			continue;
@@ -114,91 +113,31 @@ int Pickup_Powerup(gentity_t *ent, gentity_t *other) {
 
 	return RESPAWN_POWERUP;
 }
-#ifdef MISSIONPACK
+
 /*
 =======================================================================================================================================
 Pickup_PersistantPowerup
 =======================================================================================================================================
 */
 int Pickup_PersistantPowerup(gentity_t *ent, gentity_t *other) {
-	int clientNum;
-	char userinfo[MAX_INFO_STRING];
-	float handicap;
-	int max;
 
 	other->client->ps.stats[STAT_PERSISTANT_POWERUP] = ent->item - bg_itemlist;
 	other->client->persistantPowerup = ent;
 
 	switch (ent->item->giTag) {
-		case PW_GUARD:
-			clientNum = other->client->ps.clientNum;
-			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-			handicap = atof(Info_ValueForKey(userinfo, "handicap"));
-
-			if (handicap <= 0.0f || handicap > 100.0f) {
-				handicap = 100.0f;
-			}
-
-			max = (int)(2 * handicap);
-
-			other->health = max;
-			other->client->ps.stats[STAT_HEALTH] = max;
-			other->client->ps.stats[STAT_MAX_HEALTH] = max;
-			other->client->ps.stats[STAT_ARMOR] = max;
-			other->client->pers.maxHealth = max;
-			break;
-		case PW_SCOUT:
-			clientNum = other->client->ps.clientNum;
-			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-			handicap = atof(Info_ValueForKey(userinfo, "handicap"));
-
-			if (handicap <= 0.0f || handicap > 100.0f) {
-				handicap = 100.0f;
-			}
-
-			other->client->pers.maxHealth = handicap;
-			other->client->ps.stats[STAT_ARMOR] = 0;
-			break;
-		case PW_DOUBLER:
-			clientNum = other->client->ps.clientNum;
-			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-			handicap = atof(Info_ValueForKey(userinfo, "handicap"));
-
-			if (handicap <= 0.0f || handicap > 100.0f) {
-				handicap = 100.0f;
-			}
-
-			other->client->pers.maxHealth = handicap;
-			break;
 		case PW_AMMOREGEN:
-			clientNum = other->client->ps.clientNum;
-			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-			handicap = atof(Info_ValueForKey(userinfo, "handicap"));
-
-			if (handicap <= 0.0f || handicap > 100.0f) {
-				handicap = 100.0f;
-			}
-
-			other->client->pers.maxHealth = handicap;
-
 			memset(other->client->ammoTimes, 0, sizeof(other->client->ammoTimes));
 			break;
+		case PW_GUARD:
+		case PW_DOUBLER:
+		case PW_SCOUT:
 		default:
-			clientNum = other->client->ps.clientNum;
-			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-			handicap = atof(Info_ValueForKey(userinfo, "handicap"));
-
-			if (handicap <= 0.0f || handicap > 100.0f) {
-				handicap = 100.0f;
-			}
-
-			other->client->pers.maxHealth = handicap;
 			break;
 	}
 
 	return -1;
 }
-#endif
+
 /*
 =======================================================================================================================================
 Pickup_Holdable
@@ -281,7 +220,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other) {
 	Add_Ammo(other, ent->item->giTag, quantity);
 
 	if (ent->item->giTag == WP_GAUNTLET) {
-		other->client->ps.ammo[ent->item->giTag] = -1; // unlimited ammo
+		other->client->ps.ammo[ent->item->giTag] = -1; // unlimited ammo // Tobias NOTE: useful for other weapons as well?
 	}
 	// team deathmatch has slow weapon respawns
 	if (g_gametype.integer == GT_TEAM) {
@@ -297,20 +236,7 @@ Pickup_Health
 =======================================================================================================================================
 */
 int Pickup_Health(gentity_t *ent, gentity_t *other) {
-	int max;
 	int quantity;
-
-	// small and mega healths will go over the max
-#ifdef MISSIONPACK
-	if (other->client && bg_itemlist[other->client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_GUARD) {
-		max = other->client->ps.stats[STAT_MAX_HEALTH];
-	} else
-#endif
-	if (ent->item->quantity != 5 && ent->item->quantity != 100) {
-		max = other->client->ps.stats[STAT_MAX_HEALTH];
-	} else {
-		max = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
-	}
 
 	if (ent->count) {
 		quantity = ent->count;
@@ -320,15 +246,11 @@ int Pickup_Health(gentity_t *ent, gentity_t *other) {
 
 	other->health += quantity;
 
-	if (other->health > max) {
-		other->health = max;
+	if (other->health > 100) {
+		other->health = 100;
 	}
 
 	other->client->ps.stats[STAT_HEALTH] = other->health;
-
-	if (ent->item->quantity == 100) { // mega health respawns slow
-		return RESPAWN_MEGAHEALTH;
-	}
 
 	return RESPAWN_HEALTH;
 }
@@ -339,27 +261,13 @@ Pickup_Armor
 =======================================================================================================================================
 */
 int Pickup_Armor(gentity_t *ent, gentity_t *other) {
-#ifdef MISSIONPACK
-	int upperBound;
 
 	other->client->ps.stats[STAT_ARMOR] += ent->item->quantity;
 
-	if (other->client && bg_itemlist[other->client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_GUARD) {
-		upperBound = other->client->ps.stats[STAT_MAX_HEALTH];
-	} else {
-		upperBound = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
+	if (other->client->ps.stats[STAT_ARMOR] > 200) {
+		other->client->ps.stats[STAT_ARMOR] = 200;
 	}
 
-	if (other->client->ps.stats[STAT_ARMOR] > upperBound) {
-		other->client->ps.stats[STAT_ARMOR] = upperBound;
-	}
-#else
-	other->client->ps.stats[STAT_ARMOR] += ent->item->quantity;
-
-	if (other->client->ps.stats[STAT_ARMOR] > other->client->ps.stats[STAT_MAX_HEALTH] * 2) {
-		other->client->ps.stats[STAT_ARMOR] = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
-	}
-#endif
 	return RESPAWN_ARMOR;
 }
 
@@ -406,12 +314,7 @@ void RespawnItem(gentity_t *ent) {
 			te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
 		}
 
-		if (ent->item->giTag == PW_QUAD) {
-			te->s.eventParm = G_SoundIndex("sound/items/quadrespawn.ogg");
-		} else {
-			te->s.eventParm = G_SoundIndex("sound/items/poweruprespawn.ogg");
-		}
-
+		te->s.eventParm = G_SoundIndex("snd/i/psp.wav");
 		te->r.svFlags |= SVF_BROADCAST;
 	}
 
@@ -426,7 +329,7 @@ void RespawnItem(gentity_t *ent) {
 			te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
 		}
 
-		te->s.eventParm = G_SoundIndex("sound/items/kamikazerespawn.wav");
+		te->s.eventParm = G_SoundIndex("snd/i/kam_sp.wav");
 		te->r.svFlags |= SVF_BROADCAST;
 	}
 	// play the normal respawn sound only to nearby clients
@@ -461,6 +364,12 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace) {
 	predict = other->client->pers.predictItemPickup;
 	// call the item-specific pickup function
 	switch (ent->item->giType) {
+		case IT_HEALTH:
+			respawn = Pickup_Health(ent, other);
+			break;
+		case IT_ARMOR:
+			respawn = Pickup_Armor(ent, other);
+			break;
 		case IT_WEAPON:
 			respawn = Pickup_Weapon(ent, other);
 //			predict = qfalse;
@@ -469,26 +378,18 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace) {
 			respawn = Pickup_Ammo(ent, other);
 //			predict = qfalse;
 			break;
-		case IT_ARMOR:
-			respawn = Pickup_Armor(ent, other);
-			break;
-		case IT_HEALTH:
-			respawn = Pickup_Health(ent, other);
+		case IT_HOLDABLE:
+			respawn = Pickup_Holdable(ent, other);
 			break;
 		case IT_POWERUP:
 			respawn = Pickup_Powerup(ent, other);
 			predict = qfalse;
 			break;
-#ifdef MISSIONPACK
 		case IT_PERSISTANT_POWERUP:
 			respawn = Pickup_PersistantPowerup(ent, other);
 			break;
-#endif
 		case IT_TEAM:
 			respawn = Pickup_Team(ent, other);
-			break;
-		case IT_HOLDABLE:
-			respawn = Pickup_Holdable(ent, other);
 			break;
 		default:
 			return;
@@ -630,7 +531,7 @@ gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle) {
 	angles[YAW] += angle;
 	angles[PITCH] = 0; // always forward
 
-	AngleVectors(angles, velocity, NULL, NULL);
+	AngleVectorsForward(angles, velocity);
 	VectorScale(velocity, 150, velocity);
 
 	velocity[2] += 200 + crandom() * 50;
@@ -915,14 +816,23 @@ void G_SpawnItem(gentity_t *ent, gitem_t *item) {
 	ent->physicsBounce = 0.50; // items are bouncy
 
 	if (item->giType == IT_POWERUP) {
-		G_SoundIndex("sound/items/poweruprespawn.ogg");
+		G_SoundIndex("snd/i/psp.wav");
 		G_SpawnFloat("noglobalsound", "0", &ent->speed);
 	}
-#ifdef MISSIONPACK
+
 	if (item->giType == IT_PERSISTANT_POWERUP) {
-		ent->s.generic1 = ent->spawnflags;
+		qboolean redTeam = !!(ent->spawnflags & 2);
+		qboolean blueTeam = !!(ent->spawnflags & 4);
+		// only one team can pick it up
+		if (redTeam && !blueTeam) {
+			ent->s.team = TEAM_RED;
+		} else if (blueTeam && !redTeam) {
+			ent->s.team = TEAM_BLUE;
+		// allow all players to pick it up
+		} else {
+			ent->s.team = 255;
+		}
 	}
-#endif
 }
 
 /*

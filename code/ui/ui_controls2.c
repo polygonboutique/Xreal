@@ -38,21 +38,21 @@ CONTROLS MENU
 
 typedef struct
 {
-	char           *command;
-	char           *label;
-	int             id;
-	int             anim;
-	int             defaultbind1;
-	int             defaultbind2;
-	int             bind1;
-	int             bind2;
+	char *command;
+	char *label;
+	int id;
+	int anim;
+	int defaultbind1;
+	int defaultbind2;
+	int bind1;
+	int bind2;
 } bind_t;
 
 typedef struct
 {
-	char           *name;
-	float           defaultvalue;
-	float           value;
+	char *name;
+	float defaultvalue;
+	float value;
 } configcvar_t;
 
 #define SAVE_NOOP		0
@@ -153,72 +153,72 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	//menubitmap_s    framel;
-	//menubitmap_s    framer;
+	menutext_s banner;
+	//menubitmap_s framel;
+	//menubitmap_s framer;
 
-	menubitmap_s    movement;
-	menubitmap_s    looking;
-	menubitmap_s    weapons;
-	menubitmap_s    misc;
+	menubitmap_s movement;
+	menubitmap_s looking;
+	menubitmap_s weapons;
+	menubitmap_s misc;
 
-	menuaction_s    walkforward;
-	menuaction_s    backpedal;
-	menuaction_s    stepleft;
-	menuaction_s    stepright;
-	menuaction_s    moveup;
-	menuaction_s    movedown;
-	menuaction_s    turnleft;
-	menuaction_s    turnright;
-	menuaction_s    sidestep;
-	menuaction_s    run;
-	menuaction_s    machinegun;
-	menuaction_s    chainsaw;
-	menuaction_s    shotgun;
-	menuaction_s    grenadelauncher;
-	menuaction_s    rocketlauncher;
-	menuaction_s    lightning;
-	menuaction_s    railgun;
-	menuaction_s    plasma;
-	menuaction_s    bfg;
-	menuaction_s    attack;
-	menuaction_s    attack2;
-	menuaction_s    prevweapon;
-	menuaction_s    nextweapon;
-	menuaction_s    lookup;
-	menuaction_s    lookdown;
-	menuaction_s    mouselook;
+	menuaction_s walkforward;
+	menuaction_s backpedal;
+	menuaction_s stepleft;
+	menuaction_s stepright;
+	menuaction_s moveup;
+	menuaction_s movedown;
+	menuaction_s turnleft;
+	menuaction_s turnright;
+	menuaction_s sidestep;
+	menuaction_s run;
+	menuaction_s machinegun;
+	menuaction_s chainsaw;
+	menuaction_s shotgun;
+	menuaction_s grenadelauncher;
+	menuaction_s rocketlauncher;
+	menuaction_s lightning;
+	menuaction_s railgun;
+	menuaction_s plasma;
+	menuaction_s bfg;
+	menuaction_s attack;
+	menuaction_s attack2;
+	menuaction_s prevweapon;
+	menuaction_s nextweapon;
+	menuaction_s lookup;
+	menuaction_s lookdown;
+	menuaction_s mouselook;
 	menuradiobutton_s freelook;
-	menuaction_s    centerview;
-	menuaction_s    zoomview;
-	menuaction_s    gesture;
+	menuaction_s centerview;
+	menuaction_s zoomview;
+	menuaction_s gesture;
 	menuradiobutton_s invertmouse;
-	menuslider_s    sensitivity;
+	menuslider_s sensitivity;
 	menuradiobutton_s smoothmouse;
 	menuradiobutton_s alwaysrun;
-	menuaction_s    showscores;
+	menuaction_s showscores;
 	menuradiobutton_s autoswitch;
-	menuaction_s    useitem;
+	menuaction_s useitem;
 	playerInfo_t    playerinfo;
 	qboolean        changesmade;
-	menuaction_s    chat;
-	menuaction_s    chat2;
-	menuaction_s    chat3;
-	menuaction_s    chat4;
+	menuaction_s chat;
+	menuaction_s chat2;
+	menuaction_s chat3;
+	menuaction_s chat4;
 	menuradiobutton_s joyenable;
-	menuslider_s    joythreshold;
-	int             section;
+	menuslider_s joythreshold;
+	int section;
 	qboolean        waitingforkey;
-	char            playerModel[64];
+	char playerModel[64];
 	vec3_t          playerViewangles;
 	vec3_t          playerMoveangles;
-	int             playerLegs;
-	int             playerTorso;
-	int             playerWeapon;
+	int playerLegs;
+	int playerTorso;
+	int playerWeapon;
 	qboolean        playerChat;
 
-	menubitmap_s    back;
-	menutext_s      name;
+	menubitmap_s back;
+	menutext_s name;
 } controls_t;
 
 static controls_t s_controls;
@@ -355,7 +355,7 @@ Controls_InitCvars
 */
 static void Controls_InitCvars(void)
 {
-	int             i;
+	int i;
 	configcvar_t   *cvarptr;
 
 	cvarptr = g_configcvars;
@@ -384,7 +384,7 @@ Controls_GetCvarDefault
 static float Controls_GetCvarDefault(char *name)
 {
 	configcvar_t   *cvarptr;
-	int             i;
+	int i;
 
 	cvarptr = g_configcvars;
 	for(i = 0;; i++, cvarptr++)
@@ -407,7 +407,7 @@ Controls_GetCvarValue
 static float Controls_GetCvarValue(char *name)
 {
 	configcvar_t   *cvarptr;
-	int             i;
+	int i;
 
 	cvarptr = g_configcvars;
 	for(i = 0;; i++, cvarptr++)
@@ -504,11 +504,11 @@ static void Controls_UpdateModel(int anim)
 			break;
 
 		case ANIM_WEAPON5:
-			s_controls.playerWeapon = WP_ROCKET_LAUNCHER;
+			s_controls.playerWeapon = WP_ROCKETLAUNCHER;
 			break;
 
 		case ANIM_WEAPON6:
-			s_controls.playerWeapon = WP_LIGHTNING;
+			s_controls.playerWeapon = WP_BEAMGUN;
 			break;
 
 		case ANIM_WEAPON7:
@@ -554,11 +554,11 @@ Controls_Update
 */
 static void Controls_Update(void)
 {
-	int             i;
-	int             j;
-	int             y;
-	menucommon_s  **controls;
-	menucommon_s   *control;
+	int i;
+	int j;
+	int y;
+	menucommon_s **controls;
+	menucommon_s *control;
 
 	// disable all controls in all groups
 	for(i = 0; i < C_MAX; i++)
@@ -660,14 +660,14 @@ Controls_DrawKeyBinding
 */
 static void Controls_DrawKeyBinding(void *self)
 {
-	menuaction_s   *a;
-	int             x;
-	int             y;
-	int             b1;
-	int             b2;
+	menuaction_s *a;
+	int x;
+	int y;
+	int b1;
+	int b2;
 	qboolean        c;
-	char            name[32];
-	char            name2[32];
+	char name[32];
+	char name2[32];
 
 	a = (menuaction_s *) self;
 
@@ -801,9 +801,9 @@ Controls_GetKeyAssignment
 */
 static void Controls_GetKeyAssignment(char *command, int *twokeys)
 {
-	int             count;
-	int             j;
-	char            b[256];
+	int count;
+	int j;
+	char b[256];
 
 	twokeys[0] = twokeys[1] = -1;
 	count = 0;
@@ -832,8 +832,8 @@ Controls_GetConfig
 */
 static void Controls_GetConfig(void)
 {
-	int             i;
-	int             twokeys[2];
+	int i;
+	int twokeys[2];
 	bind_t         *bindptr;
 
 	// put the bindings into a local store
@@ -868,7 +868,7 @@ Controls_SetConfig
 */
 static void Controls_SetConfig(void)
 {
-	int             i;
+	int i;
 	bind_t         *bindptr;
 
 	// set the bindings from the local store
@@ -911,7 +911,7 @@ Controls_SetDefaults
 */
 static void Controls_SetDefaults(void)
 {
-	int             i;
+	int i;
 	bind_t         *bindptr;
 
 	// set the bindings from the local store
@@ -944,8 +944,8 @@ Controls_MenuKey
 */
 static sfxHandle_t Controls_MenuKey(int key)
 {
-	int             id;
-	int             i;
+	int id;
+	int i;
 	qboolean        found;
 	bind_t         *bindptr;
 
@@ -1214,7 +1214,7 @@ Controls_MenuInit
 */
 static void Controls_MenuInit(void)
 {
-	static char     playername[32];
+	static char playername[32];
 
 	// zero set all our globals
 	memset(&s_controls, 0, sizeof(controls_t));

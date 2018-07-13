@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -160,20 +160,6 @@ field_t fields[] = {
 	{"rotation", FOFS(s.angles), F_ROTATIONHACK},
 	{"targetShaderName", FOFS(targetShaderName), F_LSTRING},
 	{"targetShaderNewName", FOFS(targetShaderNewName), F_LSTRING}, 
-#ifdef G_LUA
-	{"luaThink", FOFS(luaThink), F_LSTRING},
-	{"luaTouch", FOFS(luaTouch), F_LSTRING},
-	{"luaUse", FOFS(luaUse), F_LSTRING},
-	{"luaHurt", FOFS(luaHurt), F_LSTRING},
-	{"luaDie", FOFS(luaDie), F_LSTRING},
-	{"luaFree", FOFS(luaFree), F_LSTRING},
-	{"luaTrigger", FOFS(luaTrigger), F_LSTRING},
-	{"luaSpawn", FOFS(luaSpawn), F_LSTRING},
-	{"luaParam1", FOFS(luaParam1), F_LSTRING},
-	{"luaParam2", FOFS(luaParam2), F_LSTRING},
-	{"luaParam3", FOFS(luaParam3), F_LSTRING},
-	{"luaParam4", FOFS(luaParam4), F_LSTRING}, 
-#endif
 	{NULL}
 };
 
@@ -340,12 +326,6 @@ qboolean G_CallSpawn(gentity_t *ent) {
 			}
 
 			G_SpawnItem(ent, item);
-#ifdef G_LUA
-			// Lua API callbacks
-			if (ent->luaSpawn) {
-				G_LuaHook_EntitySpawn(ent->luaSpawn, ent->s.number);
-			}
-#endif
 			return qtrue;
 		}
 	}
@@ -360,12 +340,6 @@ qboolean G_CallSpawn(gentity_t *ent) {
 			}
 
 			s->spawn(ent);
-#ifdef G_LUA
-			// Lua API callbacks
-			if (ent->luaSpawn) {
-				G_LuaHook_EntitySpawn(ent->luaSpawn, ent->s.number);
-			}
-#endif
 			return qtrue;
 		}
 	}
@@ -430,6 +404,12 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent) {
 			b = (byte *)ent;
 
 			switch (f->type) {
+				case F_INT:
+					*(int *)(b + f->ofs) = atoi(value);
+					break;
+				case F_FLOAT:
+					*(float *)(b + f->ofs) = atof(value);
+					break;
 				case F_LSTRING:
 					*(char **)(b + f->ofs) = G_NewString(value);
 					break;
@@ -438,12 +418,6 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent) {
 					((float *)(b + f->ofs))[0] = vec[0];
 					((float *)(b + f->ofs))[1] = vec[1];
 					((float *)(b + f->ofs))[2] = vec[2];
-					break;
-				case F_INT:
-					*(int *)(b + f->ofs) = atoi(value);
-					break;
-				case F_FLOAT:
-					*(float *)(b + f->ofs) = atof(value);
 					break;
 				case F_ANGLEHACK:
 					v = atof(value);
@@ -500,7 +474,7 @@ void G_SpawnGEntityFromSpawnVars(void) {
 	int i;
 	gentity_t *ent;
 	char *s, *value, *gametypeName;
-	static char *gametypeNames[] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester", "teamtournament"};
+	static char *gametypeNames[] = {"single", "ffa", "tournament", "team", "ctf", "oneflag", "obelisk", "harvester"};
 
 	// get the next free entity
 	ent = G_Spawn();
@@ -517,8 +491,8 @@ void G_SpawnGEntityFromSpawnVars(void) {
 			return;
 		}
 	}
-	// check for "notteam" flag (GT_FFA, GT_TOURNAMENT, GT_SINGLE_PLAYER)
-	if (g_gametype.integer >= GT_TEAM) {
+	// check for "notteam" flag (GT_SINGLE_PLAYER, GT_FFA, GT_TOURNAMENT)
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		G_SpawnInt("notteam", "0", &i);
 
 		if (i) {
@@ -580,7 +554,7 @@ char *G_AddSpawnVarToken(const char *string) {
 	l = strlen(string);
 
 	if (level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS) {
-		G_Error("G_AddSpawnVarToken: MAX_SPAWN_CHARS");
+		G_Error("G_AddSpawnVarToken: MAX_SPAWN_VARS_CHARS");
 	}
 
 	dest = level.spawnVarChars + level.numSpawnVarChars;

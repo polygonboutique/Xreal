@@ -106,7 +106,7 @@ void ACEAI_Think(gentity_t *self) {
 		team = Info_ValueForKey(userinfo, "team");
 
 		if (!team || !*team) {
-			if (g_gametype.integer >= GT_TEAM) {
+			if (g_gametype.integer > GT_TOURNAMENT) {
 				if (PickTeam(clientNum) == TEAM_RED) {
 					team = "red";
 				} else {
@@ -553,7 +553,7 @@ void ACEAI_ChooseWeapon(gentity_t *self) {
 			if (ACEAI_CheckShot(self) && ACEIT_ChangeWeapon(self, WP_BFG))
 				return;
 
-		if (ACEAI_CheckShot(self) && ACEIT_ChangeWeapon(self, WP_ROCKET_LAUNCHER))
+		if (ACEAI_CheckShot(self) && ACEIT_ChangeWeapon(self, WP_ROCKETLAUNCHER))
 			return;
 	}
 	// only use GL in certain ranges and only on targets at or below our level
@@ -562,7 +562,7 @@ void ACEAI_ChooseWeapon(gentity_t *self) {
 			return;
 
 	if (range > 100 && range < LIGHTNING_RANGE)
-		if (ACEIT_ChangeWeapon(self, WP_LIGHTNING))
+		if (ACEIT_ChangeWeapon(self, WP_BEAMGUN))
 			return;
 
 #ifdef MISSIONPACK

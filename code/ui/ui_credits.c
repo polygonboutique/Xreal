@@ -41,15 +41,15 @@ typedef struct
 
 static creditsmenu_t s_credits;
 
-int             starttime;		// game time at which credits are started
-float           mvolume;		// records the original music volume level
+int starttime;		// game time at which credits are started
+float mvolume;		// records the original music volume level
 
 //qhandle_t       BackgroundShader;
 
 typedef struct
 {
-	char           *string;
-	int             style;
+	char *string;
+	int style;
 	vec_t          *color;
 
 } cr_line;
@@ -222,10 +222,10 @@ Main drawing function
 */
 static void ScrollingCredits_Draw(void)
 {
-	int             x = 320, y, n;
-	float           textScale = 0.25f;
+	int x = 320, y, n;
+	float textScale = 0.25f;
 	vec4_t          color;
-	float           textZoom;
+	float textZoom;
 
 	// first, fill the background with the specified shader
 //  UI_DrawHandlePic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BackgroundShader);

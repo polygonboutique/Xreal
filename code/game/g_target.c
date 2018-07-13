@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -101,16 +101,6 @@ Think_Target_Delay
 =======================================================================================================================================
 */
 void Think_Target_Delay(gentity_t *ent) {
-#ifdef G_LUA
-	// Lua API callbacks
-	if (ent->luaTrigger) {
-		if (ent->activator) {
-			G_LuaHook_EntityTrigger(ent->luaTrigger, ent->s.number, ent->activator->s.number);
-		} else {
-			G_LuaHook_EntityTrigger(ent->luaTrigger, ent->s.number, ENTITYNUM_WORLD);
-		}
-	}
-#endif
 	G_UseTargets(ent, ent->activator);
 }
 
@@ -602,12 +592,7 @@ target_fx_think
 =======================================================================================================================================
 */
 static void target_fx_think(gentity_t *self) {
-#ifdef G_LUA
-	// Lua API callbacks
-	if (self->luaTrigger) {
-		G_LuaHook_EntityTrigger(self->luaTrigger, self->s.number, self->s.number);
-	}
-#endif
+
 	G_AddEvent(self, EV_EFFECT, self->s.modelindex);
 
 	if (self->wait > 0) {

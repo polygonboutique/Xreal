@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -275,7 +275,7 @@ void CG_DrawInformation(void) {
 
 			y += y_offset;
 		}
-	} else if (cgs.gametype >= GT_CTF) {
+	} else if (cgs.gametype > GT_TEAM) {
 		value = atoi(Info_ValueForKey(info, "capturelimit"));
 
 		if (value) {

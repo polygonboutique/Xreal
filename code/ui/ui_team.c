@@ -42,14 +42,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    back;
+	menubitmap_s back;
 
-	menutext_s      banner;
+	menutext_s banner;
 
-	menutext_s      joinred;
-	menutext_s      joinblue;
-	menutext_s      joingame;
-	menutext_s      spectate;
+	menutext_s joinred;
+	menutext_s joinblue;
+	menutext_s joingame;
+	menutext_s spectate;
 } teammain_t;
 
 static teammain_t s_teammain;
@@ -101,9 +101,9 @@ TeamMain_MenuInit
 */
 void TeamMain_MenuInit(void)
 {
-	int             y;
-	int             gametype;
-	char            info[MAX_INFO_STRING];
+	int y;
+	int gametype;
+	char info[MAX_INFO_STRING];
 
 	memset(&s_teammain, 0, sizeof(s_teammain));
 

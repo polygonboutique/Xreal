@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -218,7 +218,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 =======================================================================================================================================
 */
 
-#define HEARTBEAT_MSEC 300 * 1000
+#define HEARTBEAT_MSEC 300000
 #define HEARTBEAT_GAME "XreaL-1"
 
 /*
@@ -768,10 +768,6 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 		SV_GetChallenge(from);
 	} else if (!Q_stricmp(c, "connect")) {
 		SV_DirectConnect(from);
-#ifndef STANDALONE
-	} else if (!Q_stricmp(c, "ipAuthorize")) {
-		SV_AuthorizeIpPacket(from);
-#endif
 	} else if (!Q_stricmp(c, "rcon")) {
 		SVC_RemoteCommand(from, msg);
 	} else if (!Q_stricmp(c, "disconnect")) {
@@ -1081,11 +1077,7 @@ void SV_Frame(int msec) {
 		svs.time += frameMsec;
 		sv.time += frameMsec;
 		// let everything in the world think and move
-#if defined(USE_JAVA)
-		Java_G_RunFrame(sv.time);
-#else
 		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-#endif
 	}
 
 	if (com_speeds->integer) {

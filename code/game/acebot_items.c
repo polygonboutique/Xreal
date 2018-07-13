@@ -104,13 +104,13 @@ float ACEIT_ItemNeed(gentity_t *self, gentity_t *itemEnt) {
 				return 5.0f;
 			} else if (item->giTag == WP_FLAK_CANNON) {
 				return 4.0f;
-			} else if (item->giTag == WP_ROCKET_LAUNCHER) {
+			} else if (item->giTag == WP_ROCKETLAUNCHER) {
 				return 12.0f;
 			} else if (item->giTag == WP_RAILGUN) {
 				return 8.5f;
 			} else if (item->giTag == WP_BFG) {
 				return 3.0f;
-			} else if (item->giTag == WP_LIGHTNING) {
+			} else if (item->giTag == WP_BEAMGUN) {
 				return 5.0f;
 			} else if (item->giTag == WP_PLASMAGUN) {
 				return 5.0f;
@@ -129,13 +129,13 @@ float ACEIT_ItemNeed(gentity_t *self, gentity_t *itemEnt) {
 				return 3.5f;
 			} else if (item->giTag == WP_FLAK_CANNON) {
 				return 3.0f;
-			} else if (item->giTag == WP_ROCKET_LAUNCHER) {
+			} else if (item->giTag == WP_ROCKETLAUNCHER) {
 				return 9.0f;
 			} else if (item->giTag == WP_RAILGUN) {
 				return 2.5f;
 			} else if (item->giTag == WP_BFG) {
 				return 4.5f;
-			} else if (item->giTag == WP_LIGHTNING) {
+			} else if (item->giTag == WP_BEAMGUN) {
 				return 4.0f;
 			} else if (item->giTag == WP_PLASMAGUN) {
 				return 4.0f;

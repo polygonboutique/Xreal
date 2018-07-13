@@ -55,9 +55,9 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
 
 	menuradiobutton_s simpleitems;
@@ -67,9 +67,9 @@ typedef struct
 //	menuradiobutton_s synceveryframe;
 	menuradiobutton_s forceModel;
 	menuradiobutton_s forceBrightSkins;
-	menulist_s      drawteamoverlay;
+	menulist_s drawteamoverlay;
 	menuradiobutton_s allowdownload;
-	menubitmap_s    back;
+	menubitmap_s back;
 } preferences_t;
 
 static preferences_t s_preferences;
@@ -161,10 +161,10 @@ Crosshair_Draw
 */
 /*static void Crosshair_Draw(void *self)
 {
-	menulist_s     *s;
-	float          *color;
-	int             x, y;
-	int             style;
+	menulist_s *s;
+	float *color;
+	int x, y;
+	int style;
 	qboolean        focus;
 
 	s = (menulist_s *) self;
@@ -209,7 +209,7 @@ Crosshair_Draw
 
 static void Preferences_MenuInit(void)
 {
-	int             y;
+	int y;
 
 	memset(&s_preferences, 0, sizeof(preferences_t));
 

@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -77,7 +77,7 @@ const char *BuildShaderStateConfig(void) {
 	memset(buff, 0, MAX_STRING_CHARS);
 
 	for (i = 0; i < remapCount; i++) {
-		Com_sprintf(out, (MAX_QPATH * 2) + 5, "%s=%s:%5.2f@", remappedShaders[i].oldShader, remappedShaders[i].newShader, remappedShaders[i].timeOffset);
+		Com_sprintf(out, (MAX_QPATH * 2) + 5, "%s = %s:%5.2f@", remappedShaders[i].oldShader, remappedShaders[i].newShader, remappedShaders[i].timeOffset);
 		Q_strcat(buff, sizeof(buff), out);
 	}
 
@@ -354,16 +354,6 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator) {
 		} else {
 			if (t->use) {
 				t->use(t, ent, activator);
-#ifdef G_LUA
-				// Lua API callbacks
-				if (t->luaUse) {
-					if (activator) {
-						G_LuaHook_EntityUse(t->luaUse, t->s.number, ent->s.number, activator->s.number);
-					} else {
-						G_LuaHook_EntityUse(t->luaUse, t->s.number, ent->s.number, ENTITYNUM_WORLD);
-					}
-				}
-#endif
 			}
 		}
 
@@ -509,9 +499,6 @@ void G_InitGentity(gentity_t *e) {
 	e->classname = "noclass";
 	e->s.number = e - g_entities;
 	e->r.ownerNum = ENTITYNUM_NONE;
-#if defined(ACEBOT)
-	e->node = -1;
-#endif
 }
 
 /*
@@ -604,20 +591,12 @@ void G_FreeEntity(gentity_t *ed) {
 	if (ed->neverFree) {
 		return;
 	}
-#ifdef G_LUA
-	// Lua API callbacks
-	if (ed->luaFree && !ed->client) {
-		G_LuaHook_EntityFree(ed->luaFree, ed->s.number);
-	}
-#endif
+
 	memset(ed, 0, sizeof(*ed));
 
 	ed->classname = "freed";
 	ed->freeTime = level.time;
 	ed->inuse = qfalse;
-#if defined(ACEBOT)
-	ed->node = -1;
-#endif
 }
 
 /*
@@ -714,7 +693,6 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm) {
 
 		ent->client->ps.externalEvent = event|bits;
 		ent->client->ps.externalEventParm = eventParm;
-		ent->client->ps.externalEventTime = level.time;
 	} else {
 		bits = ent->s.event & EV_EVENT_BITS;
 		bits = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
@@ -755,4 +733,22 @@ void G_SetOrigin(gentity_t *ent, vec3_t origin) {
 
 	VectorClear(ent->s.pos.trDelta);
 	VectorCopy(origin, ent->r.currentOrigin);
+}
+
+/*
+=======================================================================================================================================
+G_GetEntityPlayerState
+=======================================================================================================================================
+*/
+playerState_t *G_GetEntityPlayerState(const gentity_t *ent) {
+
+	if (ent->client) {
+		return &ent->client->ps;
+	}
+/* // Tobias NOTE: enable this!
+	if (ent->monster) {
+		return &ent->monster->ps;
+	}
+*/
+	return NULL;
 }

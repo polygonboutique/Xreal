@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -38,8 +38,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CTF_CARRIER_DANGER_PROTECT_TIMEOUT 8000
 #define CTF_FRAG_CARRIER_ASSIST_TIMEOUT 10000
 #define CTF_RETURN_FLAG_ASSIST_TIMEOUT 10000
-#define CTF_GRAPPLE_SPEED 750 // speed of grapple in flight
-#define CTF_GRAPPLE_PULL_SPEED 750 // speed player is pulled at
 #define OVERLOAD_ATTACK_BASE_SOUND_TIME 20000
 // Prototypes
 int OtherTeam(int team);

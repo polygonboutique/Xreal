@@ -54,21 +54,21 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	//menubitmap_s    framel;
-	//menubitmap_s    framer;
+	menutext_s banner;
+	//menubitmap_s framel;
+	//menubitmap_s framer;
 
-	menubitmap_s    graphics;
-	//menutext_s      display;
-	menubitmap_s    sound;
-	menubitmap_s    network;
+	menubitmap_s graphics;
+	//menutext_s display;
+	menubitmap_s sound;
+	menubitmap_s network;
 
-	menuslider_s    sfxvolume;
-	menuslider_s    musicvolume;
-	menulist_s      quality;
+	menuslider_s sfxvolume;
+	menuslider_s musicvolume;
+	menulist_s quality;
 	menuradiobutton_s openal;
 
-	menubitmap_s    back;
+	menubitmap_s back;
 } soundOptionsInfo_t;
 
 static soundOptionsInfo_t soundOptionsInfo;
@@ -152,7 +152,7 @@ UI_SoundOptionsMenu_Init
 */
 static void UI_SoundOptionsMenu_Init(void)
 {
-	int             y;
+	int y;
 
 	memset(&soundOptionsInfo, 0, sizeof(soundOptionsInfo));
 

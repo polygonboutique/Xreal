@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -78,7 +78,7 @@ void UpdateTournamentInfo(void) {
 
 		won = qfalse;
 
-		if (g_gametype.integer >= GT_CTF) {
+		if (g_gametype.integer > GT_TOURNAMENT) {
 			score1 = level.teamScores[TEAM_RED];
 			score2 = level.teamScores[TEAM_BLUE];
 
@@ -130,7 +130,7 @@ void UpdateTournamentInfo(void) {
 		strcat(msg, buf);
 	}
 
-	trap_SendConsoleCommand(EXEC_APPEND, msg);
+	trap_Cmd_ExecuteText(EXEC_APPEND, msg);
 }
 
 /*
@@ -223,7 +223,6 @@ static void CelebrateStop(gentity_t *player) {
 	player->s.torsoAnim = ((player->s.torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT)|anim;
 }
 
-#define TIMER_GESTURE (34 * 66 + 50)
 /*
 =======================================================================================================================================
 CelebrateStart
@@ -257,7 +256,7 @@ static void PodiumPlacementThink(gentity_t *podium) {
 
 	podium->nextthink = level.time + 100;
 
-	AngleVectors(level.intermission_angle, vec, NULL, NULL);
+	AngleVectorsForward(level.intermission_angle, vec, NULL, NULL);
 	VectorMA(level.intermission_origin, trap_Cvar_VariableIntegerValue("g_podiumDist"), vec, origin);
 
 	origin[2] -= trap_Cvar_VariableIntegerValue("g_podiumDrop");

@@ -50,39 +50,39 @@ SINGLE PLAYER POSTGAME MENU
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      item_status;
-	menubitmap_s    item_again;
-	menubitmap_s    item_next;
-	menubitmap_s    item_menu;
+	menutext_s item_status;
+	menubitmap_s item_again;
+	menubitmap_s item_next;
+	menubitmap_s item_menu;
 
-	int             phase;
-	int             ignoreKeysTime;
-	int             starttime;
-	int             scoreboardtime;
-	int             serverId;
+	int phase;
+	int ignoreKeysTime;
+	int starttime;
+	int scoreboardtime;
+	int serverId;
 
-	int             clientNums[MAX_SCOREBOARD_CLIENTS];
-	int             ranks[MAX_SCOREBOARD_CLIENTS];
-	int             scores[MAX_SCOREBOARD_CLIENTS];
+	int clientNums[MAX_SCOREBOARD_CLIENTS];
+	int ranks[MAX_SCOREBOARD_CLIENTS];
+	int scores[MAX_SCOREBOARD_CLIENTS];
 
-	char            placeNames[3][64];
+	char placeNames[3][64];
 
-	int             level;
-	int             numClients;
-	int             won;
-	int             numAwards;
-	int             awardsEarned[MAX_AWARDS];
-	int             awardsLevels[MAX_AWARDS];
+	int level;
+	int numClients;
+	int won;
+	int numAwards;
+	int awardsEarned[MAX_AWARDS];
+	int awardsLevels[MAX_AWARDS];
 	qboolean        playedSound[MAX_AWARDS];
-	int             lastTier;
+	int lastTier;
 	sfxHandle_t     winnerSound;
 } postgameMenuInfo_t;
 
 static postgameMenuInfo_t postgameMenuInfo;
-static char     arenainfo[MAX_INFO_VALUE];
+static char arenainfo[MAX_INFO_VALUE];
 
-char           *ui_medalNames[MAX_AWARDS] = { "Accuracy", "Impressive", "Excellent", "Gauntlet", "Telefrag", "Frags", "Perfect" };
-char           *ui_medalPicNames[MAX_AWARDS] = {
+char *ui_medalNames[MAX_AWARDS] = { "Accuracy", "Impressive", "Excellent", "Gauntlet", "Telefrag", "Frags", "Perfect" };
+char *ui_medalPicNames[MAX_AWARDS] = {
 	"menu/medals/medal_accuracy",
 	"menu/medals/medal_impressive",
 	"menu/medals/medal_excellent",
@@ -91,7 +91,7 @@ char           *ui_medalPicNames[MAX_AWARDS] = {
 	"menu/medals/medal_frags",
 	"menu/medals/medal_victory"
 };
-char           *ui_medalSounds[MAX_AWARDS] = {
+char *ui_medalSounds[MAX_AWARDS] = {
 	"sound/feedback/accuracy.ogg",
 	"sound/feedback/impressive_a.ogg",
 	"sound/feedback/excellent_a.ogg",
@@ -125,11 +125,11 @@ UI_SPPostgameMenu_NextEvent
 */
 static void UI_SPPostgameMenu_NextEvent(void *ptr, int event)
 {
-	int             currentSet;
-	int             levelSet;
-	int             level;
-	int             currentLevel;
-	const char     *arenaInfo;
+	int currentSet;
+	int levelSet;
+	int level;
+	int currentLevel;
+	const char *arenaInfo;
 
 	if(event != QM_ACTIVATED)
 	{
@@ -224,15 +224,15 @@ static sfxHandle_t UI_SPPostgameMenu_MenuKey(int key)
 }
 
 
-static int      medalLocations[6] = { 144, 448, 88, 504, 32, 560 };
+static int medalLocations[6] = { 144, 448, 88, 504, 32, 560 };
 
 static void UI_SPPostgameMenu_DrawAwardsMedals(int max)
 {
-	int             n;
-	int             medal;
-	int             amount;
-	int             x, y;
-	char            buf[16];
+	int n;
+	int medal;
+	int amount;
+	int x, y;
+	char buf[16];
 
 	for(n = 0; n < max; n++)
 	{
@@ -263,8 +263,8 @@ static void UI_SPPostgameMenu_DrawAwardsMedals(int max)
 
 static void UI_SPPostgameMenu_DrawAwardsPresentation(int timer)
 {
-	int             awardNum;
-	int             atimer;
+	int awardNum;
+	int atimer;
 	vec4_t          color;
 
 	awardNum = timer / AWARD_PRESENTATION_TIME;
@@ -292,9 +292,9 @@ UI_SPPostgameMenu_MenuDrawScoreLine
 */
 static void UI_SPPostgameMenu_MenuDrawScoreLine(int n, int y)
 {
-	int             rank;
-	char            name[64];
-	char            info[MAX_INFO_STRING];
+	int rank;
+	char name[64];
+	char info[MAX_INFO_STRING];
 
 	if(n > (postgameMenuInfo.numClients + 1))
 	{
@@ -328,10 +328,10 @@ UI_SPPostgameMenu_MenuDraw
 */
 static void UI_SPPostgameMenu_MenuDraw(void)
 {
-	int             timer;
-	int             serverId;
-	int             n;
-	char            info[MAX_INFO_STRING];
+	int timer;
+	int serverId;
+	int n;
+	char info[MAX_INFO_STRING];
 
 	trap_GetConfigString(CS_SYSTEMINFO, info, sizeof(info));
 	serverId = atoi(Info_ValueForKey(info, "sv_serverid"));
@@ -451,7 +451,7 @@ UI_SPPostgameMenu_Cache
 */
 void UI_SPPostgameMenu_Cache(void)
 {
-	int             n;
+	int n;
 
 	trap_R_RegisterShaderNoMip(ART_MENU0);
 	trap_R_RegisterShaderNoMip(ART_MENU1);
@@ -555,9 +555,9 @@ static void UI_SPPostgameMenu_Init(qboolean playerWon)
 
 static void Prepname(int index)
 {
-	int             len;
-	char            name[64];
-	char            info[MAX_INFO_STRING];
+	int len;
+	char name[64];
+	char info[MAX_INFO_STRING];
 
 	trap_GetConfigString(CS_PLAYERS + postgameMenuInfo.clientNums[index], info, MAX_INFO_STRING);
 	Q_strncpyz(name, Info_ValueForKey(info, "n"), sizeof(name));
@@ -581,15 +581,15 @@ UI_SPPostgameMenu_f
 */
 void UI_SPPostgameMenu_f(void)
 {
-	int             playerGameRank;
-	int             playerClientNum;
+	int playerGameRank;
+	int playerClientNum;
 	qboolean		playerWon;
-	int             n;
-	int             oldFrags, newFrags;
-	const char     *arena;
-	int             awardValues[MAX_AWARDS];
-	char            map[MAX_QPATH];
-	char            info[MAX_INFO_STRING];
+	int n;
+	int oldFrags, newFrags;
+	const char *arena;
+	int awardValues[MAX_AWARDS];
+	char map[MAX_QPATH];
+	char info[MAX_INFO_STRING];
 
 	memset(&postgameMenuInfo, 0, sizeof(postgameMenuInfo));
 

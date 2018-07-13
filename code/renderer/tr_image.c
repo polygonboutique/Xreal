@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -185,7 +184,7 @@ void R_ImageList_f(void) {
 		"no ", "yes"
 	};
 
-	ri.Printf(PRINT_ALL, "\n      - w--- h--- mm--type -   - if--wrap--name -------\n");
+	ri.Printf(PRINT_ALL, "\n      -w-- -h-- -type-- -size- --name-------\n");
 
 	texels = 0;
 	dataSize = 0;
@@ -324,7 +323,7 @@ void R_ImageList_f(void) {
 		ri.Printf(PRINT_ALL, " %s\n", image->name);
 	}
 
-	ri.Printf(PRINT_ALL, "--------\n");
+	ri.Printf(PRINT_ALL, " ---------\n");
 	ri.Printf(PRINT_ALL, " %i total texels(not including mipmaps)\n", texels);
 	ri.Printf(PRINT_ALL, " %d.%02d MB total image memory\n", dataSize / (1024 * 1024), (dataSize %(1024 * 1024)) * 100 / (1024 * 1024));
 	ri.Printf(PRINT_ALL, " %i total images\n\n", tr.images.currentElements);
@@ -1676,8 +1675,7 @@ typedef struct {
 	void (*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
 } imageExtToLoaderMap_t;
 
-// Note that the ordering indicates the order of preference used
-// when there are multiple images of different formats available
+// note that the ordering indicates the order of preference used when there are multiple images of different formats available
 static imageExtToLoaderMap_t imageLoaders[] = {
 #ifdef USE_WEBP
 	{"webp", LoadWEBP},
@@ -1713,58 +1711,58 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		return;
 	}
 	//ri.Printf(PRINT_ALL, "R_LoadImage: token '%s'\n", token);
-	// heightMap(<map>, <float>)Turns a grayscale height map into a normal map. <float> varies the bumpiness
+	// heightMap(<map>, <float>) turns a grayscale height map into a normal map. <float> varies the bumpiness
 	if (!Q_stricmp(token, "heightMap")) {
 		if (!ParseHeightMap(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
 				ri.Printf(PRINT_WARNING, "WARNING: failed to parse heightMap(<map>, <float>)expression for shader '%s'\n", materialName);
 			}
 		}
-	// displaceMap(<map>, <map>)Sets the alpha channel to an average of the second image's RGB channels.
+	// displaceMap(<map>, <map>) sets the alpha channel to an average of the second image's RGB channels.
 	} else if (!Q_stricmp(token, "displaceMap")) {
 		if (!ParseDisplaceMap(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
 				ri.Printf(PRINT_WARNING, "WARNING: failed to parse displaceMap(<map>, <map>)expression for shader '%s'\n", materialName);
 			}
 		}
-	// addNormals(<map>, <map>)Adds two normal maps together. Result is normalized.
+	// addNormals(<map>, <map>) adds two normal maps together. Result is normalized.
 	} else if (!Q_stricmp(token, "addNormals")) {
 		if (!ParseAddNormals(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
 				ri.Printf(PRINT_WARNING, "WARNING: failed to parse addNormals(<map>, <map>)expression for shader '%s'\n", materialName);
 			}
 		}
-	// smoothNormals(<map>)Does a box filter on the normal map, and normalizes the result.
+	// smoothNormals(<map>) does a box filter on the normal map, and normalizes the result.
 	} else if (!Q_stricmp(token, "smoothNormals")) {
 		ri.Printf(PRINT_WARNING, "WARNING: smoothNormals(<map>)keyword not supported\n");
-	// add(<map>, <map>)Adds two images without normalizing the result
+	// add(<map>, <map>) adds two images without normalizing the result
 	} else if (!Q_stricmp(token, "add")) {
 		ri.Printf(PRINT_WARNING, "WARNING: add(<map>, <map>)keyword not supported\n");
-	// scale(<map>, <float> [, float] [, float] [, float])Scales the RGBA by the specified factors. Defaults to 0.
+	// scale(<map>, <float> [, float] [, float] [, float]) scales the RGBA by the specified factors. Defaults to 0.
 	} else if (!Q_stricmp(token, "scale")) {
 		ri.Printf(PRINT_WARNING, "WARNING: scale(<map>, <float> [, float] [, float] [, float])keyword not supported\n");
-	// invertAlpha(<map>)Inverts the alpha channel(0 becomes 1, 1 becomes 0)
+	// invertAlpha(<map>) inverts the alpha channel(0 becomes 1, 1 becomes 0)
 	} else if (!Q_stricmp(token, "invertAlpha")) {
 		if (!ParseInvertAlpha(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
 				ri.Printf(PRINT_WARNING, "WARNING: failed to parse invertAlpha(<map>)expression for shader '%s'\n", materialName);
 			}
 		}
-	// invertColor(<map>)Inverts the R, G, and B channels
+	// invertColor(<map>) inverts the R, G, and B channels
 	} else if (!Q_stricmp(token, "invertColor")) {
 		if (!ParseInvertColor(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
 				ri.Printf(PRINT_WARNING, "WARNING: failed to parse invertColor(<map>)expression for shader '%s'\n", materialName);
 			}
 		}
-	// makeIntensity(<map>)Copies the red channel to the G, B, and A channels
+	// makeIntensity(<map>) copies the red channel to the G, B, and A channels
 	} else if (!Q_stricmp(token, "makeIntensity")) {
 		if (!ParseMakeIntensity(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
 				ri.Printf(PRINT_WARNING, "WARNING: failed to parse makeIntensity(<map>)expression for shader '%s'\n", materialName);
 			}
 		}
-	// makeAlpha(<map>)Sets the alpha channel to an average of the RGB channels. Sets the RGB channels to white.
+	// makeAlpha(<map>) sets the alpha channel to an average of the RGB channels. Sets the RGB channels to white.
 	} else if (!Q_stricmp(token, "makeAlpha")) {
 		if (!ParseMakeAlpha(buffer, pic, width, height, bits, materialName)) {
 			if (materialName && materialName[0] != '\0') {
@@ -1893,7 +1891,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 #endif
 #if 0
 	else if (r_tryCachedDDSImages->integer && !(bits & IF_NOCOMPRESSION) && Q_strncasecmp(name, "fonts", 5)) {
-		Q_strncpyz(ddsName, "dds / ", sizeof(ddsName));
+		Q_strncpyz(ddsName, "dds/", sizeof(ddsName));
 		Q_strcat(ddsName, sizeof(ddsName), name);
 		Com_StripExtension(ddsName, ddsName, sizeof(ddsName));
 		Q_strcat(ddsName, sizeof(ddsName), ".dds");
@@ -2792,8 +2790,6 @@ static void R_CreateDeferredRenderFBOImages(void) {
 	ri.Hunk_FreeTempMemory(data);
 }
 
-//*INDENT-OFF*
-
 /*
 =======================================================================================================================================
 R_CreateShadowMapFBOImage
@@ -2926,9 +2922,6 @@ static void R_CreateShadowCubeFBOImage(void) {
 		}
 	}
 }
-//*INDENT-ON*
-
-//*INDENT-OFF*
 
 /*
 =======================================================================================================================================
@@ -2955,9 +2948,6 @@ static void R_CreateBlackCubeImage(void) {
 		ri.Hunk_FreeTempMemory(data[i]);
 	}
 }
-//*INDENT-ON*
-
-//*INDENT-OFF*
 
 /*
 =======================================================================================================================================
@@ -2983,7 +2973,6 @@ static void R_CreateWhiteCubeImage(void) {
 		ri.Hunk_FreeTempMemory(data[i]);
 	}
 }
-//*INDENT-ON*
 
 /*
 =======================================================================================================================================

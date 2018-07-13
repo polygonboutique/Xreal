@@ -117,7 +117,7 @@ static const char *sortkey_items[] = {
 	NULL
 };
 
-static char    *gamenames[] = {
+static char *gamenames[] = {
 	"DM ",						// deathmatch
 	"1v1",						// tournament
 	"SP ",						// single player
@@ -134,39 +134,39 @@ static char    *gamenames[] = {
 	NULL
 };
 
-static char    *netnames[] = {
+static char *netnames[] = {
 	"???",
 	"UDP",
 	"UDP6",
 	NULL
 };
 
-static char     quake3worldMessage[] = "Visit http://xreal.sourceforge.net - News, Events, Files";
+static char quake3worldMessage[] = "Visit http://xreal.sourceforge.net - News, Events, Files";
 
 typedef struct
 {
-	char            adrstr[MAX_ADDRESSLENGTH];
-	int             start;
+	char adrstr[MAX_ADDRESSLENGTH];
+	int start;
 } pinglist_t;
 
 typedef struct servernode_s
 {
-	char            adrstr[MAX_ADDRESSLENGTH];
-	char            hostname[MAX_HOSTNAMELENGTH + 3];
-	char            mapname[MAX_MAPNAMELENGTH];
-	int             numclients;
-	int             maxclients;
-	int             pingtime;
-	int             gametype;
-	char            gamename[12];
-	int             nettype;
-	int             minPing;
-	int             maxPing;
+	char adrstr[MAX_ADDRESSLENGTH];
+	char hostname[MAX_HOSTNAMELENGTH + 3];
+	char mapname[MAX_MAPNAMELENGTH];
+	int numclients;
+	int maxclients;
+	int pingtime;
+	int gametype;
+	char gamename[12];
+	int nettype;
+	int minPing;
+	int maxPing;
 } servernode_t;
 
 typedef struct
 {
-	char            buff[MAX_LISTBOXWIDTH];
+	char buff[MAX_LISTBOXWIDTH];
 	servernode_t   *servernode;
 } table_t;
 
@@ -174,57 +174,57 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
+	menutext_s banner;
 
-	menulist_s      master;
-	menulist_s      gametype;
-	menulist_s      sortkey;
+	menulist_s master;
+	menulist_s gametype;
+	menulist_s sortkey;
 	menuradiobutton_s showfull;
 	menuradiobutton_s showempty;
 
-	menulist_s      list;
-	menubitmap_s    mappic;
-	menubitmap_s    arrows;
-	menubitmap_s    up;
-	menubitmap_s    down;
-	menutext_s      status;
-	menutext_s      statusbar;
+	menulist_s list;
+	menubitmap_s mappic;
+	menubitmap_s arrows;
+	menubitmap_s up;
+	menubitmap_s down;
+	menutext_s status;
+	menutext_s statusbar;
 
-	menubitmap_s    remove;
-	menubitmap_s    back;
-	menubitmap_s    refresh;
-	menubitmap_s    specify;
-	menubitmap_s    create;
-	menubitmap_s    go;
+	menubitmap_s remove;
+	menubitmap_s back;
+	menubitmap_s refresh;
+	menubitmap_s specify;
+	menubitmap_s create;
+	menubitmap_s go;
 
 	pinglist_t      pinglist[MAX_PINGREQUESTS];
 	table_t         table[MAX_LISTBOXITEMS];
-	char           *items[MAX_LISTBOXITEMS];
-	int             numqueriedservers;
-	int            *numservers;
+	char *items[MAX_LISTBOXITEMS];
+	int numqueriedservers;
+	int *numservers;
 	servernode_t   *serverlist;
-	int             currentping;
+	int currentping;
 	qboolean        refreshservers;
-	int             nextpingtime;
-	int             maxservers;
-	int             refreshtime;
-	char            favoriteaddresses[MAX_FAVORITESERVERS][MAX_ADDRESSLENGTH];
-	int             numfavoriteaddresses;
+	int nextpingtime;
+	int maxservers;
+	int refreshtime;
+	char favoriteaddresses[MAX_FAVORITESERVERS][MAX_ADDRESSLENGTH];
+	int numfavoriteaddresses;
 } arenaservers_t;
 
 static arenaservers_t g_arenaservers;
 
 static servernode_t g_globalserverlist[MAX_GLOBALSERVERS];
-static int      g_numglobalservers;
+static int g_numglobalservers;
 static servernode_t g_localserverlist[MAX_LOCALSERVERS];
-static int      g_numlocalservers;
+static int g_numlocalservers;
 static servernode_t g_favoriteserverlist[MAX_FAVORITESERVERS];
-static int      g_numfavoriteservers;
-static int      g_servertype;
-static int      g_gametype;
-static int      g_sortkey;
-static int      g_emptyservers;
-static int      g_fullservers;
+static int g_numfavoriteservers;
+static int g_servertype;
+static int g_gametype;
+static int g_sortkey;
+static int g_emptyservers;
+static int g_fullservers;
 
 
 /*
@@ -234,7 +234,7 @@ ArenaServers_MaxPing
 */
 static int ArenaServers_MaxPing(void)
 {
-	int             maxPing;
+	int maxPing;
 
 	maxPing = (int)trap_Cvar_VariableValue("cl_maxPing");
 	if(maxPing < 100)
@@ -252,8 +252,8 @@ ArenaServers_Compare
 */
 static int QDECL ArenaServers_Compare(const void *arg1, const void *arg2)
 {
-	float           f1;
-	float           f2;
+	float f1;
+	float f2;
 	servernode_t   *t1;
 	servernode_t   *t2;
 
@@ -342,7 +342,7 @@ ArenaServers_UpdatePicture
 */
 static void ArenaServers_UpdatePicture(void)
 {
-	static char     picname[64];
+	static char picname[64];
 	servernode_t   *servernodeptr;
 
 	if(!g_arenaservers.list.numitems)
@@ -369,13 +369,13 @@ ArenaServers_UpdateMenu
 */
 static void ArenaServers_UpdateMenu(void)
 {
-	int             i;
-	int             j;
-	int             count;
-	char           *buff;
+	int i;
+	int j;
+	int count;
+	char *buff;
 	servernode_t   *servernodeptr;
 	table_t        *tableptr;
-	char           *pingColor;
+	char *pingColor;
 
 	if(g_arenaservers.numqueriedservers > 0)
 	{
@@ -571,7 +571,7 @@ ArenaServers_Remove
 */
 static void ArenaServers_Remove(void)
 {
-	int             i;
+	int i;
 	servernode_t   *servernodeptr;
 	table_t        *tableptr;
 
@@ -635,8 +635,8 @@ ArenaServers_Insert
 static void ArenaServers_Insert(char *adrstr, char *info, int pingtime)
 {
 	servernode_t   *servernodeptr;
-	char           *s;
-	int             i;
+	char *s;
+	int i;
 
 
 	if((pingtime >= ArenaServers_MaxPing()) && (g_servertype != UIAS_FAVORITES))
@@ -706,9 +706,9 @@ Insert nonresponsive address book entries into display lists.
 */
 void ArenaServers_InsertFavorites(void)
 {
-	int             i;
-	int             j;
-	char            info[MAX_INFO_STRING];
+	int i;
+	int j;
+	char info[MAX_INFO_STRING];
 
 	// resync existing results with new or deleted cvars
 	info[0] = '\0';
@@ -737,11 +737,11 @@ Load cvar address book entries into local lists.
 */
 void ArenaServers_LoadFavorites(void)
 {
-	int             i;
-	int             j;
-	int             numtempitems;
-	char            emptyinfo[MAX_INFO_STRING];
-	char            adrstr[MAX_ADDRESSLENGTH];
+	int i;
+	int j;
+	int numtempitems;
+	char emptyinfo[MAX_INFO_STRING];
+	char adrstr[MAX_ADDRESSLENGTH];
 	servernode_t    templist[MAX_FAVORITESERVERS];
 	qboolean        found;
 
@@ -846,12 +846,12 @@ ArenaServers_DoRefresh
 */
 static void ArenaServers_DoRefresh(void)
 {
-	int             i;
-	int             j;
-	int             time;
-	int             maxPing;
-	char            adrstr[MAX_ADDRESSLENGTH];
-	char            info[MAX_INFO_STRING];
+	int i;
+	int j;
+	int time;
+	int maxPing;
+	char adrstr[MAX_ADDRESSLENGTH];
+	char info[MAX_INFO_STRING];
 
 	if(uis.realtime < g_arenaservers.refreshtime)
 	{
@@ -1004,8 +1004,8 @@ ArenaServers_StartRefresh
 */
 static void ArenaServers_StartRefresh(void)
 {
-	char            myargs[32], protocol[32];
-	int             i;
+	char myargs[32], protocol[32];
+	int i;
 
 	memset(g_arenaservers.serverlist, 0, g_arenaservers.maxservers * sizeof(table_t));
 
@@ -1090,7 +1090,7 @@ ArenaServers_SaveChanges
 */
 void ArenaServers_SaveChanges(void)
 {
-	int             i;
+	int i;
 
 	for(i = 0; i < g_arenaservers.numfavoriteaddresses; i++)
 		trap_Cvar_Set(va("server%d", i + 1), g_arenaservers.favoriteaddresses[i]);
@@ -1124,7 +1124,7 @@ int ArenaServers_SetType(int type)
 {
 	if(type >= UIAS_GLOBAL1 && type <= UIAS_GLOBAL5)
 	{
-		char            masterstr[2], cvarname[sizeof("sv_master1")];
+		char masterstr[2], cvarname[sizeof("sv_master1")];
 
 		while(type <= UIAS_GLOBAL5)
 		{
@@ -1191,7 +1191,7 @@ ArenaServers_Event
 */
 static void ArenaServers_Event(void *ptr, int event)
 {
-	int             id;
+	int id;
 
 	id = ((menucommon_s *) ptr)->id;
 
@@ -1325,10 +1325,10 @@ ArenaServers_MenuInit
 */
 static void ArenaServers_MenuInit(void)
 {
-	int             i;
-	int             y;
-	int             value;
-	static char     statusbuffer[MAX_STATUSLENGTH];
+	int i;
+	int y;
+	int value;
+	static char statusbuffer[MAX_STATUSLENGTH];
 
 	// zero set all our globals
 	memset(&g_arenaservers, 0, sizeof(arenaservers_t));

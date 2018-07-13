@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -179,8 +178,8 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters) {
 R_SyncRenderThread
 
 Issue any pending commands and wait for them to complete.
-After exiting, the render thread will have completed its work and will remain idle and the main thread is free to issue
-OpenGL calls until R_IssueRenderCommands is called.
+After exiting, the render thread will have completed its work and will remain idle and the main thread is free to issue OpenGL calls
+until R_IssueRenderCommands is called.
 =======================================================================================================================================
 */
 void R_SyncRenderThread(void) {
@@ -210,7 +209,7 @@ void *R_GetCommandBuffer(int bytes) {
 
 	cmdList = &backEndData[tr.smpFrame]->commands;
 	// always leave room for the swap buffers and end of list commands
-	// RB: added swapBuffers_t from ET
+	// added swapBuffers_t from ET
 	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS) {
 		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int))) {
 			ri.Error(ERR_FATAL, "R_GetCommandBuffer: bad size %i", bytes);
@@ -398,7 +397,6 @@ void RE_StretchPicGradient(float x, float y, float w, float h, float s1, float t
 
 	if (!gradientColor) {
 		static float colorWhite[4] = {1, 1, 1, 1};
-
 		gradientColor = colorWhite;
 	}
 

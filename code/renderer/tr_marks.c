@@ -199,7 +199,6 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 
 	for (i = 0; i < numPlanes; i++) {
 		R_ChopPolyBehindPlane(numClipPoints, clipPoints[pingPong], &numClipPoints, clipPoints[!pingPong], normals[i], dists[i], 0.5);
-
 		pingPong ^= 1;
 
 		if (numClipPoints == 0) {
@@ -353,7 +352,6 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 					// The 2 unit offset should avoid pretty much all LOD problems.
 
 					numClipPoints = 3;
-
 					dv = cv->verts + m * cv->width + n;
 
 					VectorCopy(dv[0].xyz, clipPoints[0][0]);

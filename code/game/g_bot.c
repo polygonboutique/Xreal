@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -24,7 +24,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "g_local.h"
 
-#if defined(BRAINWORKS) || defined(GLADIATOR)
 static int g_numBots;
 static char *g_botInfos[MAX_BOTS];
 
@@ -144,8 +143,8 @@ static void G_LoadArenasFromFile(char *filename) {
 	}
 
 	if (len >= MAX_ARENAS_TEXT) {
-		trap_Printf(va(S_COLOR_RED "file too large: %s is %i, max allowed is %i", filename, len, MAX_ARENAS_TEXT));
 		trap_FS_FCloseFile(f);
+		trap_Printf(va(S_COLOR_RED "file too large: %s is %i, max allowed is %i\n", filename, len, MAX_ARENAS_TEXT));
 		return;
 	}
 
@@ -470,7 +469,7 @@ void G_CheckMinimumPlayers(void) {
 		return;
 	}
 
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		if (minplayers >= g_maxclients.integer / 2) {
 			minplayers = (g_maxclients.integer / 2) - 1;
 		}
@@ -606,8 +605,8 @@ qboolean G_BotConnect(int clientNum, qboolean restart) {
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	Q_strncpyz(settings.characterfile, Info_ValueForKey(userinfo, "characterfile"), sizeof(settings.characterfile));
+
 	settings.skill = atof(Info_ValueForKey(userinfo, "skill"));
-	Q_strncpyz(settings.team, Info_ValueForKey(userinfo, "team"), sizeof(settings.team));
 
 	if (!BotAISetupClient(clientNum, &settings, restart)) {
 		trap_DropClient(clientNum, "BotAISetupClient failed");
@@ -655,9 +654,8 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 
 	Info_SetValueForKey(userinfo, "name", botname);
 	Info_SetValueForKey(userinfo, "rate", "25000");
-	Info_SetValueForKey(userinfo, "snaps", "20");
+	Info_SetValueForKey(userinfo, "snaps", "60");
 	Info_SetValueForKey(userinfo, "skill", va("%1.2f", skill));
-#if defined(GLADIATOR)
 	// outcommented for brainworks
 	if (skill >= 1 && skill < 2) {
 		Info_SetValueForKey(userinfo, "handicap", "50");
@@ -666,7 +664,7 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 	} else if (skill >= 3 && skill < 4) {
 		Info_SetValueForKey(userinfo, "handicap", "90");
 	}
-#endif
+
 	key = "model";
 	model = Info_ValueForKey(botinfo, key);
 
@@ -690,7 +688,7 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 	s = Info_ValueForKey(botinfo, key);
 
 	if (!*s) {
-		s = "4";
+		s = "5";
 	}
 
 	Info_SetValueForKey(userinfo, key, s);
@@ -720,7 +718,7 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 	}
 	// initialize the bot settings
 	if (!team || !*team) {
-		if (g_gametype.integer >= GT_TEAM) {
+		if (g_gametype.integer > GT_TOURNAMENT) {
 			if (PickTeam(clientNum) == TEAM_RED) {
 				team = "red";
 			} else {
@@ -781,7 +779,7 @@ void Svcmd_AddBot_f(void) {
 	trap_Argv(2, string, sizeof(string));
 
 	if (!string[0]) {
-		skill = 4;
+		skill = 3;
 	} else {
 		skill = atof(string);
 	}
@@ -823,7 +821,7 @@ void Svcmd_BotList_f(void) {
 		strcpy(name, Info_ValueForKey(g_botInfos[i], "name"));
 
 		if (!*name) {
-			strcpy(name, "UnnamedPlayer");
+			strcpy(name, DEFAULT_PLAYER_NAME);
 		}
 
 		strcpy(funname, Info_ValueForKey(g_botInfos[i], "funname"));
@@ -835,7 +833,7 @@ void Svcmd_BotList_f(void) {
 		strcpy(model, Info_ValueForKey(g_botInfos[i], "model"));
 
 		if (!*model) {
-			strcpy(model, "visor/default");
+			strcpy(model, DEFAULT_MODEL);
 		}
 
 		strcpy(aifile, Info_ValueForKey(g_botInfos[i], "aifile"));
@@ -867,11 +865,11 @@ static void G_SpawnBots(char *botList, int baseDelay) {
 	skill = trap_Cvar_VariableValue("g_spSkill");
 
 	if (skill < 1) {
-		trap_Cvar_Set("g_spSkill", "1");
 		skill = 1;
+		trap_Cvar_SetValue("g_spSkill", skill);
 	} else if (skill > 5) {
-		trap_Cvar_Set("g_spSkill", "5");
 		skill = 5;
+		trap_Cvar_SetValue("g_spSkill", skill);
 	}
 
 	Q_strncpyz(bots, botList, sizeof(bots));
@@ -899,7 +897,7 @@ static void G_SpawnBots(char *botList, int baseDelay) {
 			*p++ = 0;
 		}
 		// we must add the bot this way, calling G_AddBot directly at this stage does "Bad Things"
-		trap_SendConsoleCommand(EXEC_INSERT, va("addbot %s %f free %i\n", bot, skill, delay));
+		trap_Cmd_ExecuteText(EXEC_INSERT, va("addbot %s %f free %i\n", bot, skill, delay));
 
 		delay += BOT_BEGIN_DELAY_INCREMENT;
 	}
@@ -923,7 +921,7 @@ static void G_LoadBotsFromFile(char *filename) {
 	}
 
 	if (len >= MAX_BOTS_TEXT) {
-		trap_Printf(va(S_COLOR_RED "file too large: %s is %i, max allowed is %i", filename, len, MAX_BOTS_TEXT));
+		trap_Printf(va(S_COLOR_RED "file too large: %s is %i, max allowed is %i\n", filename, len, MAX_BOTS_TEXT));
 		trap_FS_FCloseFile(f);
 		return;
 	}
@@ -1043,27 +1041,15 @@ void G_InitBots(qboolean restart) {
 			return;
 		}
 
-		strValue = Info_ValueForKey(arenainfo, "fraglimit");
-		fragLimit = atoi(strValue);
-
-		if (fragLimit) {
-			trap_Cvar_Set("fraglimit", strValue);
-		} else {
-			trap_Cvar_Set("fraglimit", "0");
-		}
-
-		strValue = Info_ValueForKey(arenainfo, "timelimit");
-		timeLimit = atoi(strValue);
-
-		if (timeLimit) {
-			trap_Cvar_Set("timelimit", strValue);
-		} else {
-			trap_Cvar_Set("timelimit", "0");
-		}
+		fragLimit = atoi(Info_ValueForKey(arenainfo, "fraglimit"));
+		timeLimit = atoi(Info_ValueForKey(arenainfo, "timelimit"));
 
 		if (!fragLimit && !timeLimit) {
-			trap_Cvar_Set("fraglimit", "10");
-			trap_Cvar_Set("timelimit", "0");
+			trap_Cvar_SetValue("fraglimit", 10);
+			trap_Cvar_SetValue("timelimit", 0);
+		} else {
+			trap_Cvar_SetValue("fraglimit", fragLimit);
+			trap_Cvar_SetValue("timelimit", timeLimit);
 		}
 
 		basedelay = BOT_BEGIN_DELAY_BASE;
@@ -1078,4 +1064,3 @@ void G_InitBots(qboolean restart) {
 		}
 	}
 }
-#endif

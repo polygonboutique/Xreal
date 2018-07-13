@@ -1,7 +1,7 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
-Copyright (C) 2005 Stuart Dalton (badcdev@gmail.com)
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2005 Stuart Dalton (badcdev@gmail.com).
 
 This file is part of Spearmint Source Code.
 
@@ -153,10 +153,10 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si) {
 S_StartSound
 =======================================================================================================================================
 */
-void S_StartSound(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfx) {
+void S_StartSound(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfx, int range) {
 
 	if (si.StartSound) {
-		si.StartSound(origin, entnum, entchannel, sfx);
+		si.StartSound(origin, entnum, entchannel, sfx, range);
 	}
 }
 
@@ -237,10 +237,10 @@ void S_ClearLoopingSounds(qboolean killall) {
 S_AddLoopingSound
 =======================================================================================================================================
 */
-void S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx) {
+void S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range) {
 
 	if (si.AddLoopingSound) {
-		si.AddLoopingSound(entityNum, origin, velocity, sfx);
+		si.AddLoopingSound(entityNum, origin, velocity, sfx, range);
 	}
 }
 
@@ -249,10 +249,10 @@ void S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity
 S_AddRealLoopingSound
 =======================================================================================================================================
 */
-void S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx) {
+void S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range) {
 
 	if (si.AddRealLoopingSound) {
-		si.AddRealLoopingSound(entityNum, origin, velocity, sfx);
+		si.AddRealLoopingSound(entityNum, origin, velocity, sfx, range);
 	}
 }
 
@@ -534,8 +534,8 @@ void S_Init(void) {
 
 	Com_Printf("------ Initializing Sound ------\n");
 
-	s_volume = Cvar_Get("s_volume", "0.8", CVAR_ARCHIVE);
-	s_musicVolume = Cvar_Get("s_musicvolume", "0.25", CVAR_ARCHIVE);
+	s_volume = Cvar_Get("s_volume", "1.0", CVAR_ARCHIVE);
+	s_musicVolume = Cvar_Get("s_musicvolume", "0.0", CVAR_ARCHIVE);
 	s_muted = Cvar_Get("s_muted", "0", CVAR_ROM);
 	s_doppler = Cvar_Get("s_doppler", "1", CVAR_ARCHIVE);
 	s_backend = Cvar_Get("s_backend", "", CVAR_ROM);

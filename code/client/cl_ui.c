@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -24,7 +24,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "client.h"
 
-#if !defined(USE_JAVA)
 vm_t *uivm;
 
 /*
@@ -109,7 +108,6 @@ static void LAN_ResetPings(int source) {
 			servers = &cls.localServers[0];
 			count = MAX_OTHER_SERVERS;
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			servers = &cls.globalServers[0];
 			count = MAX_GLOBAL_SERVERS;
@@ -145,7 +143,6 @@ static int LAN_AddServer(int source, const char *name, const char *address) {
 			count = &cls.numlocalservers;
 			servers = &cls.localServers[0];
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			max = MAX_GLOBAL_SERVERS;
 			count = &cls.numglobalservers;
@@ -196,7 +193,6 @@ static void LAN_RemoveServer(int source, const char *addr) {
 			count = &cls.numlocalservers;
 			servers = &cls.localServers[0];
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			count = &cls.numglobalservers;
 			servers = &cls.globalServers[0];
@@ -239,7 +235,6 @@ static int LAN_GetServerCount(int source) {
 		case AS_LOCAL:
 			return cls.numlocalservers;
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			return cls.numglobalservers;
 			break;
@@ -266,7 +261,6 @@ static void LAN_GetServerAddressString(int source, int n, char *buf, int buflen)
 			}
 
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			if (n >= 0 && n < MAX_GLOBAL_SERVERS) {
 				Q_strncpyz(buf, NET_AdrToStringwPort(cls.globalServers[n].adr), buflen);
@@ -304,7 +298,6 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen) {
 			}
 
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			if (n >= 0 && n < MAX_GLOBAL_SERVERS) {
 				server = &cls.globalServers[n];
@@ -355,7 +348,6 @@ static int LAN_GetServerPing(int source, int n) {
 			}
 
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			if (n >= 0 && n < MAX_GLOBAL_SERVERS) {
 				server = &cls.globalServers[n];
@@ -391,7 +383,6 @@ static serverInfo_t *LAN_GetServerPtr(int source, int n) {
 			}
 
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			if (n >= 0 && n < MAX_GLOBAL_SERVERS) {
 				return &cls.globalServers[n];
@@ -483,42 +474,6 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 
 /*
 =======================================================================================================================================
-LAN_GetPingQueueCount
-=======================================================================================================================================
-*/
-static int LAN_GetPingQueueCount(void) {
-	return (CL_GetPingQueueCount());
-}
-
-/*
-=======================================================================================================================================
-LAN_ClearPing
-=======================================================================================================================================
-*/
-static void LAN_ClearPing(int n) {
-	CL_ClearPing(n);
-}
-
-/*
-=======================================================================================================================================
-LAN_GetPing
-=======================================================================================================================================
-*/
-static void LAN_GetPing(int n, char *buf, int buflen, int *pingtime) {
-	CL_GetPing(n, buf, buflen, pingtime);
-}
-
-/*
-=======================================================================================================================================
-LAN_GetPingInfo
-=======================================================================================================================================
-*/
-static void LAN_GetPingInfo(int n, char *buf, int buflen) {
-	CL_GetPingInfo(n, buf, buflen);
-}
-
-/*
-=======================================================================================================================================
 LAN_MarkServerVisible
 =======================================================================================================================================
 */
@@ -532,7 +487,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible) {
 			case AS_LOCAL:
 				server = &cls.localServers[0];
 				break;
-			case AS_MPLAYER:
 			case AS_GLOBAL:
 				server = &cls.globalServers[0];
 				count = MAX_GLOBAL_SERVERS;
@@ -555,7 +509,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible) {
 				}
 
 				break;
-			case AS_MPLAYER:
 			case AS_GLOBAL:
 				if (n >= 0 && n < MAX_GLOBAL_SERVERS) {
 					cls.globalServers[n].visible = visible;
@@ -586,7 +539,6 @@ static int LAN_ServerIsVisible(int source, int n) {
 			}
 
 			break;
-		case AS_MPLAYER:
 		case AS_GLOBAL:
 			if (n >= 0 && n < MAX_GLOBAL_SERVERS) {
 				return cls.globalServers[n].visible;
@@ -685,48 +637,6 @@ static void Key_GetBindingBuf(int keynum, char *buf, int buflen) {
 	}
 }
 
-/*
-=======================================================================================================================================
-CLUI_GetCDKey
-=======================================================================================================================================
-*/
-#ifndef STANDALONE
-static void CLUI_GetCDKey(char *buf, int buflen) {
-	cvar_t *fs;
-
-	fs = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
-
-	if (UI_usesUniqueCDKey() && fs && fs->string[0] != 0) {
-		Com_Memcpy(buf, &cl_cdkey[16], 16);
-		buf[16] = 0;
-	} else {
-		Com_Memcpy(buf, cl_cdkey, 16);
-		buf[16] = 0;
-	}
-}
-
-/*
-=======================================================================================================================================
-CLUI_SetCDKey
-=======================================================================================================================================
-*/
-static void CLUI_SetCDKey(char *buf) {
-	cvar_t *fs;
-
-	fs = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
-
-	if (UI_usesUniqueCDKey() && fs && fs->string[0] != 0) {
-		Com_Memcpy(&cl_cdkey[16], buf, 16);
-		cl_cdkey[32] = 0;
-		// set the flag so the fle will be written at the next opportunity
-		cvar_modifiedFlags |= CVAR_ARCHIVE;
-	} else {
-		Com_Memcpy(cl_cdkey, buf, 16);
-		// set the flag so the fle will be written at the next opportunity
-		cvar_modifiedFlags |= CVAR_ARCHIVE;
-	}
-}
-#endif
 /*
 =======================================================================================================================================
 GetConfigString
@@ -1080,7 +990,6 @@ void CL_ShutdownUI(void) {
 	uivm = NULL;
 }
 
-#define UI_OLD_API_VERSION 4
 /*
 =======================================================================================================================================
 CL_InitUI
@@ -1138,4 +1047,3 @@ qboolean UI_GameCommand(void) {
 
 	return VM_Call(uivm, UI_CONSOLE_COMMAND, cls.realtime);
 }
-#endif // !defined(USE_JAVA)

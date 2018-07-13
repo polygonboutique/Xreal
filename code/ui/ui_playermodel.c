@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LOW_MEMORY			(5 * 1024 * 1024)
 
-static char    *playermodel_artlist[] = {
+static char *playermodel_artlist[] = {
 	MODEL_SELECT,
 	MODEL_SELECTED,
 	MODEL_FRAMEL,
@@ -78,27 +78,27 @@ static char    *playermodel_artlist[] = {
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    pics[MAX_MODELSPERPAGE];
-	menubitmap_s    picbuttons[MAX_MODELSPERPAGE];
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	menubitmap_s    ports;
-	menutext_s      banner;
-	menubitmap_s    back;
-	menubitmap_s    player;
-	menubitmap_s    arrows;
-	menubitmap_s    left;
-	menubitmap_s    right;
-	menutext_s      modelname;
-	menutext_s      skinname;
-	menutext_s      playername;
+	menubitmap_s pics[MAX_MODELSPERPAGE];
+	menubitmap_s picbuttons[MAX_MODELSPERPAGE];
+	menubitmap_s framel;
+	menubitmap_s framer;
+	menubitmap_s ports;
+	menutext_s banner;
+	menubitmap_s back;
+	menubitmap_s player;
+	menubitmap_s arrows;
+	menubitmap_s left;
+	menubitmap_s right;
+	menutext_s modelname;
+	menutext_s skinname;
+	menutext_s playername;
 	playerInfo_t    playerinfo;
-	int             nummodels;
-	char            modelnames[MAX_PLAYERMODELS][128];
-	int             modelpage;
-	int             numpages;
-	char            modelskin[64];
-	int             selectedmodel;
+	int nummodels;
+	char modelnames[MAX_PLAYERMODELS][128];
+	int modelpage;
+	int numpages;
+	char modelskin[64];
+	int selectedmodel;
 } playermodel_t;
 
 static playermodel_t s_playermodel;
@@ -110,8 +110,8 @@ PlayerModel_UpdateGrid
 */
 static void PlayerModel_UpdateGrid(void)
 {
-	int             i;
-	int             j;
+	int i;
+	int j;
 
 	j = s_playermodel.modelpage * MAX_MODELSPERPAGE;
 	for(i = 0; i < PLAYERGRID_ROWS * PLAYERGRID_COLS; i++, j++)
@@ -235,8 +235,8 @@ PlayerModel_MenuKey
 */
 static sfxHandle_t PlayerModel_MenuKey(int key)
 {
-	menucommon_s   *m;
-	int             picnum;
+	menucommon_s *m;
+	int picnum;
 
 	switch (key)
 	{
@@ -303,11 +303,11 @@ PlayerModel_PicEvent
 */
 static void PlayerModel_PicEvent(void *ptr, int event)
 {
-	int             modelnum;
-	int             maxlen;
-	char           *buffptr;
-	char           *pdest;
-	int             i;
+	int modelnum;
+	int maxlen;
+	char *buffptr;
+	char *pdest;
+	int i;
 
 	if(event != QM_ACTIVATED)
 		return;
@@ -364,7 +364,7 @@ PlayerModel_DrawPlayer
 */
 static void PlayerModel_DrawPlayer(void *self)
 {
-	menubitmap_s   *b;
+	menubitmap_s *b;
 
 	b = (menubitmap_s *) self;
 
@@ -389,17 +389,17 @@ PlayerModel_BuildList
 */
 static void PlayerModel_BuildList(void)
 {
-	int             numdirs;
-	int             numfiles;
-	char            dirlist[2048];
-	char            filelist[2048];
-	char            skinname[64];
-	char           *dirptr;
-	char           *fileptr;
-	int             i;
-	int             j;
-	int             dirlen;
-	int             filelen;
+	int numdirs;
+	int numfiles;
+	char dirlist[2048];
+	char filelist[2048];
+	char skinname[64];
+	char *dirptr;
+	char *fileptr;
+	int i;
+	int j;
+	int dirlen;
+	int filelen;
 
 	s_playermodel.modelpage = 0;
 	s_playermodel.nummodels = 0;
@@ -451,11 +451,11 @@ PlayerModel_SetMenuItems
 */
 static void PlayerModel_SetMenuItems(void)
 {
-	int             i;
-	int             maxlen;
-	char            modelskin[64];
-	char           *buffptr;
-	char           *pdest;
+	int i;
+	int maxlen;
+	char modelskin[64];
+	char *buffptr;
+	char *pdest;
 
 	// name
 	trap_Cvar_VariableStringBuffer("name", s_playermodel.playername.string, 16);
@@ -509,14 +509,14 @@ PlayerModel_MenuInit
 */
 static void PlayerModel_MenuInit(void)
 {
-	int             i;
-	int             j;
-	int             k;
-	int             x;
-	int             y;
-	static char     playername[32];
-	static char     modelname[32];
-	static char     skinname[32];
+	int i;
+	int j;
+	int k;
+	int x;
+	int y;
+	static char playername[32];
+	static char modelname[32];
+	static char skinname[32];
 
 	// zero set all our globals
 	memset(&s_playermodel, 0, sizeof(playermodel_t));
@@ -728,7 +728,7 @@ PlayerModel_Cache
 */
 void PlayerModel_Cache(void)
 {
-	int             i;
+	int i;
 
 	for(i = 0; playermodel_artlist[i]; i++)
 	{

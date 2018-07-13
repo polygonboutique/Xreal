@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -357,18 +356,25 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 	return numTriangles;
 }
 
-/*static void MakeTangentSpaces(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int numTriangles, srfTriangle_t triangles[SHADER_MAX_TRIANGLES]) {
+/*
+=======================================================================================================================================
+MakeTangentSpaces
+=======================================================================================================================================
+*/
+/*
+static void MakeTangentSpaces(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int numTriangles, srfTriangle_t triangles[SHADER_MAX_TRIANGLES]) {
 	int i, j;
 	float *v;
-	const float *v0, * v1, * v2;
-	const float *t0, * t1, * t2;
+	const float *v0, *v1, *v2;
+	const float *t0, *t1, *t2;
 	vec3_t tangent;
 	vec3_t binormal;
 	vec3_t normal;
 	vec_t  d;
-	srfVert_t *dv0, * dv1, * dv2;
+	srfVert_t *dv0, *dv1, *dv2;
 	srfVert_t ctrl2[MAX_GRID_SIZE * MAX_GRID_SIZE];
 	srfTriangle_t *tri;
+
 	// FIXME: use more elegant way
 	for (i = 0; i < width; i++) {
 		for (j = 0; j < height; j++) {
@@ -452,8 +458,8 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 			VectorCopy(dv0->normal, dv1->normal);
 		}
 	}
-}*/
-
+}
+*/
 /*
 =======================================================================================================================================
 InvertCtrl
@@ -637,7 +643,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 			// check subdivided midpoints against control points
 
 			// FIXME: also check midpoints of adjacent patches against the control points
-			// this would basically stitch all patches in the same LOD group together.
+			// this would basically stitch all patches in the same LOD group together
 			maxLen = 0;
 
 			for (i = 0; i < height; i++) {
@@ -797,7 +803,7 @@ srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3
 
 	for (i = 0; i < width; i++) {
 		if (i == column) {
-			//insert new column
+			// insert new column
 			for (j = 0; j < grid->height; j++) {
 				LerpSurfaceVert(&grid->verts[j * grid->width + i - 1], &grid->verts[j * grid->width + i], &ctrl[j][i]);
 
@@ -870,7 +876,7 @@ srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t 
 
 	for (i = 0; i < height; i++) {
 		if (i == row) {
-			//insert new row
+			// insert new row
 			for (j = 0; j < grid->width; j++) {
 				LerpSurfaceVert(&grid->verts[(i - 1) * grid->width + j], &grid->verts[i * grid->width + j], &ctrl[i][j]);
 

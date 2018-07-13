@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -43,8 +43,7 @@ typedef struct {
 	float displayFrac;	// aproaches finalFrac at scr_conspeed
 	float finalFrac;	// 0.0 to 1.0 lines of console to display
 	int vislines;		// in scanlines
-	int times[NUM_CON_TIMES]; // cls.realtime time the line was generated
-	// for transparent notify lines
+	int times[NUM_CON_TIMES]; // cls.realtime time the line was generated for transparent notify lines
 	vec4_t color;
 } console_t;
 
@@ -121,11 +120,9 @@ Con_MessageMode3_f
 =======================================================================================================================================
 */
 void Con_MessageMode3_f(void) {
-#if defined(USE_JAVA)
-	chat_playerNum = Java_CG_CrosshairPlayer();
-#else
+
 	chat_playerNum = VM_Call(cgvm, CG_CROSSHAIR_PLAYER);
-#endif
+
 	if (chat_playerNum < 0 || chat_playerNum >= MAX_CLIENTS) {
 		chat_playerNum = -1;
 		return;
@@ -146,11 +143,9 @@ Con_MessageMode4_f
 =======================================================================================================================================
 */
 void Con_MessageMode4_f(void) {
-#if defined(USE_JAVA)
-	chat_playerNum = Java_CG_LastAttacker();
-#else
+
 	chat_playerNum = VM_Call(cgvm, CG_LAST_ATTACKER);
-#endif
+
 	if (chat_playerNum < 0 || chat_playerNum >= MAX_CLIENTS) {
 		chat_playerNum = -1;
 		return;

@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans < trebor_7@users.sourceforge.net > 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -232,7 +231,7 @@ SV_BoundMaxClients
 void SV_BoundMaxClients(int minimum) {
 
 	// get the current maxclients value
-	Cvar_Get("sv_maxclients", "8", 0);
+	Cvar_Get("sv_maxclients", "64", 0);
 
 	sv_maxclients->modified = qfalse;
 
@@ -387,7 +386,7 @@ SV_SpawnServer
 Change the server to a new map, taking all connected clients along with it. This is NOT called for map_restart.
 =======================================================================================================================================
 */
-void SV_SpawnServer(char *server, qboolean killBots) {
+void SV_SpawnServer(char *server) {
 	int i;
 	int checksum;
 	qboolean isBot;
@@ -472,11 +471,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	sv_gametype->modified = qfalse;
 	// run a few frames to allow everything to settle
 	for (i = 0; i < 3; i++) {
-#if defined(USE_JAVA)
-		Java_G_RunFrame(sv.time);
-#else
 		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-#endif
 		SV_BotFrame(sv.time);
 
 		sv.time += 100;
@@ -491,21 +486,13 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 			char *denied;
 
 			if (svs.clients[i].netchan.remoteAddress.type == NA_BOT) {
-				if (killBots) {
-					SV_DropClient(&svs.clients[i], "");
-					continue;
-				}
-
 				isBot = qtrue;
 			} else {
 				isBot = qfalse;
 			}
 			// connect the client again
-#if defined(USE_JAVA)
-			denied = Java_G_ClientConnect(i, qfalse, isBot);
-#else
 			denied = VM_ExplicitArgPtr(gvm, VM_Call(gvm, GAME_CLIENT_CONNECT, i, qfalse, isBot)); // firstTime = qfalse
-#endif
+
 			if (denied) {
 				// this generally shouldn't happen, because the client was connected before the level change
 				SV_DropClient(&svs.clients[i], denied);
@@ -527,21 +514,13 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 					client->deltaMessage = -1;
 					client->nextSnapshotTime = svs.time; // generate a snapshot immediately
 
-#if defined(USE_JAVA)
-					Java_G_ClientBegin(i);
-#else
 					VM_Call(gvm, GAME_CLIENT_BEGIN, i);
-#endif
 				}
 			}
 		}
 	}
 	// run another frame to allow things to look at all the players
-#if defined(USE_JAVA)
-	Java_G_RunFrame(sv.time);
-#else
 	VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-#endif
 	SV_BotFrame(sv.time);
 
 	sv.time += 100;
@@ -602,16 +581,16 @@ void SV_Init(void) {
 
 	SV_AddOperatorCommands();
 	// serverinfo vars
-	Cvar_Get("dmflags", "0", CVAR_SERVERINFO);
-	Cvar_Get("fraglimit", "20", CVAR_SERVERINFO);
-	Cvar_Get("timelimit", "0", CVAR_SERVERINFO);
-	sv_gametype = Cvar_Get("g_gametype", "0", CVAR_SERVERINFO|CVAR_LATCH);
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO);
+	Cvar_Get("dmflags", "0", CVAR_SERVERINFO);
+	Cvar_Get("fraglimit", "0", CVAR_SERVERINFO);
+	Cvar_Get("timelimit", "15", CVAR_SERVERINFO);
+	sv_gametype = Cvar_Get("g_gametype", "0", CVAR_SERVERINFO|CVAR_LATCH);
 	Cvar_Get("protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO|CVAR_ROM);
 	sv_mapname = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO|CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
-	sv_hostname = Cvar_Get("sv_hostname", "noname", CVAR_SERVERINFO|CVAR_ARCHIVE);
-	sv_maxclients = Cvar_Get("sv_maxclients", "8", CVAR_SERVERINFO|CVAR_LATCH);
+	sv_hostname = Cvar_Get("sv_hostname", "Noname", CVAR_SERVERINFO|CVAR_ARCHIVE);
+	sv_maxclients = Cvar_Get("sv_maxclients", "64", CVAR_SERVERINFO|CVAR_LATCH);
 	sv_minRate = Cvar_Get("sv_minRate", "0", CVAR_ARCHIVE|CVAR_SERVERINFO);
 	sv_maxRate = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE|CVAR_SERVERINFO);
 	sv_minPing = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE|CVAR_SERVERINFO);
@@ -632,7 +611,7 @@ void SV_Init(void) {
 	// server vars
 	sv_rconPassword = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	sv_privatePassword = Cvar_Get("sv_privatePassword", "", CVAR_TEMP);
-#if defined(USE_JAVA) || defined(USE_BULLET)
+#if defined(USE_BULLET)
 	sv_fps = Cvar_Get("sv_fps", "60", CVAR_TEMP);
 #else
 	sv_fps = Cvar_Get("sv_fps", "20", CVAR_TEMP);

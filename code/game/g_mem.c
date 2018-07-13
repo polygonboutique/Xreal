@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -24,7 +24,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "g_local.h"
 
-#define POOLSIZE (256 * 1024)
+#define POOLSIZE (1024 * 1024) // Tobias FIXME: Damned OpenAL source/memory management, increasing OpenAL sources will decrease number of available bots
 
 static char memoryPool[POOLSIZE];
 static int allocPoint;

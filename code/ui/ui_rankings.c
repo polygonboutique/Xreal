@@ -41,13 +41,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    frame;
-	menutext_s      login;
-	menutext_s      logout;
-	menutext_s      create;
-	menutext_s      spectate;
-	menutext_s      setup;
-	menutext_s      leave;
+	menubitmap_s frame;
+	menutext_s login;
+	menutext_s logout;
+	menutext_s create;
+	menutext_s spectate;
+	menutext_s setup;
+	menutext_s leave;
 } rankings_t;
 
 static rankings_t s_rankings;
@@ -68,13 +68,13 @@ Rankings_DrawText
 */
 void Rankings_DrawText(void *self)
 {
-	menufield_s    *f;
+	menufield_s *f;
 	qboolean        focus;
-	int             style;
-	char           *txt;
-	char            c;
-	float          *color;
-	int             basex, x, y;
+	int style;
+	char *txt;
+	char c;
+	float *color;
+	int basex, x, y;
 
 	f = (menufield_s *) self;
 	basex = f->generic.x;
@@ -126,9 +126,9 @@ Rankings_DrawName
 */
 void Rankings_DrawName(void *self)
 {
-	menufield_s    *f;
-	int             length;
-	char           *p;
+	menufield_s *f;
+	int length;
+	char *p;
 
 	f = (menufield_s *) self;
 
@@ -161,8 +161,8 @@ Rankings_DrawName
 */
 void Rankings_DrawName(void *self)
 {
-	menufield_s    *f;
-	int             length;
+	menufield_s *f;
+	int length;
 
 	f = (menufield_s *) self;
 
@@ -197,11 +197,11 @@ Rankings_DrawPassword
 */
 void Rankings_DrawPassword(void *self)
 {
-	menufield_s    *f;
-	char            password[MAX_EDIT_LINE];
-	int             length;
-	int             i;
-	char           *p;
+	menufield_s *f;
+	char password[MAX_EDIT_LINE];
+	int length;
+	int i;
+	char *p;
 
 	f = (menufield_s *) self;
 
@@ -292,7 +292,7 @@ Rankings_MenuInit
 void Rankings_MenuInit(void)
 {
 	grank_status_t  status;
-	int             y;
+	int y;
 
 	memset(&s_rankings, 0, sizeof(s_rankings));
 

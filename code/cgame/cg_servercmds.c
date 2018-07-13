@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -28,7 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
-#include "../ui/menudef.h"		// bk001205 - for Q3_ui as well
+#include "../../ui/menudef.h" // for the voice chats
 
 typedef struct {
 	const char *order;
@@ -38,18 +38,17 @@ typedef struct {
 static const orderTask_t validOrders[] = {
 	{VOICECHAT_GETFLAG, TEAMTASK_OFFENSE},
 	{VOICECHAT_OFFENSE, TEAMTASK_OFFENSE},
-	{VOICECHAT_DEFEND, TEAMTASK_DEFENSE},
 	{VOICECHAT_DEFENDFLAG, TEAMTASK_DEFENSE},
-	{VOICECHAT_PATROL, TEAMTASK_PATROL},
-	{VOICECHAT_CAMP, TEAMTASK_CAMP},
-	{VOICECHAT_FOLLOWME, TEAMTASK_FOLLOW},
+	{VOICECHAT_DEFEND, TEAMTASK_DEFENSE},
 	{VOICECHAT_RETURNFLAG, TEAMTASK_RETRIEVE},
-	{VOICECHAT_FOLLOWFLAGCARRIER, TEAMTASK_ESCORT}
+	{VOICECHAT_FOLLOWFLAGCARRIER, TEAMTASK_ESCORT},
+	{VOICECHAT_FOLLOWME, TEAMTASK_FOLLOW},
+	{VOICECHAT_CAMP, TEAMTASK_CAMP},
+	{VOICECHAT_PATROL, TEAMTASK_PATROL}
 };
 
 static const int numValidOrders = sizeof(validOrders) / sizeof(orderTask_t);
 
-#ifdef MISSIONPACK				// bk001204
 /*
 =======================================================================================================================================
 CG_ValidOrder
@@ -66,7 +65,7 @@ static int CG_ValidOrder(const char *p) {
 
 	return -1;
 }
-#endif
+
 /*
 =======================================================================================================================================
 CG_ParseScores
@@ -94,13 +93,13 @@ static void CG_ParseScores(void) {
 		cg.scores[i].scoreFlags = atoi(CG_Argv(i * 14 + 8));
 		powerups = atoi(CG_Argv(i * 14 + 9));
 		cg.scores[i].accuracy = atoi(CG_Argv(i * 14 + 10));
-		cg.scores[i].impressiveCount = atoi(CG_Argv(i * 14 + 11));
-		cg.scores[i].excellentCount = atoi(CG_Argv(i * 14 + 12));
+		cg.scores[i].excellentCount = atoi(CG_Argv(i * 14 + 11));
+		cg.scores[i].impressiveCount = atoi(CG_Argv(i * 14 + 12));
 		cg.scores[i].gauntletCount = atoi(CG_Argv(i * 14 + 13));
-		cg.scores[i].defendCount = atoi(CG_Argv(i * 14 + 14));
-		cg.scores[i].assistCount = atoi(CG_Argv(i * 14 + 15));
-		cg.scores[i].perfect = atoi(CG_Argv(i * 14 + 16));
-		cg.scores[i].captures = atoi(CG_Argv(i * 14 + 17));
+		cg.scores[i].captures = atoi(CG_Argv(i * 14 + 14));
+		cg.scores[i].defendCount = atoi(CG_Argv(i * 14 + 15));
+		cg.scores[i].assistCount = atoi(CG_Argv(i * 14 + 16));
+		cg.scores[i].perfect = atoi(CG_Argv(i * 14 + 17));
 
 		if (cg.scores[i].client < 0 || cg.scores[i].client >= MAX_CLIENTS) {
 			cg.scores[i].client = 0;
@@ -110,15 +109,16 @@ static void CG_ParseScores(void) {
 		cgs.clientinfo[cg.scores[i].client].powerups = powerups;
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
 	}
-#ifdef MISSIONPACK
+
 	CG_SetScoreSelection(NULL);
-#endif
 }
 
 /*
 =======================================================================================================================================
 CG_ParseTeamInfo
 
+Format: "tinfo" team numstrings string (there are numstrings strings).
+Each string is "clientNum location health armor weapon powerups".
 =======================================================================================================================================
 */
 static void CG_ParseTeamInfo(void) {
@@ -154,10 +154,9 @@ void CG_ParseServerinfo(void) {
 	info = CG_ConfigString(CS_SERVERINFO);
 	cgs.gametype = atoi(Info_ValueForKey(info, "g_gametype"));
 
-	trap_Cvar_Set("g_gametype", va("%i", cgs.gametype));
+	trap_Cvar_SetValue("g_gametype", cgs.gametype);
 
 	cgs.dmflags = atoi(Info_ValueForKey(info, "dmflags"));
-	cgs.teamflags = atoi(Info_ValueForKey(info, "teamflags"));
 	cgs.fraglimit = atoi(Info_ValueForKey(info, "fraglimit"));
 	cgs.capturelimit = atoi(Info_ValueForKey(info, "capturelimit"));
 	cgs.timelimit = atoi(Info_ValueForKey(info, "timelimit"));
@@ -187,7 +186,11 @@ static void CG_ParseWarmup(void) {
 	if (warmup == 0 && cg.warmup) {
 
 	} else if (warmup > 0 && cg.warmup <= 0) {
-		trap_S_StartLocalSound(cgs.media.countPrepareSound, CHAN_ANNOUNCER);
+		if (cgs.gametype > GT_TOURNAMENT && cgs.gametype <= GT_HARVESTER) {
+			trap_S_StartLocalSound(cgs.media.countPrepareTeamSound, CHAN_ANNOUNCER);
+		} else {
+			trap_S_StartLocalSound(cgs.media.countPrepareSound, CHAN_ANNOUNCER);
+		}
 	}
 
 	cg.warmup = warmup;
@@ -314,7 +317,6 @@ static void CG_ConfigStringModified(void) {
 		cgs.teamVoteModified[num - CS_TEAMVOTE_NO] = qtrue;
 	} else if (num >= CS_TEAMVOTE_STRING && num <= CS_TEAMVOTE_STRING + 1) {
 		Q_strncpyz(cgs.teamVoteString[num - CS_TEAMVOTE_STRING], str, sizeof(cgs.teamVoteString));
-
 		trap_S_StartLocalSound(cgs.media.voteNow, CHAN_ANNOUNCER);
 	} else if (num == CS_INTERMISSION) {
 		cg.intermissionStarted = atoi(str);
@@ -445,17 +447,16 @@ static void CG_MapRestart(void) {
 		trap_S_StartLocalSound(cgs.media.countFightSound, CHAN_ANNOUNCER);
 		CG_CenterPrint("FIGHT!", 120, GIANTCHAR_WIDTH * 2);
 	}
-#ifdef MISSIONPACK
-	if (cg_singlePlayerActive.integer) {
-		trap_Cvar_Set("ui_matchStartTime", va("%i", cg.time));
+
+	if (cg_singlePlayer.integer) {
+		trap_Cvar_SetValue("ui_matchStartTime", cg.time);
 
 		if (cg_recordSPDemo.integer && cg_recordSPDemoName.string && *cg_recordSPDemoName.string) {
-			trap_SendConsoleCommand(va("set g_synchronousclients 1; record %s \n", cg_recordSPDemoName.string));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("set g_synchronousclients 1; record %s \n", cg_recordSPDemoName.string));
 		}
 	}
-#endif
-	trap_Cvar_Set("cg_cameraOrbit", "0");
-	trap_Cvar_Set("cg_thirdPerson", "0");
+
+	trap_Cvar_SetValue("cg_thirdPerson", 0);
 }
 
 #define MAX_VOICEFILESIZE 16384
@@ -710,7 +711,6 @@ CG_VoiceChatListForClient
 =======================================================================================================================================
 */
 voiceChatList_t *CG_VoiceChatListForClient(int clientNum) {
-#ifdef MISSIONPACK
 	clientInfo_t *ci;
 	int voiceChatNum, i, j, k, gender;
 	char filename[MAX_QPATH], headModelName[MAX_QPATH];
@@ -801,9 +801,6 @@ voiceChatList_t *CG_VoiceChatListForClient(int clientNum) {
 	}
 	// just return the first voice chat list
 	return &voiceChatLists[0];
-#else
-	return NULL;
-#endif
 }
 
 #define MAX_VOICECHATBUFFER 32
@@ -824,7 +821,6 @@ CG_PlayVoiceChat
 =======================================================================================================================================
 */
 void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat) {
-#ifdef MISSIONPACK
 	// if we are going into the intermission, don't start any voices
 	if (cg.intermissionStarted) {
 		return;
@@ -853,7 +849,6 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat) {
 	}
 
 	voiceChatBuffer[cg.voiceChatBufferOut].snd = 0;
-#endif
 }
 
 /*
@@ -862,7 +857,7 @@ CG_PlayBufferedVoiceChats
 =======================================================================================================================================
 */
 void CG_PlayBufferedVoiceChats(void) {
-#ifdef MISSIONPACK
+
 	if (cg.voiceChatTime < cg.time) {
 		if (cg.voiceChatBufferOut != cg.voiceChatBufferIn && voiceChatBuffer[cg.voiceChatBufferOut].snd) {
 			CG_PlayVoiceChat(&voiceChatBuffer[cg.voiceChatBufferOut]);
@@ -871,7 +866,6 @@ void CG_PlayBufferedVoiceChats(void) {
 			cg.voiceChatTime = cg.time + 1000;
 		}
 	}
-#endif
 }
 
 /*
@@ -880,7 +874,7 @@ CG_AddBufferedVoiceChat
 =======================================================================================================================================
 */
 void CG_AddBufferedVoiceChat(bufferedVoiceChat_t *vchat) {
-#ifdef MISSIONPACK
+
 	// if we are going into the intermission, don't start any voices
 	if (cg.intermissionStarted) {
 		return;
@@ -894,7 +888,6 @@ void CG_AddBufferedVoiceChat(bufferedVoiceChat_t *vchat) {
 		CG_PlayVoiceChat(&voiceChatBuffer[cg.voiceChatBufferOut]);
 		cg.voiceChatBufferOut++;
 	}
-#endif
 }
 
 /*
@@ -903,7 +896,6 @@ CG_VoiceChatLocal
 =======================================================================================================================================
 */
 void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, const char *cmd) {
-#ifdef MISSIONPACK
 	char *chat;
 	voiceChatList_t *voiceChatList;
 	clientInfo_t *ci;
@@ -941,7 +933,6 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 			CG_AddBufferedVoiceChat(&vchat);
 		}
 	}
-#endif
 }
 
 /*
@@ -950,7 +941,6 @@ CG_VoiceChat
 =======================================================================================================================================
 */
 void CG_VoiceChat(int mode) {
-#ifdef MISSIONPACK
 	const char *cmd;
 	int clientNum, color;
 	qboolean voiceOnly;
@@ -961,49 +951,12 @@ void CG_VoiceChat(int mode) {
 	cmd = CG_Argv(4);
 
 	if (cg_noTaunt.integer != 0) {
-		if (!strcmp(cmd, VOICECHAT_KILLINSULT) || !strcmp(cmd, VOICECHAT_TAUNT) || !strcmp(cmd, VOICECHAT_DEATHINSULT) || !strcmp(cmd, VOICECHAT_KILLGAUNTLET) || !strcmp(cmd, VOICECHAT_PRAISE)) {
+		if (!strcmp(cmd, VOICECHAT_PRAISE) || !strcmp(cmd, VOICECHAT_TAUNT) || !strcmp(cmd, VOICECHAT_KILLGAUNTLET) || !strcmp(cmd, VOICECHAT_KILLINSULT) || !strcmp(cmd, VOICECHAT_DEATHINSULT)) {
 			return;
 		}
 	}
 
 	CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd);
-#endif
-}
-
-/*
-=======================================================================================================================================
-CG_spWin
-=======================================================================================================================================
-*/
-static void CG_spWin(void) {
-#ifdef MISSIONPACK
-	trap_Cvar_Set("cg_cameraOrbit", "2");
-	trap_Cvar_Set("cg_cameraOrbitDelay", "35");
-	trap_Cvar_Set("cg_thirdPerson", "1");
-	trap_Cvar_Set("cg_thirdPersonAngle", "0");
-	trap_Cvar_Set("cg_thirdPersonRange", "100");
-	//CG_AddBufferedSound(cgs.media.winnerSound);
-	//trap_S_StartLocalSound(cgs.media.winnerSound, CHAN_ANNOUNCER);
-	//CG_CenterPrint("YOU WIN!", SCREEN_HEIGHT * .30, 0);
-#endif
-}
-
-/*
-=======================================================================================================================================
-CG_spLose
-=======================================================================================================================================
-*/
-static void CG_spLose(void) {
-#ifdef MISSIONPACK
-	trap_Cvar_Set("cg_cameraOrbit", "2");
-	trap_Cvar_Set("cg_cameraOrbitDelay", "35");
-	trap_Cvar_Set("cg_thirdPerson", "1");
-	trap_Cvar_Set("cg_thirdPersonAngle", "0");
-	trap_Cvar_Set("cg_thirdPersonRange", "100");
-	//CG_AddBufferedSound(cgs.media.loserSound);
-	//trap_S_StartLocalSound(cgs.media.loserSound, CHAN_ANNOUNCER);
-	//CG_CenterPrint("YOU LOSE...", SCREEN_HEIGHT * .30, 0);
-#endif
 }
 
 /*
@@ -1142,16 +1095,6 @@ static void CG_ServerCommand(void) {
 	// clientLevelShot is sent before taking a special screenshot for the menu system during development
 	if (!strcmp(cmd, "clientLevelShot")) {
 		cg.levelShot = qtrue;
-		return;
-	}
-
-	if (!strcmp(cmd, "spWin")) {
-		CG_spWin();
-		return;
-	}
-
-	if (!strcmp(cmd, "spLose")) {
-		CG_spLose();
 		return;
 	}
 

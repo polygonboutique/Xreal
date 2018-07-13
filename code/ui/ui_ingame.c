@@ -53,19 +53,19 @@ typedef struct
 {
 	menuframework_s menu;
 
-	//menubitmap_s    frame;
-	menutext_s      banner;
-	menutext_s      team;
-	menutext_s      setup;
-	menutext_s      server;
-	menutext_s      addbots;
-	menutext_s      removebots;
-	menutext_s      teamorders;
+	//menubitmap_s frame;
+	menutext_s banner;
+	menutext_s team;
+	menutext_s setup;
+	menutext_s server;
+	menutext_s addbots;
+	menutext_s removebots;
+	menutext_s teamorders;
 
-	menubitmap_s    quit;
-	menubitmap_s    restart;
-	menubitmap_s    leave;
-	menubitmap_s    resume;
+	menubitmap_s quit;
+	menubitmap_s restart;
+	menubitmap_s leave;
+	menubitmap_s resume;
 } ingamemenu_t;
 
 static ingamemenu_t s_ingame;
@@ -184,10 +184,10 @@ InGame_MenuInit
 */
 void InGame_MenuInit(void)
 {
-	int             y;
+	int y;
 	uiClientState_t cs;
-	char            info[MAX_INFO_STRING];
-	int             team;
+	char info[MAX_INFO_STRING];
+	int team;
 
 	memset(&s_ingame, 0, sizeof(ingamemenu_t));
 
@@ -246,7 +246,7 @@ void InGame_MenuInit(void)
 		s_ingame.removebots.generic.flags |= QMF_GRAYED;
 	}
 
-	if((trap_Cvar_VariableValue("g_gametype") >= GT_TEAM))
+	if((trap_Cvar_VariableValue("g_gametype") > GT_TOURNAMENT))
 	{
 		y += INGAME_MENU_VERTICAL_SPACING;
 		s_ingame.teamorders.generic.type = MTYPE_PTEXT;
@@ -372,7 +372,7 @@ void InGame_MenuInit(void)
 	Menu_AddItem(&s_ingame.menu, &s_ingame.addbots);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.removebots);
 
-	if((trap_Cvar_VariableValue("g_gametype") >= GT_TEAM))
+	if((trap_Cvar_VariableValue("g_gametype") > GT_TOURNAMENT))
 		Menu_AddItem(&s_ingame.menu, &s_ingame.teamorders);
 
 	Menu_AddItem(&s_ingame.menu, &s_ingame.setup);

@@ -32,7 +32,7 @@ void dllEntry(intptr_t(QDECL * syscallptr) (intptr_t arg, ...))
 
 int PASSFLOAT(float x)
 {
-	float           floatTemp;
+	float floatTemp;
 
 	floatTemp = x;
 	return *(int *)&floatTemp;
@@ -53,12 +53,12 @@ int trap_Milliseconds(void)
 	return syscall(UI_MILLISECONDS);
 }
 
-void trap_Cvar_Register(vmCvar_t * cvar, const char *var_name, const char *value, int flags)
+void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
 {
 	syscall(UI_CVAR_REGISTER, cvar, var_name, value, flags);
 }
 
-void trap_Cvar_Update(vmCvar_t * cvar)
+void trap_Cvar_Update(vmCvar_t *cvar)
 {
 	syscall(UI_CVAR_UPDATE, cvar);
 }
@@ -70,7 +70,7 @@ void trap_Cvar_Set(const char *var_name, const char *value)
 
 float trap_Cvar_VariableValue(const char *var_name)
 {
-	int             temp;
+	int temp;
 
 	temp = syscall(UI_CVAR_VARIABLEVALUE, var_name);
 	return (*(float *)&temp);
@@ -116,7 +116,7 @@ void trap_Cmd_ExecuteText(int exec_when, const char *text)
 	syscall(UI_CMD_EXECUTETEXT, exec_when, text);
 }
 
-int trap_FS_FOpenFile(const char *qpath, fileHandle_t * f, fsMode_t mode)
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
 {
 	return syscall(UI_FS_FOPENFILE, qpath, f, mode);
 }
@@ -165,7 +165,7 @@ int trap_R_AnimFrameRate(qhandle_t hAnim)
 {
 	return syscall(UI_R_ANIMFRAMERATE, hAnim);
 }
-int trap_R_BuildSkeleton(refSkeleton_t * skel, qhandle_t anim, int startFrame, int endFrame, float frac, qboolean clearOrigin)
+int trap_R_BuildSkeleton(refSkeleton_t *skel, qhandle_t anim, int startFrame, int endFrame, float frac, qboolean clearOrigin)
 {
 	return syscall(UI_R_BUILDSKELETON, skel, anim, startFrame, endFrame, PASSFLOAT(frac), clearOrigin);
 }
@@ -175,7 +175,7 @@ qhandle_t trap_R_RegisterSkin(const char *name)
 	return syscall(UI_R_REGISTERSKIN, name);
 }
 
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t * font)
+void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	syscall(UI_R_REGISTERFONT, fontName, pointSize, font);
 }
@@ -190,12 +190,12 @@ void trap_R_ClearScene(void)
 	syscall(UI_R_CLEARSCENE);
 }
 
-void trap_R_AddRefEntityToScene(const refEntity_t * re)
+void trap_R_AddRefEntityToScene(const refEntity_t *re)
 {
 	syscall(UI_R_ADDREFENTITYTOSCENE, re);
 }
 
-void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t * verts)
+void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 {
 	syscall(UI_R_ADDPOLYTOSCENE, hShader, numVerts, verts);
 }
@@ -205,7 +205,7 @@ void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g,
 	syscall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
 }
 
-void trap_R_RenderScene(const refdef_t * fd)
+void trap_R_RenderScene(const refdef_t *fd)
 {
 	syscall(UI_R_RENDERSCENE, fd);
 }
@@ -238,7 +238,7 @@ void trap_UpdateScreen(void)
 	syscall(UI_UPDATESCREEN);
 }
 
-int trap_CM_LerpTag(orientation_t * tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName)
+int trap_CM_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName)
 {
 	return syscall(UI_CM_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
 }
@@ -303,17 +303,17 @@ void trap_GetClipboardData(char *buf, int bufsize)
 	syscall(UI_GETCLIPBOARDDATA, buf, bufsize);
 }
 
-void trap_GetClientState(uiClientState_t * state)
+void trap_GetClientState(uiClientState_t *state)
 {
 	syscall(UI_GETCLIENTSTATE, state);
 }
 
-void trap_GetGlconfig(glconfig_t * glconfig)
+void trap_GetGlconfig(glconfig_t *glconfig)
 {
 	syscall(UI_GETGLCONFIG, glconfig);
 }
 
-void trap_GetGlconfig2(glconfig2_t * glconfig)
+void trap_GetGlconfig2(glconfig2_t *glconfig)
 {
 	syscall(UI_GETGLCONFIG2, glconfig);
 }
@@ -428,7 +428,7 @@ void trap_S_StartBackgroundTrack(const char *intro, const char *loop)
 	syscall(UI_S_STARTBACKGROUNDTRACK, intro, loop);
 }
 
-int trap_RealTime(qtime_t * qtime)
+int trap_RealTime(qtime_t *qtime)
 {
 	return syscall(UI_REAL_TIME, qtime);
 }

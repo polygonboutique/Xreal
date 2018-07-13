@@ -56,20 +56,20 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menubitmap_s    art_frame;
-	menutext_s      art_banner;
+	menubitmap_s art_frame;
+	menutext_s art_banner;
 
-	menutext_s      item_baby;
-	menutext_s      item_easy;
-	menutext_s      item_medium;
-	menutext_s      item_hard;
-	menutext_s      item_nightmare;
+	menutext_s item_baby;
+	menutext_s item_easy;
+	menutext_s item_medium;
+	menutext_s item_hard;
+	menutext_s item_nightmare;
 
-	menubitmap_s    art_skillPic;
-	menubitmap_s    item_back;
-	menubitmap_s    item_fight;
+	menubitmap_s art_skillPic;
+	menubitmap_s item_back;
+	menubitmap_s item_fight;
 
-	const char     *arenaInfo;
+	const char *arenaInfo;
 	qhandle_t       skillpics[5];
 	sfxHandle_t     nightmareSound;
 	sfxHandle_t     silenceSound;
@@ -110,8 +110,8 @@ UI_SPSkillMenu_SkillEvent
 */
 static void UI_SPSkillMenu_SkillEvent(void *ptr, int notification)
 {
-	int             id;
-	int             skill;
+	int id;
+	int skill;
 
 	if(notification != QM_ACTIVATED)
 		return;
@@ -212,7 +212,7 @@ UI_SPSkillMenu_Init
 */
 static void UI_SPSkillMenu_Init(void)
 {
-	int             skill;
+	int skill;
 
 	memset(&skillMenuInfo, 0, sizeof(skillMenuInfo));
 	skillMenuInfo.menu.fullscreen = qtrue;

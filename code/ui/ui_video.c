@@ -44,7 +44,7 @@ driverinfo is disabled by default in ui now, because it exeeds ui space
 #define DRIVERINFO_BACK0	"menu/art/back_0"
 #define DRIVERINFO_BACK1	"menu/art/back_1"
 
-static char    *driverinfo_artlist[] = {
+static char *driverinfo_artlist[] = {
 	DRIVERINFO_FRAMEL,
 	DRIVERINFO_FRAMER,
 	DRIVERINFO_BACK0,
@@ -57,13 +57,13 @@ static char    *driverinfo_artlist[] = {
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      banner;
-	menubitmap_s    back;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	char            stringbuff[1024];
-	char           *strings[64];
-	int             numstrings;
+	menutext_s banner;
+	menubitmap_s back;
+	menubitmap_s framel;
+	menubitmap_s framer;
+	char stringbuff[1024];
+	char *strings[64];
+	int numstrings;
 } driverinfo_t;
 
 static driverinfo_t s_driverinfo;
@@ -93,8 +93,8 @@ DriverInfo_MenuDraw
 */
 static void DriverInfo_MenuDraw(void)
 {
-	int             i;
-	int             y;
+	int i;
+	int y;
 
 	Menu_Draw(&s_driverinfo.menu);
 
@@ -129,7 +129,7 @@ DriverInfo_Cache
 */
 void DriverInfo_Cache(void)
 {
-	int             i;
+	int i;
 
 	// touch all our pics
 	for(i = 0;; i++)
@@ -147,9 +147,9 @@ UI_DriverInfo_Menu
 */
 static void UI_DriverInfo_Menu(void)
 {
-	char           *eptr;
-	int             i;
-	int             len;
+	char *eptr;
+	int i;
+	int len;
 
 	// zero set all our globals
 	memset(&s_driverinfo, 0, sizeof(driverinfo_t));
@@ -267,67 +267,67 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menubitmap_s    graphics;
-//  menutext_s      display;
-	menubitmap_s    sound;
-	menubitmap_s    network;
+	menubitmap_s graphics;
+//  menutext_s display;
+	menubitmap_s sound;
+	menubitmap_s network;
 
-	menulist_s      list;
-	menulist_s      ratio;
-	menulist_s      mode;
-	menuslider_s    tq;
-	menulist_s      fs;
-	menulist_s      vsync;
-	menuslider_s    brightness;
-//	menulist_s      texturebits;
-//  menulist_s      colordepth;
-	menulist_s      geometry;
-	menulist_s      filter;
-	menulist_s      compression;
-	menuslider_s    anisotropicFilter;
-	menulist_s      deferredShading;
-	menulist_s      normalMapping;
-	menulist_s      parallax;
-	menulist_s      shadowType;
-	menulist_s      shadowFilter;
-	menuslider_s    shadowBlur;
-	menulist_s      shadowQuality;
-	menulist_s      dynamicLightsCastShadows;
-	menulist_s      hdr;
-	menulist_s      bloom;
-	menulist_s      vertexLighting;
-	menutext_s      driverinfo;
+	menulist_s list;
+	menulist_s ratio;
+	menulist_s mode;
+	menuslider_s tq;
+	menulist_s fs;
+	menulist_s vsync;
+	menuslider_s brightness;
+//	menulist_s texturebits;
+//  menulist_s colordepth;
+	menulist_s geometry;
+	menulist_s filter;
+	menulist_s compression;
+	menuslider_s anisotropicFilter;
+	menulist_s deferredShading;
+	menulist_s normalMapping;
+	menulist_s parallax;
+	menulist_s shadowType;
+	menulist_s shadowFilter;
+	menuslider_s shadowBlur;
+	menulist_s shadowQuality;
+	menulist_s dynamicLightsCastShadows;
+	menulist_s hdr;
+	menulist_s bloom;
+	menulist_s vertexLighting;
+	menutext_s driverinfo;
 
-	menubitmap_s    apply;
-	menubitmap_s    back;
+	menubitmap_s apply;
+	menubitmap_s back;
 } graphicsoptions_t;
 
 typedef struct
 {
-	int             mode;
+	int mode;
 	qboolean        fullscreen;
 	qboolean		vsync;
-	int             tq;
-//  int             colordepth;
-//	int             texturebits;
-	int             geometry;
-	int             filter;
-	int             compression;
-	int             anisotropicFilter;
-	int             deferredShading;
+	int tq;
+//  int colordepth;
+//	int texturebits;
+	int geometry;
+	int filter;
+	int compression;
+	int anisotropicFilter;
+	int deferredShading;
 	int				normalMapping;
-	int             parallax;
-	int             shadowType;
-	int             shadowFilter;
-	int             shadowBlur;
-	int             shadowQuality;
-	int             dynamicLightsCastShadows;
-	int             hdr;
-	int             bloom;
+	int parallax;
+	int shadowType;
+	int shadowFilter;
+	int shadowBlur;
+	int shadowQuality;
+	int dynamicLightsCastShadows;
+	int hdr;
+	int bloom;
 } InitialVideoOptions_s;
 
 static InitialVideoOptions_s s_ivo;
@@ -383,11 +383,11 @@ static const char *knownRatios[][2] = {
 #define MAX_RESOLUTIONS	32
 
 static const char *ratios[MAX_RESOLUTIONS];
-static char     ratioBuf[MAX_RESOLUTIONS][8];
-static int      ratioToRes[MAX_RESOLUTIONS];
-static int      resToRatio[MAX_RESOLUTIONS];
+static char ratioBuf[MAX_RESOLUTIONS][8];
+static int ratioToRes[MAX_RESOLUTIONS];
+static int resToRatio[MAX_RESOLUTIONS];
 
-static char     resbuf[MAX_STRING_CHARS];
+static char resbuf[MAX_STRING_CHARS];
 static const char *detectedResolutions[MAX_RESOLUTIONS];
 
 static const char **resolutions = builtinResolutions;
@@ -400,7 +400,7 @@ GraphicsOptions_FindBuiltinResolution
 */
 static int GraphicsOptions_FindBuiltinResolution(int mode)
 {
-	int             i;
+	int i;
 
 	if(!resolutionsDetected)
 		return mode;
@@ -424,7 +424,7 @@ GraphicsOptions_FindDetectedResolution
 */
 static int GraphicsOptions_FindDetectedResolution(int mode)
 {
-	int             i;
+	int i;
 
 	if(!resolutionsDetected)
 		return mode;
@@ -448,14 +448,14 @@ GraphicsOptions_GetAspectRatios
 */
 static void GraphicsOptions_GetAspectRatios(void)
 {
-	int             i, r;
+	int i, r;
 
 	// build ratio list from resolutions
 	for(r = 0; resolutions[r]; r++)
 	{
-		int             w, h;
-		char           *x;
-		char            str[sizeof(ratioBuf[0])];
+		int w, h;
+		char *x;
+		char str[sizeof(ratioBuf[0])];
 
 		// calculate resolution's aspect ratio
 		x = strchr(resolutions[r], 'x') + 1;
@@ -535,8 +535,8 @@ static void GraphicsOptions_GetResolutions(void)
 	Q_strncpyz(resbuf, UI_Cvar_VariableString("r_availableModes"), sizeof(resbuf));
 	if(*resbuf)
 	{
-		char           *s = resbuf;
-		unsigned int    i = 0;
+		char *s = resbuf;
+		unsigned int i = 0;
 
 		while(s && i < sizeof(detectedResolutions) / sizeof(detectedResolutions[0]) - 1)
 		{
@@ -562,7 +562,7 @@ GraphicsOptions_CheckConfig
 */
 static void GraphicsOptions_CheckConfig(void)
 {
-	int             i;
+	int i;
 
 	for(i = 0; i < NUM_IVO_TEMPLATES; i++)
 	{
@@ -811,7 +811,7 @@ static void GraphicsOptions_ApplyChanges(void *unused, int notification)
 	if(resolutionsDetected)
 	{
 		// search for builtin mode that matches the detected mode
-		int             mode;
+		int mode;
 
 		if(s_graphicsoptions.mode.curvalue == -1
 		   || s_graphicsoptions.mode.curvalue >= sizeof(detectedResolutions) / sizeof(detectedResolutions[0]))
@@ -820,7 +820,7 @@ static void GraphicsOptions_ApplyChanges(void *unused, int notification)
 		mode = GraphicsOptions_FindBuiltinResolution(s_graphicsoptions.mode.curvalue);
 		if(mode == -1)
 		{
-			char            w[16], h[16];
+			char w[16], h[16];
 
 			Q_strncpyz(w, detectedResolutions[s_graphicsoptions.mode.curvalue], sizeof(w));
 			*strchr(w, 'x') = 0;
@@ -1086,8 +1086,8 @@ static void GraphicsOptions_SetMenuItems(void)
 	{
 		if(resolutionsDetected)
 		{
-			int             i;
-			char            buf[MAX_STRING_CHARS];
+			int i;
+			char buf[MAX_STRING_CHARS];
 
 			trap_Cvar_VariableStringBuffer("r_customwidth", buf, sizeof(buf) - 2);
 			buf[strlen(buf) + 1] = 0;
@@ -1319,7 +1319,7 @@ void GraphicsOptions_MenuInit(void)
 		NULL
 	};
 
-	int             y;
+	int y;
 
 	// zero set all our globals
 	memset(&s_graphicsoptions, 0, sizeof(graphicsoptions_t));

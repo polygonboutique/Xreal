@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans < trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -22,35 +21,38 @@ If you have questions concerning this license or the applicable additional terms
 ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
-// 
 
+/**************************************************************************************************************************************
 
-#define CMD_BACKUP			64
-#define CMD_MASK			(CMD_BACKUP - 1)
-// allow a lot of command backups for very fast systems
-// multiple commands may be combined into a single packet, so this
-// needs to be larger than PACKET_BACKUP
+	Allow a lot of command backups for very fast systems. Multiple commands may be combined into a single packet, so this needs to be
+	larger than PACKET_BACKUP.
 
+**************************************************************************************************************************************/
 
-#define MAX_ENTITIES_IN_SNAPSHOT	512	// was 256 in vanilla Q3A
+#define CMD_BACKUP 64
+#define CMD_MASK (CMD_BACKUP - 1)
 
-// snapshots are a view of the server at a given time
+/**************************************************************************************************************************************
 
-// Snapshots are generated at regular time intervals by the server, 
-// but they may not be sent if a client's rate level is exceeded, or
-// they may be dropped by the network.
+	Snapshots are a view of the server at a given time.
+
+	Snapshots are generated at regular time intervals by the server, but they may not be sent if a client's rate level is exceeded, or
+	they may be dropped by the network.
+
+**************************************************************************************************************************************/
+
+#define MAX_ENTITIES_IN_SNAPSHOT 512 // was 256 in vanilla Q3A
+
 typedef struct {
-	int snapFlags;	// SNAPFLAG_RATE_DELAYED, etc
+	int snapFlags;						// SNAPFLAG_RATE_DELAYED, etc.
 	int ping;
-	int serverTime;	// server time the message is valid for(in msec)
-
+	int serverTime;						// server time the message is valid for (in msec)
 	byte areamask[MAX_MAP_AREA_BYTES];	// portalarea visibility bits
-
-	playerState_t ps;			// complete information about the current player at this time
-	int numEntities;	// all of the entities that need to be presented
-	entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT];	// at the time of this snapshot
-	int numServerCommands;	// text based server commands to execute when this
-	int serverCommandSequence;	// snapshot becomes current
+	playerState_t ps;					// complete information about the current player at this time
+	int numEntities;
+	entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT]; // all of the entities that need to be presented at the time of this snapshot
+	int numServerCommands;				// text based server commands to execute when this
+	int serverCommandSequence;			// snapshot becomes current
 } snapshot_t;
 
 enum {
@@ -60,19 +62,19 @@ enum {
 	CGAME_EVENT_EDITHUD
 };
 
-
 /*
 =======================================================================================================================================
 
-functions imported from the main executable
+	Functions imported from the main executable.
 
 =======================================================================================================================================
 */
 
-#define CGAME_IMPORT_API_VERSION	12
+	// See sharedTraps_t in qcommon.h for TRAP_MEMSET = 0, etc.
 
 typedef enum {
-	CG_PRINT,
+	//============== general Quake services ==================
+	CG_PRINT = 20,
 	CG_ERROR,
 	CG_MILLISECONDS,
 	CG_CVAR_REGISTER,
@@ -163,7 +165,6 @@ typedef enum {
 	CG_GET_ENTITY_TOKEN,
 	CG_R_ADDPOLYSTOSCENE,
 	CG_R_INPVS, 
-
 	// Tr3B - XreaL extensions
 	CG_R_REGISTERANIMATION,
 	CG_R_REGISTERSHADERLIGHTATTENUATION,
@@ -202,55 +203,40 @@ typedef enum {
 	CG_ADDCOMMANDALIAS
 } cgameImport_t;
 
-
 /*
 =======================================================================================================================================
 
-functions exported to the main executable
+	Functions exported to the main executable.
 
 =======================================================================================================================================
 */
 
 typedef enum {
-	CG_INIT, 
-// void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum)
+	CG_INIT,
+//	void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum)
 	// called when the level loads or when the renderer is restarted
 	// all media should be registered at this time
-	// cgame will display loading status by calling SCR_Update, which
-	// will call CG_DrawInformation during the loading process
-	// reliableCommandSequence will be 0 on fresh loads, but higher for
-	// demos, tourney restarts, or vid_restarts
-
-	CG_SHUTDOWN, 
-// void(*CG_Shutdown)(void);
-	// oportunity to flush and close any open files
-
-	CG_CONSOLE_COMMAND, 
-// qboolean(*CG_ConsoleCommand)(void);
-	// a console command has been issued locally that is not recognized by the
-	// main game system.
-	// use Cmd_Argc() / Cmd_Argv()to read the command, return qfalse if the
-	// command is not known to the game
-
-	CG_DRAW_ACTIVE_FRAME, 
-// void(*CG_DrawActiveFrame)(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
+	// cgame will display loading status by calling SCR_Update, which will call CG_DrawInformation during the loading process
+	// reliableCommandSequence will be 0 on fresh loads, but higher for demos, tourney restarts, or vid_restarts
+	CG_SHUTDOWN,
+//	void (*CG_Shutdown)(void);
+	// opportunity to flush and close any open files
+	CG_CONSOLE_COMMAND,
+//	qboolean (*CG_ConsoleCommand)(void);
+	// a console command has been issued locally that is not recognized by the main game system.
+	// use Cmd_Argc() / Cmd_Argv() to read the command, return qfalse if the command is not known to the game
+	CG_DRAW_ACTIVE_FRAME,
+//	void (*CG_DrawActiveFrame)(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
 	// Generates and draws a game scene and status information at the given time.
 	// If demoPlayback is set, local movement prediction will not be enabled
-
-	CG_CROSSHAIR_PLAYER, 
-// int(*CG_CrosshairPlayer)(void);
-
-	CG_LAST_ATTACKER, 
-// int(*CG_LastAttacker)(void);
-
-	CG_KEY_EVENT, 
-// void (*CG_KeyEvent)(int key, qboolean down);
-
-	CG_MOUSE_EVENT, 
-// void (*CG_MouseEvent)(int dx, int dy);
-
-	CG_EVENT_HANDLING, 
-// void(*CG_EventHandling)(int type);
+	CG_CROSSHAIR_PLAYER,
+//	int (*CG_CrosshairPlayer)(void);
+	CG_LAST_ATTACKER,
+//	int (*CG_LastAttacker)(void);
+	CG_KEY_EVENT,
+//	void (*CG_KeyEvent)(int key, qboolean down);
+	CG_MOUSE_EVENT,
+//	void (*CG_MouseEvent)(int dx, int dy);
+	CG_EVENT_HANDLING
+//	void (*CG_EventHandling)(int type);
 } cgameExport_t;
-
-// ---------------------------------------------- 

@@ -56,20 +56,20 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    background;
-	menubitmap_s    arrows;
-	menubitmap_s    up;
-	menubitmap_s    down;
-	menutext_s      bots[7];
-	menubitmap_s    delete;
-	menubitmap_s    back;
+	menutext_s banner;
+	menubitmap_s background;
+	menubitmap_s arrows;
+	menubitmap_s up;
+	menubitmap_s down;
+	menutext_s bots[7];
+	menubitmap_s delete;
+	menubitmap_s back;
 
-	int             numBots;
-	int             baseBotNum;
-	int             selectedBotNum;
-	char            botnames[7][32];
-	int             botClientNums[MAX_BOTS];
+	int numBots;
+	int baseBotNum;
+	int selectedBotNum;
+	char botnames[7][32];
+	int botClientNums[MAX_BOTS];
 } removeBotsMenuInfo_t;
 
 static removeBotsMenuInfo_t removeBotsMenuInfo;
@@ -82,8 +82,8 @@ UI_RemoveBotsMenu_SetBotNames
 */
 static void UI_RemoveBotsMenu_SetBotNames(void)
 {
-	int             n;
-	char            info[MAX_INFO_STRING];
+	int n;
+	char info[MAX_INFO_STRING];
 
 	for(n = 0; (n < 7) && (removeBotsMenuInfo.baseBotNum + n < removeBotsMenuInfo.numBots); n++)
 	{
@@ -194,10 +194,10 @@ UI_RemoveBotsMenu_GetBots
 */
 static void UI_RemoveBotsMenu_GetBots(void)
 {
-	int             numPlayers;
-	int             isBot;
-	int             n;
-	char            info[MAX_INFO_STRING];
+	int numPlayers;
+	int isBot;
+	int n;
+	char info[MAX_INFO_STRING];
 
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 	numPlayers = atoi(Info_ValueForKey(info, "sv_maxclients"));
@@ -238,9 +238,9 @@ UI_RemoveBotsMenu_Init
 */
 static void UI_RemoveBotsMenu_Init(void)
 {
-	int             n;
-	int             count;
-	int             y;
+	int n;
+	int count;
+	int y;
 
 	memset(&removeBotsMenuInfo, 0, sizeof(removeBotsMenuInfo));
 	removeBotsMenuInfo.menu.fullscreen = qtrue;

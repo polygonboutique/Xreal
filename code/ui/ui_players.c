@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 UI_DrawPlayer
 ===============
 */
-void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t * pi, int time)
+void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int time)
 {
 	UI_XPPM_Player(x, y, w, h, pi, time);
 }
@@ -58,9 +58,9 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t * pi, int ti
 UI_RegisterClientSkin
 ==========================
 */
-/*static qboolean UI_RegisterClientSkin(playerInfo_t * pi, const char *modelName, const char *skinName)
+/*static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, const char *skinName)
 {
-	char            filename[MAX_QPATH];
+	char filename[MAX_QPATH];
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/lower_%s.skin", modelName, skinName);
 	pi->legsSkin = trap_R_RegisterSkin(filename);
@@ -85,11 +85,11 @@ UI_RegisterClientSkin
 UI_RegisterClientModelname
 ==========================
 */
-qboolean UI_RegisterClientModelname(playerInfo_t * pi, const char *modelSkinName)
+qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 {
-	char            modelName[MAX_QPATH];
-	char            skinName[MAX_QPATH];
-	char           *slash;
+	char modelName[MAX_QPATH];
+	char skinName[MAX_QPATH];
+	char *slash;
 
 	pi->torsoModel = 0;
 	pi->headModel = 0;
@@ -125,7 +125,7 @@ qboolean UI_RegisterClientModelname(playerInfo_t * pi, const char *modelSkinName
 UI_PlayerInfo_SetModel
 ===============
 */
-void UI_PlayerInfo_SetModel(playerInfo_t * pi, const char *model)
+void UI_PlayerInfo_SetModel(playerInfo_t *pi, const char *model)
 {
 	memset(pi, 0, sizeof(*pi));
 	UI_RegisterClientModelname(pi, model);

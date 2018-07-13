@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -23,7 +23,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 #include "g_local.h"
-#include "../ui/menudef.h" // for the voice chats
+#include "../../ui/menudef.h" // for the voice chats
 
 /*
 =======================================================================================================================================
@@ -32,12 +32,16 @@ DeathmatchScoreboardMessage
 */
 void DeathmatchScoreboardMessage(gentity_t *ent) {
 	char entry[1024];
-	char string[1400];
+	char string[1000];
 	int stringlength;
 	int i, j;
 	gclient_t *cl;
 	int numSorted, scoreFlags, accuracy, perfect;
 
+	// don't send scores to bots, they don't parse it
+	if (ent->r.svFlags & SVF_BOT) {
+		return;
+	}
 	// send the latest information on all clients
 	string[0] = 0;
 	stringlength = 0;
@@ -260,7 +264,7 @@ void Cmd_Give_f(gentity_t *ent) {
 	}
 
 	if (give_all || Q_stricmp(name, "health") == 0) {
-		ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
+		ent->health = 200;
 
 		if (!give_all) {
 			return;
@@ -548,7 +552,7 @@ void SetTeam(gentity_t *ent, char *s) {
 	} else if (!Q_stricmp(s, "spectator") || !Q_stricmp(s, "s")) {
 		team = TEAM_SPECTATOR;
 		specState = SPECTATOR_FREE;
-	} else if (g_gametype.integer >= GT_TEAM) {
+	} else if (g_gametype.integer > GT_TOURNAMENT) {
 		// if running a team game, assign player to one of the teams
 		specState = SPECTATOR_NOT;
 
@@ -564,8 +568,8 @@ void SetTeam(gentity_t *ent, char *s) {
 		if (g_teamForceBalance.integer) {
 			int counts[TEAM_NUM_TEAMS];
 
-			counts[TEAM_BLUE] = TeamCount(clientNum, TEAM_BLUE);
 			counts[TEAM_RED] = TeamCount(clientNum, TEAM_RED);
+			counts[TEAM_BLUE] = TeamCount(clientNum, TEAM_BLUE);
 			// we allow a spread of two
 			if (team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1) {
 				trap_SendServerCommand(clientNum, "cp \"Red team has too many players.\n\"");
@@ -862,7 +866,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText) {
 			G_LogPrintf("sayteam: %s: %s\n", ent->client->pers.netname, chatText);
 
 			if (Team_GetLocationMsg(ent, location, sizeof(location))) {
-				Com_sprintf(name, sizeof(name), EC"(%s%c%c"EC") (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
+				Com_sprintf(name, sizeof(name), EC"(%s%c%c"EC")(%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
 			} else {
 				Com_sprintf(name, sizeof(name), EC"(%s%c%c"EC")"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
 			}
@@ -870,8 +874,8 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText) {
 			color = COLOR_CYAN;
 			break;
 		case SAY_TELL:
-			if (target && g_gametype.integer >= GT_TEAM && target->client->sess.sessionTeam == ent->client->sess.sessionTeam && Team_GetLocationMsg(ent, location, sizeof(location))) {
-				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"] (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
+			if (target && g_gametype.integer > GT_TOURNAMENT && target->client->sess.sessionTeam == ent->client->sess.sessionTeam && Team_GetLocationMsg(ent, location, sizeof(location))) {
+				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"](%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
 			} else {
 				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
 			}
@@ -1141,9 +1145,9 @@ static void Cmd_VoiceTaunt_f(gentity_t *ent) {
 		}
 	}
 
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		// praise a team mate who just got a reward
-		for (i = 0; i < MAX_CLIENTS; i++) {
+		for (i = 0; i < level.maxclients; i++) {
 			who = g_entities + i;
 
 			if (who->client && who != ent && who->client->sess.sessionTeam == ent->client->sess.sessionTeam) {
@@ -1212,9 +1216,9 @@ void Cmd_Where_f(gentity_t *ent) {
 }
 
 static const char *gameNames[] = {
-	"Free For All",
-	"Tournament",
 	"Single Player",
+	"Tournament",
+	"Free For All",
 	"Team Deathmatch",
 	"Capture the Flag",
 	"One Flag CTF",
@@ -1277,21 +1281,22 @@ void Cmd_CallVote_f(gentity_t *ent) {
 	} else if (!Q_stricmp(arg1, "g_doWarmup")) {
 	} else if (!Q_stricmp(arg1, "timelimit")) {
 	} else if (!Q_stricmp(arg1, "fraglimit")) {
+	} else if (!Q_stricmp(arg1, "capturelimit")) {
 	} else {
 		trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
-		trap_SendServerCommand(ent - g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>.\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>, capturelimit <captures>.\n\"");
 		return;
 	}
 	// if there is still a vote to be executed
 	if (level.voteExecuteTime) {
 		level.voteExecuteTime = 0;
-		trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", level.voteString));
+		trap_Cmd_ExecuteText(EXEC_APPEND, va("%s\n", level.voteString));
 	}
 	// special case for g_gametype, check for bad values
 	if (!Q_stricmp(arg1, "g_gametype")) {
 		i = atoi(arg2);
 
-		if (i == GT_SINGLE_PLAYER || i < GT_FFA || i >= GT_MAX_GAME_TYPE) {
+		if (i <= GT_SINGLE_PLAYER || i >= GT_MAX_GAME_TYPE) {
 			trap_SendServerCommand(ent - g_entities, "print \"Invalid gametype.\n\"");
 			return;
 		}
@@ -1655,21 +1660,7 @@ void ClientCommand(int clientNum) {
 	}
 
 	trap_Argv(0, cmd, sizeof(cmd));
-#ifdef G_LUA
-	if (Q_stricmp(cmd, "lua_status") == 0) {
-		G_LuaStatus(ent);
-		return;
-	}
-	// Lua API callbacks
-	if (G_LuaHook_ClientCommand(clientNum, cmd)) {
-		return;
-	}
-#endif
-#if defined(ACEBOT)
-	if (ACECM_Commands(ent)) {
-		return;
-	}
-#endif
+
 	if (Q_stricmp(cmd, "say") == 0) {
 		Cmd_Say_f(ent, SAY_ALL, qfalse);
 		return;

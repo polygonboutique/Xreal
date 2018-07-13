@@ -40,18 +40,7 @@ void func_explosive_die(gentity_t *self, gentity_t *inflictor, gentity_t *attack
 	self->freeAfterEvent = qtrue;
 	self->s.solid = 0;
 
-#ifdef G_LUA
-	// Lua API callbacks
-	if (self->luaTrigger) {
-		if (attacker) {
-			G_LuaHook_EntityTrigger(self->luaTrigger, self->s.number, attacker->s.number);
-		} else {
-			G_LuaHook_EntityTrigger(self->luaTrigger, self->s.number, ENTITYNUM_WORLD);
-		}
-	}
-#endif
-
-	// If it takes more damage during the event, it would die again.
+	// if it takes more damage during the event, it would die again.
 	self->takedamage = qfalse;
 }
 

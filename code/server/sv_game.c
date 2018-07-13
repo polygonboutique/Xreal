@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -31,7 +31,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // these functions must be used instead of pointer arithmetic, because the game allocates gentities with private information after the
 // server shared part
 
-#if !defined(USE_JAVA)
 /*
 =======================================================================================================================================
 SV_GameError
@@ -623,4 +622,3 @@ qboolean SV_GameCommand(void) {
 
 	return VM_Call(gvm, GAME_CONSOLE_COMMAND);
 }
-#endif // !defined(USE_JAVA

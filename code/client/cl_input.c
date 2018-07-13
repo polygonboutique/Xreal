@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -850,17 +850,9 @@ CL_MouseEvent
 void CL_MouseEvent(int dx, int dy, int time) {
 
 	if (Key_GetCatcher() & KEYCATCH_UI) {
-#if defined(USE_JAVA)
-		Java_UI_MouseEvent(dx, dy);
-#else
 		VM_Call(uivm, UI_MOUSE_EVENT, dx, dy);
-#endif
 	} else if (Key_GetCatcher() & KEYCATCH_CGAME) {
-#if defined(USE_JAVA)
-		Java_CG_MouseEvent(dx, dy);
-#else
 		VM_Call(cgvm, CG_MOUSE_EVENT, dx, dy);
-#endif
 	} else {
 		cl.mouseDx[cl.mouseIndex] += dx;
 		cl.mouseDy[cl.mouseIndex] += dy;
@@ -1283,20 +1275,14 @@ void CL_WritePacket(void) {
 
 			if (Q_stricmp(target, "attacker") == 0) {
 				int player;
-#if defined(USE_JAVA)
-				player = Java_CG_LastAttacker();
-#else
 				player = VM_Call(cgvm, CG_LAST_ATTACKER);
-#endif
+
 				Com_sprintf(buffer, sizeof(buffer), "%d", player);
 				target = buffer;
 			} else if (Q_stricmp(target, "crosshair") == 0) {
 				int player;
-#if defined(USE_JAVA)
-				player = Java_CG_CrosshairPlayer();
-#else
 				player = VM_Call(cgvm, CG_CROSSHAIR_PLAYER);
-#endif
+
 				Com_sprintf(buffer, sizeof(buffer), "%d", player);
 
 				target = buffer;

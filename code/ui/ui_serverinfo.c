@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SERVERINFO_BACK0	"menu/art/back_0"
 #define SERVERINFO_BACK1	"menu/art/back_1"
 
-static char    *serverinfo_artlist[] = {
+static char *serverinfo_artlist[] = {
 	SERVERINFO_FRAMEL,
 	SERVERINFO_FRAMER,
 	SERVERINFO_BACK0,
@@ -42,13 +42,13 @@ static char    *serverinfo_artlist[] = {
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	menubitmap_s    back;
-	menutext_s      add;
-	char            info[MAX_INFO_STRING];
-	int             numlines;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
+	menubitmap_s back;
+	menutext_s add;
+	char info[MAX_INFO_STRING];
+	int numlines;
 } serverinfo_t;
 
 static serverinfo_t s_serverinfo;
@@ -63,10 +63,10 @@ Add current server to favorites
 */
 void Favorites_Add(void)
 {
-	char            adrstr[128];
-	char            serverbuff[128];
-	int             i;
-	int             best;
+	char adrstr[128];
+	char serverbuff[128];
+	int i;
+	int best;
 
 	trap_Cvar_VariableStringBuffer("cl_currentServerAddress", serverbuff, sizeof(serverbuff));
 	if(!serverbuff[0])
@@ -125,10 +125,10 @@ ServerInfo_MenuDraw
 */
 static void ServerInfo_MenuDraw(void)
 {
-	const char     *s;
-	char            key[MAX_INFO_KEY];
-	char            value[MAX_INFO_VALUE];
-	int             i = 0, y;
+	const char *s;
+	char key[MAX_INFO_KEY];
+	char value[MAX_INFO_VALUE];
+	int i = 0, y;
 
 	y = SCREEN_HEIGHT / 2 - s_serverinfo.numlines * (SMALLCHAR_HEIGHT) / 2 - 20;
 	s = s_serverinfo.info;
@@ -176,7 +176,7 @@ ServerInfo_Cache
 */
 void ServerInfo_Cache(void)
 {
-	int             i;
+	int i;
 
 	// touch all our pics
 	for(i = 0;; i++)
@@ -194,9 +194,9 @@ UI_ServerInfoMenu
 */
 void UI_ServerInfoMenu(void)
 {
-	const char     *s;
-	char            key[MAX_INFO_KEY];
-	char            value[MAX_INFO_VALUE];
+	const char *s;
+	char key[MAX_INFO_KEY];
+	char value[MAX_INFO_VALUE];
 
 	// zero set all our globals
 	memset(&s_serverinfo, 0, sizeof(serverinfo_t));

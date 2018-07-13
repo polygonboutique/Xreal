@@ -26,8 +26,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "client.h"
 
-#if defined(USE_JAVA)
-
 #include "../qcommon/vm_java.h"
 
 extern qboolean loadCamera(const char *name);
@@ -731,10 +729,7 @@ void CL_SetCGameTime(void) {
 		CL_ReadDemoMessage();
 
 		if (cls.state != CA_ACTIVE) {
-			return;				// end of demo
+			return; // end of demo
 		}
 	}
-
 }
-
-#endif // !defined(USE_JAVA)

@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_SPECIFYLEAGUEDOWN	103
 #define ID_SPECIFYLEAGUEBACK	104
 
-static char    *specifyleague_artlist[] = {
+static char *specifyleague_artlist[] = {
 	SPECIFYLEAGUE_FRAMEL,
 	SPECIFYLEAGUE_FRAMER,
 	SPECIFYLEAGUE_ARROWS0,
@@ -64,22 +64,22 @@ static char    *specifyleague_artlist[] = {
 	NULL
 };
 
-static char     playername[80];
+static char playername[80];
 
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	menufield_s     rankname;
-	menulist_s      list;
-	menubitmap_s    arrows;
-	menubitmap_s    up;
-	menubitmap_s    down;
-	menubitmap_s    back;
-	menubitmap_s    grlogo;
-	menubitmap_s    grletters;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
+	menufield_s rankname;
+	menulist_s list;
+	menubitmap_s arrows;
+	menubitmap_s up;
+	menubitmap_s down;
+	menubitmap_s back;
+	menubitmap_s grlogo;
+	menubitmap_s grletters;
 } specifyleague_t;
 
 static specifyleague_t s_specifyleague;
@@ -87,18 +87,18 @@ static specifyleague_t s_specifyleague;
 
 typedef struct
 {
-	char            buff[MAX_LISTBOXWIDTH];
-	char            leaguename[MAX_LEAGUENAME];
+	char buff[MAX_LISTBOXWIDTH];
+	char leaguename[MAX_LEAGUENAME];
 } table_t;
 
 table_t         league_table[MAX_LISTBOXITEMS];
-char           *leaguename_items[MAX_LISTBOXITEMS];
+char *leaguename_items[MAX_LISTBOXITEMS];
 
 
 static void SpecifyLeague_GetList()
 {
-	int             count = 0;
-	int             i;
+	int count = 0;
+	int i;
 
 	/* The Player Name has changed. We need to perform another search */
 	Q_strncpyz(playername, s_specifyleague.rankname.field.buffer, sizeof(playername));
@@ -107,8 +107,8 @@ static void SpecifyLeague_GetList()
 
 	for(i = 0; i < count; i++)
 	{
-		char            s[MAX_LEAGUENAME];
-		const char     *var;
+		char s[MAX_LEAGUENAME];
+		const char *var;
 
 		var = va("leaguename%i", i + 1);
 		trap_Cvar_VariableStringBuffer(var, s, sizeof(s));
@@ -126,7 +126,7 @@ SpecifyLeague_Event
 */
 static void SpecifyLeague_Event(void *ptr, int event)
 {
-	int             id;
+	int id;
 
 	id = ((menucommon_s *) ptr)->id;
 	//if( event != QM_ACTIVATED && id != ID_SPECIFYLEAGUELIST ) {
@@ -177,7 +177,7 @@ SpecifyLeague_MenuInit
 */
 void SpecifyLeague_MenuInit(void)
 {
-	int             i;
+	int i;
 
 	// zero set all our globals
 	memset(&s_specifyleague, 0, sizeof(specifyleague_t));
@@ -319,7 +319,7 @@ SpecifyLeague_Cache
 */
 void SpecifyLeague_Cache(void)
 {
-	int             i;
+	int i;
 
 	// touch all our pics
 	for(i = 0;; i++)

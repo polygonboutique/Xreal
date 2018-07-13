@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -88,7 +88,7 @@ void G_InitSessionData(gclient_t *client, char *userinfo) {
 
 	sess = &client->sess;
 	// initial team determination
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		if (g_teamAutoJoin.integer) {
 			sess->sessionTeam = PickTeam(-1);
 			BroadcastTeamChange(client, -1);
@@ -105,8 +105,8 @@ void G_InitSessionData(gclient_t *client, char *userinfo) {
 		} else {
 			switch (g_gametype.integer) {
 				default:
-				case GT_FFA:
 				case GT_SINGLE_PLAYER:
+				case GT_FFA:
 					if (g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer) {
 						sess->sessionTeam = TEAM_SPECTATOR;
 					} else {
@@ -160,7 +160,7 @@ G_WriteSessionData
 void G_WriteSessionData(void) {
 	int i;
 
-	trap_Cvar_Set("session", va("%i", g_gametype.integer));
+	trap_Cvar_SetValue("session", g_gametype.integer);
 
 	for (i = 0; i < level.maxclients; i++) {
 		if (level.clients[i].pers.connected == CON_CONNECTED) {

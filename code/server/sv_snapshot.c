@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -301,12 +301,11 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 	for (e = 0; e < sv.numEntities; e++) {
 		ent = SV_GentityNum(e);
-#if 1 // !defined(USE_JAVA)
 		// never send entities that aren't linked in
 		if (!ent->r.linked) {
 			continue;
 		}
-#endif
+
 		if (ent->s.number != e) {
 			Com_DPrintf("FIXING ENT->S.NUMBER!!!\n");
 			ent->s.number = e;
@@ -342,6 +341,16 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		// don't double add an entity through portals
 		if (svEnt->snapshotCounter == sv.snapshotCounter) {
 			continue;
+		}
+		// limit based on distance
+		if (ent->r.cullDistance) {
+			vec3_t dir;
+
+			VectorSubtract(ent->s.origin, origin, dir);
+
+			if (VectorLengthSquared(dir) > (float)ent->r.cullDistance * ent->r.cullDistance) {
+				continue;
+			}
 		}
 		// broadcast entities are always sent
 		if (ent->r.svFlags & SVF_BROADCAST) {
@@ -388,16 +397,78 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 				continue;
 			}
 		}
+		// visibility dummies
+		if (ent->r.svFlags & SVF_VISDUMMY) {
+			sharedEntity_t *ment = NULL;
+
+			// find master
+			ment = SV_GentityNum(ent->r.visDummyNum);
+
+			if (ment) {
+				svEntity_t *master = NULL;
+
+				master = SV_SvEntityForGentity(ment);
+
+				if (master->snapshotCounter == sv.snapshotCounter || !ment->r.linked) {
+					continue;
+				}
+
+				SV_AddEntToSnapshot(master, ment, eNums);
+			}
+			// master needs to be added, but not this dummy ent
+			continue;
+		} else if (ent->r.svFlags & SVF_VISDUMMY_MULTIPLE) {
+			int h;
+			sharedEntity_t *ment = NULL;
+			svEntity_t *master = NULL;
+
+			for (h = 0; h < sv.num_entities; h++) {
+				ment = SV_GentityNum(h);
+
+				if (ment == ent) {
+					continue;
+				}
+
+				if (ment) {
+					master = SV_SvEntityForGentity(ment);
+				} else {
+					continue;
+				}
+
+				if (!ment->r.linked) {
+					continue;
+				}
+
+				if (ment->s.number != h) {
+					Com_DPrintf("FIXING vis dummy multiple ment->S.NUMBER!!!\n");
+					ment->s.number = h;
+				}
+
+				if (ment->r.svFlags & SVF_NOCLIENT) {
+					continue;
+				}
+
+				if (master->snapshotCounter == sv.snapshotCounter) {
+					continue;
+				}
+
+				if (ment->r.visDummyNum == ent->s.number) {
+					SV_AddEntToSnapshot(master, ment, eNums);
+				}
+			}
+			// masters need to be added, but not this dummy ent
+			continue;
+		}
 		// add it
 		SV_AddEntToSnapshot(svEnt, ent, eNums);
 		// if it's a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL) {
-			if (ent->s.generic1) {
+			if (ent->r.portalCullDistance) {
 				vec3_t dir;
 
 				VectorSubtract(ent->s.origin, origin, dir);
 
-				if (VectorLengthSquared(dir) > (float)ent->s.generic1 * ent->s.generic1) {
+				if (VectorLengthSquared(dir) > (float)ent->r.portalCullDistance * ent->r.portalCullDistance) {
 					continue;
 				}
 			}

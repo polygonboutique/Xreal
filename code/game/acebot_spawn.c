@@ -470,7 +470,7 @@ void ACESP_SpawnBot(char *name, float skill, char *team) {
 	Info_SetValueForKey(userinfo, key, s);
 
 	if (!team || !*team) {
-		if (g_gametype.integer >= GT_TEAM) {
+		if (g_gametype.integer > GT_TOURNAMENT) {
 			if (PickTeam(clientNum) == TEAM_RED) {
 				team = "red";
 			} else {
@@ -597,7 +597,7 @@ void ACESP_SetupBotState(gentity_t *self) {
 	   team = Info_ValueForKey(userinfo, "team");
 	   if (!team || !*team)
 	   {
-	   if (g_gametype.integer >= GT_TEAM)
+	   if (g_gametype.integer > GT_TOURNAMENT)
 	   {
 	   if (PickTeam(clientNum) == TEAM_RED)
 	   {
@@ -619,7 +619,7 @@ void ACESP_SetupBotState(gentity_t *self) {
 	  }
 	 */
 
-	// if(g_gametype.integer >= GT_TEAM)
+	// if(g_gametype.integer > GT_TOURNAMENT)
 	// trap_BotClientCommand(self - g_entities, va("team %s", Info_ValueForKey(userinfo, "team")));
 }
 

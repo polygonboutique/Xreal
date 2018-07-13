@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -22,9 +22,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-#include <q_shared.h>
-#include <tr_types.h>
-#include <bg_public.h>
+#include "../qcommon/q_shared.h"
+#include "../renderer/tr_types.h"
+#include "../game/bg_public.h"
 #include "cg_public.h"
 
 /**************************************************************************************************************************************
@@ -78,22 +78,117 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define DEFAULT_BLUETEAM_NAME "Pagans"
 
 typedef enum {
-	FOOTSTEP_STONE,
-	FOOTSTEP_BOOT,
-	FOOTSTEP_FLESH,
-	FOOTSTEP_MECH,
-	FOOTSTEP_ENERGY,
-	FOOTSTEP_METAL,
+	// default
+	FOOTSTEP_DEFAULT_HARD,
+	FOOTSTEP_DEFAULT_HARD_FROZEN,
+	FOOTSTEP_DEFAULT_HARD_SNOW,
+	FOOTSTEP_DEFAULT_HARD_SLUSH,
+	FOOTSTEP_DEFAULT_PUDDLE,
+	FOOTSTEP_DEFAULT_LEAVES,
+	FOOTSTEP_DEFAULT_BUSH,
+	FOOTSTEP_DEFAULT_GRASS,
+	FOOTSTEP_DEFAULT_LONGGRASS,
+	FOOTSTEP_DEFAULT_LONGGRASS_MUD,
+	FOOTSTEP_DEFAULT_SAND,
+	FOOTSTEP_DEFAULT_GRAVEL,
+	FOOTSTEP_DEFAULT_RUBBLE,
+	FOOTSTEP_DEFAULT_RUBBLE_WET,
+	FOOTSTEP_DEFAULT_SOIL,
+	FOOTSTEP_DEFAULT_MUD,
+	FOOTSTEP_DEFAULT_SNOW_DEEP,
+	FOOTSTEP_DEFAULT_ICE,
+	FOOTSTEP_DEFAULT_METAL_HOLLOW,
+	FOOTSTEP_DEFAULT_METAL_HOLLOW_FROZEN,
+	FOOTSTEP_DEFAULT_METAL_HOLLOW_SNOW,
+	FOOTSTEP_DEFAULT_METAL_HOLLOW_SLUSH,
+	FOOTSTEP_DEFAULT_METAL_HOLLOW_SPLASH,
+	FOOTSTEP_DEFAULT_GRATE_01,
+	FOOTSTEP_DEFAULT_GRATE_02,
+	FOOTSTEP_DEFAULT_DUCT,
+	FOOTSTEP_DEFAULT_PLATE,
+	FOOTSTEP_DEFAULT_FENCE,
+	FOOTSTEP_DEFAULT_WOOD_HOLLOW,
+	FOOTSTEP_DEFAULT_WOOD_HOLLOW_FROZEN,
+	FOOTSTEP_DEFAULT_WOOD_HOLLOW_SNOW,
+	FOOTSTEP_DEFAULT_WOOD_HOLLOW_SLUSH,
+	FOOTSTEP_DEFAULT_WOOD_HOLLOW_SPLASH,
+	FOOTSTEP_DEFAULT_WOOD_SOLID,
+	FOOTSTEP_DEFAULT_WOOD_CREAKING,
+	FOOTSTEP_DEFAULT_ROOF,
+	FOOTSTEP_DEFAULT_SHINGLES,
+	FOOTSTEP_DEFAULT_SOFT,
+	FOOTSTEP_DEFAULT_GLASS_SHARDS,
+	FOOTSTEP_DEFAULT_TRASH_GLASS,
+	FOOTSTEP_DEFAULT_TRASH_DEBRIS,
+	FOOTSTEP_DEFAULT_TRASH_WIRE,
+	FOOTSTEP_DEFAULT_TRASH_PACKING,
+	FOOTSTEP_DEFAULT_TRASH_PLASTIC,
+	// boot_01
+	FOOTSTEP_BOOT_01_HARD,
+	FOOTSTEP_BOOT_01_BUSH,
+	// boot_02
+	FOOTSTEP_BOOT_02_HARD,
+	// boot_03
+	FOOTSTEP_BOOT_03_HARD,
+	// flesh_01
+	FOOTSTEP_FLESH_01_HARD,
+	// flesh_02
+	FOOTSTEP_FLESH_02_HARD,
+	// heels_01
+	FOOTSTEP_HEELS_01_HARD,
+	// heels_02
+	FOOTSTEP_HEELS_02_HARD,
+	// heels_03
+	FOOTSTEP_HEELS_03_HARD,
+	// sandals_01
+	FOOTSTEP_SANDALS_01_HARD,
+	// step_01
+	FOOTSTEP_STEP_01_HARD,
+	// step_02
+	FOOTSTEP_STEP_02_HARD,
+	// step_03
+	FOOTSTEP_STEP_03_HARD,
+	// strogg_01
+	FOOTSTEP_STROGG_01_HARD,
+	// klesk
+	FOOTSTEP_SPEC_KLESK_HARD,
+	// sorlag
+	FOOTSTEP_SPEC_SORLAG_HARD,
+	// mission character (medium)
+	FOOTSTEP_T2_MEDIUM_HARD,
+	// mission character (heavy)
+	FOOTSTEP_T2_HEAVY_HARD,
+	// mission character (small)
+	FOOTSTEP_T2_SMALL_HARD,
+	// common footstep sounds (all characters use the same sound)
 	FOOTSTEP_SPLASH,
+	FOOTSTEP_WADE,
+	FOOTSTEP_SWIM,
 	FOOTSTEP_WALLWALK, 
 	FOOTSTEP_TOTAL
 } footstep_t;
 
 typedef enum {
-	IMPACTSOUND_DEFAULT,
-	IMPACTSOUND_METAL,
-	IMPACTSOUND_FLESH
-} impactSound_t;
+	FOOTTYPE_DEFAULT,			// default footstep sound for (male/female) humans, zombies with boots etc.
+	FOOTTYPE_BOOT_01,			// e.g.: Ranger
+	FOOTTYPE_BOOT_02,			// e.g.: Sarge
+	FOOTTYPE_BOOT_03,			// e.g.: Fritzkrieg
+	FOOTTYPE_FLESH_01,			// e.g.: Xaero
+	FOOTTYPE_FLESH_02,			// e.g.: Klansman
+	FOOTTYPE_HEELS_01,			// e.g.: Mynx
+	FOOTTYPE_HEELS_02,			// e.g.: Major
+	FOOTTYPE_HEELS_03,			// e.g.: Lucy (and any other fat slut)
+	FOOTTYPE_SANDALS_01,		// e.g.: Xaerena
+	FOOTTYPE_STEP_01,			// e.g.: Grunt (default sound for non-mission characters?)
+	FOOTTYPE_STEP_02,			// e.g.: Hossman
+	FOOTTYPE_STEP_03,			// e.g.: Doom, Razor
+	FOOTTYPE_STROGG_01,			// e.g.: Visor
+	FOOTTYPE_SPEC_KLESK,		// e.g.: Klesk
+	FOOTTYPE_SPEC_SORLAG,		// e.g.: Sorlag
+	FOOTTYPE_T2_MEDIUM,			// mission character (normal)
+	FOOTTYPE_T2_HEAVY,			// mission character (heavy) e.g.: Soldier
+	FOOTTYPE_T2_SMALL			// mission character (lightweight) e.g.: Medic
+} footType_t;
 
 /**************************************************************************************************************************************
 
@@ -151,11 +246,10 @@ typedef struct {
 	lerpFrame_t legs, torso, flag, gun;
 	int painTime;
 	int painDirection; // flip from 0 to 1
-	int lightningFiring;
+	int beamgunFiring;
 	// railgun trail spawning
 	vec3_t railgunImpact;
 	qboolean railgunFlash;
-
 	// machinegun spinning
 	float barrelAngle;
 	int barrelTime;
@@ -182,16 +276,12 @@ typedef struct centity_s {
 	qboolean currentValid;		// true if cg.frame holds this entity
 	int muzzleFlashTime;		// move to playerEntity?
 	int previousEvent;
-	int teleportFlag;
 	int trailTime;				// so missile trails can handle dropped initial packets
 	int dustTrailTime;
 	int miscTime;
 	int snapShotTime;			// last time this entity was found in a snapshot
 	playerEntity_t pe;
 	int errorTime;				// decay the error from this time
-	vec3_t errorOrigin;
-	vec3_t errorAngles;
-	qboolean extrapolated;		// false if origin/angles is an interpolation
 	vec3_t rawOrigin;
 	vec3_t rawAngles;
 	vec3_t beamEnd;
@@ -217,28 +307,25 @@ typedef struct markPoly_s {
 } markPoly_t;
 
 typedef enum {
-	LE_MARK,
-	LE_EXPLOSION,
 	LE_SPRITE_EXPLOSION,
-	LE_FRAGMENT,
-	LE_MOVE_SCALE_FADE,
-	LE_FALL_SCALE_FADE,
-	LE_FADE_RGB,
-	LE_SCALE_FADE,
-	LE_SCOREPLUM,
+	LE_EXPLOSION,
 	LE_KAMIKAZE,
+	LE_MARK,
+	LE_FRAGMENT,
+	LE_SCALE_FADE,
+	LE_FADE_RGB,
+	LE_FALL_SCALE_FADE,
+	LE_MOVE_SCALE_FADE,
+	LE_BUBBLE,
+	LE_SCOREPLUM,
 	LE_RAILEXPLOSION,
 	LE_FIRE, 
-#ifdef MISSIONPACK
-	LE_INVULIMPACT,
-	LE_INVULJUICED,
-#endif
 	LE_SHOWREFENTITY
 } leType_t;
 
 typedef enum {
 	LEF_PUFF_DONT_SCALE = 0x0001, // do not scale size over time
-	LEF_TUMBLE			= 0x0002, // tumble over time, used for ejecting shells
+	LEF_TUMBLE			= 0x0002, // tumble over time, used for plasma balls etc.
 	LEF_SOUND1			= 0x0004, // sound 1 for kamikaze
 	LEF_SOUND2			= 0x0008  // sound 2 for kamikaze
 } leFlag_t;
@@ -286,14 +373,13 @@ typedef struct {
 	int ping;
 	int time;
 	int scoreFlags;
-	int powerUps;
 	int accuracy;
-	int impressiveCount;
 	int excellentCount;
+	int impressiveCount;
 	int gauntletCount;
+	int captures;
 	int defendCount;
 	int assistCount;
-	int captures;
 	qboolean perfect;
 	int team;
 } score_t;
@@ -315,19 +401,18 @@ typedef struct {
 	int botSkill;			// 0 = not bot, 1-5 = bot
 	vec3_t color1;
 	vec3_t color2;
+	byte c1RGBA[4];
+	byte c2RGBA[4];
 	int score;				// updated by score servercmds
 	int location;			// location index for team mode
 	int health;				// you only get this info about your teammates
 	int armor;
 	int curWeapon;
-	int handicap;
 	int wins, losses;		// in tourney mode
 	int teamTask;			// task in teamplay (offence/defence)
 	qboolean teamLeader;	// true when this is a team leader
 	int powerups;			// so can display quad/flag status
 	int medkitUsageTime;
-	int invulnerabilityStartTime;
-	int invulnerabilityStopTime;
 	int breathPuffTime;
 	// when clientinfo is changed, the loading of models/skins/sounds can be deferred until you are dead, to prevent hitches in gameplay
 	char modelName[MAX_QPATH];
@@ -339,7 +424,9 @@ typedef struct {
 	qboolean fixedlegs;		// true if legs yaw is always the same as torso yaw
 	qboolean fixedtorso;	// true if torso never changes yaw
 	vec3_t headOffset;		// move head in icon views
-	footstep_t footsteps;
+	footstep_t foottype;
+	footstep_t footsteps4;
+	footstep_t footsteps8;
 	gender_t gender;		// from model
 	// Tr3B: don't forget to add these values to CG_CopyClientInfoModel !
 	char firstTorsoBoneName[MAX_QPATH];
@@ -428,12 +515,11 @@ typedef struct {
 	int numpositions;
 } skulltrail_t;
 
-#define MAX_REWARDSTACK 10
 #define MAX_SOUNDBUFFER 20
 
 /**************************************************************************************************************************************
 
-	All cg.stepTime, cg.duckTime, cg.landTime, etc are set to cg.time when the action occurs, and they will have visible effects for
+	All cg.stepTime, cg.duckTime, cg.landTime, etc. are set to cg.time when the action occurs, and they will have visible effects for
 	#define STEP_TIME or whatever msec after.
 
 **************************************************************************************************************************************/
@@ -492,7 +578,7 @@ typedef struct particle_s {
 
 /**************************************************************************************************************************************
 
-	All cg.stepTime, cg.duckTime, cg.landTime, etc are set to cg.time when the action occurs, and they will have visible effects for
+	All cg.stepTime, cg.duckTime, cg.landTime, etc. are set to cg.time when the action occurs, and they will have visible effects for
 	#define STEP_TIME or whatever msec after.
 
 **************************************************************************************************************************************/
@@ -608,13 +694,8 @@ typedef struct {
 	int scoreFadeTime;
 	char killerName[MAX_NAME_LENGTH];
 	char spectatorList[MAX_STRING_CHARS];	// list of names
-	int spectatorLen;						// length of list
-	float spectatorWidth;					// width in device units
-	int spectatorTime;						// next time to offset
-	int spectatorPaintX;					// current paint x
-	int spectatorPaintX2;					// current paint x
-	int spectatorOffset;					// current offset from start
-	int spectatorPaintLen;					// current offset from start
+	int spectatorTime;						// last time offset
+	float spectatorOffset;					// current offset from start
 	// skull trails
 	skulltrail_t skulltrails[MAX_CLIENTS];
 	// centerprinting
@@ -625,8 +706,6 @@ typedef struct {
 	int centerPrintLines;
 	// low ammo warning state
 	int lowAmmoWarning;						// 1 = low, 2 = empty
-	// kill timers for carnage reward
-	int lastKillTime;
 	// crosshair client ID
 	int crosshairClientNum;
 	int crosshairClientTime;
@@ -636,12 +715,6 @@ typedef struct {
 	// attacking player
 	int attackerTime;
 	int voiceTime;
-	// reward medals
-	int rewardStack;
-	int rewardTime;
-	int rewardCount[MAX_REWARDSTACK];
-	qhandle_t rewardShader[MAX_REWARDSTACK];
-	qhandle_t rewardSound[MAX_REWARDSTACK];
 	// sound buffer mainly for announcer sounds
 	int soundBufferIn;
 	int soundBufferOut;
@@ -654,9 +727,10 @@ typedef struct {
 	// warmup countdown
 	int warmup;
 	int warmupCount;
+#ifndef BASEGAME
 	int itemPickup;
 	int itemPickupTime;
-	int itemPickupBlendTime; // the pulse around the crosshair is timed separately
+#endif
 	int weaponSelectTime;
 	int weaponAnimation;
 	int weaponAnimationTime;
@@ -681,7 +755,6 @@ typedef struct {
 	float bobfracsin;
 	int bobcycle;
 	float xyspeed;
-	int nextOrbitTime;
 	//qboolean cameraMode;					// if rendering from a loaded camera
 	// development tool
 	refEntity_t testModelEntity;
@@ -778,7 +851,8 @@ typedef struct {
 	qhandle_t railRings2Shader;
 	qhandle_t railCoreShader;
 	qhandle_t lightningShader;
-	qhandle_t friendShader;
+	qhandle_t redFriendShader;
+	qhandle_t blueFriendShader;
 	qhandle_t balloonShader;
 	qhandle_t connectionShader;
 	qhandle_t weaponSelectShader;
@@ -1148,6 +1222,7 @@ extern centity_t cg_entities[MAX_GENTITIES];
 extern weaponInfo_t cg_weapons[MAX_WEAPONS];
 extern itemInfo_t cg_items[MAX_ITEMS];
 extern markPoly_t cg_markPolys[MAX_MARK_POLYS];
+
 extern vmCvar_t cg_centertime;
 extern vmCvar_t cg_runpitch;
 extern vmCvar_t cg_runroll;
@@ -1164,6 +1239,7 @@ extern vmCvar_t cg_drawSnapshot;
 extern vmCvar_t cg_draw3dIcons;
 extern vmCvar_t cg_drawIcons;
 extern vmCvar_t cg_drawAmmoWarning;
+extern vmCvar_t cg_hitSounds;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_hudRed;
 extern vmCvar_t cg_hudGreen;
@@ -1470,32 +1546,6 @@ void CG_PlayBufferedVoiceChats(void);
 void CG_Respawn(void);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
 void CG_CheckChangedPredictableEvents(playerState_t *ps);
-#ifdef CG_LUA
-// cg_lua.c
-#include <lua.h>
-void CG_InitLua();
-void CG_ShutdownLua();
-void CG_LoadLuaScript(const char *filename);
-void CG_RunLuaFunction(const char *func, const char *sig, ...);
-void CG_DumpLuaStack();
-void CG_RestartLua_f(void);
-// lua_cgame.c
-int luaopen_cgame(lua_State * L);
-// lua_particle.c
-typedef struct {
-	cparticle_t *p;
-} lua_Particle;
-
-int luaopen_particle(lua_State *L);
-void lua_pushparticle(lua_State *L, cparticle_t *p);
-lua_Particle *lua_getparticle(lua_State *L, int argNum);
-// lua_qmath.c
-int luaopen_qmath(lua_State *L);
-// lua_vector.c
-int luaopen_vector(lua_State *L);
-void lua_pushvector(lua_State *L, vec3_t v);
-vec_t *lua_getvector(lua_State *L, int argNum);
-#endif
 // cg_particles.c
 void CG_InitParticles(void);
 cparticle_t *CG_AllocParticle(void);

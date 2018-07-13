@@ -54,21 +54,21 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menulist_s      list;
+	menulist_s list;
 
-	menubitmap_s    arrows;
-	menubitmap_s    left;
-	menubitmap_s    right;
-	menubitmap_s    back;
-	menubitmap_s    go;
+	menubitmap_s arrows;
+	menubitmap_s left;
+	menubitmap_s right;
+	menubitmap_s back;
+	menubitmap_s go;
 
-	int             numDemos;
-	char            names[NAMEBUFSIZE];
-	char           *demolist[MAX_DEMOS];
+	int numDemos;
+	char names[NAMEBUFSIZE];
+	char *demolist[MAX_DEMOS];
 } demos_t;
 
 static demos_t  s_demos;
@@ -115,7 +115,7 @@ UI_DemosMenu_Key
 */
 static sfxHandle_t UI_DemosMenu_Key(int key)
 {
-	menucommon_s   *item;
+	menucommon_s *item;
 
 	item = Menu_ItemAtCursor(&s_demos.menu);
 
@@ -130,9 +130,9 @@ Demos_MenuInit
 */
 static void Demos_MenuInit(void)
 {
-	int             i;
-	int             len;
-	char           *demoname, extension[32];
+	int i;
+	int len;
+	char *demoname, extension[32];
 
 	memset(&s_demos, 0, sizeof(demos_t));
 	s_demos.menu.key = UI_DemosMenu_Key;

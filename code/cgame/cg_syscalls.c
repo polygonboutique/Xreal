@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -26,6 +26,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  This file is only included when building a dll, cg_syscalls.asm is included instead when building a qvm.
 **************************************************************************************************************************************/
 
+#ifdef Q3_VM
+#error "Do not use in VM build"
+#endif
 #include "cg_local.h"
 
 static intptr_t(QDECL *syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;

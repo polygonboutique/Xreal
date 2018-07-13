@@ -65,50 +65,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	NUM_CROSSHAIRS			10
 
 
-int             numDot = 0;
-int             numCircle = 0;
-int             numCross = 0;
+int numDot = 0;
+int numCircle = 0;
+int numCross = 0;
 
 
 typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menutext_s      title_player;
-	menutext_s      title_crosshair;
-	menutext_s      title_hud;
+	menutext_s banner;
+	menutext_s title_player;
+	menutext_s title_crosshair;
+	menutext_s title_hud;
 
-	//menubitmap_s    framel;
-	//menubitmap_s    framer;
-	menubitmap_s    player;
+	//menubitmap_s framel;
+	//menubitmap_s framer;
+	menubitmap_s player;
 
-	menufield_s     name;
-	menufield_s     clan;
-	menulist_s      handicap;
-	//menulist_s      color1;
-	//menulist_s      color2;
+	menufield_s name;
+	menufield_s clan;
+	menulist_s handicap;
+	//menulist_s color1;
+	//menulist_s color2;
 
-	menubitmap_s    back;
-	menubitmap_s    model;
-	menubitmap_s    item_null;
+	menubitmap_s back;
+	menubitmap_s model;
+	menubitmap_s item_null;
 
 	qhandle_t       fxBasePic;
 	qhandle_t       fxPic[7];
 	playerInfo_t    playerinfo;
-	int             current_fx;
-	char            playerModel[MAX_QPATH];
+	int current_fx;
+	char playerModel[MAX_QPATH];
 
-	menuslider_s    crosshairDot;
-	menuslider_s    crosshairCircle;
-	menuslider_s    crosshairCross;
-	menuslider_s    crosshairSize;
+	menuslider_s crosshairDot;
+	menuslider_s crosshairCircle;
+	menuslider_s crosshairCross;
+	menuslider_s crosshairSize;
 
 
-	menuslider_s    hudRed;
-	menuslider_s    hudGreen;
-	menuslider_s    hudBlue;
-	menuslider_s    hudAlpha;
+	menuslider_s hudRed;
+	menuslider_s hudGreen;
+	menuslider_s hudBlue;
+	menuslider_s hudAlpha;
 
 
 	menuradiobutton_s crosshairTarget;
@@ -124,8 +124,8 @@ typedef struct
 
 static playersettings_t s_playersettings;
 
-//static int      gamecodetoui[] = { 4, 2, 3, 0, 5, 1, 6 };
-//static int      uitogamecode[] = { 4, 6, 2, 3, 1, 5, 7 };
+//static int gamecodetoui[] = { 4, 2, 3, 0, 5, 1, 6 };
+//static int uitogamecode[] = { 4, 6, 2, 3, 1, 5, 7 };
 
 /*static const char *handicap_items[] = {
 	"None",
@@ -159,10 +159,10 @@ PlayerSettings_DrawEffects
 */
 /*static void PlayerSettings_DrawEffects(void *self)
 {
-	menulist_s     *item;
+	menulist_s *item;
 	qboolean        focus;
-	int             style;
-	float          *color;
+	int style;
+	float *color;
 
 	item = (menulist_s *) self;
 	focus = (item->generic.parent->cursor == item->generic.menuPosition);
@@ -189,7 +189,7 @@ PlayerSettings_DrawSecondaryEffects
 */
 /*static void PlayerSettings_DrawSecondaryEffects(void *self)
 {
-	menulist_s     *item;
+	menulist_s *item;
 
 	item = (menulist_s *) self;
 
@@ -205,9 +205,9 @@ PlayerSettings_DrawPlayer
 */
 static void PlayerSettings_DrawPlayer(void *self)
 {
-	menubitmap_s   *b;
-	char            buf[MAX_QPATH];
-	int             x, y, value, size;
+	menubitmap_s *b;
+	char buf[MAX_QPATH];
+	int x, y, value, size;
 	vec4_t          color;
 
 	// draw the model
@@ -323,7 +323,7 @@ PlayerSettings_SetMenuItems
 static void PlayerSettings_SetMenuItems(void)
 {
 	vec3_t          viewangles;
-	int             h;
+	int h;
 
 	// name
 	Q_strncpyz(s_playersettings.name.field.buffer, UI_Cvar_VariableString("name"), sizeof(s_playersettings.name.field.buffer));
@@ -427,7 +427,7 @@ PlayerSettings_MenuInit
 */
 static void PlayerSettings_MenuInit(void)
 {
-	int             x, y;
+	int x, y;
 
 	memset(&s_playersettings, 0, sizeof(playersettings_t));
 
@@ -777,7 +777,7 @@ PlayerSettings_Cache
 void PlayerSettings_Cache(void)
 {
 
-	int             i;
+	int i;
 
 	trap_R_RegisterShaderNoMip(ART_MODEL0);
 	trap_R_RegisterShaderNoMip(ART_MODEL1);

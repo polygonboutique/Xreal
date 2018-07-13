@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -27,8 +27,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "client.h"
-
-#if !defined(USE_JAVA)
 
 vm_t *cgvm;
 extern qboolean loadCamera(const char *name);
@@ -1141,5 +1139,3 @@ void CL_SetCGameTime(void) {
 		}
 	}
 }
-
-#endif // !defined(USE_JAVA)

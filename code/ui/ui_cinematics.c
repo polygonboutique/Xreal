@@ -45,25 +45,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	menutext_s      cin_idlogo;
-	menutext_s      cin_intro;
-	menutext_s      cin_tier1;
-	menutext_s      cin_tier2;
-	menutext_s      cin_tier3;
-	menutext_s      cin_tier4;
-	menutext_s      cin_tier5;
-	menutext_s      cin_tier6;
-	menutext_s      cin_tier7;
-	menutext_s      cin_end;
-	menubitmap_s    back;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
+	menutext_s cin_idlogo;
+	menutext_s cin_intro;
+	menutext_s cin_tier1;
+	menutext_s cin_tier2;
+	menutext_s cin_tier3;
+	menutext_s cin_tier4;
+	menutext_s cin_tier5;
+	menutext_s cin_tier6;
+	menutext_s cin_tier7;
+	menutext_s cin_end;
+	menubitmap_s back;
 } cinematicsMenuInfo_t;
 
 static cinematicsMenuInfo_t cinematicsMenuInfo;
 
-static char    *cinematics[] = {
+static char *cinematics[] = {
 	"logo",
 	"intro",
 	"tier1",
@@ -98,7 +98,7 @@ UI_CinematicsMenu_Event
 */
 static void UI_CinematicsMenu_Event(void *ptr, int event)
 {
-	int             n;
+	int n;
 
 	if(event != QM_ACTIVATED)
 		return;
@@ -123,7 +123,7 @@ UI_CinematicsMenu_Init
 */
 static void UI_CinematicsMenu_Init(void)
 {
-	int             y;
+	int y;
 
 	UI_CinematicsMenu_Cache();
 
@@ -360,7 +360,7 @@ UI_CinematicsMenu_f
 */
 void UI_CinematicsMenu_f(void)
 {
-	int             n;
+	int n;
 
 	n = atoi(UI_Argv(1));
 	UI_CinematicsMenu();

@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -36,8 +36,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-#define MAX_MARK_FRAGMENTS 128
-#define MAX_MARK_POINTS 384
+// doubled to support more marks if r_marksOnTriangleMeshes is on, see ioquake3 README
+#define MAX_MARK_FRAGMENTS 256
+#define MAX_MARK_POINTS 768
 #define MARK_TOTAL_TIME 10000
 #define MARK_FADE_TIME 1000
 
@@ -128,7 +129,7 @@ CG_ImpactMark
 Temporary marks will not be stored or randomly oriented, but immediately passed to the renderer.
 =======================================================================================================================================
 */
-void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, float orientation, float red, float green, float blue, float alpha, qboolean alphaFade, float radius, qboolean temporary) {
+void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, float orientation, float red, float green, float blue, float alpha, qboolean alphaFade, float markRadius, qboolean temporary) {
 	vec3_t axis[3];
 	float texCoordScale;
 	vec3_t originalPoints[4];
@@ -143,7 +144,7 @@ void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
 		return;
 	}
 
-	if (radius <= 0) {
+	if (markRadius <= 0) {
 		CG_Error("CG_ImpactMark called with <= 0 radius");
 	}
 
@@ -156,13 +157,13 @@ void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
 	RotatePointAroundVector(axis[2], axis[0], axis[1], orientation);
 	CrossProduct(axis[0], axis[2], axis[1]);
 
-	texCoordScale = 0.5 * 1.0 / radius;
+	texCoordScale = 0.5 * 1.0 / markRadius;
 	// create the full polygon
 	for (i = 0; i < 3; i++) {
-		originalPoints[0][i] = origin[i] - radius * axis[1][i] - radius * axis[2][i];
-		originalPoints[1][i] = origin[i] + radius * axis[1][i] - radius * axis[2][i];
-		originalPoints[2][i] = origin[i] + radius * axis[1][i] + radius * axis[2][i];
-		originalPoints[3][i] = origin[i] - radius * axis[1][i] + radius * axis[2][i];
+		originalPoints[0][i] = origin[i] - markRadius * axis[1][i] - markRadius * axis[2][i];
+		originalPoints[1][i] = origin[i] + markRadius * axis[1][i] - markRadius * axis[2][i];
+		originalPoints[2][i] = origin[i] + markRadius * axis[1][i] + markRadius * axis[2][i];
+		originalPoints[3][i] = origin[i] - markRadius * axis[1][i] + markRadius * axis[2][i];
 	}
 	// get the fragments
 	VectorScale(dir, -20, projection);

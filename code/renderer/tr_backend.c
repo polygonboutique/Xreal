@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -118,21 +117,22 @@ void GL_TextureFilter(image_t *image, filterType_t filterType) {
 		}
 	}
 
-	if (image->filterType == filterType)
+	if (image->filterType == filterType) {
 		return;
+	}
 	// set filter type
 	switch (image->filterType) {
 			/*
 			   case FT_DEFAULT:
 			   glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 			   glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-
 			   // set texture anisotropy
-			   if (glConfig2.textureAnisotropyAvailable)
-			   glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+			   if (glConfig2.textureAnisotropyAvailable) {
+			   	  glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+			   }
+
 			   break;
 			*/
-
 		case FT_LINEAR:
 			glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -141,7 +141,6 @@ void GL_TextureFilter(image_t *image, filterType_t filterType) {
 			glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameterf(image->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			break;
-
 		default:
 			break;
 	}
@@ -474,6 +473,7 @@ GL_Cull
 =======================================================================================================================================
 */
 void GL_Cull(int cullType) {
+
 	if (glState.faceCulling == cullType) {
 		return;
 	}
@@ -628,7 +628,7 @@ void GL_State(uint32_t stateBits) {
 			GL_DepthMask(GL_FALSE);
 		}
 	}
-	// fill / line mode
+	// fill/line mode
 	if (diff & GLS_POLYMODE_LINE) {
 		if (stateBits & GLS_POLYMODE_LINE) {
 			GL_PolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -712,8 +712,9 @@ GL_VertexAttribsState
 void GL_VertexAttribsState(uint32_t stateBits) {
 	uint32_t diff;
 
-	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning) {
 		stateBits|= (ATTR_BONE_INDEXES|ATTR_BONE_WEIGHTS);
+	}
 
 	GL_VertexAttribPointers(stateBits);
 
@@ -983,8 +984,9 @@ void GL_VertexAttribPointers(uint32_t attribBits) {
 		GLimp_LogComment(va("--- GL_VertexAttribPointers(%s) ---\n", glState.currentVBO->name));
 	}
 
-	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning) {
 		attribBits|= (ATTR_BONE_INDEXES|ATTR_BONE_WEIGHTS);
+	}
 
 	if ((attribBits & ATTR_POSITION) && !(glState.vertexAttribPointersSet & ATTR_POSITION)) {
 		if (r_logFile->integer) {
@@ -1199,8 +1201,8 @@ RB_RenderDrawSurfaces
 =======================================================================================================================================
 */
 static void RB_RenderDrawSurfaces(bool opaque, bool depthFill, renderDrawSurfaces_e drawSurfFilter) {
-	trRefEntity_t *entity, * oldEntity;
-	shader_t *shader, * oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	shader_t *shader, *oldShader;
 	int lightmapNum, oldLightmapNum;
 	int fogNum, oldFogNum;
 	qboolean depthRange, oldDepthRange;
@@ -1265,10 +1267,11 @@ static void RB_RenderDrawSurfaces(bool opaque, bool depthFill, renderDrawSurface
 				Tess_End();
 			}
 
-			if (depthFill)
+			if (depthFill) {
 				Tess_Begin(Tess_StageIteratorGBuffer, NULL, shader, NULL, qtrue, qfalse, lightmapNum, fogNum);
-			else
+			} else {
 				Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, lightmapNum, fogNum);
+			}
 
 			oldShader = shader;
 			oldLightmapNum = lightmapNum;
@@ -1328,8 +1331,8 @@ RB_RenderOpaqueSurfacesIntoDepth
 =======================================================================================================================================
 */
 static void RB_RenderOpaqueSurfacesIntoDepth(bool onlyWorld) {
-	trRefEntity_t *entity, * oldEntity;
-	shader_t *shader, * oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	shader_t *shader, *oldShader;
 	qboolean depthRange, oldDepthRange;
 	qboolean alphaTest, oldAlphaTest;
 	deformType_t deformType, oldDeformType;
@@ -1409,6 +1412,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(bool onlyWorld) {
 				} else {
 					glDepthRange(0, 1);
 				}
+
 				oldDepthRange = depthRange;
 			}
 
@@ -1615,7 +1619,7 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 			}
 		}
 
-		if (*surface == SF_FACE || * surface == SF_GRID || * surface == SF_TRIANGLES) {
+		if (*surface == SF_FACE || *surface == SF_GRID || *surface == SF_TRIANGLES) {
 			srfGeneric_t *gen = (srfGeneric_t *)surface;
 
 			VectorCopy(gen->bounds[0], worldBounds[0]);
@@ -1747,9 +1751,9 @@ RB_RenderInteractions
 =======================================================================================================================================
 */
 static void RB_RenderInteractions() {
-	shader_t *shader, * oldShader;
-	trRefEntity_t *entity, * oldEntity;
-	trRefLight_t *light, * oldLight;
+	shader_t *shader, *oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	trRefLight_t *light, *oldLight;
 	interaction_t *ia;
 	qboolean depthRange, oldDepthRange;
 	int iaCount;
@@ -1779,11 +1783,13 @@ static void RB_RenderInteractions() {
 
 		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA) {
 			// skip all interactions of this light because it failed the occlusion query
-			if (r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+			if (r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples) {
 				goto skipInteraction;
+			}
 
-			if (r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+			if (r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples) {
 				goto skipInteraction;
+			}
 		}
 
 		if (!shader->interactLight) {
@@ -1851,41 +1857,38 @@ static void RB_RenderInteractions() {
 			} else {
 				VectorCopy(light->origin, light->transformed);
 			}
-
 			// build the attenuation matrix using the entity transform
 			MatrixMultiply(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			switch (light->l.rlType) {
 				case RL_PROJ:
 				{
-					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);	// bias
-					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));	// scale
+					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0); // bias
+					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0)); // scale
 					break;
 				}
 				case RL_OMNI:
 				default:
 				{
-					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);	// bias
-					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);	// scale
+					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5); // bias
+					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5); // scale
 					break;
 				}
 			}
 
-			MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);	// light projection(frustum)
+			MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix); // light projection(frustum)
 			MatrixMultiply2(light->attenuationMatrix, modelToLight);
 		}
 		// add the triangles for this surface
 		rb_surfaceTable[*surface](surface);
 
 nextInteraction:
-
 		// remember values
 		oldLight = light;
 		oldEntity = entity;
 		oldShader = shader;
 
 skipInteraction:
-
 		if (!ia->next) {
 			// draw the contents of the last shader batch
 			Tess_End();
@@ -1910,7 +1913,6 @@ skipInteraction:
 		} else {
 			// just continue
 			ia = ia->next;
-
 			iaCount++;
 		}
 	}
@@ -1937,9 +1939,9 @@ RB_RenderInteractionsShadowMapped
 =======================================================================================================================================
 */
 static void RB_RenderInteractionsShadowMapped() {
-	shader_t *shader, * oldShader;
-	trRefEntity_t *entity, * oldEntity;
-	trRefLight_t *light, * oldLight;
+	shader_t *shader, *oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	trRefLight_t *light, *oldLight;
 	interaction_t *ia;
 	int iaCount;
 	int iaFirst;
@@ -2013,8 +2015,7 @@ static void RB_RenderInteractionsShadowMapped() {
 
 				if (light->l.noShadows || light->shadowLOD < 0) {
 					if (r_logFile->integer) {
-						// don't just call LogComment, or we will get
-						// a call to va()every frame!
+						// don't just call LogComment, or we will get a call to va()every frame!
 						GLimp_LogComment(va("----- Skipping shadowCube side: %i-----\n", cubeSide));
 					}
 
@@ -2033,8 +2034,7 @@ static void RB_RenderInteractionsShadowMapped() {
 							matrix_t rotationMatrix, transformMatrix, viewMatrix;
 
 							if (r_logFile->integer) {
-								// don't just call LogComment, or we will get
-								// a call to va()every frame!
+								// don't just call LogComment, or we will get a call to va()every frame!
 								GLimp_LogComment(va("----- Rendering shadowCube side: %i-----\n", cubeSide));
 							}
 
@@ -2044,7 +2044,6 @@ static void RB_RenderInteractionsShadowMapped() {
 							if (!r_ignoreGLErrors->integer) {
 								R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
 							}
-
 							// set the window clipping
 							GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 							GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
@@ -2115,8 +2114,7 @@ static void RB_RenderInteractionsShadowMapped() {
 							MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 							MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
 							MatrixAffineInverse(transformMatrix, viewMatrix);
-							// convert from our coordinate system(looking down X)
-							// to OpenGL's coordinate system(looking down - Z)
+							// convert from our coordinate system (looking down X) to OpenGL's coordinate system (looking down -Z)
 							MatrixMultiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 							// OpenGL projection matrix
 							fovX = 90;
@@ -2244,8 +2242,7 @@ static void RB_RenderInteractionsShadowMapped() {
 									vec3_t rayIntersectionNear, rayIntersectionFar;
 									float zNear, zFar;
 
-									// don't just call LogComment, or we will get
-									// a call to va()every frame!
+									// don't just call LogComment, or we will get a call to va() every frame!
 									//GLimp_LogComment(va("-----Skipping shadowCube side: %i-----\n", cubeSide));
 
 									PlaneIntersectRay(viewOrigin, viewDirection, splitFrustum[FRUSTUM_FAR], rayIntersectionFar);
@@ -2278,8 +2275,7 @@ static void RB_RenderInteractionsShadowMapped() {
 									AddPointToBounds(splitFrustumCorners[j], splitFrustumBounds[0], splitFrustumBounds[1]);
 								}
 #if 0
-								// Scene - Independent Projection
-
+								// scene-independent projection
 								// find the bounding box of the current split in the light's view space
 								ClearBounds(splitFrustumViewBounds[0], splitFrustumViewBounds[1]);
 								//numCasters = MergeInteractionBounds(light->viewMatrix, ia, iaCount, splitFrustumViewBounds, qtrue);
@@ -2301,7 +2297,6 @@ static void RB_RenderInteractionsShadowMapped() {
 								MatrixOrthogonalProjectionRH(projectionMatrix, splitFrustumViewBounds[0][0], splitFrustumViewBounds[1][0], splitFrustumViewBounds[0][1], splitFrustumViewBounds[1][1], -splitFrustumViewBounds[1][2], -splitFrustumViewBounds[0][2]);
 #endif
 								MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
-
 								// find the bounding box of the current split in the light's clip space
 								ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 
@@ -2328,12 +2323,11 @@ static void RB_RenderInteractionsShadowMapped() {
 									GLimp_LogComment(va("split frustum light clip space bounds(%5.3f, %5.3f, %5.3f)(%5.3f, %5.3f, %5.3f)\n", splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2], splitFrustumClipBounds[1][0], splitFrustumClipBounds[1][1], splitFrustumClipBounds[1][2]));
 								}
 #else
-								// Scene - Dependent Projection
+								// scene-dependent projection
 
 								// find the bounding box of the current split in the light's view space
 								ClearBounds(cropBounds[0], cropBounds[1]);
-								for (j = 0; j < 8; j++)
-								{
+								for (j = 0; j < 8; j++) {
 									VectorCopy(splitFrustumCorners[j], point);
 									point[3] = 1;
 #if 1
@@ -2374,7 +2368,7 @@ static void RB_RenderInteractionsShadowMapped() {
 									GLimp_LogComment(va("shadow caster light space clip bounds(%5.3f, %5.3f, %5.3f)(%5.3f, %5.3f, %5.3f)\n", casterBounds[0][0], casterBounds[0][1], casterBounds[0][2], casterBounds[1][0], casterBounds[1][1], casterBounds[1][2]));
 									GLimp_LogComment(va("light receiver light space clip bounds(%5.3f, %5.3f, %5.3f)(%5.3f, %5.3f, %5.3f)\n", receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2], receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]));
 								}
-								// scene - dependent bounding volume
+								// scene-dependent bounding volume
 								cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
 								cropBounds[0][1] = Q_max(Q_max(casterBounds[0][1], receiverBounds[0][1]), splitFrustumClipBounds[0][1]);
 
@@ -2387,8 +2381,7 @@ static void RB_RenderInteractionsShadowMapped() {
 								cropBounds[1][2] = Q_min(receiverBounds[1][2], splitFrustumClipBounds[1][2]);
 								//cropBounds[1][2] = splitFrustumClipBounds[1][2];
 
-								if (numCasters == 0)
-								{
+								if (numCasters == 0) {
 									VectorCopy(splitFrustumClipBounds[0], cropBounds[0]);
 									VectorCopy(splitFrustumClipBounds[1], cropBounds[1]);
 								}
@@ -2457,13 +2450,13 @@ static void RB_RenderInteractionsShadowMapped() {
 					GLimp_LogComment(va("----- First Light Interaction: %i-----\n", iaCount));
 				}
 
-				if (r_hdrRendering->integer)
+				if (r_hdrRendering->integer) {
 					R_BindFBO(tr.deferredRenderFBO);
-				else
+				} else {
 					R_BindNullFBO();
+				}
 				// set the window clipping
 				GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY, backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
-
 				GL_Scissor(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY, backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 				// restore camera matrices
 				GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -2639,11 +2632,10 @@ static void RB_RenderInteractionsShadowMapped() {
 				goto skipInteraction;
 			}
 			/*
-			   if (light->l.inverseShadows && (entity == &tr.worldEntity))
-			   {
-			   // this light only casts shadows by its player and their items
-			   goto skipInteraction;
-			  }
+			if (light->l.inverseShadows && (entity == &tr.worldEntity)) {
+				// this light only casts shadows by its player and their items
+			 	goto skipInteraction;
+			}
 			*/
 			if (ia->type == IA_LIGHTONLY) {
 				goto skipInteraction;
@@ -2660,11 +2652,9 @@ static void RB_RenderInteractionsShadowMapped() {
 				{
 					if (light == oldLight && entity == oldEntity && (alphaTest ? shader == oldShader : alphaTest == oldAlphaTest) && deformType == oldDeformType) {
 						if (r_logFile->integer) {
-							// don't just call LogComment, or we will get
-							// a call to va()every frame!
+							// don't just call LogComment, or we will get a call to va() every frame!
 							GLimp_LogComment(va("----- Batching Shadow Interaction: %i-----\n", iaCount));
 						}
-
 						// fast path, same as previous
 						rb_surfaceTable[*surface](surface);
 						goto nextInteraction;
@@ -2675,11 +2665,9 @@ static void RB_RenderInteractionsShadowMapped() {
 						}
 
 						if (r_logFile->integer) {
-							// don't just call LogComment, or we will get
-							// a call to va()every frame!
+							// don't just call LogComment, or we will get a call to va()every frame!
 							GLimp_LogComment(va("----- Beginning Shadow Interaction: %i-----\n", iaCount));
 						}
-
 						// we don't need tangent space calculations here
 						Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
 					}
@@ -2705,11 +2693,9 @@ static void RB_RenderInteractionsShadowMapped() {
 
 			if (light == oldLight && entity == oldEntity && shader == oldShader) {
 				if (r_logFile->integer) {
-					// don't just call LogComment, or we will get
-					// a call to va()every frame!
+					// don't just call LogComment, or we will get a call to va()every frame!
 					GLimp_LogComment(va("----- Batching Light Interaction: %i-----\n", iaCount));
 				}
-
 				// fast path, same as previous
 				rb_surfaceTable[*surface](surface);
 				goto nextInteraction;
@@ -2720,8 +2706,7 @@ static void RB_RenderInteractionsShadowMapped() {
 				}
 
 				if (r_logFile->integer) {
-					// don't just call LogComment, or we will get
-					// a call to va()every frame!
+					// don't just call LogComment, or we will get a call to va()every frame!
 					GLimp_LogComment(va("----- Beginning Light Interaction: %i-----\n", iaCount));
 				}
 				// begin a new batch
@@ -2793,8 +2778,8 @@ static void RB_RenderInteractionsShadowMapped() {
 			switch (light->l.rlType) {
 				case RL_OMNI:
 				{
-					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);	// bias
-					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);	// scale
+					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5); // bias
+					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5); // scale
 					MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
 					MatrixMultiply2(light->attenuationMatrix, modelToLight);
 					MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
@@ -2803,8 +2788,8 @@ static void RB_RenderInteractionsShadowMapped() {
 
 				case RL_PROJ:
 				{
-					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);	// bias
-					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));	// scale
+					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0); // bias
+					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0)); // scale
 					MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
 					MatrixMultiply2(light->attenuationMatrix, modelToLight);
 					MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
@@ -2813,8 +2798,8 @@ static void RB_RenderInteractionsShadowMapped() {
 
 				case RL_DIRECTIONAL:
 				{
-					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);	// bias
-					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);	// scale
+					MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5); // bias
+					MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5); // scale
 					MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
 					MatrixMultiply2(light->attenuationMatrix, modelToLight);
 					break;
@@ -2841,7 +2826,6 @@ static void RB_RenderInteractionsShadowMapped() {
 		}
 
 nextInteraction:
-
 		// remember values
 		oldLight = light;
 		oldEntity = entity;
@@ -2851,10 +2835,9 @@ nextInteraction:
 
 skipInteraction:
 		if (!ia->next) {
-			// if ia->next does not point to any other interaction then
-			// this is the last interaction of the current light
+			// if ia->next does not point to any other interaction then this is the last interaction of the current light
 			if (r_logFile->integer) {
-				// don't just call LogComment, or we will get a call to va()every frame!
+				// don't just call LogComment, or we will get a call to va() every frame!
 				GLimp_LogComment(va("----- Last Interaction: %i-----\n", iaCount));
 			}
 			// draw the contents of the last shader batch
@@ -2900,7 +2883,6 @@ skipInteraction:
 							} else {
 								splitFrustumIndex++;
 							}
-
 							// jump back to first interaction of this light
 							ia = &backEnd.viewParms.interactions[iaFirst];
 							iaCount = iaFirst;
@@ -2970,8 +2952,8 @@ RB_RenderDrawSurfacesIntoGeometricBuffer
 =======================================================================================================================================
 */
 static void RB_RenderDrawSurfacesIntoGeometricBuffer() {
-	trRefEntity_t *entity, * oldEntity;
-	shader_t *shader, * oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	shader_t *shader, *oldShader;
 	int lightmapNum, oldLightmapNum;
 	qboolean depthRange, oldDepthRange;
 	int i;
@@ -3003,7 +2985,6 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer() {
 		if (shader->sort > SS_OPAQUE) {
 			break;
 		}
-
 		/*
 		if (DS_PREPASS_LIGHTING_ENABLED()) {
 			if (entity == oldEntity && shader == oldShader) {
@@ -3011,7 +2992,6 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer() {
 				rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
 				continue;
 			}
-
 			// change the tess parameters if needed
 			// a "entityMergable" shader is a shader that can have surfaces from seperate
 			// entities merged into a single batch, like smoke and blood puff sprites
@@ -3021,12 +3001,11 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer() {
 				}
 
 				Tess_Begin(Tess_StageIteratorGBufferNormalsOnly, NULL, shader, NULL, qfalse, qfalse, -1, 0);
+
 				oldShader = shader;
 				oldLightmapNum = lightmapNum;
 			}
-		}
-
-		else
+		} else
 		*/
 		{
 			if (entity == oldEntity && shader == oldShader && lightmapNum == oldLightmapNum) {
@@ -3043,6 +3022,7 @@ static void RB_RenderDrawSurfacesIntoGeometricBuffer() {
 				}
 
 				Tess_Begin(Tess_StageIteratorGBuffer, NULL, shader, NULL, qfalse, qfalse, lightmapNum, 0);
+
 				oldShader = shader;
 				oldLightmapNum = lightmapNum;
 			}
@@ -3111,7 +3091,7 @@ RB_RenderInteractionsDeferred
 void RB_RenderInteractionsDeferred() {
 	interaction_t *ia;
 	int iaCount;
-	trRefLight_t *light, * oldLight = NULL;
+	trRefLight_t *light, *oldLight = NULL;
 	shader_t *lightShader;
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
@@ -3127,8 +3107,9 @@ void RB_RenderInteractionsDeferred() {
 
 	GLimp_LogComment("--- RB_RenderInteractionsDeferred ---\n");
 
-	if (r_skipLightBuffer->integer)
+	if (r_skipLightBuffer->integer) {
 		return;
+	}
 
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES) {
 		glFinish();
@@ -3146,8 +3127,8 @@ void RB_RenderInteractionsDeferred() {
 
 	R_BindNullVBO();
 	R_BindNullIBO();
-
 	R_BindFBO(tr.geometricRenderFBO);
+
 	glDrawBuffers(1, geometricRenderTargets);
 	// helper matrix for 2D rendering
 	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
@@ -3220,8 +3201,7 @@ skipInteraction:
 
 						tess.numVertexes = light->frustumVerts;
 						tess.numIndexes = light->frustumIndexes;
-					}
-					else
+					} else
 #endif
 					{
 						tess.multiDrawPrimitives = 0;
@@ -3436,7 +3416,6 @@ skipInteraction:
 						if (light->clipsNearPlane) {
 							// draw lighting with a fullscreen quad
 							Tess_InstantQuad(backEnd.viewParms.viewportVerts);
-						
 							/*
 							Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0, 1);
 							Vector4Set(quadVerts[1], ia->scissorX + ia->scissorWidth - 1, ia->scissorY, 0, 1);
@@ -3634,9 +3613,9 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 	interaction_t *ia;
 	int iaCount;
 	int iaFirst;
-	shader_t *shader, * oldShader;
-	trRefEntity_t *entity, * oldEntity;
-	trRefLight_t *light, * oldLight;
+	shader_t *shader, *oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	trRefLight_t *light, *oldLight;
 	surfaceType_t *surface;
 	qboolean depthRange, oldDepthRange;
 	qboolean alphaTest, oldAlphaTest;
@@ -3661,8 +3640,9 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 
 	GLimp_LogComment("--- RB_RenderInteractionsDeferredShadowMapped ---\n");
 
-	if (r_skipLightBuffer->integer)
+	if (r_skipLightBuffer->integer) {
 		return;
+	}
 
 	if (r_speeds->integer == RSPEEDS_SHADING_TIMES) {
 		glFinish();
@@ -3712,14 +3692,12 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 				GL_BindProgram(NULL);
 				GL_State(GLS_DEFAULT);
 				//GL_VertexAttribsState(ATTR_POSITION);
-
 				GL_SelectTexture(0);
 				GL_Bind(tr.whiteImage);
 
 				if (light->l.noShadows || light->shadowLOD < 0) {
 					if (r_logFile->integer) {
-						// don't just call LogComment, or we will get
-						// a call to va()every frame!
+						// don't just call LogComment, or we will get a call to va() every frame!
 						GLimp_LogComment(va("----- Skipping shadowCube side: %i-----\n", cubeSide));
 					}
 
@@ -3736,8 +3714,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 							matrix_t rotationMatrix, transformMatrix, viewMatrix;
 
 							if (r_logFile->integer) {
-								// don't just call LogComment, or we will get
-								// a call to va()every frame!
+								// don't just call LogComment, or we will get a call to va() every frame!
 								GLimp_LogComment(va("----- Rendering shadowCube side: %i-----\n", cubeSide));
 							}
 
@@ -3747,7 +3724,6 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 							if (!r_ignoreGLErrors->integer) {
 								R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
 							}
-
 							// set the window clipping
 							GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 							GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
@@ -3760,7 +3736,6 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 								{
 									// view parameters
 									VectorSet(angles, 0, 0, 90);
-
 									// projection parameters
 									flipX = qfalse;
 									flipY = qfalse;
@@ -3849,11 +3824,9 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 							R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 							R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
 
-							if (!r_ignoreGLErrors->integer)
-							{
+							if (!r_ignoreGLErrors->integer) {
 								R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
 							}
-
 							// set the window clipping
 							GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 							GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
@@ -3923,7 +3896,6 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									0, 1, 0, 0,
 									0, 0, 0, 1
 								};
-
 								// original light direction is from surface to light
 								VectorInverse(lightDirection);
 								VectorNormalize(lightDirection);
@@ -3985,7 +3957,6 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 #endif
 								//BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], backEnd.viewParms.visBounds[0], backEnd.viewParms.visBounds[1]);
 								BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], light->worldBounds[0], light->worldBounds[1]);
-
 								ClearBounds(cropBounds[0], cropBounds[1]);
 
 								for (j = 0; j < 8; j++) {
@@ -4095,8 +4066,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									if (n >= FLT_MAX) {
 										// if n is infinite than we should do uniform shadow mapping
 										MatrixIdentity(lispMatrix);
-									}
-									else
+									} else
 #endif
 									{
 										// one possibility for a simple perspective transformation matrix with the two parameters n(near)and f(far)in y direction
@@ -4129,7 +4099,6 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 										//MatrixPerspectiveProjectionRH(lispMatrix, -1, 1, n, f, -1, 1);
 										//MatrixPerspectiveProjection(lispMatrix, -1, 1, -1, 1, n, f);
 										//MatrixInverse(lispMatrix);
-
 										//MatrixPerspectiveProjectionLH(lispMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], cropBounds[0][2], cropBounds[1][2]);
 										//MatrixPerspectiveProjectionRH(lispMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -f, -n);
 
@@ -4210,8 +4179,6 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 #if 0
 								ri.Printf(PRINT_ALL, "light space post crop bounds(%5.3f, %5.3f, %5.3f)(%5.3f, %5.3f, %5.3f)\n", cropBounds[0][0], cropBounds[0][1], cropBounds[0][2], cropBounds[1][0], cropBounds[1][1], cropBounds[1][2]);
 #endif
-
-								//
 								//MatrixInverse(cropMatrix);
 
 #if 0
@@ -4398,7 +4365,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 									GLimp_LogComment(va("light receiver light space clip bounds(%5.3f, %5.3f, %5.3f)(%5.3f, %5.3f, %5.3f)\n", receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2], receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]));
 								}
 
-								// scene - dependent bounding volume
+								// scene-dependent bounding volume
 								cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
 								cropBounds[0][1] = Q_max(Q_max(casterBounds[0][1], receiverBounds[0][1]), splitFrustumClipBounds[0][1]);
 
@@ -4506,9 +4473,9 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 						MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
 						MatrixSetupScale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1], 1.0 / light->l.radius[2]);
 						// build the attenuation matrix
-						MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);	// bias
-						MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);		// scale
-						MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);	// light projection(frustum)
+						MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5); // bias
+						MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5); // scale
+						MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
 						MatrixMultiply2(light->attenuationMatrix, light->viewMatrix);
 						MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
 						break;
@@ -4570,8 +4537,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 
 						tess.numVertexes = light->frustumVerts;
 						tess.numIndexes = light->frustumIndexes;
-					}
-					else
+					} else
 #endif
 					{
 						tess.multiDrawPrimitives = 0;
@@ -5143,9 +5109,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 							tess.numVertexes = 0;
 
 							GL_PopMatrix();
-
 							GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY, backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
-
 							GL_Scissor(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY, backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 						}
 					}
@@ -5200,8 +5164,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 						// fast path, same as previous
 						rb_surfaceTable[*surface](surface);
 						goto nextInteraction;
-					}
-					else
+					} else
 #endif
 					{
 						if (oldLight) {
@@ -5213,10 +5176,10 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 							// don't just call LogComment, or we will get a call to va()every frame!
 							GLimp_LogComment(va("-----Beginning Shadow Interaction: %i-----\n", iaCount));
 						}
-
 						// we don't need tangent space calculations here
 						Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
 					}
+
 					break;
 				}
 
@@ -5271,6 +5234,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 				} else {
 					glDepthRange(0, 1);
 				}
+
 				oldDepthRange = depthRange;
 			}
 		}
@@ -5433,51 +5397,49 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred) {
 
 	GLimp_LogComment("--- RB_RenderScreenSpaceAmbientOcclusion ---\n");
 
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
 		return;
+	}
 
-	if (!r_screenSpaceAmbientOcclusion->integer)
+	if (!r_screenSpaceAmbientOcclusion->integer) {
 		return;
+	}
 	// enable shader, set arrays
 	GL_BindProgram(&tr.screenSpaceAmbientOcclusionShader);
-
 	GL_State(GLS_DEPTHTEST_DISABLE); //|GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
 
 	glVertexAttrib4fvARB(ATTR_INDEX_COLOR, colorWhite);
 	// set uniforms
 	/*
-	   VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin); // in world space
+	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin); // in world space
 
-	   if (!jitterInit)
-	   {
-	   for(i = 0; i < 32; i++)
-	   {
-	   float *jit = &jitter[i][0];
+	if (!jitterInit) {
+		for i = 0; i < 32; i++) {
+			float *jit = &jitter[i][0];
 
-	   float rad = crandom() * 1024.0f; // FIXME radius;
-	   float a = crandom() * M_PI * 2;
-	   float b = crandom() * M_PI * 2;
+			float rad = crandom() * 1024.0f; // FIXME radius;
+			float a = crandom() * M_PI * 2;
+			float b = crandom() * M_PI * 2;
 
-	   jit[0] = rad * sin(a) * cos(b);
-	   jit[1] = rad * sin(a) * sin(b);
-	   jit[2] = rad * cos(a);
-	  }
+			jit[0] = rad * sin(a) * cos(b);
+			jit[1] = rad * sin(a) * sin(b);
+			jit[2] = rad * cos(a);
+		}
 
-	   jitterInit = qtrue;
-	  }
+		jitterInit = qtrue;
+	}
 
-	   MatrixCopy(backEnd.viewParms.projectionMatrix, projectMatrix);
-	   MatrixInverse(projectMatrix);
+	MatrixCopy(backEnd.viewParms.projectionMatrix, projectMatrix);
+	MatrixInverse(projectMatrix);
 
-	   glUniform3fARB(tr.screenSpaceAmbientOcclusionShader.u_ViewOrigin, viewOrigin[0], viewOrigin[1], viewOrigin[2]);
-	   glUniform3fvARB(tr.screenSpaceAmbientOcclusionShader.u_SSAOJitter, 32, &jitter[0][0]);
-	   glUniform1fARB(tr.screenSpaceAmbientOcclusionShader.u_SSAORadius, r_screenSpaceAmbientOcclusionRadius->value);
+	glUniform3fARB(tr.screenSpaceAmbientOcclusionShader.u_ViewOrigin, viewOrigin[0], viewOrigin[1], viewOrigin[2]);
+	glUniform3fvARB(tr.screenSpaceAmbientOcclusionShader.u_SSAOJitter, 32, &jitter[0][0]);
+	glUniform1fARB(tr.screenSpaceAmbientOcclusionShader.u_SSAORadius, r_screenSpaceAmbientOcclusionRadius->value);
 
-	   glUniformMatrix4fvARB(tr.screenSpaceAmbientOcclusionShader.u_UnprojectMatrix, 1, GL_FALSE, backEnd.viewParms.unprojectionMatrix);
-	   glUniformMatrix4fvARB(tr.screenSpaceAmbientOcclusionShader.u_ProjectMatrix, 1, GL_FALSE, projectMatrix);
+	glUniformMatrix4fvARB(tr.screenSpaceAmbientOcclusionShader.u_UnprojectMatrix, 1, GL_FALSE, backEnd.viewParms.unprojectionMatrix);
+	glUniformMatrix4fvARB(tr.screenSpaceAmbientOcclusionShader.u_ProjectMatrix, 1, GL_FALSE, projectMatrix);
 	*/
-
 	// capture current color buffer for u_CurrentMap
 	GL_SelectTexture(0);
 	GL_Bind(tr.currentRenderImage);
@@ -5516,20 +5478,20 @@ void RB_RenderDepthOfField() {
 
 	GLimp_LogComment("--- RB_RenderDepthOfField ---\n");
 
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
 		return;
+	}
 
-	if (!r_depthOfField->integer)
+	if (!r_depthOfField->integer) {
 		return;
+	}
 	// enable shader, set arrays
 	GL_BindProgram(&tr.depthOfFieldShader);
-
 	GL_State(GLS_DEPTHTEST_DISABLE);	//|GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
 
 	glVertexAttrib4fvARB(ATTR_INDEX_COLOR, colorWhite);
 	// set uniforms
-
 	// capture current color buffer for u_CurrentMap
 	GL_SelectTexture(0);
 
@@ -5579,23 +5541,26 @@ void RB_RenderGlobalFog() {
 
 	GLimp_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
 		return;
+	}
 
-	if (r_noFog->integer)
+	if (r_noFog->integer) {
 		return;
-
+	}
 #if defined(COMPAT_ET)
-	if (!tr.world || tr.world->globalFog < 0)
+	if (!tr.world || tr.world->globalFog < 0) {
 		return;
+	}
 #else
-	if (r_forceFog->value <= 0 && VectorLength(tr.fogColor) <= 0)
+	if (r_forceFog->value <= 0 && VectorLength(tr.fogColor) <= 0) {
 		return;
+	}
 
-	if (r_forceFog->value <= 0 && tr.fogDensity <= 0)
+	if (r_forceFog->value <= 0 && tr.fogDensity <= 0) {
 		return;
+	}
 #endif
-
 	GL_Cull(CT_TWO_SIDED);
 
 	gl_fogGlobalShader->BindProgram();
@@ -5682,8 +5647,9 @@ void RB_RenderBloom() {
 
 	GLimp_LogComment("--- RB_RenderBloom ---\n");
 
-	if ((backEnd.refdef.rdflags &(RDF_NOWORLDMODEL|RDF_NOBLOOM)) || !r_bloom->integer || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable)
+	if ((backEnd.refdef.rdflags &(RDF_NOWORLDMODEL|RDF_NOBLOOM)) || !r_bloom->integer || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable) {
 		return;
+	}
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
@@ -5751,10 +5717,11 @@ void RB_RenderBloom() {
 				GL_State(GLS_DEPTHTEST_DISABLE);
 				GL_SelectTexture(0);
 
-				if (j == 0)
+				if (j == 0) {
 					GL_Bind(tr.contrastRenderFBOImage);
-				else
+				} else {
 					GL_Bind(tr.bloomRenderFBOImage[j % 2]);
+				}
 
 				GL_PushMatrix();
 				GL_LoadModelViewMatrix(matrixIdentity);
@@ -5824,8 +5791,9 @@ void RB_RenderRotoscope(void) {
 
 	GLimp_LogComment("--- RB_CameraPostFX ---\n");
 
-	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_rotoscope->integer || backEnd.viewParms.isPortal)
+	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_rotoscope->integer || backEnd.viewParms.isPortal) {
 		return;
+	}
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
@@ -5859,9 +5827,9 @@ void RB_CameraPostFX(void) {
 
 	GLimp_LogComment("--- RB_CameraPostFX ---\n");
 
-	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_cameraPostFX->integer || backEnd.viewParms.isPortal ||
-		!tr.grainImage || !tr.vignetteImage)
+	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_cameraPostFX->integer || backEnd.viewParms.isPortal || !tr.grainImage || !tr.vignetteImage) {
 		return;
+	}
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
@@ -5951,24 +5919,25 @@ static void RB_CalculateAdaptation() {
 
 		luminance = DotProduct(color, LUMINANCE_VECTOR) + 0.0001f;
 
-		if (luminance > maxLuminance)
+		if (luminance > maxLuminance) {
 			maxLuminance = luminance;
+		}
 
 		sum += log(luminance);
 	}
 
 	sum /= (64.0f * 64.0f);
 	avgLuminance = exp(sum);
-	// the user's adapted luminance level is simulated by closing the gap between
-	// adapted luminance and current luminance by 2% every frame, based on a
-	// 30 fps rate. This is not an accurate model of human adaptation, which can
-	// take longer than half an hour.
-	if (backEnd.hdrTime > curTime)
+	// the user's adapted luminance level is simulated by closing the gap between adapted luminance and current luminance by 2% every frame, based on a
+	// 30 fps rate. This is not an accurate model of human adaptation, which can take longer than half an hour.
+	if (backEnd.hdrTime > curTime) {
 		backEnd.hdrTime = curTime;
+	}
 
 	deltaTime = curTime - backEnd.hdrTime;
 
-	//if(r_hdrMaxLuminance->value) {
+	//if(r_hdrMaxLuminance->value)
+	{
 		Q_clamp(backEnd.hdrAverageLuminance, r_hdrMinLuminance->value, r_hdrMaxLuminance->value);
 		Q_clamp(avgLuminance, r_hdrMinLuminance->value, r_hdrMaxLuminance->value);
 
@@ -6016,13 +5985,10 @@ void RB_RenderDeferredShadingResultToFrameBuffer() {
 	GLimp_LogComment("--- RB_RenderDeferredShadingResultToFrameBuffer ---\n");
 
 	R_BindNullFBO();
-
 	/*
-	   if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
-	   {
-	   GL_State(GLS_DEPTHTEST_DISABLE|GLS_DEPTHMASK_TRUE|GLS_SRCBLEND_ONE|GLS_DSTBLEND_ONE);
-	  }
-	   else
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL) {
+		GL_State(GLS_DEPTHTEST_DISABLE|GLS_DEPTHMASK_TRUE|GLS_SRCBLEND_ONE|GLS_DSTBLEND_ONE);
+	} else
 	*/
 	{
 		GL_State(GLS_DEPTHTEST_DISABLE); //|GLS_DEPTHMASK_TRUE);
@@ -6030,7 +5996,6 @@ void RB_RenderDeferredShadingResultToFrameBuffer() {
 
 	GL_Cull(CT_TWO_SIDED);
 	// set uniforms
-
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
@@ -6086,8 +6051,9 @@ void RB_RenderDeferredHDRResultToFrameBuffer() {
 
 	GLimp_LogComment("--- RB_RenderDeferredHDRResultToFrameBuffer ---\n");
 
-	if (!r_hdrRendering->integer || !glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
+	if (!r_hdrRendering->integer || !glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable) {
 		return;
+	}
 
 	GL_CheckErrors();
 	R_BindNullFBO();
@@ -6097,7 +6063,6 @@ void RB_RenderDeferredHDRResultToFrameBuffer() {
 	GL_State(GLS_DEPTHTEST_DISABLE);
 	GL_Cull(CT_TWO_SIDED);
 	// set uniforms
-
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	MatrixOrthogonalProjection(ortho, backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight, -99999, 99999);
@@ -6306,6 +6271,11 @@ static void IssueLightOcclusionQuery(link_t *queue, trRefLight_t *light, qboolea
 	GL_CheckErrors();
 }
 
+/*
+=======================================================================================================================================
+IssueLightMultiOcclusionQueries
+=======================================================================================================================================
+*/
 static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individualQueue) {
 	trRefLight_t *light;
 	trRefLight_t *multiQueryLight;
@@ -6323,8 +6293,9 @@ static void IssueLightMultiOcclusionQueries(link_t *multiQueue, link_t *individu
 
 	ri.Printf(PRINT_ALL, ")\n");
 #endif
-	if (QueueEmpty(multiQueue))
+	if (QueueEmpty(multiQueue)) {
 		return;
+	}
 
 	multiQueryLight = (trRefLight_t *)QueueFront(multiQueue) ->data;
 
@@ -6406,7 +6377,7 @@ GetLightOcclusionQueryResult
 =======================================================================================================================================
 */
 static void GetLightOcclusionQueryResult(trRefLight_t *light) {
-	link_t *l, * sentinel;
+	link_t *l, *sentinel;
 	int ocSamples;
 	GLint available;
 
@@ -6455,7 +6426,7 @@ LightCompare
 =======================================================================================================================================
 */
 static int LightCompare(const void *a, const void *b) {
-	trRefLight_t *l1, * l2;
+	trRefLight_t *l1, *l2;
 	float d1, d2;
 
 	l1 = (trRefLight_t *) * (void **)a;
@@ -6489,7 +6460,7 @@ void RB_RenderLightOcclusionQueries() {
 		interaction_t *ia;
 		int iaCount;
 		int iaFirst;
-		trRefLight_t *light, * oldLight, * multiQueryLight;
+		trRefLight_t *light, *oldLight, *multiQueryLight;
 		GLint ocSamples = 0;
 		qboolean queryObjects;
 		link_t occlusionQueryQueue;
@@ -6848,8 +6819,9 @@ static void IssueEntityMultiOcclusionQueries(link_t *multiQueue, link_t *individ
 
 	ri.Printf(PRINT_ALL, ")\n");
 #endif
-	if (QueueEmpty(multiQueue))
+	if (QueueEmpty(multiQueue)) {
 		return;
+	}
 
 	multiQueryEntity = (trRefEntity_t *)QueueFront(multiQueue) ->data;
 
@@ -6917,7 +6889,8 @@ static qboolean EntityOcclusionResultAvailable(trRefEntity_t *entity) {
 		glFinish();
 
 		available = 0;
-		//if(glIsQueryARB(light->occlusionQueryObjects[backEnd.viewParms.viewCount])) {
+		//if glIsQueryARB(light->occlusionQueryObjects[backEnd.viewParms.viewCount]))
+		{
 			glGetQueryObjectivARB(entity->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE_ARB, &available);
 			GL_CheckErrors();
 		}
@@ -6936,7 +6909,7 @@ GetEntityOcclusionQueryResult
 static void GetEntityOcclusionQueryResult(trRefEntity_t *entity) {
 	link_t *l, *sentinel;
 	int ocSamples;
-	GLint  available;
+	GLint available;
 
 	GLimp_LogComment("--- GetEntityOcclusionQueryResult ---\n");
 
@@ -6946,7 +6919,8 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity) {
 		available = 0;
 
 		while (!available) {
-			//if(glIsQueryARB(node->occlusionQueryObjects[backEnd.viewParms.viewCount])) {
+			//if glIsQueryARB(node->occlusionQueryObjects[backEnd.viewParms.viewCount])))
+			{
 				glGetQueryObjectivARB(entity->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE_ARB, &available);
 				//GL_CheckErrors();
 			}
@@ -6979,7 +6953,7 @@ EntityCompare
 =======================================================================================================================================
 */
 static int EntityCompare(const void *a, const void *b) {
-	trRefEntity_t *e1, * e2;
+	trRefEntity_t *e1, *e2;
 	float d1, d2;
 
 	e1 = (trRefEntity_t *) * (void **)a;
@@ -7010,7 +6984,7 @@ void RB_RenderEntityOcclusionQueries() {
 
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL)) {
 		int i;
-		trRefEntity_t *entity, * multiQueryEntity;
+		trRefEntity_t *entity, *multiQueryEntity;
 		link_t occlusionQueryQueue;
 		link_t invisibleQueue;
 		growList_t invisibleList;
@@ -7177,7 +7151,7 @@ void RB_RenderBspOcclusionQueries() {
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer) {
 		//int j;
 		bspNode_t *node;
-		link_t *l, * next, * sentinel;
+		link_t *l, *next, *sentinel;
 
 		GL_BindProgram(&tr.genericShader);
 		GL_Cull(CT_TWO_SIDED);
@@ -7252,7 +7226,7 @@ void RB_CollectBspOcclusionQueries() {
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer) {
 		//int j;
 		bspNode_t *node;
-		link_t *l, * next, * sentinel;
+		link_t *l, *next, *sentinel;
 
 		int ocCount;
 		int avCount;
@@ -7874,7 +7848,6 @@ static void RB_RenderDebugUtils() {
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 	}
-
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 	if (r_showSkeleton->integer) {
 		int i, j, k, parentIndex;
@@ -8201,7 +8174,6 @@ static void RB_RenderDebugUtils() {
 			GL_State(GLS_DEFAULT);
 			GL_Cull(CT_TWO_SIDED);
 			// set uniforms
-
 			// set up the transformation matrix
 			backEnd.orientation = backEnd.viewParms.world;
 			GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
@@ -8264,7 +8236,6 @@ static void RB_RenderDebugUtils() {
 		GL_State(GLS_DEFAULT);
 		GL_Cull(CT_TWO_SIDED);
 		// set uniforms
-
 		// set up the transformation matrix
 		backEnd.orientation = backEnd.viewParms.world;
 		GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
@@ -8318,7 +8289,7 @@ static void RB_RenderDebugUtils() {
 
 	if (r_showBspNodes->integer) {
 		bspNode_t *node;
-		link_t *l, * sentinel;
+		link_t *l, *sentinel;
 
 		if ((backEnd.refdef.rdflags &(RDF_NOWORLDMODEL)) || !tr.world) {
 			return;
@@ -8400,7 +8371,6 @@ static void RB_RenderDebugUtils() {
 						//ClearBounds(splitFrustumBounds[0], splitFrustumBounds[1]);
 						//BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], backEnd.viewParms.visBounds[0], backEnd.viewParms.visBounds[1]);
 						//BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], light->worldBounds[0], light->worldBounds[1]);
-
 						ClearBounds(cropBounds[0], cropBounds[1]);
 
 						for (j = 0; j < 8; j++) {
@@ -8478,8 +8448,8 @@ static void RB_RenderDebugUtils() {
 
 					gl_genericShader->SetUniform_ColorModulate(CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 				}
-			} // i == 1
-			else {
+			// i == 1
+			} else {
 				GL_State(GLS_POLYMODE_LINE|GLS_DEPTHTEST_DISABLE);
 				GL_Cull(CT_TWO_SIDED);
 				// render in world space
@@ -8506,9 +8476,9 @@ static void RB_RenderDebugUtils() {
 							continue;
 						}
 
-						//if(node->shrinkedAABB)
+						//if (node->shrinkedAABB) {
 						//	gl_genericShader->SetUniform_Color(colorBlue);
-						//else 
+						//} else 
 						if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex]) {
 							gl_genericShader->SetUniform_Color(colorGreen);
 						} else {
@@ -8539,7 +8509,7 @@ static void RB_RenderDebugUtils() {
 							continue;
 						}
 
-						//if(node->occlusionQuerySamples[backEnd.viewParms.viewCount] > 0)
+						//if (node->occlusionQuerySamples[backEnd.viewParms.viewCount] > 0) {
 						if (node->visible[backEnd.viewParms.viewCount]) {
 							gl_genericShader->SetUniform_Color(colorGreen);
 						} else {
@@ -8550,7 +8520,7 @@ static void RB_RenderDebugUtils() {
 							continue;
 						}
 
-						//if(node->occlusionQuerySamples[backEnd.viewParms.viewCount] > 0)
+						// if(node->occlusionQuerySamples[backEnd.viewParms.viewCount] > 0) {
 						if (node->visible[backEnd.viewParms.viewCount]) {
 							gl_genericShader->SetUniform_Color(colorYellow);
 						} else {
@@ -8717,10 +8687,9 @@ static void RB_RenderView(void) {
 
 		clearBits = GL_DEPTH_BUFFER_BIT;
 		/*
-		   if (r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL)
-		   {
-		   clearBits|= GL_STENCIL_BUFFER_BIT;
-		  }
+		if (r_measureOverdraw->integer || r_shadows->integer == SHADOWING_STENCIL) {
+			clearBits|= GL_STENCIL_BUFFER_BIT;
+		}
 		*/
 		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL)) {
 			clearBits|= GL_COLOR_BUFFER_BIT;
@@ -8979,8 +8948,8 @@ static void RB_RenderView(void) {
 					// try to clear fastsky with current fog color
 					GL_ClearColor(tr.glfogsettings[FOG_CURRENT].color[0], tr.glfogsettings[FOG_CURRENT].color[1], tr.glfogsettings[FOG_CURRENT].color[2], tr.glfogsettings[FOG_CURRENT].color[3]);
 				} else {
-					//GL_ClearColor(0.0, 0.0, 1.0, 1.0);   // blue clear for testing world sky clear
-					GL_ClearColor(0.05, 0.05, 0.05, 1.0);	// JPW NERVE changed per id req was 0.5s
+					//GL_ClearColor(0.0, 0.0, 1.0, 1.0); // blue clear for testing world sky clear
+					GL_ClearColor(0.05, 0.05, 0.05, 1.0); // JPW NERVE changed per id req was 0.5s
 				}
 			} else {
 				// world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
@@ -9004,8 +8973,8 @@ static void RB_RenderView(void) {
 		}
 #else
 		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL)) {
-			clearBits|= GL_COLOR_BUFFER_BIT;	// FIXME: only if sky shaders have been used
-			GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);	// FIXME: get color of sky
+			clearBits|= GL_COLOR_BUFFER_BIT; // FIXME: only if sky shaders have been used
+			GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f); // FIXME: get color of sky
 		} else {
 			if (HDR_ENABLED()) {
 				// copy color of the main context to deferredRenderFBO
@@ -9079,7 +9048,7 @@ static void RB_RenderView(void) {
 		RB_RenderGlobalFog();
 		// draw everything that is translucent
 		RB_RenderDrawSurfaces(false, false, DRAWSURFACES_ALL);
-		// scale down rendered HDR scene to 1 / 4th
+		// scale down rendered HDR scene to 1/4th
 		if (HDR_ENABLED()) {
 			if (glConfig2.framebufferBlitAvailable) {
 				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, tr.deferredRenderFBO->frameBuffer);
@@ -9096,9 +9065,7 @@ static void RB_RenderView(void) {
 			RB_CalculateAdaptation();
 		} else {
 			/*
-			Tr3B: FIXME this causes: caught OpenGL error:
-			GL_INVALID_OPERATION in file code / renderer / tr_backend.c line 6479
-
+			Tr3B: FIXME this causes: caught OpenGL error: GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
 			if (glConfig2.framebufferBlitAvailable) {
 				// copy deferredRenderFBO to downScaleFBO_quarter
 				glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
@@ -9196,7 +9163,7 @@ static void RB_RenderView(void) {
 /*
 =======================================================================================================================================
 
-RENDER BACK END THREAD FUNCTIONS
+	RENDER BACK END THREAD FUNCTIONS
 
 =======================================================================================================================================
 */
@@ -9205,9 +9172,8 @@ RENDER BACK END THREAD FUNCTIONS
 =======================================================================================================================================
 RE_StretchRaw
 
-FIXME: not exactly backend
-Stretches a raw 32 bit power of 2 bitmap image over the given screen rectangle.
-Used for cinematics.
+FIXME: not exactly backend.
+Stretches a raw 32 bit power of 2 bitmap image over the given screen rectangle. Used for cinematics.
 =======================================================================================================================================
 */
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty) {
@@ -9229,11 +9195,11 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		start = ri.Milliseconds();
 	}
 	// make sure rows and cols are powers of 2
-	for (i = 0;(1 << i) < cols; i++) {
+	for (i = 0; (1 << i) < cols; i++) {
 
 	}
 
-	for (j = 0;(1 << j) < rows; j++) {
+	for (j = 0; (1 << j) < rows; j++) {
 
 	}
 
@@ -9828,15 +9794,12 @@ void RB_ShowImages(void) {
 
 	for (i = 0; i < tr.images.currentElements; i++) {
 		image = (image_t *)Com_GrowListElement(&tr.images, i);
-
 		/*
-		   if (image->bits &(IF_RGBA16F|IF_RGBA32F|IF_LA16F|IF_LA32F))
-		   {
-		   // don't render float textures using FFP
-		   continue;
-		  }
+		if (image->bits &(IF_RGBA16F|IF_RGBA32F|IF_LA16F|IF_LA32F)) {
+			// don't render float textures using FFP
+			continue;
+		}
 		*/
-
 		w = glConfig.vidWidth / 20;
 		h = glConfig.vidHeight / 15;
 		x = i % 20 * w;
@@ -9872,6 +9835,7 @@ void RB_ShowImages(void) {
 	glFinish();
 
 	end = ri.Milliseconds();
+
 	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
 
 	GL_CheckErrors();

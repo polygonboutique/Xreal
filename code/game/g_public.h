@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 Robert Beckebans < trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -23,108 +22,87 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-// g_public.h--game module information visible to server
+/**************************************************************************************************************************************
+ Game module information visible to server.
+**************************************************************************************************************************************/
 
-#define GAME_API_VERSION	11
+#define GAME_API_VERSION 11
 
-// entity->svFlags
-// the server does not know how to interpret most of the values
-// in entityStates(level eType), so the game must explicitly flag
-// special server behaviors
-#define SVF_NOCLIENT			0x00000001	// don't send entity to clients, even if it has effects
+/**************************************************************************************************************************************
 
-// TTimo
-// https:// zerowing.idsoftware.com / bugzilla / show_bug.cgi?id = 551
-#define SVF_CLIENTMASK 0x00000002
+	entity->svFlags
 
-#define SVF_BOT					0x00000008	// set if the entity is a bot
-#define SVF_BROADCAST			0x00000020	// send to all connected clients
-#define SVF_PORTAL				0x00000040	// merge a second pvs at origin2 into snapshots
-#define SVF_USE_CURRENT_ORIGIN	0x00000080	// entity->r.currentOrigin instead of entity->s.origin
-											// for link position(missiles and movers)
-#define SVF_SINGLECLIENT		0x00000100	// only send to a single client(entityShared_t->singleClient)
-#define SVF_NOSERVERINFO		0x00000200	// don't send CS_SERVERINFO updates to this client
-											// so that it can be updated for ping tools without
-											// lagging clients
-#define SVF_CAPSULE				0x00000400	// use capsule for collision detection instead of bbox
-#define SVF_NOTSINGLECLIENT		0x00000800	// send entity to everyone but one client
-											// (entityShared_t->singleClient)
+	The server does not know how to interpret most of the values in entityStates (level eType), so the game must explicitly flag
+	special server behaviors.
 
+**************************************************************************************************************************************/
 
-
-//===============================================================
-
+#define SVF_NOCLIENT			0x00000001 // don't send entity to clients, even if it has effects
+// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
+#define SVF_CLIENTMASK			0x00000002 // send to limited list of clients
+#define SVF_BOT					0x00000008 // set if the entity is a bot
+#define SVF_BROADCAST			0x00000020 // send to all connected clients (r.cullDistance will still be checked)
+#define SVF_PORTAL				0x00000040 // merge a second pvs at origin2 into snapshots
+#define SVF_SINGLECLIENT		0x00000080 // only send to a single client (entityShared_t->singleClient)
+#define SVF_NOSERVERINFO		0x00000100 // don't send CS_SERVERINFO updates to this client so that it can be updated for ping tools without lagging clients
+#define SVF_CAPSULE				0x00000200 // use capsule for collision detection instead of bbox
+#define SVF_NOTSINGLECLIENT		0x00000400 // send entity to everyone but one client (entityShared_t->singleClient)
+#define SVF_VISDUMMY			0x00000800 // this ent is a "visibility dummy" and needs it's master to be sent to players that can see it even if they can't see the master ent
+#define SVF_VISDUMMY_MULTIPLE	0x00001000 // so that one vis dummy can add to snapshot multiple speakers
 
 typedef struct {
-	entityState_t s;			// communicated by server to clients
-
+	entityState_t s;		// communicated by server to clients
 	qboolean linked;		// qfalse if not in any good cluster
 	int linkcount;
-	int svFlags;	// SVF_NOCLIENT, SVF_BROADCAST, etc
-
-	// only send to this client when SVF_SINGLECLIENT is set    
-	// if SVF_CLIENTMASK is set, use bitmask for clients to send to(maxclients must be <= 32, up to the mod to enforce this)
+	int svFlags;			// SVF_NOCLIENT, SVF_BROADCAST, etc.
+	// only send to this client when SVF_SINGLECLIENT is set
+	// if SVF_CLIENTMASK is set, use bitmask for clients to send to (maxclients must be <= 32, up to the mod to enforce this)
 	int singleClient;
-	qboolean bmodel;		// if false, assume an explicit mins/maxs bounding box
-	// only set by trap_SetBrushModel
+	qboolean bmodel;		// if false, assume an explicit mins/maxs bounding box, only set by trap_SetBrushModel
 	vec3_t mins, maxs;
-	int contents;	// CONTENTS_TRIGGER, CONTENTS_SOLID, CONTENTS_BODY, etc
-	// a non - solid entity should set to 0
-
+	int contents;			// CONTENTS_TRIGGER, CONTENTS_SOLID, CONTENTS_BODY, etc., a non-solid entity should set to 0
 	vec3_t absmin, absmax;	// derived from mins/maxs and origin + rotation
-
 	// currentOrigin will be used for all collision detection and world linking.
-	// it will not necessarily be the same as the trajectory evaluation for the current
-	// time, because each entity must be moved one at a time after time is advanced
-	// to avoid simultanious collision issues
+	// it will not necessarily be the same as the trajectory evaluation for the current time, because each entity must be moved one at a
+	// time after time is advanced to avoid simultanious collision issues
 	vec3_t currentOrigin;
 	vec3_t currentAngles;
-
-	// when a trace call is made and passEntityNum != ENTITYNUM_NONE,
-	// an ent will be excluded from testing if:
-	// ent->s.number == passEntityNum  (don't interact with self)
-	// ent->s.ownerNum = passEntityNum (don't interact with your own missiles)
-	// entity[ent->s.ownerNum].ownerNum = passEntityNum(don't interact with other missiles from owner)
+	// when a trace call is made and passEntityNum != ENTITYNUM_NONE, an ent will be excluded from testing if:
+	// ent->s.number == passEntityNum (don't interact with self)
+	// ent->r.ownerNum == passEntityNum (don't interact with your own missiles)
+	// entity[ent->r.ownerNum].r.ownerNum == passEntityNum (don't interact with other missiles from owner)
 	int ownerNum;
 } entityShared_t;
-
-
-
 // the server looks at a sharedEntity, which is the start of the game's gentity_t structure
 typedef struct {
-	entityState_t s;			// communicated by server to clients
-	entityShared_t r;			// shared by both the server system and game
+	entityState_t s;	// communicated by server to clients
+	entityShared_t r;	// shared by both the server system and game
 } sharedEntity_t;
 
+/**************************************************************************************************************************************
 
+	System traps provided by the main engine.
 
-//===============================================================
+**************************************************************************************************************************************/
 
-// 
-// system traps provided by the main engine
-// 
+	// See sharedTraps_t in qcommon.h for TRAP_MEMSET = 0, etc.
+
 typedef enum {
 	//============== general Quake services ==================
-
-	G_PRINT, 					// (const char *string);
+	G_PRINT = 20,				// (const char *string);
 	// print message on the local console
-
-	G_ERROR, 					// (const char *string);
+	G_ERROR,					// (const char *string);
 	// abort the game
-
-	G_MILLISECONDS, 				// (void);
+	G_MILLISECONDS,				// (void);
 	// get current time for profiling reasons
-	// this should NOT be used for any game related tasks,
-	// because it is not journaled
+	// this should NOT be used for any game related tasks, because it is not journaled
 
 	// console variable interaction
-	G_CVAR_REGISTER, 			// (vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
-	G_CVAR_UPDATE, 				// (vmCvar_t *vmCvar);
-	G_CVAR_SET, 					// (const char *var_name, const char *value);
+	G_CVAR_REGISTER,			// (vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+	G_CVAR_UPDATE,				// (vmCvar_t *vmCvar);
+	G_CVAR_SET,					// (const char *var_name, const char *value);
 	G_CVAR_VARIABLE_INTEGER_VALUE, 	// (const char *var_name);
-
 	G_CVAR_VARIABLE_STRING_BUFFER, 	// (const char *var_name, char *buffer, int bufsize);
-
 	G_ARGC, 						// (void);
 	// ClientCommand and ServerCommand parameter access
 
@@ -137,7 +115,7 @@ typedef enum {
 
 	G_SEND_CONSOLE_COMMAND, 		// (const char *text);
 	// add commands to the console as if they were typed in
-	// for map changing, etc
+	// for map changing, etc.
 
 
 	//=========== server specific functionality =============

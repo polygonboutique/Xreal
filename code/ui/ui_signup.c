@@ -45,17 +45,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    frame;
-	menutext_s      name;
-	menufield_s     name_box;
-	menutext_s      password;
-	menufield_s     password_box;
-	menutext_s      again;
-	menufield_s     again_box;
-	menutext_s      email;
-	menufield_s     email_box;
-	menutext_s      signup;
-	menutext_s      cancel;
+	menubitmap_s frame;
+	menutext_s name;
+	menufield_s name_box;
+	menutext_s password;
+	menufield_s password_box;
+	menutext_s again;
+	menufield_s again_box;
+	menutext_s email;
+	menufield_s email_box;
+	menutext_s signup;
+	menutext_s cancel;
 } signup_t;
 
 static signup_t s_signup;
@@ -73,7 +73,7 @@ Signup_MenuEvent
 */
 static void Signup_MenuEvent(void *ptr, int event)
 {
-	//char  cmd[1024];
+	//char cmd[1024];
 
 	if(event != QM_ACTIVATED)
 	{
@@ -123,7 +123,7 @@ Signup_MenuInit
 void Signup_MenuInit(void)
 {
 	grank_status_t  status;
-	int             y;
+	int y;
 
 	memset(&s_signup, 0, sizeof(s_signup));
 

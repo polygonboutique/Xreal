@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -189,10 +189,10 @@ void G_RankFireWeapon(int self, int weapon) {
 		case WP_GRENADE_LAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_SHOT_FIRED_GRENADE, 1, 1);
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_SHOT_FIRED_ROCKET, 1, 1);
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			trap_RankReportInt(self, -1, QGR_KEY_SHOT_FIRED_LIGHTNING, 1, 1);
 			break;
 		case WP_RAILGUN:
@@ -610,10 +610,10 @@ void G_RankWeaponTime(int self, int weapon) {
 		case WP_GRENADE_LAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_TIME_GRENADE, time, 1);
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_TIME_ROCKET, time, 1);
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			trap_RankReportInt(self, -1, QGR_KEY_TIME_LIGHTNING, time, 1);
 			break;
 		case WP_RAILGUN:
@@ -660,10 +660,10 @@ void G_RankPickupWeapon(int self, int weapon) {
 		case WP_GRENADE_LAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_PICKUP_GRENADE, 1, 1);
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_PICKUP_ROCKET, 1, 1);
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			trap_RankReportInt(self, -1, QGR_KEY_PICKUP_LIGHTNING, 1, 1);
 			break;
 		case WP_RAILGUN:
@@ -711,11 +711,11 @@ void G_RankPickupAmmo(int self, int weapon, int quantity) {
 			trap_RankReportInt(self, -1, QGR_KEY_BOXES_GRENADES, 1, 1);
 			trap_RankReportInt(self, -1, QGR_KEY_ROUNDS_GRENADES, quantity, 1);
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			trap_RankReportInt(self, -1, QGR_KEY_BOXES_ROCKETS, 1, 1);
 			trap_RankReportInt(self, -1, QGR_KEY_ROUNDS_ROCKETS, quantity, 1);
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			trap_RankReportInt(self, -1, QGR_KEY_BOXES_LG_AMMO, 1, 1);
 			trap_RankReportInt(self, -1, QGR_KEY_ROUNDS_LG_AMMO, quantity, 1);
 			break;

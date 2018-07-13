@@ -116,10 +116,10 @@ Text_Draw
 */
 static void Text_Draw(menutext_s * t)
 {
-	int             x;
-	int             y;
-	char            buff[512];
-	float          *color;
+	int x;
+	int y;
+	char buff[512];
+	float *color;
 
 	x = t->generic.x;
 	y = t->generic.y;
@@ -165,9 +165,9 @@ BText_Draw
 */
 static void BText_Draw(menutext_s * t)
 {
-	int             x;
-	int             y;
-	float          *color;
+	int x;
+	int y;
+	float *color;
 
 	x = t->generic.x;
 	y = t->generic.y;
@@ -191,11 +191,11 @@ PText_Init
 */
 static void PText_Init(menutext_s * t)
 {
-	int             x;
-	int             y;
-	int             w;
-	int             h;
-	float           sizeScale;
+	int x;
+	int y;
+	int w;
+	int h;
+	float sizeScale;
 
 	sizeScale = UI_ProportionalSizeScale(t->style);
 
@@ -226,10 +226,10 @@ PText_Draw
 */
 static void PText_Draw(menutext_s * t)
 {
-	int             x;
-	int             y;
-	float          *color;
-	int             style;
+	int x;
+	int y;
+	float *color;
+	int style;
 
 	x = t->generic.x;
 	y = t->generic.y;
@@ -267,10 +267,10 @@ Bitmap_Init
 */
 void Bitmap_Init(menubitmap_s * b)
 {
-	int             x;
-	int             y;
-	int             w;
-	int             h;
+	int x;
+	int y;
+	int w;
+	int h;
 
 	x = b->generic.x;
 	y = b->generic.y;
@@ -312,12 +312,12 @@ Bitmap_Draw
 */
 void Bitmap_Draw(menubitmap_s * b)
 {
-	float           x;
-	float           y;
-	float           w;
-	float           h;
+	float x;
+	float y;
+	float w;
+	float h;
 	vec4_t          tempcolor;
-	float          *color;
+	float *color;
 
 	x = b->generic.x;
 	y = b->generic.y;
@@ -426,7 +426,7 @@ Action_Init
 */
 static void Action_Init(menuaction_s * a)
 {
-	int             len;
+	int len;
 
 	// calculate bounds
 	if(a->generic.name)
@@ -448,9 +448,9 @@ Action_Draw
 */
 static void Action_Draw(menuaction_s * a)
 {
-	int             x, y;
-	int             style;
-	float          *color;
+	int x, y;
+	int style;
+	float *color;
 
 	style = 0;
 	color = menu_text_color;
@@ -492,7 +492,7 @@ RadioButton_Init
 */
 static void RadioButton_Init(menuradiobutton_s * rb)
 {
-	int             len;
+	int len;
 
 	// calculate bounds
 	if(rb->generic.name)
@@ -547,10 +547,10 @@ RadioButton_Draw
 */
 static void RadioButton_Draw(menuradiobutton_s * rb)
 {
-	int             x;
-	int             y;
-	float          *color;
-	int             style;
+	int x;
+	int y;
+	float *color;
+	int style;
 	qboolean        focus;
 
 	x = rb->generic.x;
@@ -620,7 +620,7 @@ Slider_Init
 */
 static void Slider_Init(menuslider_s * s)
 {
-	int             len;
+	int len;
 
 	// calculate bounds
 	if(s->generic.name)
@@ -644,9 +644,9 @@ Slider_Key
 static sfxHandle_t Slider_Key(menuslider_s * s, int key)
 {
 	sfxHandle_t     sound;
-	int             x;
-	int             oldvalue;
-	int             step;
+	int x;
+	int oldvalue;
+	int step;
 
 
 	step = s->step;
@@ -726,11 +726,11 @@ Slider_Draw
 */
 static void Slider_Draw(menuslider_s * s)
 {
-	int             x;
-	int             y;
-	int             style;
-	float          *color;
-	int             button;
+	int x;
+	int y;
+	int style;
+	float *color;
+	int button;
 	qboolean        focus;
 
 	x = s->generic.x;
@@ -808,11 +808,11 @@ Slider_Draw
 */
 static void Slider_Draw(menuslider_s * s)
 {
-	float          *color;
-	int             style;
-	int             i;
-	int             x;
-	int             y;
+	float *color;
+	int style;
+	int i;
+	int x;
+	int y;
 	qboolean        focus;
 
 	x = s->generic.x;
@@ -880,9 +880,9 @@ SpinControl_Init
 */
 static void SpinControl_Init(menulist_s * s)
 {
-	int             len;
-	int             l;
-	const char     *str;
+	int len;
+	int l;
+	const char *str;
 
 	if(s->generic.name)
 		len = strlen(s->generic.name) * SMALLCHAR_WIDTH;
@@ -961,9 +961,9 @@ SpinControl_Draw
 */
 static void SpinControl_Draw(menulist_s * s)
 {
-	float          *color;
-	int             x, y;
-	int             style;
+	float *color;
+	int x, y;
+	int style;
 	qboolean        focus;
 
 	x = s->generic.x;
@@ -1022,7 +1022,7 @@ ScrollList_Init
 */
 static void ScrollList_Init(menulist_s * l)
 {
-	int             w;
+	int w;
 
 	l->oldvalue = 0;
 	l->curvalue = 0;
@@ -1059,16 +1059,16 @@ ScrollList_Key
 */
 sfxHandle_t ScrollList_Key(menulist_s * l, int key)
 {
-	int             x;
-	int             y;
-	int             w;
-	int             i;
-	int             j;
-	int             c;
-	int             cursorx;
-	int             cursory;
-	int             column;
-	int             index;
+	int x;
+	int y;
+	int w;
+	int i;
+	int j;
+	int c;
+	int cursorx;
+	int cursory;
+	int column;
+	int index;
 
 	switch (key)
 	{
@@ -1363,15 +1363,15 @@ ScrollList_Draw
 */
 void ScrollList_Draw(menulist_s * l)
 {
-	int             x;
-	int             u;
-	int             y;
-	int             i;
-	int             base;
-	int             column;
-	float          *color;
+	int x;
+	int u;
+	int y;
+	int i;
+	int base;
+	int column;
+	float *color;
 	qboolean        hasfocus;
-	int             style;
+	int style;
 
 	hasfocus = (l->generic.parent->cursor == l->generic.menuPosition);
 
@@ -1429,7 +1429,7 @@ Menu_AddItem
 */
 void Menu_AddItem(menuframework_s * menu, void *item)
 {
-	menucommon_s   *itemptr;
+	menucommon_s *itemptr;
 
 	if(menu->nitems >= MAX_MENUITEMS)
 		trap_Error("Menu_AddItem: excessive items");
@@ -1546,7 +1546,7 @@ Menu_SetCursorToItem
 */
 void Menu_SetCursorToItem(menuframework_s * m, void *ptr)
 {
-	int             i;
+	int i;
 
 	for(i = 0; i < m->nitems; i++)
 	{
@@ -1567,7 +1567,7 @@ void Menu_SetCursorToItem(menuframework_s * m, void *ptr)
 */
 void Menu_AdjustCursor(menuframework_s * m, int dir)
 {
-	menucommon_s   *item = NULL;
+	menucommon_s *item = NULL;
 	qboolean        wrapped = qfalse;
 
   wrap:
@@ -1630,8 +1630,8 @@ Menu_Draw
 */
 void Menu_Draw(menuframework_s * menu)
 {
-	int             i;
-	menucommon_s   *itemptr;
+	int i;
+	menucommon_s *itemptr;
 
 	// draw menu
 	for(i = 0; i < menu->nitems; i++)
@@ -1700,10 +1700,10 @@ void Menu_Draw(menuframework_s * menu)
 #ifndef NDEBUG
 		if(uis.debug)
 		{
-			int             x;
-			int             y;
-			int             w;
-			int             h;
+			int x;
+			int y;
+			int w;
+			int h;
 
 			if(!(itemptr->flags & QMF_INACTIVE))
 			{
@@ -1770,8 +1770,8 @@ Menu_DefaultKey
 sfxHandle_t Menu_DefaultKey(menuframework_s * m, int key)
 {
 	sfxHandle_t     sound = 0;
-	menucommon_s   *item;
-	int             cursor_prev;
+	menucommon_s *item;
+	int cursor_prev;
 
 	// menu system keys
 	switch (key)

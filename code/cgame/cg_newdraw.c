@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -22,9 +22,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-#ifndef MISSIONPACK
-#error This file not be used for classic Q3A.
-#endif
 #include "cg_local.h"
 #include "../ui/ui_shared.h"
 
@@ -94,10 +91,13 @@ void CG_CheckOrderPending() {
 				p2 = VOICECHAT_DEFEND;
 				b = "+button8; wait; -button8";
 				break;
-			case TEAMTASK_PATROL:
-				p1 = VOICECHAT_ONPATROL;
-				p2 = VOICECHAT_PATROL;
-				b = "+button9; wait; -button9";
+			case TEAMTASK_RETRIEVE:
+				p1 = VOICECHAT_ONGETFLAG;
+				p2 = VOICECHAT_RETURNFLAG;
+				break;
+			case TEAMTASK_ESCORT:
+				p1 = VOICECHAT_ONFOLLOWCARRIER;
+				p2 = VOICECHAT_FOLLOWFLAGCARRIER;
 				break;
 			case TEAMTASK_FOLLOW:
 				p1 = VOICECHAT_ONFOLLOW;
@@ -108,33 +108,30 @@ void CG_CheckOrderPending() {
 				p1 = VOICECHAT_ONCAMPING;
 				p2 = VOICECHAT_CAMP;
 				break;
-			case TEAMTASK_RETRIEVE:
-				p1 = VOICECHAT_ONGETFLAG;
-				p2 = VOICECHAT_RETURNFLAG;
-				break;
-			case TEAMTASK_ESCORT:
-				p1 = VOICECHAT_ONFOLLOWCARRIER;
-				p2 = VOICECHAT_FOLLOWFLAGCARRIER;
+			case TEAMTASK_PATROL:
+				p1 = VOICECHAT_ONPATROL;
+				p2 = VOICECHAT_PATROL;
+				b = "+button9; wait; -button9";
 				break;
 		}
 
 		if (cg_currentSelectedPlayer.integer == numSortedTeamPlayers) {
 			// to everyone
-			trap_SendConsoleCommand(va("cmd vsay_team %s\n", p2));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vsay_team %s\n", p2));
 		} else {
 			// for the player self
 			if (sortedTeamPlayers[cg_currentSelectedPlayer.integer] == cg.snap->ps.clientNum && p1) {
-				trap_SendConsoleCommand(va("teamtask %i\n", cgs.currentOrder));
-				//trap_SendConsoleCommand(va("cmd say_team %s\n", p2));
-				trap_SendConsoleCommand(va("cmd vsay_team %s\n", p1));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("teamtask %i\n", cgs.currentOrder));
+				//trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd say_team %s\n", p2));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vsay_team %s\n", p1));
 			} else if (p2) {
-				//trap_SendConsoleCommand(va("cmd say_team %s, %s\n", ci->name, p));
-				trap_SendConsoleCommand(va("cmd vtell %d %s\n", sortedTeamPlayers[cg_currentSelectedPlayer.integer], p2));
+				//trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd say_team %s, %s\n", ci->name, p));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vtell %d %s\n", sortedTeamPlayers[cg_currentSelectedPlayer.integer], p2));
 			}
 		}
 
 		if (b) {
-			trap_SendConsoleCommand(b);
+			trap_Cmd_ExecuteText(EXEC_APPEND, b);
 		}
 
 		cgs.orderPending = qfalse;
@@ -153,7 +150,7 @@ static void CG_SetSelectedPlayerName() {
 
 		if (ci) {
 			trap_Cvar_Set("cg_selectedPlayerName", ci->name);
-			trap_Cvar_Set("cg_selectedPlayer", va("%d", sortedTeamPlayers[cg_currentSelectedPlayer.integer]));
+			trap_Cvar_SetValue("cg_selectedPlayer", sortedTeamPlayers[cg_currentSelectedPlayer.integer]);
 			cgs.currentOrder = ci->teamTask;
 		}
 	} else {
@@ -271,16 +268,6 @@ static void CG_DrawPlayerArmorValue(rectDef_t *rect, float scale, vec4_t color, 
 	}
 }
 
-#ifndef MISSIONPACK
-static float healthColors[4][4] = {
-//     { 0.2, 1.0, 0.2, 1.0} , { 1.0, 0.2, 0.2, 1.0}, {0.5, 0.5, 0.5, 1}};
-	// bk0101016 - float const
-	{1.0f, 0.69f, 0.0f, 1.0f}, 	// normal
-	{1.0f, 0.2f, 0.2f, 1.0f}, 	// low health
-	{0.5f, 0.5f, 0.5f, 1.0f}, 	// weapon firing
-	{1.0f, 1.0f, 1.0f, 1.0f}
-};								// health > 100
-#endif
 /*
 =======================================================================================================================================
 CG_DrawPlayerAmmoIcon
@@ -468,8 +455,11 @@ qhandle_t CG_StatusHandle(int task) {
 		case TEAMTASK_DEFENSE:
 			h = cgs.media.defendShader;
 			break;
-		case TEAMTASK_PATROL:
-			h = cgs.media.patrolShader;
+		case TEAMTASK_RETRIEVE:
+			h = cgs.media.retrieveShader;
+			break;
+		case TEAMTASK_ESCORT:
+			h = cgs.media.escortShader;
 			break;
 		case TEAMTASK_FOLLOW:
 			h = cgs.media.followShader;
@@ -477,11 +467,8 @@ qhandle_t CG_StatusHandle(int task) {
 		case TEAMTASK_CAMP:
 			h = cgs.media.campShader;
 			break;
-		case TEAMTASK_RETRIEVE:
-			h = cgs.media.retrieveShader;
-			break;
-		case TEAMTASK_ESCORT:
-			h = cgs.media.escortShader;
+		case TEAMTASK_PATROL:
+			h = cgs.media.patrolShader;
 			break;
 		default:
 			h = cgs.media.assaultShader;
@@ -985,7 +972,7 @@ static void CG_HarvesterSkulls(rectDef_t *rect, float scale, vec4_t color, qbool
 	char num[16];
 	vec3_t origin, angles;
 	qhandle_t handle;
-	int value = cg.snap->ps.generic1;
+	int value = cg.snap->ps.tokens;
 
 	if (cgs.gametype != GT_HARVESTER) {
 		return;
@@ -1006,7 +993,7 @@ static void CG_HarvesterSkulls(rectDef_t *rect, float scale, vec4_t color, qbool
 			VectorClear(angles);
 			origin[0] = 90;
 			origin[1] = 0;
-			origin[2] = -10;
+			origin[2] = -6;
 			angles[YAW] = (cg.time &2047) * 360 / 2048.0;
 
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE) {
@@ -1127,10 +1114,14 @@ static void CG_DrawAreaPowerUp(rectDef_t *rect, int align, float special, float 
 		if (!ps->powerups[i]) {
 			continue;
 		}
+		// don't draw if the power up has unlimited time. This is true of the CTF flags
+		if (ps->powerups[i] == INT_MAX) {
+			continue;
+		}
 
 		t = ps->powerups[i] - cg.time;
-		// don't draw if the power up has unlimited time. This is true of the CTF flags
-		if (t <= 0 || t >= 999000) {
+
+		if (t <= 0) {
 			continue;
 		}
 		// insert into the list
@@ -1329,7 +1320,7 @@ qboolean CG_OwnerDrawVisible(int flags) {
 	}
 
 	if (flags &CG_SHOW_ANYTEAMGAME) {
-		if (cgs.gametype >= GT_TEAM) {
+		if (cgs.gametype > GT_TOURNAMENT) {
 			return qtrue;
 		}
 	}
@@ -1340,11 +1331,9 @@ qboolean CG_OwnerDrawVisible(int flags) {
 		}
 	}
 
-	if (flags &CG_SHOW_HARVESTER) {
-		if (cgs.gametype == GT_HARVESTER) {
+	if (flags &CG_SHOW_CTF) {
+		if (cgs.gametype == GT_CTF) {
 			return qtrue;
-		} else {
-			return qfalse;
 		}
 	}
 
@@ -1356,14 +1345,16 @@ qboolean CG_OwnerDrawVisible(int flags) {
 		}
 	}
 
-	if (flags &CG_SHOW_CTF) {
-		if (cgs.gametype == GT_CTF) {
+	if (flags &CG_SHOW_OBELISK) {
+		if (cgs.gametype == GT_OBELISK) {
 			return qtrue;
+		} else {
+			return qfalse;
 		}
 	}
 
-	if (flags &CG_SHOW_OBELISK) {
-		if (cgs.gametype == GT_OBELISK) {
+	if (flags &CG_SHOW_HARVESTER) {
+		if (cgs.gametype == GT_HARVESTER) {
 			return qtrue;
 		} else {
 			return qfalse;
@@ -1487,7 +1478,7 @@ CG_DrawCapFragLimit
 =======================================================================================================================================
 */
 static void CG_DrawCapFragLimit(rectDef_t *rect, float scale, vec4_t color, qhandle_t shader, int textStyle) {
-	int limit = (cgs.gametype >= GT_CTF) ? cgs.capturelimit : cgs.fraglimit;
+	int limit = (cgs.gametype > GT_TEAM) ? cgs.capturelimit : cgs.fraglimit;
 
 	CG_Text_Paint(rect->x, rect->y, scale, color, va("%2i", limit), 0, 0, textStyle);
 }
@@ -1858,26 +1849,26 @@ void CG_DrawMedal(int ownerDraw, rectDef_t *rect, float scale, vec4_t color, qha
 		case CG_ACCURACY:
 			value = score->accuracy;
 			break;
-		case CG_ASSISTS:
-			value = score->assistCount;
-			break;
-		case CG_DEFEND:
-			value = score->defendCount;
-			break;
 		case CG_EXCELLENT:
 			value = score->excellentCount;
 			break;
 		case CG_IMPRESSIVE:
 			value = score->impressiveCount;
 			break;
-		case CG_PERFECT:
-			value = score->perfect;
-			break;
 		case CG_GAUNTLET:
 			value = score->gauntletCount;
 			break;
 		case CG_CAPTURES:
 			value = score->captures;
+			break;
+		case CG_DEFEND:
+			value = score->defendCount;
+			break;
+		case CG_ASSISTS:
+			value = score->assistCount;
+			break;
+		case CG_PERFECT:
+			value = score->perfect;
 			break;
 	}
 
@@ -2076,13 +2067,13 @@ void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y
 			CG_DrawKiller(&rect, scale, color, shader, textStyle);
 			break;
 		case CG_ACCURACY:
-		case CG_ASSISTS:
-		case CG_DEFEND:
 		case CG_EXCELLENT:
 		case CG_IMPRESSIVE:
-		case CG_PERFECT:
 		case CG_GAUNTLET:
 		case CG_CAPTURES:
+		case CG_DEFEND:
+		case CG_ASSISTS:
+		case CG_PERFECT:
 			CG_DrawMedal(ownerDraw, &rect, scale, color, shader);
 			break;
 		case CG_SPECTATORS:

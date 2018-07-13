@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -339,7 +339,6 @@ void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle
 	refdef.y = y;
 	refdef.width = w;
 	refdef.height = h;
-
 	refdef.time = cg.time;
 
 	trap_R_ClearScene();
@@ -396,7 +395,7 @@ void CG_Draw3DWeaponModel(float x, float y, float w, float h, qhandle_t weaponMo
 
 	ent.hModel = weaponModel;
 	ent.customSkin = skin;
-	ent.renderfx = RF_NOSHADOW;	// no stencil shadows
+	ent.renderfx = RF_NOSHADOW; // no stencil shadows
 
 	refdef.rdflags = RDF_NOWORLDMODEL|RDF_NOSHADOWS;
 
@@ -505,8 +504,7 @@ void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean for
 		// calculate distance so the flag nearly fills the box, assume heads are taller than wide
 		len = 0.5 * (maxs[2] - mins[2]);
 		origin[0] = len / 0.268; // len / tan(fov / 2)
-
-		angles[YAW] = 60 * sin(cg.time / 2000.0);;
+		angles[YAW] = 60 * sin(cg.time / 2000.0);
 
 		if (team == TEAM_RED) {
 			skin = cgs.media.redFlagSkin;
@@ -637,10 +635,8 @@ static void CG_DrawStatusBarQ3(void) {
 	vec4_t hcolor;
 	vec3_t angles;
 	vec3_t origin;
-
-#ifdef MISSIONPACK
 	qhandle_t handle;
-#endif
+
 	static float colors[4][4] = {
 		{1.0f, 0.69f, 0.0f, 1.0f}, 	// normal
 		{1.0f, 0.2f, 0.2f, 1.0f}, 	// low health
@@ -686,7 +682,7 @@ static void CG_DrawStatusBarQ3(void) {
 
 		CG_Draw3DModel(370 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 445, ICON_SIZE, ICON_SIZE, cgs.media.armorModel, 0, origin, angles);
 	}
-#ifdef MISSIONPACK
+
 	if (cgs.gametype == GT_HARVESTER) {
 		origin[0] = 90;
 		origin[1] = 0;
@@ -701,7 +697,6 @@ static void CG_DrawStatusBarQ3(void) {
 
 		CG_Draw3DModel(640 - (TEXT_ICON_SPACE + ICON_SIZE), 416, ICON_SIZE, ICON_SIZE, handle, 0, origin, angles);
 	}
-#endif
 	// ammo
 	if (cent->currentState.weapon) {
 		value = ps->ammo[cent->currentState.weapon];
@@ -762,7 +757,6 @@ static void CG_DrawStatusBarQ3(void) {
 			CG_DrawPic(370 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 445, ICON_SIZE, ICON_SIZE, cgs.media.armorIcon);
 		}
 	}
-#ifdef MISSIONPACK
 	// cubes
 	if (cgs.gametype == GT_HARVESTER) {
 		value = ps->generic1;
@@ -785,7 +779,6 @@ static void CG_DrawStatusBarQ3(void) {
 			CG_DrawPic(640 - (TEXT_ICON_SPACE + ICON_SIZE), 445, ICON_SIZE, ICON_SIZE, handle);
 		}
 	}
-#endif
 }
 
 /*
@@ -956,7 +949,7 @@ static void CG_DrawStatusBarXreaL(void) {
 
 /* new hud
 
-TODO: divide into sections(lower, upper etc)
+TODO: divide into sections(lower, upper etc.)
 
 */
 
@@ -1023,9 +1016,9 @@ void CG_DrawStatusBarNew(void) {
 
 	colorOverlay[3] = basecolor[3];
 	// top stats bar
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		// background middle - score limit
-		if (cgs.gametype >= GT_CTF) {
+		if (cgs.gametype > GT_TEAM) {
 			score = cgs.capturelimit;
 		} else {
 			score = cgs.fraglimit;
@@ -1058,7 +1051,7 @@ void CG_DrawStatusBarNew(void) {
 
 		score = cgs.scores1;
 
-		if (cgs.gametype >= GT_CTF) {
+		if (cgs.gametype > GT_TEAM) {
 			trap_R_SetColor(color);
 			CG_DrawPic(320 - 10 - 100, 3, 100, 40, cgs.media.hud_top_ctf_left);
 			trap_R_SetColor(NULL);
@@ -1082,7 +1075,7 @@ void CG_DrawStatusBarNew(void) {
 
 		score = cgs.scores2;
 
-		if (cgs.gametype >= GT_CTF) {
+		if (cgs.gametype > GT_TEAM) {
 			trap_R_SetColor(color);
 			CG_DrawPic(320 + 10, 3, 100, 40, cgs.media.hud_top_ctf_right);
 			trap_R_SetColor(NULL);
@@ -1579,7 +1572,6 @@ static void CG_DrawSideBar(void) {
 /*
 =======================================================================================================================================
 CG_DrawAttacker
-
 =======================================================================================================================================
 */
 static float CG_DrawAttacker(float y) {
@@ -1616,11 +1608,13 @@ static float CG_DrawAttacker(float y) {
 	angles[PITCH] = 0;
 	angles[YAW] = 180;
 	angles[ROLL] = 0;
+
 	CG_DrawHead(640 - size, y, size, size, clientNum, angles);
 
 	info = CG_ConfigString(CS_PLAYERS + clientNum);
 	name = Info_ValueForKey(info, "n");
 	y += size;
+
 	CG_DrawBigString(640 - (Q_PrintStrlen(name) * BIGCHAR_WIDTH), y, name, 0.5);
 
 	return y + BIGCHAR_HEIGHT + 2;
@@ -1725,12 +1719,15 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	clientInfo_t *ci;
 	gitem_t *item;
 	int ret_y, count;
+	int team;
 
 	if (!cg_drawTeamOverlay.integer) {
 		return y;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_RED && cg.snap->ps.persistant[PERS_TEAM] != TEAM_BLUE) {
+	team = cg.snap->ps.persistant[PERS_TEAM];
+
+	if (team != TEAM_RED && team != TEAM_BLUE) {
 		return y; // not on any team
 	}
 
@@ -1742,7 +1739,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	for (i = 0; i < count; i++) {
 		ci = cgs.clientinfo + sortedTeamPlayers[i];
 
-		if (ci->infoValid && ci->team == cg.snap->ps.persistant[PERS_TEAM]) {
+		if (ci->infoValid && ci->team == team) {
 			plyrs++;
 			len = CG_DrawStrlen(ci->name);
 
@@ -1797,12 +1794,12 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED) {
+	if (team == TEAM_RED) {
 		hcolor[0] = 1.0f;
 		hcolor[1] = 0.0f;
 		hcolor[2] = 0.0f;
 		hcolor[3] = 0.33f;
-	} else { // if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE)
+	} else {
 		hcolor[0] = 0.0f;
 		hcolor[1] = 0.0f;
 		hcolor[2] = 1.0f;
@@ -1816,7 +1813,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	for (i = 0; i < count; i++) {
 		ci = cgs.clientinfo + sortedTeamPlayers[i];
 
-		if (ci->infoValid && ci->team == cg.snap->ps.persistant[PERS_TEAM]) {
+		if (ci->infoValid && ci->team == team) {
 			hcolor[0] = hcolor[1] = hcolor[2] = hcolor[3] = 1.0;
 			xx = x + TINYCHAR_WIDTH;
 
@@ -1893,7 +1890,7 @@ static void CG_DrawUpperRight(void) {
 
 	y = 10;
 
-	if (cgs.gametype >= GT_TEAM && cg_drawTeamOverlay.integer == 1) {
+	if (cgs.gametype > GT_TOURNAMENT && cg_drawTeamOverlay.integer == 1) {
 		y = CG_DrawTeamOverlay(y, qtrue, qtrue);
 	}
 
@@ -1948,7 +1945,7 @@ static float CG_DrawScores(float y) {
 	y -= BIGCHAR_HEIGHT + 8;
 	y1 = y;
 	// draw from the right side to left
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		x = 640;
 
 		color[0] = 0.0f;
@@ -2024,7 +2021,7 @@ static float CG_DrawScores(float y) {
 			}
 		}
 
-		if (cgs.gametype >= GT_CTF) {
+		if (cgs.gametype > GT_TEAM) {
 			v = cgs.capturelimit;
 		} else {
 			v = cgs.fraglimit;
@@ -2115,7 +2112,6 @@ static float CG_DrawScores(float y) {
 CG_DrawPowerups
 =======================================================================================================================================
 */
-#ifndef MISSIONPACK
 void CG_DrawPowerups(void) {
 /*	int sorted[MAX_POWERUPS];
 	int sortedTime[MAX_POWERUPS];
@@ -2170,7 +2166,7 @@ void CG_DrawPowerups(void) {
 
 	for (i = 0; i < active; i++) {
 		item = BG_FindItemForPowerup(sorted[i]);
-gitem_t *item;
+		gitem_t *item;
 
 		if (item) {
 			color = 1;
@@ -2207,7 +2203,6 @@ gitem_t *item;
 	trap_R_SetColor(NULL);
 */
 }
-#endif // MISSIONPACK
 
 /*
 =======================================================================================================================================
@@ -2219,7 +2214,7 @@ static void CG_DrawLowerRight(void) {
 
 	y = 480 - 88; // offset above lagometer
 
-	if (cgs.gametype >= GT_TEAM && cg_drawTeamOverlay.integer == 2) {
+	if (cgs.gametype > GT_TOURNAMENT && cg_drawTeamOverlay.integer == 2) {
 		y = CG_DrawTeamOverlay(y, qtrue, qfalse);
 	}
 
@@ -2272,7 +2267,7 @@ static void CG_DrawLowerLeft(void) {
 
 	y = 480 - ICON_SIZE;
 
-	if (cgs.gametype >= GT_TEAM && cg_drawTeamOverlay.integer == 3) {
+	if (cgs.gametype > GT_TOURNAMENT && cg_drawTeamOverlay.integer == 3) {
 		y = CG_DrawTeamOverlay(y, qfalse, qfalse);
 	}
 
@@ -3022,7 +3017,7 @@ static void CG_DrawSpectator(void) {
 
 	if (cgs.gametype == GT_TOURNAMENT) {
 		CG_Text_PaintAligned(320, 460, "waiting to play", 0.25f, UI_CENTER|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
-	} else if (cgs.gametype >= GT_TEAM) {
+	} else if (cgs.gametype > GT_TOURNAMENT) {
 		CG_Text_PaintAligned(320, 460, "press ESC and use the JOIN menu to play", 0.25f, UI_CENTER|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
 	}
 }
@@ -3502,7 +3497,7 @@ static void CG_Draw2D(void) {
 			CG_DrawReward();
 		}
 
-		if (cgs.gametype >= GT_TEAM) {
+		if (cgs.gametype > GT_TOURNAMENT) {
 			CG_DrawTeamInfo();
 		}
 	}

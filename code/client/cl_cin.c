@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -1603,13 +1603,9 @@ int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBit
 */
 		if (cinTable[currentHandle].alterGameState) {
 			// close the menu
-#if defined(USE_JAVA)
-			Java_UI_SetActiveMenu(UIMENU_NONE);
-#else
 			if (uivm) {
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_NONE);
 			}
-#endif
 		} else {
 			cinTable[currentHandle].playonwalls = cl_inGameVideo->integer;
 		}
@@ -1645,13 +1641,9 @@ int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBit
 
 	if (cinTable[currentHandle].alterGameState) {
 		// close the menu
-#if defined(USE_JAVA)
-		Java_UI_SetActiveMenu(UIMENU_NONE);
-#else
 		if (uivm) {
 			VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_NONE);
 		}
-#endif
 	} else {
 		cinTable[currentHandle].playonwalls = cl_inGameVideo->integer;
 	}

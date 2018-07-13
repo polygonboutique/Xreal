@@ -2229,7 +2229,7 @@ void R_AddEntitySurfaces(void) {
 			case RT_RAIL_CORE:
 			case RT_RAIL_CORE_TAPER:
 			case RT_RAIL_RINGS:
-				// self blood sprites, talk balloons, etc should not be drawn in the primary
+				// self blood sprites, talk balloons, etc. should not be drawn in the primary
 				// view. We can't just do this check for all entities, because md3 entities may still want to cast shadows from them
 				if ((ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal) {
 					continue;
@@ -2960,6 +2960,6 @@ void R_RenderView(viewParms_t *parms) {
 	tr.viewParms.numInteractions = tr.refdef.numInteractions - firstInteraction;
 
 	R_SortDrawSurfs();
-	// draw main system development information(surface outlines, etc)
+	// draw main system development information(surface outlines, etc.)
 	R_DebugGraphics();
 }

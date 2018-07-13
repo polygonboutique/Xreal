@@ -41,9 +41,9 @@ FIXME: otty: this is never called, remove ?
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      no;
-	menutext_s      yes;
-	int             slashX;
+	menutext_s no;
+	menutext_s yes;
+	int slashX;
 } resetMenu_t;
 
 static resetMenu_t s_reset;
@@ -145,8 +145,8 @@ UI_ResetMenu
 void UI_ResetMenu(void)
 {
 	uiClientState_t cstate;
-	int             n1, n2, n3;
-	int             l1, l2, l3;
+	int n1, n2, n3;
+	int l1, l2, l3;
 
 	// zero set all our globals
 	memset(&s_reset, 0, sizeof(s_reset));

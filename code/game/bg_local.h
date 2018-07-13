@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -27,9 +27,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #define MIN_WALK_NORMAL 0.7f // can't walk on very steep slopes
-#define JUMP_VELOCITY 270
+#define STEPSIZE 18
+#define JUMP_VELOCITY 200
 #define TIMER_LAND 130
-#define TIMER_GESTURE (34 * 66 + 50)
 #define OVERCLIP 1.001f
 
 /**************************************************************************************************************************************

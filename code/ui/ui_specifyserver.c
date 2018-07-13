@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_SPECIFYSERVERBACK	102
 #define ID_SPECIFYSERVERGO		103
 
-static char    *specifyserver_artlist[] = {
+static char *specifyserver_artlist[] = {
 	SPECIFYSERVER_FRAMEL,
 	SPECIFYSERVER_FRAMER,
 	SPECIFYSERVER_BACK0,
@@ -50,13 +50,13 @@ static char    *specifyserver_artlist[] = {
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	menufield_s     domain;
-	menufield_s     port;
-	menubitmap_s    go;
-	menubitmap_s    back;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
+	menufield_s domain;
+	menufield_s port;
+	menubitmap_s go;
+	menubitmap_s back;
 } specifyserver_t;
 
 static specifyserver_t s_specifyserver;
@@ -68,7 +68,7 @@ SpecifyServer_Event
 */
 static void SpecifyServer_Event(void *ptr, int event)
 {
-	char            buff[256];
+	char buff[256];
 
 	switch (((menucommon_s *) ptr)->id)
 	{
@@ -201,7 +201,7 @@ SpecifyServer_Cache
 */
 void SpecifyServer_Cache(void)
 {
-	int             i;
+	int i;
 
 	// touch all our pics
 	for(i = 0;; i++)

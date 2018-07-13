@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -29,19 +29,27 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "cg_local.h"
 
 char *cg_customSoundNames[MAX_CUSTOM_SOUNDS] = {
-	"*death1.wav",
-	"*death2.wav",
-	"*death3.wav",
-	"*jump1.wav",
-	"*pain25_1.wav",
-	"*pain50_1.wav",
-	"*pain75_1.wav",
-	"*pain100_1.wav",
-	"*falling1.wav",
-	"*gasp.wav",
-	"*drown.wav",
-	"*fall1.wav",
-	"*taunt.wav"
+	// default death
+	"*dd1.wav",
+	"*dd2.wav",
+	"*dd3.wav",
+	// drown
+	"*dr1.wav",
+	// falling far
+	"*ff1.wav",
+	// fall into void
+	"*fv1.wav",
+	// gasp
+	"*gp1.wav",
+	// default jump
+	"*jd1.wav",
+	// default pain
+	"*pd1.wav",
+	"*pd2.wav",
+	"*pd3.wav",
+	"*pd4.wav",
+	// taunt
+	"*ta1.wav"
 };
 
 /*
@@ -121,7 +129,7 @@ static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
 
 	VectorClear(ci->headOffset);
 
-	ci->footsteps = FOOTSTEP_STONE;
+	ci->foottype = FOOTTYPE_DEFAULT;
 	ci->gender = GENDER_MALE;
 	ci->fixedlegs = qfalse;
 	ci->fixedtorso = qfalse;
@@ -141,25 +149,53 @@ static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
 			break;
 		}
 
-		if (!Q_stricmp(token, "footsteps")) {
+		if (!Q_stricmp(token, "foottype")) {
 			token = Com_Parse(&text_p);
 
-			if (!token) {
+			if (!token[0]) {
 				break;
 			}
 
-			if (!Q_stricmp(token, "default") || !Q_stricmp(token, "normal") || !Q_stricmp(token, "stone")) {
-				ci->footsteps = FOOTSTEP_STONE;
-			} else if (!Q_stricmp(token, "boot")) {
-				ci->footsteps = FOOTSTEP_BOOT;
-			} else if (!Q_stricmp(token, "flesh")) {
-				ci->footsteps = FOOTSTEP_FLESH;
-			} else if (!Q_stricmp(token, "mech")) {
-				ci->footsteps = FOOTSTEP_MECH;
-			} else if (!Q_stricmp(token, "energy")) {
-				ci->footsteps = FOOTSTEP_ENERGY;
+			if (!Q_stricmp(token, "default")) {
+				ci->foottype = FOOTTYPE_DEFAULT;
+			} else if (!Q_stricmp(token, "boot_01")) {
+				ci->foottype = FOOTTYPE_BOOT_01;
+			} else if (!Q_stricmp(token, "boot_02")) {
+				ci->foottype = FOOTTYPE_BOOT_02;
+			} else if (!Q_stricmp(token, "boot_03")) {
+				ci->foottype = FOOTTYPE_BOOT_03;
+			} else if (!Q_stricmp(token, "flesh_01")) {
+				ci->foottype = FOOTTYPE_FLESH_01;
+			} else if (!Q_stricmp(token, "flesh_02")) {
+				ci->foottype = FOOTTYPE_FLESH_02;
+			} else if (!Q_stricmp(token, "heels_01")) {
+				ci->foottype = FOOTTYPE_HEELS_01;
+			} else if (!Q_stricmp(token, "heels_02")) {
+				ci->foottype = FOOTTYPE_HEELS_02;
+			} else if (!Q_stricmp(token, "heels_03")) {
+				ci->foottype = FOOTTYPE_HEELS_03;
+			} else if (!Q_stricmp(token, "sandals_01")) {
+				ci->foottype = FOOTTYPE_SANDALS_01;
+			} else if (!Q_stricmp(token, "step_01")) {
+				ci->foottype = FOOTTYPE_STEP_01;
+			} else if (!Q_stricmp(token, "step_02")) {
+				ci->foottype = FOOTTYPE_STEP_02;
+			} else if (!Q_stricmp(token, "step_03")) {
+				ci->foottype = FOOTTYPE_STEP_03;
+			} else if (!Q_stricmp(token, "strogg_01")) {
+				ci->foottype = FOOTTYPE_STROGG_01;
+			} else if (!Q_stricmp(token, "klesk")) {
+				ci->foottype = FOOTTYPE_SPEC_KLESK;
+			} else if (!Q_stricmp(token, "sorlag")) {
+				ci->foottype = FOOTTYPE_SPEC_SORLAG;
+			} else if (!Q_stricmp(token, "t2m")) {
+				ci->foottype = FOOTTYPE_T2_MEDIUM;
+			} else if (!Q_stricmp(token, "t2h")) {
+				ci->foottype = FOOTTYPE_T2_HEAVY;
+			} else if (!Q_stricmp(token, "t2s")) {
+				ci->foottype = FOOTTYPE_T2_SMALL;
 			} else {
-				CG_Printf("Bad footsteps parm in %s: %s\n", filename, token);
+				CG_Printf("Bad foottype parm in %s: %s\n", filename, token);
 			}
 
 			continue;
@@ -167,7 +203,7 @@ static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
 			for (i = 0; i < 3; i++) {
 				token = Com_Parse(&text_p);
 
-				if (!token) {
+				if (!token[0]) {
 					break;
 				}
 
@@ -178,7 +214,7 @@ static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
 		} else if (!Q_stricmp(token, "sex")) {
 			token = Com_Parse(&text_p);
 
-			if (!token) {
+			if (!token[0]) {
 				break;
 			}
 
@@ -217,7 +253,7 @@ static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
 			for (i = 0; i < 3; i++) {
 				token = Com_ParseExt(&text_p, qfalse);
 
-				if (!token) {
+				if (!token[0]) {
 					break;
 				}
 				ci->modelScale[i] = atof(token);
@@ -257,7 +293,7 @@ CG_FindClientModelFile
 qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t *ci, const char *modelName, const char *skinName, const char *base, const char *ext) {
 	char *team;
 
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		switch (ci->team) {
 			case TEAM_BLUE: {
 				team = "blue";
@@ -273,11 +309,11 @@ qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t *ci, co
 		team = "default";
 	}
 
-	if (cgs.gametype >= GT_TEAM) {
-		//                           "models/players / james / lower_red.skin"
+	if (cgs.gametype > GT_TOURNAMENT) {
+		//                           "models/players/james/lower_red.skin"
 		Com_sprintf(filename, length, "models/players/%s/%s_%s.%s", modelName, base, team, ext);
 	} else {
-		//                           "models/players / james / lower_lily.skin"
+		//                           "models/players/james/lower_lily.skin"
 		Com_sprintf(filename, length, "models/players/%s/%s_%s.%s", modelName, base, skinName, ext);
 	}
 
@@ -513,8 +549,8 @@ static void CG_LoadClientInfo(clientInfo_t *ci) {
 	char teamname[MAX_QPATH];
 
 	teamname[0] = 0;
-#ifdef MISSIONPACK
-	if (cgs.gametype >= GT_TEAM) {
+
+	if (cgs.gametype > GT_TOURNAMENT) {
 		if (ci->team == TEAM_BLUE) {
 			Q_strncpyz(teamname, cg_blueTeamName.string, sizeof(teamname));
 		} else {
@@ -525,7 +561,7 @@ static void CG_LoadClientInfo(clientInfo_t *ci) {
 	if (teamname[0]) {
 		strcat(teamname, "/");
 	}
-#endif
+
 	modelloaded = qtrue;
 
 	if (!CG_RegisterClientModel(ci, ci->modelName, ci->skinName, teamname)) {
@@ -533,7 +569,7 @@ static void CG_LoadClientInfo(clientInfo_t *ci) {
 			CG_Error("CG_RegisterClientModel(%s, %s, %s) failed", ci->modelName, ci->skinName, teamname);
 		}
 		// fall back to default team name
-		if (cgs.gametype >= GT_TEAM) {
+		if (cgs.gametype > GT_TOURNAMENT) {
 			// keep skin name
 			if (ci->team == TEAM_BLUE) {
 				Q_strncpyz(teamname, DEFAULT_BLUETEAM_NAME, sizeof(teamname));
@@ -541,8 +577,8 @@ static void CG_LoadClientInfo(clientInfo_t *ci) {
 				Q_strncpyz(teamname, DEFAULT_REDTEAM_NAME, sizeof(teamname));
 			}
 
-			if (!CG_RegisterClientModel(ci, DEFAULT_MODEL, ci->skinName, teamname)) {
-				CG_Error("DEFAULT_TEAM_MODEL/skin (%s/%s) failed to register", DEFAULT_MODEL, ci->skinName);
+			if (!CG_RegisterClientModel(ci, DEFAULT_TEAM_MODEL, ci->skinName, teamname)) {
+				CG_Error("DEFAULT_TEAM_MODEL/skin (%s/%s) failed to register", DEFAULT_TEAM_MODEL, ci->skinName);
 			}
 		} else {
 			if (!CG_RegisterClientModel(ci, DEFAULT_MODEL, "default", teamname)) {
@@ -557,7 +593,7 @@ static void CG_LoadClientInfo(clientInfo_t *ci) {
 
 	// sounds
 	dir = ci->modelName;
-	fallback = DEFAULT_MODEL;
+	fallback = (cgs.gametype > GT_TOURNAMENT) ? DEFAULT_TEAM_MODEL : DEFAULT_MODEL;
 
 	for (i = 0; i < MAX_CUSTOM_SOUNDS; i++) {
 		s = cg_customSoundNames[i];
@@ -569,11 +605,11 @@ static void CG_LoadClientInfo(clientInfo_t *ci) {
 		ci->sounds[i] = 0;
 		// if the model didn't load use the sounds of the default model
 		if (modelloaded) {
-			ci->sounds[i] = trap_S_RegisterSound(va("sound/player/%s/%s", dir, s + 1));
+			ci->sounds[i] = trap_S_RegisterSound(va("snd/c/%s/%s", dir, s + 1));
 		}
 
 		if (!ci->sounds[i]) {
-			ci->sounds[i] = trap_S_RegisterSound(va("sound/player/%s/%s", fallback, s + 1));
+			ci->sounds[i] = trap_S_RegisterSound(va("snd/c/%s/%s", fallback, s + 1));
 		}
 	}
 
@@ -597,7 +633,7 @@ static void CG_CopyClientInfoModel(clientInfo_t *from, clientInfo_t *to) {
 
 	VectorCopy(from->headOffset, to->headOffset);
 
-	to->footsteps = from->footsteps;
+	to->foottype = from->foottype;
 	to->gender = from->gender;
 
 	Q_strncpyz(to->firstTorsoBoneName, from->firstTorsoBoneName, sizeof(to->firstTorsoBoneName));
@@ -672,7 +708,7 @@ static void CG_SetDeferredClientInfo(clientInfo_t *ci) {
 		if (Q_stricmp(ci->skinName, match->skinName) || Q_stricmp(ci->modelName, match->modelName) ||
 //			Q_stricmp(ci->headModelName, match->headModelName) ||
 //			Q_stricmp(ci->headSkinName, match->headSkinName) ||
-			(cgs.gametype >= GT_TEAM && ci->team != match->team)) {
+			(cgs.gametype > GT_TOURNAMENT && ci->team != match->team)) {
 			continue;
 		}
 		// just load the real info cause it uses the same models and skins
@@ -680,7 +716,7 @@ static void CG_SetDeferredClientInfo(clientInfo_t *ci) {
 		return;
 	}
 	// if we are in teamplay, only grab a model if the skin is correct
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		for (i = 0; i < cgs.maxclients; i++) {
 			match = &cgs.clientinfo[i];
 
@@ -688,7 +724,7 @@ static void CG_SetDeferredClientInfo(clientInfo_t *ci) {
 				continue;
 			}
 
-			if (Q_stricmp(ci->skinName, match->skinName) || (cgs.gametype >= GT_TEAM && ci->team != match->team)) {
+			if (Q_stricmp(ci->skinName, match->skinName) || (cgs.gametype > GT_TOURNAMENT && ci->team != match->team)) {
 				continue;
 			}
 
@@ -749,25 +785,6 @@ void CG_NewClientInfo(int clientNum) {
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
 	Q_strncpyz(newInfo.name, v, sizeof(newInfo.name));
-	// colors
-	v = Info_ValueForKey(configstring, "c1");
-	CG_ColorFromString(v, newInfo.color1);
-
-	v = Info_ValueForKey(configstring, "c2");
-	CG_ColorFromString(v, newInfo.color2);
-
-	// bot skill
-	v = Info_ValueForKey(configstring, "skill");
-	newInfo.botSkill = atoi(v);
-	// handicap
-	v = Info_ValueForKey(configstring, "hc");
-	newInfo.handicap = atoi(v);
-	// wins
-	v = Info_ValueForKey(configstring, "w");
-	newInfo.wins = atoi(v);
-	// losses
-	v = Info_ValueForKey(configstring, "l");
-	newInfo.losses = atoi(v);
 	// team
 	v = Info_ValueForKey(configstring, "t");
 	newInfo.team = atoi(v);
@@ -796,7 +813,7 @@ void CG_NewClientInfo(int clientNum) {
 		char modelStr[MAX_QPATH];
 		char *skin = "";
 
-		if (cgs.gametype >= GT_TEAM) {
+		if (cgs.gametype > GT_TOURNAMENT) {
 			Q_strncpyz(newInfo.modelName, DEFAULT_MODEL, sizeof(newInfo.modelName));
 			Q_strncpyz(newInfo.skinName, "default", sizeof(newInfo.skinName));
 		} else {
@@ -820,7 +837,7 @@ void CG_NewClientInfo(int clientNum) {
 			Q_strncpyz(newInfo.modelName, modelStr, sizeof(newInfo.modelName));
 		}
 
-		if (cgs.gametype >= GT_TEAM) {
+		if (cgs.gametype > GT_TOURNAMENT) {
 			// keep skin name
 			slash = strchr(v, '/');
 
@@ -868,6 +885,31 @@ void CG_NewClientInfo(int clientNum) {
 			CG_LoadClientInfo(&newInfo);
 		}
 	}
+	// colors
+	v = Info_ValueForKey(configstring, "c1");
+	CG_ColorFromString(v, newInfo.color1);
+
+	newInfo.c1RGBA[0] = 255 * newInfo.color1[0];
+	newInfo.c1RGBA[1] = 255 * newInfo.color1[1];
+	newInfo.c1RGBA[2] = 255 * newInfo.color1[2];
+	newInfo.c1RGBA[3] = 255;
+
+	v = Info_ValueForKey(configstring, "c2");
+	CG_ColorFromString(v, newInfo.color2);
+
+	newInfo.c2RGBA[0] = 255 * newInfo.color2[0];
+	newInfo.c2RGBA[1] = 255 * newInfo.color2[1];
+	newInfo.c2RGBA[2] = 255 * newInfo.color2[2];
+	newInfo.c2RGBA[3] = 255;
+	// wins
+	v = Info_ValueForKey(configstring, "w");
+	newInfo.wins = atoi(v);
+	// losses
+	v = Info_ValueForKey(configstring, "l");
+	newInfo.losses = atoi(v);
+	// bot skill
+	v = Info_ValueForKey(configstring, "skill");
+	newInfo.botSkill = atoi(v);
 	// replace whatever was there with the new one
 	newInfo.infoValid = qtrue;
 	*ci = newInfo;
@@ -1049,7 +1091,7 @@ static void CG_RunPlayerLerpFrame(clientInfo_t *ci, lerpFrame_t *lf, int newAnim
 		}
 
 		f = (lf->frameTime - lf->animationStartTime) / anim->frameTime;
-		f *= speedScale; // adjust for haste, etc.
+		f *= speedScale; // adjust for scout, etc.
 
 		numFrames = anim->numFrames;
 
@@ -1145,8 +1187,8 @@ static void CG_PlayerAnimation(centity_t *cent) {
 		return;
 	}
 
-	if (cent->currentState.powerups & (1 << PW_HASTE)) {
-		speedScale = 1.5;
+	if (cent->currentState.powerups & (1 << PW_SCOUT)) {
+		speedScale = SCOUT_SPEED_SCALE;
 	} else {
 		speedScale = 1;
 	}
@@ -1450,77 +1492,36 @@ static void CG_PlayerWWSmoothing(centity_t *cent, vec3_t in[3], vec3_t out[3]) {
 
 /*
 =======================================================================================================================================
-CG_HasteTrail
+CG_AddBreathPuffs
 =======================================================================================================================================
 */
-static void CG_HasteTrail(centity_t *cent) {
-	localEntity_t *smoke;
-	vec3_t origin;
-	int anim;
-
-	if (cent->trailTime > cg.time) {
-		return;
-	}
-
-	anim = cent->pe.legs.animationNumber & ~ANIM_TOGGLEBIT;
-
-	if (anim != LEGS_RUN && anim != LEGS_BACK) {
-		return;
-	}
-
-	cent->trailTime += 100;
-
-	if (cent->trailTime < cg.time) {
-		cent->trailTime = cg.time;
-	}
-
-	VectorCopy(cent->lerpOrigin, origin);
-
-	origin[2] -= 16;
-
-	smoke = CG_SmokePuff(origin, vec3_origin, 8, 1, 1, 1, 1, 500, cg.time, 0, 0, cgs.media.hastePuffShader);
-	// use the optimized local entity add
-	smoke->leType = LE_SCALE_FADE;
-}
-
-/*
-=======================================================================================================================================
-CG_BreathPuffs
-=======================================================================================================================================
-*/
-void CG_BreathPuffs(centity_t *cent, const vec3_t headOrigin, const vec3_t headDirection) {
+static void CG_AddBreathPuffs(centity_t *cent, refEntity_t *head) {
 	clientInfo_t *ci;
-	vec3_t up, origin;
-	int contents;
+	vec3_t origin;
+
+	if (cent->currentState.number >= MAX_CLIENTS) {
+		return;
+	}
 
 	ci = &cgs.clientinfo[cent->currentState.number];
 
-	if (!cg_enableBreath.integer) {
-		return;
-	}
-
-	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
-		return;
-	}
-
 	if (cent->currentState.eFlags & EF_DEAD) {
-		return;
-	}
-
-	contents = trap_CM_PointContents(headOrigin, 0);
-
-	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
 		return;
 	}
 
 	if (ci->breathPuffTime > cg.time) {
 		return;
 	}
-
-	VectorSet(up, 0, 0, 8);
-	VectorMA(headOrigin, 8, headDirection, origin);
-	//VectorMA(origin, -4, head->axis[2], origin);
-	CG_SmokePuff(origin, up, 16, 1, 1, 1, 0.66f, 1500, cg.time, cg.time + 400, LEF_PUFF_DONT_SCALE, cgs.media.shotgunSmokePuffShader);
+	// add first person effects
+	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
+		VectorMA(cg.refdef.vieworg, 20, cg.refdef.viewaxis[0], origin);
+		VectorMA(origin, -4, cg.refdef.viewaxis[2], origin);
+		CG_BreathPuff(cent->currentState.number, origin, cg.refdef.viewaxis);
+	}
+	// add third person effects for mirrors
+	VectorMA(head->origin, 8, head->axis[0], origin);
+	VectorMA(origin, -4, head->axis[2], origin);
+	CG_BreathPuff(cent->currentState.number, origin, head->axis);
 
 	ci->breathPuffTime = cg.time + 2000;
 }
@@ -1561,11 +1562,11 @@ void CG_DustTrail(centity_t *cent) {
 	end[2] -= 64;
 
 	CG_Trace(&tr, cent->currentState.pos.trBase, NULL, NULL, end, cent->currentState.number, MASK_PLAYERSOLID);
-
-	if (!(tr.surfaceFlags & SURF_DUST)) {
+// Tobias FIXME: do some simplifications here (like 'isSoftMaterial' etc.), after everything is done...
+	if ((tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_01 && (tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_02 && (tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_03 && (tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_04) {
 		return;
 	}
-
+// Tobias: end
 	VectorCopy(cent->currentState.pos.trBase, end);
 
 	end[2] -= 16;
@@ -1773,7 +1774,7 @@ void CG_PlayerTokens(centity_t *cent, int renderfx) {
 	skulltrail_t *trail;
 
 	trail = &cg.skulltrails[cent->currentState.number];
-	tokens = cent->currentState.generic1;
+	tokens = cent->currentState.tokens;
 
 	if (!tokens) {
 		trail->numpositions = 0;
@@ -1877,10 +1878,6 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso, int noShadowI
 		light.noShadowID = noShadowID;
 
 		trap_R_AddRefLightToScene(&light);
-	}
-	// flight plays a looped sound
-	if (powerups & (1 << PW_FLIGHT)) {
-		trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.flightSound);
 	}
 
 	ci = &cgs.clientinfo[cent->currentState.clientNum];
@@ -2031,46 +2028,15 @@ void CG_PlayerSprites(centity_t *cent) {
 		return;
 	}
 
-	if (cent->currentState.eFlags & EF_AWARD_IMPRESSIVE) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalImpressive);
-		return;
-	}
-
-	if (cent->currentState.eFlags & EF_AWARD_EXCELLENT) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalExcellent);
-		return;
-	}
-
-	if (cent->currentState.eFlags & EF_AWARD_GAUNTLET) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalGauntlet);
-		return;
-	}
-
-	if (cent->currentState.eFlags & EF_AWARD_DEFEND) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalDefend);
-		return;
-	}
-
-	if (cent->currentState.eFlags & EF_AWARD_ASSIST) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalAssist);
-		return;
-	}
-
-	if (cent->currentState.eFlags & EF_AWARD_CAP) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalCapture);
-		return;
-	}
-
-	if (cent->currentState.eFlags & EF_AWARD_TELEFRAG) {
-		CG_PlayerFloatSprite(cent, cgs.media.medalTelefrag);
-		return;
-	}
-
 	team = cgs.clientinfo[cent->currentState.clientNum].team;
 
-	if (!(cent->currentState.eFlags & EF_DEAD) && cg.snap->ps.persistant[PERS_TEAM] == team && cgs.gametype >= GT_TEAM) {
+	if (!(cent->currentState.eFlags & EF_DEAD) && cg.snap->ps.persistant[PERS_TEAM] == team && cgs.gametype > GT_TOURNAMENT) {
 		if (cg_drawFriend.integer) {
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader);
+			if (team == TEAM_BLUE) {
+				CG_PlayerFloatSprite(origin, friendFlags, cgs.media.blueFriendShader);
+			} else {
+				CG_PlayerFloatSprite(origin, friendFlags, cgs.media.redFriendShader);
+			}
 		}
 
 		return;
@@ -2227,7 +2193,7 @@ void CG_PlayerSplash(centity_t *cent) {
 	end[2] -= 24;
 	// if the feet aren't in liquid, don't make a mark
 	// this won't handle moving water brushes, but they wouldn't draw right anyway...
-	contents = trap_CM_PointContents(end, 0);
+	contents = CG_PointContents(end, 0);
 
 	if (!(contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
 		return;
@@ -2237,7 +2203,7 @@ void CG_PlayerSplash(centity_t *cent) {
 
 	start[2] += 32;
 	// if the head isn't out of liquid, don't make a mark
-	contents = trap_CM_PointContents(start, 0);
+	contents = CG_PointContents(start, 0);
 
 	if (contents & (CONTENTS_SOLID|CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
 		return;
@@ -2297,39 +2263,30 @@ void CG_PlayerSplash(centity_t *cent) {
 =======================================================================================================================================
 CG_AddRefEntityWithPowerups
 
-Adds a piece with modifications or duplications for powerups.
+Adds a piece with modifications or duplications for powerups. Also called by CG_Missile for quad rockets, but nobody can tell...
 =======================================================================================================================================
 */
-void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state, int team) {
+void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state) {
 
 	if (state->eFlags & EF_DEAD) {
 		trap_R_AddRefEntityToScene(ent);
 		ent->customShader = cgs.media.unlinkEffect;
 		trap_R_AddRefEntityToScene(ent);
-	} else if (state->powerups &(1 << PW_INVIS)) {
-		ent->customShader = cgs.media.invisShader;
+	} else if (state->powerups & (1 << PW_INVIS)) {
+		if (state->team == TEAM_RED) {
+			ent->customShader = cgs.media.invisRedShader;
+		} else if (state->team == TEAM_BLUE) {
+			ent->customShader = cgs.media.invisBlueShader;
+		} else {
+			ent->customShader = cgs.media.invisShader;
+		}
+
 		trap_R_AddRefEntityToScene(ent);
 	} else {
-		/*
-		if (state->eFlags & EF_KAMIKAZE) {
-			if (team == TEAM_BLUE) {
-				ent->customShader = cgs.media.blueKamikazeShader;
-			} else {
-				ent->customShader = cgs.media.redKamikazeShader;
-			}
-
-			trap_R_AddRefEntityToScene(ent);
-		} else {*/
-			trap_R_AddRefEntityToScene(ent);
-		//}
+		trap_R_AddRefEntityToScene(ent);
 
 		if (state->powerups & (1 << PW_QUAD)) {
-			if (team == TEAM_RED) {
-				ent->customShader = cgs.media.redQuadShader;
-			} else {
-				ent->customShader = cgs.media.quadShader;
-			}
-
+			ent->customShader = cgs.media.quadShader;
 			trap_R_AddRefEntityToScene(ent);
 		}
 
@@ -2338,11 +2295,6 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state, int tea
 				ent->customShader = cgs.media.regenShader;
 				trap_R_AddRefEntityToScene(ent);
 			}
-		}
-
-		if (state->powerups & (1 << PW_BATTLESUIT)) {
-			ent->customShader = cgs.media.battleSuitShader;
-			trap_R_AddRefEntityToScene(ent);
 		}
 	}
 }
@@ -2414,6 +2366,9 @@ void CG_Player(centity_t *cent) {
 	int renderfx;
 	qboolean shadow;
 	float shadowPlane;
+	refEntity_t skull;
+	float angle;
+	vec3_t dir, angles;
 	int noShadowID;
 	vec3_t angles;
 	vec3_t legsAngles;
@@ -2659,11 +2614,39 @@ void CG_Player(centity_t *cent) {
 #endif
 	CG_DustTrail(cent);
 
-	if (cent->currentState.eFlags & EF_KAMIKAZE) {
-		refEntity_t skull;
-		float angle;
-		vec3_t dir, angles;
+	t = cg.time - ci->medkitUsageTime;
 
+	if (ci->medkitUsageTime && t < 500) {
+		memcpy(&powerup, &torso, sizeof(torso));
+
+		powerup.hModel = cgs.media.medkitUsageModel;
+		powerup.frame = 0;
+		powerup.oldframe = 0;
+		powerup.customSkin = 0;
+		// always draw
+		powerup.renderfx &= ~RF_THIRD_PERSON;
+		VectorClear(angles);
+		AnglesToAxis(angles, powerup.axis);
+		VectorCopy(cent->lerpOrigin, powerup.origin);
+		powerup.origin[2] += -24 + (float)t * 80 / 500;
+
+		if (t > 400) {
+			c = (float)(t - 1000) * 0xff / 100;
+			powerup.shaderRGBA[0] = 0xff - c;
+			powerup.shaderRGBA[1] = 0xff - c;
+			powerup.shaderRGBA[2] = 0xff - c;
+			powerup.shaderRGBA[3] = 0xff - c;
+		} else {
+			powerup.shaderRGBA[0] = 0xff;
+			powerup.shaderRGBA[1] = 0xff;
+			powerup.shaderRGBA[2] = 0xff;
+			powerup.shaderRGBA[3] = 0xff;
+		}
+
+		trap_R_AddRefEntityToScene(&powerup);
+	}
+
+	if (cent->currentState.eFlags & EF_KAMIKAZE) {
 		memset(&skull, 0, sizeof(skull));
 
 		VectorCopy(cent->lerpOrigin, skull.lightingOrigin);
@@ -2805,19 +2788,18 @@ void CG_Player(centity_t *cent) {
 		}
 	}
 
-#ifdef MISSIONPACK
-	if (cent->currentState.powerups &(1 << PW_GUARD)) {
+	if (cent->currentState.powerups & (1 << PW_AMMOREGEN)) {
 		memcpy(&powerup, &torso, sizeof(torso));
-		powerup.hModel = cgs.media.guardPowerupModel;
+		powerup.hModel = cgs.media.ammoRegenPowerupModel;
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
 		trap_R_AddRefEntityToScene(&powerup);
 	}
 
-	if (cent->currentState.powerups & (1 << PW_SCOUT)) {
+	if (cent->currentState.powerups & (1 << PW_GUARD)) {
 		memcpy(&powerup, &torso, sizeof(torso));
-		powerup.hModel = cgs.media.scoutPowerupModel;
+		powerup.hModel = cgs.media.guardPowerupModel;
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
@@ -2833,77 +2815,15 @@ void CG_Player(centity_t *cent) {
 		trap_R_AddRefEntityToScene(&powerup);
 	}
 
-	if (cent->currentState.powerups & (1 << PW_AMMOREGEN)) {
+	if (cent->currentState.powerups & (1 << PW_SCOUT)) {
 		memcpy(&powerup, &torso, sizeof(torso));
-		powerup.hModel = cgs.media.ammoRegenPowerupModel;
+		powerup.hModel = cgs.media.scoutPowerupModel;
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
 		trap_R_AddRefEntityToScene(&powerup);
 	}
 
-	if (cent->currentState.powerups & (1 << PW_INVULNERABILITY)) {
-		if (!ci->invulnerabilityStartTime) {
-			ci->invulnerabilityStartTime = cg.time;
-		}
-
-		ci->invulnerabilityStopTime = cg.time;
-	} else {
-		ci->invulnerabilityStartTime = 0;
-	}
-
-	if ((cent->currentState.powerups & (1 << PW_INVULNERABILITY)) || cg.time - ci->invulnerabilityStopTime < 250) {
-		memcpy(&powerup, &torso, sizeof(torso));
-
-		powerup.hModel = cgs.media.invulnerabilityPowerupModel;
-		powerup.customSkin = 0;
-		// always draw
-		powerup.renderfx &= ~RF_THIRD_PERSON;
-		VectorCopy(cent->lerpOrigin, powerup.origin);
-
-		if (cg.time - ci->invulnerabilityStartTime < 250) {
-			c = (float)(cg.time - ci->invulnerabilityStartTime) / 250;
-		} else if (cg.time - ci->invulnerabilityStopTime < 250) {
-			c = (float)(250 - (cg.time - ci->invulnerabilityStopTime)) / 250;
-		} else {
-			c = 1;
-		}
-
-		VectorSet(powerup.axis[0], c, 0, 0);
-		VectorSet(powerup.axis[1], 0, c, 0);
-		VectorSet(powerup.axis[2], 0, 0, c);
-		trap_R_AddRefEntityToScene(&powerup);
-	}
-
-	t = cg.time - ci->medkitUsageTime;
-
-	if (ci->medkitUsageTime && t < 500) {
-		memcpy(&powerup, &torso, sizeof(torso));
-
-		powerup.hModel = cgs.media.medkitUsageModel;
-		powerup.customSkin = 0;
-		// always draw
-		powerup.renderfx &= ~RF_THIRD_PERSON;
-		VectorClear(angles);
-		AnglesToAxis(angles, powerup.axis);
-		VectorCopy(cent->lerpOrigin, powerup.origin);
-		powerup.origin[2] += -24 + (float)t * 80 / 500;
-
-		if (t > 400) {
-			c = (float)(t - 1000) * 0xff / 100;
-			powerup.shaderRGBA[0] = 0xff - c;
-			powerup.shaderRGBA[1] = 0xff - c;
-			powerup.shaderRGBA[2] = 0xff - c;
-			powerup.shaderRGBA[3] = 0xff - c;
-		} else {
-			powerup.shaderRGBA[0] = 0xff;
-			powerup.shaderRGBA[1] = 0xff;
-			powerup.shaderRGBA[2] = 0xff;
-			powerup.shaderRGBA[3] = 0xff;
-		}
-
-		trap_R_AddRefEntityToScene(&powerup);
-	}
 #endif
 	// add the gun/barrel/flash
 	CG_AddPlayerWeapon(&body, NULL, cent, ci->team);
@@ -2925,7 +2845,6 @@ A player just came into view or teleported, so reset all animation info.
 void CG_ResetPlayerEntity(centity_t *cent) {
 
 	cent->errorTime = -99999; // guarantee no error decay added
-	cent->extrapolated = qfalse;
 
 	CG_ClearLerpFrame(&cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);
 	CG_ClearLerpFrame(&cgs.clientinfo[cent->currentState.clientNum], &cent->pe.torso, cent->currentState.torsoAnim);

@@ -49,14 +49,14 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      singleplayer;
-	menutext_s      multiplayer;
-	menutext_s      setup;
-	menutext_s      demos;
-	menutext_s      cinematics;
-	menutext_s      teamArena;
-	menutext_s      mods;
-	menutext_s      exit;
+	menutext_s singleplayer;
+	menutext_s multiplayer;
+	menutext_s setup;
+	menutext_s demos;
+	menutext_s cinematics;
+	menutext_s teamArena;
+	menutext_s mods;
+	menutext_s exit;
 } mainmenu_t;
 
 
@@ -65,7 +65,7 @@ static mainmenu_t s_main;
 typedef struct
 {
 	menuframework_s menu;
-	char            errorMessage[4096];
+	char errorMessage[4096];
 } errorMessage_t;
 
 static errorMessage_t s_errorMessage;
@@ -170,8 +170,8 @@ static void Main_MenuDraw(void)
 	   refEntity_t      ent;
 	   vec3_t           origin;
 	   vec3_t           angles;
-	   float            adjust;
-	   float            x, y, w, h;
+	   float adjust;
+	   float x, y, w, h;
 
 	   // setup the refdef
 	   memset( &refdef, 0, sizeof( refdef ) );
@@ -254,12 +254,12 @@ UI_TeamArenaExists
 */
 /*static qboolean UI_TeamArenaExists(void)
 {
-	int             numdirs;
-	char            dirlist[2048];
-	char           *dirptr;
-	char           *descptr;
-	int             i;
-	int             dirlen;
+	int numdirs;
+	char dirlist[2048];
+	char *dirptr;
+	char *descptr;
+	int i;
+	int dirlen;
 
 	numdirs = trap_FS_GetFileList("$modlist", "", dirlist, sizeof(dirlist));
 	dirptr = dirlist;
@@ -288,8 +288,8 @@ and that local cinematics are killed
 */
 void UI_MainMenu(void)
 {
-	int             y;
-	int             style = UI_CENTER | UI_DROPSHADOW;
+	int y;
+	int style = UI_CENTER | UI_DROPSHADOW;
 
 	trap_Cvar_Set("sv_killserver", "1");
 

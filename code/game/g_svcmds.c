@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -28,9 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "g_local.h"
 
-#if defined(ACEBOT)
-#include "acebot.h"
-#endif
 /*
 =======================================================================================================================================
 
@@ -349,38 +346,38 @@ void Svcmd_EntityList_f(void) {
 			case ET_PLAYER:
 				G_Printf("ET_PLAYER           ");
 				break;
-			case ET_ITEM:
-				G_Printf("ET_ITEM             ");
-				break;
 			case ET_PROJECTILE:
 				G_Printf("ET_PROJECTILE       ");
 				break;
 			case ET_PROJECTILE2:
 				G_Printf("ET_PROJECTILE2      ");
 				break;
+			case ET_TEAM:
+				G_Printf("ET_TEAM             ");
+				break;
+			case ET_ITEM:
+				G_Printf("ET_ITEM             ");
+				break;
 			case ET_MOVER:
 				G_Printf("ET_MOVER            ");
-				break;
-			case ET_BEAM:
-				G_Printf("ET_BEAM             ");
-				break;
-			case ET_PORTAL:
-				G_Printf("ET_PORTAL           ");
 				break;
 			case ET_SPEAKER:
 				G_Printf("ET_SPEAKER          ");
 				break;
-			case ET_PUSH_TRIGGER:
-				G_Printf("ET_PUSH_TRIGGER     ");
+			case ET_PORTAL:
+				G_Printf("ET_PORTAL           ");
+				break;
+			case ET_BEAM:
+				G_Printf("ET_BEAM             ");
 				break;
 			case ET_TELEPORT_TRIGGER:
 				G_Printf("ET_TELEPORT_TRIGGER ");
 				break;
+			case ET_PUSH_TRIGGER:
+				G_Printf("ET_PUSH_TRIGGER     ");
+				break;
 			case ET_INVISIBLE:
 				G_Printf("ET_INVISIBLE        ");
-				break;
-			case ET_GRAPPLE:
-				G_Printf("ET_GRAPPLE          ");
 				break;
 			case ET_AI_NODE:
 				G_Printf("ET_AI_NODE          ");
@@ -477,17 +474,6 @@ char *ConcatArgs(int start);
 
 /*
 =======================================================================================================================================
-Svcmd_LuaRestart_f
-=======================================================================================================================================
-*/
-#ifdef G_LUA
-static void Svcmd_LuaRestart_f(void) {
-	G_LuaShutdown();
-	G_LuaInit();
-}
-#endif
-/*
-=======================================================================================================================================
 ConsoleCommand
 =======================================================================================================================================
 */
@@ -495,21 +481,7 @@ qboolean ConsoleCommand(void) {
 	char cmd[MAX_TOKEN_CHARS];
 
 	trap_Argv(0, cmd, sizeof(cmd));
-#ifdef G_LUA
-	if (Q_stricmp(cmd, "lua_status") == 0) {
-		G_LuaStatus(NULL);
-		return qtrue;
-	}
 
-	if (Q_stricmp(cmd, "lua_restart") == 0) {
-		Svcmd_LuaRestart_f();
-		return qtrue;
-	}
-	// Lua API callbacks
-	if (G_LuaHook_ConsoleCommand(cmd)) {
-		return qtrue;
-	}
-#endif
 	if (Q_stricmp(cmd, "entitylist") == 0) {
 		Svcmd_EntityList_f();
 		return qtrue;
@@ -554,62 +526,7 @@ qboolean ConsoleCommand(void) {
 		trap_SendConsoleCommand(EXEC_NOW, "g_banIPs\n");
 		return qtrue;
 	}
-#if defined(BRAINWORKS)
-	// brainworks
-	if (Q_stricmp(cmd, "ai_debug") == 0) {
-		BotAIDebug();
-		return qtrue;
-	}
-#endif
-#if defined(ACEBOT)
-	// ACEBOT_ADD
-	if (Q_stricmp(cmd, "addbot") == 0) {
-		char string[MAX_TOKEN_CHARS];
-		char name[MAX_TOKEN_CHARS];
-		float skill;
-		char team[MAX_TOKEN_CHARS];
 
-		// name
-		trap_Argv(1, name, sizeof(name));
-		// skill
-		trap_Argv(2, string, sizeof(string));
-
-		if (!string[0]) {
-			skill = 4;
-		} else {
-			skill = atof(string);
-		}
-		// team
-		trap_Argv(3, team, sizeof(team));
-
-		ACESP_SpawnBot(name, skill, team);
-		// if this was issued during gameplay and we are playing locally, go ahead and load the bot's media immediately
-		if (level.time - level.startTime > 1000 && trap_Cvar_VariableIntegerValue("cl_running")) {
-			trap_SendServerCommand(-1, "loaddeferred\n");
-		}
-
-		return qtrue;
-	}
-	/*
-	// removebot
-	if (Q_stricmp(cmd, "removebot") == 0) {
-		if (trap_Argc() < 2) {
-			G_Printf("Usage: removebot < name > \n");
-			return qtrue;
-		}
-
-		trap_Argv(1, arg1, sizeof(arg1));
-
-		ACESP_RemoveBot(arg1);
-		return qtrue;
-	}
-	*/
-	// node saving
-	if (Q_stricmp(cmd, "savenodes") == 0) {
-		ACEND_SaveNodes();
-		return qtrue;
-	}
-#endif
 	if (g_dedicated.integer) {
 		if (Q_stricmp(cmd, "say") == 0) {
 			trap_SendServerCommand(-1, va("print \"server: %s\"", ConcatArgs(1)));

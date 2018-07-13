@@ -58,20 +58,20 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
 
-	menulist_s      list;
+	menulist_s list;
 
-	menubitmap_s    arrows;
-	menubitmap_s    left;
-	menubitmap_s    right;
-	menubitmap_s    back;
-	menubitmap_s    go;
+	menubitmap_s arrows;
+	menubitmap_s left;
+	menubitmap_s right;
+	menubitmap_s back;
+	menubitmap_s go;
 
-	char            names[NAMEBUFSIZE];
-	char           *configlist[MAX_CONFIGS];
+	char names[NAMEBUFSIZE];
+	char *configlist[MAX_CONFIGS];
 } configs_t;
 
 static configs_t s_configs;
@@ -118,9 +118,9 @@ LoadConfig_MenuInit
 */
 static void LoadConfig_MenuInit(void)
 {
-	int             i;
-	int             len;
-	char           *configname;
+	int i;
+	int len;
+	char *configname;
 
 	UI_LoadConfig_Cache();
 

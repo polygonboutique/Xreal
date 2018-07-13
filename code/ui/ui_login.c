@@ -41,13 +41,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    frame;
-	menutext_s      name;
-	menufield_s     name_box;
-	menutext_s      password;
-	menufield_s     password_box;
-	menutext_s      login;
-	menutext_s      cancel;
+	menubitmap_s frame;
+	menutext_s name;
+	menufield_s name_box;
+	menutext_s password;
+	menufield_s password_box;
+	menutext_s login;
+	menutext_s cancel;
 } login_t;
 
 static login_t  s_login;
@@ -100,7 +100,7 @@ Login_MenuInit
 */
 void Login_MenuInit(void)
 {
-	int             y;
+	int y;
 
 	memset(&s_login, 0, sizeof(s_login));
 

@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -39,7 +39,6 @@ int pcount[256];
 =======================================================================================================================================
 */
 
-int oldsize = 0;
 void MSG_initHuffman(void);
 
 /*
@@ -130,7 +129,7 @@ MSG_Copy
 void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src) {
 
 	if (length < src->cursize) {
-		Com_Error(ERR_DROP, "MSG_Copy: can't copy into a smaller msg_t buffer");
+		Com_Error(ERR_DROP, "MSG_Copy: can't copy %d into a smaller %d msg_t buffer", src->cursize, length);
 	}
 
 	Com_Memcpy(buf, src, sizeof(msg_t));
@@ -157,9 +156,7 @@ Negative bit values include signs.
 */
 void MSG_WriteBits(msg_t *msg, int value, int bits) {
 	int i;
-	//FILE *fp;
 
-	oldsize += bits;
 	// this isn't an exact overflow check, but close enough
 	if (msg->maxsize - msg->cursize < 4) {
 		msg->overflowed = qtrue;
@@ -196,7 +193,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 			msg->cursize += 1;
 			msg->bit += 8;
 		} else if (bits == 16) {
-			unsigned short * sp = (unsigned short *)&msg->data[msg->cursize];
+			unsigned short *sp = (unsigned short *)&msg->data[msg->cursize];
 
 			*sp = LittleShort(value);
 			msg->cursize += 2;
@@ -229,14 +226,12 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 
 		if (bits) {
 			for (i = 0; i < bits; i += 8) {
-//				fwrite(bp, 1, 1, fp);
 				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit);
 				value = (value >> 8);
 			}
 		}
 
 		msg->cursize = (msg->bit >> 3) + 1;
-//		fclose(fp);
 	}
 }
 
@@ -267,7 +262,7 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 			msg->readcount += 1;
 			msg->bit += 8;
 		} else if (bits == 16) {
-			unsigned short * sp = (unsigned short *)&msg->data[msg->readcount];
+			unsigned short *sp = (unsigned short *)&msg->data[msg->readcount];
 
 			value = LittleShort(*sp);
 			msg->readcount += 2;
@@ -831,8 +826,8 @@ float MSG_ReadDeltaFloat(msg_t *msg, float oldV) {
 /*
 =======================================================================================================================================
 
-delta functions with keys
-  
+	Delta functions with keys.
+
 =======================================================================================================================================
 */
 
@@ -996,7 +991,6 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 
 	if (from->angles[0] == to->angles[0] && from->angles[1] == to->angles[1] && from->angles[2] == to->angles[2] && from->forwardmove == to->forwardmove && from->rightmove == to->rightmove && from->upmove == to->upmove && from->buttons == to->buttons && from->weapon == to->weapon) {
 		MSG_WriteBits(msg, 0, 1); // no change
-		oldsize += 7;
 		return;
 	}
 
@@ -1216,8 +1210,6 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 	MSG_WriteBits(msg, 1, 1); // we have a delta
 	MSG_WriteByte(msg, lc); // # of changes
 
-	oldsize += numFields;
-
 	for (i = 0, field = entityStateFields; i < lc; i++, field++) {
 		fromF = (int *)((byte *)from + field->offset);
 		toF = (int *)((byte *)to + field->offset);
@@ -1236,7 +1228,6 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 
 			if (fullFloat == 0.0f) {
 				MSG_WriteBits(msg, 0, 1);
-				oldsize += FLOAT_INT_BITS;
 			} else {
 				MSG_WriteBits(msg, 1, 1);
 
@@ -1490,8 +1481,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 
 	MSG_WriteByte(msg, lc); // # of changes
 
-	oldsize += numFields - lc;
-
 	for (i = 0, field = playerStateFields; i < lc; i++, field++) {
 		fromF = (int *)((byte *)from + field->offset);
 		toF = (int *)((byte *)to + field->offset);
@@ -1560,7 +1549,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 
 	if (!statsbits && !persistantbits && !ammobits && !powerupbits) {
 		MSG_WriteBits(msg, 0, 1); // no change
-		oldsize += 4;
 		return;
 	}
 
@@ -1704,7 +1692,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		*toF = *fromF;
 	}
 	// read the arrays
-	if (MSG_ReadBits(msg, 1)) {
+	if (MSG_ReadBits(msg, 1)) { // one general bit tells if any of this infrequently changing stuff has changed
 		// parse stats
 		if (MSG_ReadBits(msg, 1)) {
 			LOG("PS_STATS");

@@ -49,7 +49,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define RF_SHADOW_PLANE		0x00000040	// use refEntity->shadowPlane
 #define RF_WRAP_FRAMES		0x00000080	// mod the model frames by the maxframes to allow continuous
 											// animation without needing to know the frame count
-#define RF_HILIGHT			0x00000100	// more than RF_MINLIGHT.  For when an object is "Highlighted"(looked at / training identification / etc)
+#define RF_HILIGHT			0x00000100	// more than RF_MINLIGHT.  For when an object is "Highlighted"(looked at / training identification / etc.)
 #define RF_BLINK			0x00000200	// eyes in 'blink' state
 #define RF_FORCENOLOD		0x00000400
 
@@ -175,7 +175,7 @@ typedef struct {
 	// Ridah
 	vec3_t fireRiseDir;
 
-	// Ridah, entity fading(gibs, debris, etc)
+	// Ridah, entity fading(gibs, debris, etc.)
 	int fadeStartTime, fadeEndTime;
 	float hilightIntensity;	// ---- (SA) added
 	int reFlags;
@@ -254,7 +254,7 @@ typedef struct {
 
 	// time in milliseconds for shader effects and other time dependent rendering issues
 	int time;
-	int rdflags;	// RDF_NOWORLDMODEL, etc
+	int rdflags;	// RDF_NOWORLDMODEL, etc.
 
 	// 1 bits will prevent the associated area from rendering at all
 	byte areamask[MAX_MAP_AREA_BYTES];

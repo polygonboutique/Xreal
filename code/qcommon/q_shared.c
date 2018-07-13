@@ -1,7 +1,6 @@
 /*
-===========================================================================
-Copyright(C)1999 - 2005 Id Software, Inc.
-Copyright(C)2006 - 2008 Robert Beckebans < trebor_7@users.sourceforge.net > 
+=======================================================================================================================================
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -22,50 +21,56 @@ If you have questions concerning this license or the applicable additional terms
 ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
- // 
- // q_shared.c--stateless support routines that are included in each code dll
+
+/**************************************************************************************************************************************
+ Stateless support routines that are included in each code dll.
+**************************************************************************************************************************************/
+
 #include "q_shared.h"
 
-
 /*
-============================================================================
+=======================================================================================================================================
 
-OPTIMIZED
+	OPTIMIZED
 
-============================================================================
+=======================================================================================================================================
 */
 
+#if 1 // defined(C_ONLY) // bk010102 - dedicated?
+/*
+=======================================================================================================================================
+Com_Memcpy
 
- // bk001207 - we need something under Linux, too. Mac?
-#if 1							// defined(C_ONLY) // bk010102 - dedicated?
+bk001207 - we need something under Linux, too. Mac?
+=======================================================================================================================================
+*/
 void Com_Memcpy(void *dest, const void *src, const size_t count) {
 	memcpy(dest, src, count);
 }
 
 /*
 =======================================================================================================================================
-
+Com_Memset
 =======================================================================================================================================
 */
 void Com_Memset(void *dest, const int val, const size_t count) {
 	memset(dest, val, count);
 }
-
 #else
-
 typedef enum {
-	PRE_READ,					// prefetch assuming that buffer is used for reading only
-	PRE_WRITE,					// prefetch assuming that buffer is used for writing only
-	PRE_READ_WRITE				// prefetch assuming that buffer is used for both reading and writing
+	PRE_READ,		// prefetch assuming that buffer is used for reading only
+	PRE_WRITE,		// prefetch assuming that buffer is used for writing only
+	PRE_READ_WRITE	// prefetch assuming that buffer is used for both reading and writing
 } e_prefetch;
 
 void Com_Prefetch(const void *s, const unsigned int bytes, e_prefetch type);
-
- // *INDENT - OFF * 
+/*
+=======================================================================================================================================
+_copyDWord
+=======================================================================================================================================
+*/
 void _copyDWord(unsigned int *dest, const unsigned int constant, const unsigned int count) {
-	// MMX version not used on standard Pentium MMX
-	// because the dword version is faster(with
-	// proper destination prefetching)
+		// MMX version not used on standard Pentium MMX because the dword version is faster (with proper destination prefetching)
 		__asm__ __volatile__(" \
 			// mov			eax,constant		// eax = val \
 			// mov			edx,dest			// dest \
@@ -140,9 +145,13 @@ void _copyDWord(unsigned int *dest, const unsigned int constant, const unsigned 
 	: : "a"(constant), "c"(count), "d"(dest)
 	: "%ebx", "%edi", "%esi", "cc", "memory");
 }
+/*
+=======================================================================================================================================
+Com_Memcpy
 
- // optimized memory copy routine that handles all alignment
- // cases and block sizes efficiently
+Optimized memory copy routine that handles all alignment cases and block sizes efficiently.
+=======================================================================================================================================
+*/
 void Com_Memcpy(void *dest, const void *src, const size_t count) {
 	Com_Prefetch(src, count, PRE_READ);
 
@@ -246,7 +255,7 @@ void Com_Memcpy(void *dest, const void *src, const size_t count) {
 
 /*
 =======================================================================================================================================
-
+Com_Memset
 =======================================================================================================================================
 */
 void Com_Memset(void *dest, const int val, const size_t count) {
@@ -318,15 +327,14 @@ void Com_Memset(void *dest, const int val, const size_t count) {
 
 /*
 =======================================================================================================================================
+Com_Prefetch
 
+Write buffer prefetching is performed only if the processor benefits from it. Read and read/write prefetching is always performed.
 =======================================================================================================================================
 */
 void Com_Prefetch(const void *s, const unsigned int bytes, e_prefetch type) {
-	// write buffer prefetching is performed only if
-	// the processor benefits from it. Read and read / write
-	// prefetching is always performed.
 
-	switch(type) {
+	switch (type) {
 		case PRE_WRITE:
 			break;
 
@@ -359,21 +367,17 @@ void Com_Prefetch(const void *s, const unsigned int bytes, e_prefetch type) {
 }
 
 #endif
-
-
-
-
 /*
 ============================================================================
 
-GROWLISTS
+	GROWLISTS
 
 ============================================================================
 */
 
- // malloc / free all in one place for debugging
- // extern "C" void *Com_Allocate(int bytes);
- // extern "C" void Com_Dealloc(void *ptr);
+// malloc/free all in one place for debugging
+// extern "C" void *Com_Allocate(int bytes);
+// extern "C" void Com_Dealloc(void *ptr);
 
 void Com_InitGrowList(growList_t *list, int maxElements) {
 
@@ -384,7 +388,7 @@ void Com_InitGrowList(growList_t *list, int maxElements) {
 
 /*
 =======================================================================================================================================
-
+Com_DestroyGrowList
 =======================================================================================================================================
 */
 void Com_DestroyGrowList(growList_t *list) {
@@ -396,7 +400,7 @@ void Com_DestroyGrowList(growList_t *list) {
 
 /*
 =======================================================================================================================================
-
+Com_AddToGrowList(
 =======================================================================================================================================
 */
 int Com_AddToGrowList(growList_t *list, void *data) {
@@ -422,7 +426,7 @@ int Com_AddToGrowList(growList_t *list, void *data) {
 
 	list->maxElements *= 2;
 
-	// Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
+	//Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
 
 	list->elements = (void **)Com_Allocate(list->maxElements * sizeof(void *));
 
@@ -438,7 +442,7 @@ int Com_AddToGrowList(growList_t *list, void *data) {
 
 /*
 =======================================================================================================================================
-
+*Com_GrowListElement
 =======================================================================================================================================
 */
 void *Com_GrowListElement(const growList_t *list, int index) {
@@ -452,7 +456,7 @@ void *Com_GrowListElement(const growList_t *list, int index) {
 
 /*
 =======================================================================================================================================
-
+Com_IndexForGrowListElement
 =======================================================================================================================================
 */
 int Com_IndexForGrowListElement(const growList_t *list, const void *element) {
@@ -469,7 +473,7 @@ int Com_IndexForGrowListElement(const growList_t *list, const void *element) {
 
 /*
 =======================================================================================================================================
-
+AllocMemStream
 =======================================================================================================================================
 */
 memStream_t *AllocMemStream(byte * buffer, int bufSize) {
@@ -480,8 +484,9 @@ memStream_t *AllocMemStream(byte * buffer, int bufSize) {
 
 	s = Com_Allocate(sizeof(memStream_t));
 
-	if (s == NULL)
+	if (s == NULL) {
 		return NULL;
+	}
 
 	Com_Memset(s, 0, sizeof(memStream_t));
 
@@ -495,7 +500,7 @@ memStream_t *AllocMemStream(byte * buffer, int bufSize) {
 
 /*
 =======================================================================================================================================
-
+FreeMemStream
 =======================================================================================================================================
 */
 void FreeMemStream(memStream_t *s) {
@@ -504,14 +509,15 @@ void FreeMemStream(memStream_t *s) {
 
 /*
 =======================================================================================================================================
-
+MemStreamRead
 =======================================================================================================================================
 */
 int MemStreamRead(memStream_t *s, void *buffer, int len) {
 	int ret = 1;
 
-	if (s == NULL || buffer == NULL)
+	if (s == NULL || buffer == NULL) {
 		return 0;
+	}
 
 	if (s->curPos + len > s->buffer + s->bufSize) {
 		s->flags |= MEMSTREAM_FLAGS_EOF;
@@ -522,6 +528,7 @@ int MemStreamRead(memStream_t *s, void *buffer, int len) {
 	}
 
 	Com_Memcpy(buffer, s->curPos, len);
+
 	s->curPos += len;
 
 	return ret;
@@ -529,75 +536,83 @@ int MemStreamRead(memStream_t *s, void *buffer, int len) {
 
 /*
 =======================================================================================================================================
-
+MemStreamGetC
 =======================================================================================================================================
 */
 int MemStreamGetC(memStream_t *s) {
 	int c = 0;
 
-	if (s == NULL)
+	if (s == NULL) {
 		return -1;
+	}
 
-	if (MemStreamRead(s, &c, 1) == 0)
+	if (MemStreamRead(s, &c, 1) == 0) {
 		return -1;
+	}
 
 	return c;
 }
 
 /*
 =======================================================================================================================================
-
+MemStreamGetLong
 =======================================================================================================================================
 */
 int MemStreamGetLong(memStream_t *s) {
 	int c = 0;
 
-	if (s == NULL)
+	if (s == NULL) {
 		return -1;
+	}
 
-	if (MemStreamRead(s, &c, 4) == 0)
+	if (MemStreamRead(s, &c, 4) == 0) {
 		return -1;
+	}
 
 	return LittleLong(c);
 }
 
 /*
 =======================================================================================================================================
-
+MemStreamGetShort
 =======================================================================================================================================
 */
 int MemStreamGetShort(memStream_t *s) {
 	int c = 0;
 
-	if (s == NULL)
+	if (s == NULL) {
 		return -1;
+	}
 
-	if (MemStreamRead(s, &c, 2) == 0)
+	if (MemStreamRead(s, &c, 2) == 0) {
 		return -1;
+	}
 
 	return LittleShort(c);
 }
 
 /*
 =======================================================================================================================================
-
+MemStreamGetFloat
 =======================================================================================================================================
 */
 float MemStreamGetFloat(memStream_t *s) {
 	floatint_t c;
 
-	if (s == NULL)
+	if (s == NULL) {
 		return -1;
+	}
 
-	if (MemStreamRead(s, &c.i, 4) == 0)
+	if (MemStreamRead(s, &c.i, 4) == 0) {
 		return -1;
+	}
 
 	return LittleFloat(c.f);
 }
 
 /*
 =======================================================================================================================================
-
+Com_Clamp
 =======================================================================================================================================
 */
 float Com_Clamp(float min, float max, float value) {
@@ -622,6 +637,7 @@ char *Com_SkipPath(char *pathname) {
 	char *last;
 
 	last = pathname;
+
 	while (*pathname) {
 		if (*pathname == '/') {
 			last = pathname + 1;
@@ -647,8 +663,9 @@ const char *Com_GetExtension(const char *name) {
 	while (name[i] != '.') {
 		i--;
 
-		if (name[i] == '/' || i == 0)
+		if (name[i] == '/' || i == 0) {
 			return ""; // no extension
+		}
 	}
 
 	return &name[i + 1];
@@ -670,15 +687,15 @@ void Com_StripExtension(const char *src, char *dest, int destsize) {
 	while (length > 0 && dest[length] != '.') {
 		length--;
 
-		if (dest[length] == '/')
+		if (dest[length] == '/') {
 			return; // no extension
+		}
 	}
 
 	if (length) {
 		dest[length] = 0;
 	}
 }
-
 
 /*
 =======================================================================================================================================
@@ -690,8 +707,7 @@ void Com_DefaultExtension(char *path, int maxSize, const char *extension) {
 	char *src;
 
 
-	// if path doesn't have a .EXT, append extension
-	// (extension should include the .)
+	// if path doesn't have a .EXT, append extension (extension should include the .)
 	src = path + strlen(path) - 1;
 
 	while (*src != '/' && src != path) {
@@ -722,14 +738,17 @@ int Com_HashKey(char *string, int maxlength) {
 	while (string[i] != '\0' && i < maxlength) {
 		letter = tolower(string[i]);
 
-		if (letter == '.')
+		if (letter == '.') {
 			break; // don't include extension
+		}
 
-		if (letter == '\\')
+		if (letter == '\\') {
 			letter = '/'; // damn path names
+		}
 
-		if (letter == PATH_SEP)
+		if (letter == PATH_SEP) {
 			letter = '/'; // damn path names
+		}
 
 		hash += (long)(letter) * (i + 119);
 		i++;
@@ -740,30 +759,29 @@ int Com_HashKey(char *string, int maxlength) {
 }
 
 /*
-============================================================================
+=======================================================================================================================================
 
-					BYTE ORDER FUNCTIONS
+	BYTE ORDER FUNCTIONS
 
-============================================================================
+=======================================================================================================================================
 */
 /*
- // can't just use function pointers, or dll linkage can
- // mess up when qcommon is included in multiple places
-static short	(*_BigShort)(short l);
-static short	(*_LittleShort)(short l);
-static int(*_BigLong)(int l);
-static int(*_LittleLong)(int l);
-static qint64	(*_BigLong64)(qint64 l);
-static qint64	(*_LittleLong64)(qint64 l);
-static float(*_BigFloat)(const float *l);
-static float(*_LittleFloat)(const float *l);
+// can't just use function pointers, or dll linkage can mess up when qcommon is included in multiple places
+static short (*_BigShort)(short l);
+static short (*_LittleShort)(short l);
+static int (*_BigLong)(int l);
+static int (*_LittleLong)(int l);
+static qint64 (*_BigLong64)(qint64 l);
+static qint64 (*_LittleLong64)(qint64 l);
+static float (*_BigFloat)(const float *l);
+static float (*_LittleFloat)(const float *l);
 
-short	BigShort(short l) {return _BigShort(l);}
-short	LittleShort(short l) {return _LittleShort(l);}
+short BigShort(short l) {return _BigShort(l);}
+short LittleShort(short l) {return _LittleShort(l);}
 int BigLong(int l) {return _BigLong(l);}
 int LittleLong(int l) {return _LittleLong(l);}
-qint64 	BigLong64(qint64 l) {return _BigLong64(l);}
-qint64 	LittleLong64(qint64 l) {return _LittleLong64(l);}
+qint64 BigLong64(qint64 l) {return _BigLong64(l);}
+qint64 LittleLong64(qint64 l) {return _LittleLong64(l);}
 float BigFloat(const float *l) {return _BigFloat(l);}
 float LittleFloat(const float *l) {return _LittleFloat(l);}
 */
@@ -771,15 +789,15 @@ float LittleFloat(const float *l) {return _LittleFloat(l);}
 short ShortSwap(short l) {
 	byte b1, b2;
 
-	b1 = l & 255;
-	b2 = (l >> 8)& 255;
+	b1 = l &255;
+	b2 = (l >> 8)&255;
 
 	return (b1 << 8) + b2;
 }
 
 /*
 =======================================================================================================================================
-
+ShortNoSwap
 =======================================================================================================================================
 */
 short ShortNoSwap(short l) {
@@ -788,23 +806,23 @@ short ShortNoSwap(short l) {
 
 /*
 =======================================================================================================================================
-
+LongSwap
 =======================================================================================================================================
 */
 int LongSwap(int l) {
 	byte b1, b2, b3, b4;
 
-	b1 = l & 255;
-	b2 = (l >> 8)& 255;
-	b3 = (l >> 16)& 255;
-	b4 = (l >> 24)& 255;
+	b1 = l &255;
+	b2 = (l >> 8)&255;
+	b3 = (l >> 16)&255;
+	b4 = (l >> 24)&255;
 
 	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
 }
 
 /*
 =======================================================================================================================================
-
+LongNoSwap
 =======================================================================================================================================
 */
 int LongNoSwap(int l) {
@@ -813,7 +831,7 @@ int LongNoSwap(int l) {
 
 /*
 =======================================================================================================================================
-
+Long64Swap
 =======================================================================================================================================
 */
 qint64 Long64Swap(qint64 ll) {
@@ -833,7 +851,7 @@ qint64 Long64Swap(qint64 ll) {
 
 /*
 =======================================================================================================================================
-
+Long64NoSwap
 =======================================================================================================================================
 */
 qint64 Long64NoSwap(qint64 ll) {
@@ -847,7 +865,7 @@ typedef union {
 
 /*
 =======================================================================================================================================
-
+FloatSwap
 =======================================================================================================================================
 */
 float FloatSwap(const float *f) {
@@ -855,13 +873,12 @@ float FloatSwap(const float *f) {
 
 	out.f = *f;
 	out.i = LongSwap(out.i);
-
 	return out.f;
 }
 
 /*
 =======================================================================================================================================
-
+FloatNoSwap
 =======================================================================================================================================
 */
 float FloatNoSwap(const float *f) {
@@ -869,17 +886,16 @@ float FloatNoSwap(const float *f) {
 }
 
 /*
-============================================================================
+=======================================================================================================================================
 
-PARSING
+	PARSING
 
-============================================================================
+=======================================================================================================================================
 */
 
  // multiple character punctuation tokens
 const char *punctuation[] = {
-	" +=", " -=", "*=", "/=", "&= ", "|=", "++", "--", "&&", "||", "<=", ">=", "==", "!=",
-	NULL
+	"+=", "-=", "*=", "/=", "&=", "|=", "++", "--", "&&", "||", "<=", ">=", "==", "!=", NULL
 };
 
 static char com_token[MAX_TOKEN_CHARS];
@@ -888,17 +904,19 @@ static int com_lines;
 
 /*
 =======================================================================================================================================
-
+Com_BeginParseSession
 =======================================================================================================================================
 */
 void Com_BeginParseSession(const char *name) {
+
 	com_lines = 0;
+
 	Q_strncpyz(com_parsename, name, sizeof(com_parsename));
 }
 
 /*
 =======================================================================================================================================
-
+Com_GetCurrentParseLine
 =======================================================================================================================================
 */
 int Com_GetCurrentParseLine(void) {
@@ -907,7 +925,7 @@ int Com_GetCurrentParseLine(void) {
 
 /*
 =======================================================================================================================================
-
+Com_Parse
 =======================================================================================================================================
 */
 char *Com_Parse(char **data_p) {
@@ -916,7 +934,7 @@ char *Com_Parse(char **data_p) {
 
 /*
 =======================================================================================================================================
-
+Com_ParseError
 =======================================================================================================================================
 */
 void Com_ParseError(char *format, ...) {
@@ -926,13 +944,12 @@ void Com_ParseError(char *format, ...) {
 	va_start(argptr, format);
 	Q_vsnprintf(string, sizeof(string), format, argptr);
 	va_end(argptr);
-
 	Com_Printf(S_COLOR_RED "ERROR: '%s', line %d: '%s'\n", com_parsename, com_lines, string);
 }
 
 /*
 =======================================================================================================================================
-
+Com_ParseWarning
 =======================================================================================================================================
 */
 void Com_ParseWarning(char *format, ...) {
@@ -942,24 +959,18 @@ void Com_ParseWarning(char *format, ...) {
 	va_start(argptr, format);
 	Q_vsnprintf(string, sizeof(string), format, argptr);
 	va_end(argptr);
-
 	Com_Printf(S_COLOR_YELLOW "WARNING: '%s', line %d: '%s'\n", com_parsename, com_lines, string);
 }
 
-
 /*
 =======================================================================================================================================
-Com_Parse
+SkipWhitespace
 
-Parse a token out of a string
-Will never return NULL, just empty strings
-
-If "allowLineBreaks" is qtrue then an empty
-string will be returned if the next token is
-a newline.
+Parse a token out of a string. Will never return NULL, just empty strings.
+If "allowLineBreaks" is qtrue then an empty string will be returned if the next token is a newline.
 =======================================================================================================================================
 */
-static char *SkipWhitespace(char *data, qboolean * hasNewLines) {
+static char *SkipWhitespace(char *data, qboolean *hasNewLines) {
 	int c;
 
 	while ((c = *data) <= ' ') {
@@ -980,7 +991,7 @@ static char *SkipWhitespace(char *data, qboolean * hasNewLines) {
 
 /*
 =======================================================================================================================================
-
+Com_Compress
 =======================================================================================================================================
 */
 int Com_Compress(char *data_p) {
@@ -994,15 +1005,18 @@ int Com_Compress(char *data_p) {
 		while ((c = *in) != 0) {
 			// skip double slash comments
 			if (c == '/' && in[1] == '/') {
-				while (*in && * in != '\n') {
+				while (*in && *in != '\n') {
 					in++;
 				}
-				// skip/**/comments
+			// skip /* */ comments
 			} else if (c == '/' && in[1] == '*') {
-				while (*in &&(*in != '*' || in[1] != '/'))
+				while (*in && (*in != '*' || in[1] != '/')) {
 					in++;
-				if (*in)
+				}
+
+				if (*in) {
 					in += 2;
+				}
 				// record when we hit a newline
 			} else if (c == '\n' || c == '\r') {
 				newline = qtrue;
@@ -1013,7 +1027,7 @@ int Com_Compress(char *data_p) {
 				in++;
 				// an actual token
 			} else {
-				// if we have a pending newline, emit it(and it counts as whitespace)
+				// if we have a pending newline, emit it (and it counts as whitespace)
 				if (newline) {
 					*out++ = '\n';
 					newline = qfalse;
@@ -1031,6 +1045,7 @@ int Com_Compress(char *data_p) {
 
 					while (1) {
 						c = *in;
+
 						if (c && c != '"') {
 							*out++ = c;
 							in++;
@@ -1056,7 +1071,11 @@ int Com_Compress(char *data_p) {
 	return out - data_p;
 }
 
- // *INDENT - OFF * 
+/*
+=======================================================================================================================================
+COM_ParseExt
+=======================================================================================================================================
+*/
 char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 	int c = 0, len;
 	qboolean hasNewLines = qfalse;
@@ -1075,9 +1094,11 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 		*data_p = NULL;
 		return com_token;
 	}
-	// skip whitespace
+
 	while (1) {
+		// skip whitespace
 		data = SkipWhitespace(data, &hasNewLines);
+
 		if (!data) {
 			*data_p = NULL;
 			return com_token;
@@ -1092,15 +1113,15 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 		// skip double slash comments
 		if (c == '/' && data[1] == '/') {
 			data += 2;
-			while (*data && * data != '\n') {
+
+			while (*data && *data != '\n') {
 				data++;
 			}
-		}
-		// skip/**/comments
-		else if (c == '/' && data[1] == '*') {
+		// skip /* */ comments
+		} else if (c == '/' && data[1] == '*') {
 			data += 2;
 
-			while (*data &&(*data != '*' || data[1] != '/')) {
+			while (*data && (*data != '*' || data[1] != '/')) {
 				data++;
 			}
 
@@ -1112,14 +1133,14 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 			break;
 		}
 	}
-
 	// handle quoted strings
 	if (c == '\"') {
 		data++;
+
 		while (1) {
 			c = *data++;
 
-			if ((c == '\\') &&(*data == '\"')) {
+			if ((c == '\\') && (*data == '\"')) {
 				// allow quoted strings to use \" to indicate the " character
 				data++;
 			} else if (c == '\"' || !c) {
@@ -1148,7 +1169,6 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 			data++;
 			c = *data;
 		} while((c >= '0' && c <= '9') || c == '.');
-
 		// parse the exponent
 		if (c == 'e' || c == 'E') {
 			if (len < MAX_TOKEN_CHARS - 1) {
@@ -1159,7 +1179,7 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 			data++;
 			c = *data;
 
-			if (c == '-' || c == ' + ') {
+			if (c == '-' || c == '+') {
 				if (len < MAX_TOKEN_CHARS - 1) {
 					com_token[len] = c;
 					len++;
@@ -1186,21 +1206,12 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 		}
 
 		com_token[len] = 0;
-
 		*data_p = (char *)data;
 		return com_token;
 	}
-
 	// check for a regular word
-	// we still allow forward and back slashes in name tokens for pathnames
-	// and also colons for drive letters
-	if ((c >= 'a' && c <= 'z') ||
-		(c >= 'A' && c <= 'Z') ||
-		(c == '_') ||
-		(c == '/') ||
-		(c == '\\') ||
-		(c == '$') ||(c == '*')) // Tr3B - for bad shader strings
-	{
+	// we still allow forward and back slashes in name tokens for pathnames and also colons for drive letters
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') || (c == '/') || (c == '\\') || (c == '$') || (c == '*')) { // Tr3B - for bad shader strings
 		do {
 			if (len < MAX_TOKEN_CHARS - 1) {
 				com_token[len] = c;
@@ -1212,31 +1223,17 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 			c = *data;
 		}
 
-		while
-			((c >= 'a' && c <= 'z') ||
-			(c >= 'A' && c <= 'Z') ||
-			(c == '_') ||
-			(c == '-') ||
-			(c >= '0' && c <= '9') ||
-			(c == '/') ||
-			(c == '\\') ||
-			(c == ':') ||
-			(c == '.') ||
-			(c == '$') ||
-			(c == '*') ||
-			(c == '@'));
+		while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_') || (c == '-') || (c >= '0' && c <= '9') || (c == '/') || (c == '\\') || (c == ':') || (c == '.') || (c == '$') || (c == '*') || (c == '@'));
 
 		if (len == MAX_TOKEN_CHARS) {
 			len = 0;
 		}
 
 		com_token[len] = 0;
-
 		*data_p = (char *)data;
 		return com_token;
 	}
-
-	// check for multi - character punctuation token
+	// check for multi-character punctuation token
 	for (punc = punctuation; *punc; punc++) {
 		int l;
 		int j;
@@ -1250,8 +1247,9 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 		}
 
 		if (j == l) {
-			// a valid multi - character punctuation
+			// a valid multi-character punctuation
 			Com_Memcpy(com_token, *punc, l);
+
 			com_token[l] = 0;
 			data += l;
 			*data_p = (char *)data;
@@ -1264,11 +1262,8 @@ char *Com_ParseExt(char **data_p, qboolean allowLineBreaks) {
 	com_token[1] = 0;
 	data++;
 	*data_p = (char *)data;
-
 	return com_token;
 }
- // *INDENT - ON * 
-
 
 /*
 =======================================================================================================================================
@@ -1285,14 +1280,12 @@ void Com_MatchToken(char **buf_p, char *match) {
 	}
 }
 
-
 /*
 =======================================================================================================================================
 Com_SkipBracedSection
 
 The next token should be an open brace.
-Skips until a matching close brace is found.
-Internal brace depths are properly skipped.
+Skips until a matching close brace is found. Internal brace depths are properly skipped.
 =======================================================================================================================================
 */
 void Com_SkipBracedSection(char **program) {
@@ -1311,7 +1304,7 @@ void Com_SkipBracedSection(char **program) {
 				depth--;
 			}
 		}
-	} while(depth && * program);
+	} while (depth && *program);
 }
 
 /*
@@ -1324,9 +1317,9 @@ void Com_SkipRestOfLine(char **data) {
 	int c;
 
 	p = *data;
+
 	while ((c = *p++) != 0) {
-		if (c == '\n')
-		{
+		if (c == '\n') {
 			com_lines++;
 			break;
 		}
@@ -1337,7 +1330,7 @@ void Com_SkipRestOfLine(char **data) {
 
 /*
 =======================================================================================================================================
-
+Com_Parse1DMatrix
 =======================================================================================================================================
 */
 void Com_Parse1DMatrix(char **buf_p, int x, float *m, qboolean checkBrackets) {
@@ -1360,7 +1353,7 @@ void Com_Parse1DMatrix(char **buf_p, int x, float *m, qboolean checkBrackets) {
 
 /*
 =======================================================================================================================================
-
+Com_Parse2DMatrix
 =======================================================================================================================================
 */
 void Com_Parse2DMatrix(char **buf_p, int y, int x, float *m) {
@@ -1377,7 +1370,7 @@ void Com_Parse2DMatrix(char **buf_p, int y, int x, float *m) {
 
 /*
 =======================================================================================================================================
-
+Com_Parse3DMatrix
 =======================================================================================================================================
 */
 void Com_Parse3DMatrix(char **buf_p, int z, int y, int x, float *m) {
@@ -1398,9 +1391,10 @@ Com_HexStrToInt
 =======================================================================================================================================
 */
 int Com_HexStrToInt(const char *str) {
-	if (!str || !str[0])
-		return -1;
 
+	if (!str || !str[0]) {
+		return -1;
+	}
 	// check for hex code
 	if (str[0] == '0' && str[1] == 'x') {
 		int i, n = 0;
@@ -1409,15 +1403,15 @@ int Com_HexStrToInt(const char *str) {
 			char digit;
 
 			n *= 16;
-
 			digit = tolower(str[i]);
 
-			if (digit>= '0' && digit<= '9')
+			if (digit >= '0' && digit <= '9') {
 				digit -= '0';
-			else if (digit>= 'a' && digit<= 'f')
+			} else if (digit >= 'a' && digit <= 'f') {
 				digit = digit - 'a' + 10;
-			else
+			} else {
 				return -1;
+			}
 
 			n += digit;
 		}
@@ -1429,64 +1423,72 @@ int Com_HexStrToInt(const char *str) {
 }
 
 /*
-============================================================================
+=======================================================================================================================================
 
-					LIBRARY REPLACEMENT FUNCTIONS
+	LIBRARY REPLACEMENT FUNCTIONS
 
-============================================================================
+=======================================================================================================================================
 */
 
 /*
 =======================================================================================================================================
-
+Q_isprint
 =======================================================================================================================================
 */
 int Q_isprint(int c) {
 
-	if (c >= 0x20 && c <= 0x7E)
+	if (c >= 0x20 && c <= 0x7E) {
 		return (1);
+	}
+
 	return (0);
 }
 
 /*
 =======================================================================================================================================
-
+Q_islower
 =======================================================================================================================================
 */
 int Q_islower(int c) {
 
-	if (c >= 'a' && c <= 'z')
+	if (c >= 'a' && c <= 'z') {
 		return (1);
+	}
+
 	return (0);
 }
 
 /*
 =======================================================================================================================================
-
+Q_isupper
 =======================================================================================================================================
 */
 int Q_isupper(int c) {
 
-	if (c >= 'A' && c <= 'Z')
+	if (c >= 'A' && c <= 'Z') {
 		return (1);
+	}
+
 	return (0);
 }
 
 /*
 =======================================================================================================================================
-
+Q_isalpha
 =======================================================================================================================================
 */
 int Q_isalpha(int c) {
 
-	if ((c >= 'a' && c <= 'z') ||(c >= 'A' && c <= 'Z'))
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
 		return (1);
+	}
+
 	return (0);
 }
 
 /*
 =======================================================================================================================================
-
+Q_strrchr
 =======================================================================================================================================
 */
 char *Q_strrchr(const char *string, int c) {
@@ -1513,14 +1515,16 @@ char *Q_strrchr(const char *string, int c) {
 
 /*
 =======================================================================================================================================
-
+Q_isanumber
 =======================================================================================================================================
-*/qboolean Q_isanumber(const char *s) {
+*/
+qboolean Q_isanumber(const char *s) {
 	char *p;
 	double unused;
 
-	if (*s == '\0')
+	if (*s == '\0') {
 		return qfalse;
+	}
 
 	unused = strtod(s, &p);
 
@@ -1529,9 +1533,10 @@ char *Q_strrchr(const char *string, int c) {
 
 /*
 =======================================================================================================================================
-
+Q_isintegral
 =======================================================================================================================================
-*/qboolean Q_isintegral(float f) {
+*/
+qboolean Q_isintegral(float f) {
 	return (int)f == f;
 }
 
@@ -1539,7 +1544,7 @@ char *Q_strrchr(const char *string, int c) {
 =======================================================================================================================================
 Q_strncpyz
 
-Safe strncpy that ensures a trailing zero
+Safe strncpy that ensures a trailing zero.
 =======================================================================================================================================
 */
 void Q_strncpyz(char *dest, const char *src, int destsize) {
@@ -1547,32 +1552,37 @@ void Q_strncpyz(char *dest, const char *src, int destsize) {
 	if (!dest) {
 		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest");
 	}
+
 	if (!src) {
 		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src");
 	}
+
 	if (destsize < 1) {
 		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
 	}
 
 	strncpy(dest, src, destsize - 1);
+
 	dest[destsize - 1] = 0;
 }
 
 /*
 =======================================================================================================================================
-
+Q_stricmpn
 =======================================================================================================================================
 */
 int Q_stricmpn(const char *s1, const char *s2, int n) {
 	int c1, c2;
 
 	if (s1 == NULL) {
-		if (s2 == NULL)
+		if (s2 == NULL) {
 			return 0;
-		else
+		} else {
 			return -1;
-	} else if (s2 == NULL)
+		}
+	} else if (s2 == NULL) {
 		return 1;
+	}
 
 	do {
 		c1 = *s1++;
@@ -1583,26 +1593,26 @@ int Q_stricmpn(const char *s1, const char *s2, int n) {
 		}
 
 		if (c1 != c2) {
-			if (c1>= 'a' && c1<= 'z') {
-				c1 -= ('a'-'A');
+			if (c1 >= 'a' && c1 <= 'z') {
+				c1 -= ('a' - 'A');
 			}
 
-			if (c2>= 'a' && c2<= 'z') {
-				c2 -= ('a'-'A');
+			if (c2 >= 'a' && c2 <= 'z') {
+				c2 -= ('a' - 'A');
 			}
 
 			if (c1 != c2) {
-				return c1 < c2 ? - 1 : 1;
+				return c1 < c2 ? -1 : 1;
 			}
 		}
-	} while(c1);
+	} while (c1);
 
 	return 0; // strings are equal
 }
 
 /*
 =======================================================================================================================================
-
+Q_strncmp
 =======================================================================================================================================
 */
 int Q_strncmp(const char *s1, const char *s2, int n) {
@@ -1617,25 +1627,25 @@ int Q_strncmp(const char *s1, const char *s2, int n) {
 		}
 
 		if (c1 != c2) {
-			return c1 < c2 ? - 1 : 1;
+			return c1 < c2 ? -1 : 1;
 		}
-	} while(c1);
+	} while (c1);
 
 	return 0; // strings are equal
 }
 
 /*
 =======================================================================================================================================
-
+Q_stricmp
 =======================================================================================================================================
 */
 int Q_stricmp(const char *s1, const char *s2) {
-	return (s1 && s2)? Q_stricmpn(s1, s2, 99999): - 1;
+	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 }
 
 /*
 =======================================================================================================================================
-
+Q_strlwr
 =======================================================================================================================================
 */
 char *Q_strlwr(char *s1) {
@@ -1653,7 +1663,7 @@ char *Q_strlwr(char *s1) {
 
 /*
 =======================================================================================================================================
-
+Q_strupr
 =======================================================================================================================================
 */
 char *Q_strupr(char *s1) {
@@ -1669,8 +1679,13 @@ char *Q_strupr(char *s1) {
 	return s1;
 }
 
+/*
+=======================================================================================================================================
+Q_strcat
 
- // never goes past bounds or leaves without a terminating 0
+Never goes past bounds or leaves without a terminating 0.
+=======================================================================================================================================
+*/
 void Q_strcat(char *dest, int destsize, const char *src) {
 	int l1;
 
@@ -1682,7 +1697,6 @@ void Q_strcat(char *dest, int destsize, const char *src) {
 
 	Q_strncpyz(dest + l1, src, destsize - l1);
 }
-
 
 /*
 =======================================================================================================================================
@@ -1697,10 +1711,11 @@ char *Q_stristr(const char *s, const char *find) {
 
 	if ((c = *find++) != 0) {
 		if (c >= 'a' && c <= 'z') {
-			c -= ('a'-'A');
+			c -= ('a' - 'A');
 		}
 
 		len = strlen(find);
+
 		do {
 			do {
 				if ((sc = *s++) == 0) {
@@ -1708,10 +1723,11 @@ char *Q_stristr(const char *s, const char *find) {
 				}
 
 				if (sc >= 'a' && sc <= 'z') {
-					sc -= ('a'-'A');
+					sc -= ('a' - 'A');
 				}
 			} while (sc != c);
 		} while (Q_stricmpn(s, find, len) != 0);
+
 		s--;
 	}
 
@@ -1723,7 +1739,7 @@ char *Q_stristr(const char *s, const char *find) {
 =======================================================================================================================================
 Q_strreplace
 
-replaces content of find by replace in dest
+Replaces content of find by replace in dest.
 =======================================================================================================================================
 */
 qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *replace) {
@@ -1756,7 +1772,7 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 
 /*
 =======================================================================================================================================
-
+Q_PrintStrlen
 =======================================================================================================================================
 */
 int Q_PrintStrlen(const char *string) {
@@ -1785,7 +1801,7 @@ int Q_PrintStrlen(const char *string) {
 
 /*
 =======================================================================================================================================
-
+Q_CleanStr
 =======================================================================================================================================
 */
 char *Q_CleanStr(char *string) {
@@ -1802,6 +1818,7 @@ char *Q_CleanStr(char *string) {
 		} else if (c >= 0x20 && c <= 0x7E) {
 			*d++ = c;
 		}
+
 		s++;
 	}
 
@@ -1812,15 +1829,16 @@ char *Q_CleanStr(char *string) {
 
 /*
 =======================================================================================================================================
-
+Q_CountChar
 =======================================================================================================================================
 */
 int Q_CountChar(const char *string, char tocount) {
 	int count;
 
 	for (count = 0; *string; string++) {
-		if (*string == tocount)
+		if (*string == tocount) {
 			count++;
+		}
 	}
 
 	return count;
@@ -1828,7 +1846,7 @@ int Q_CountChar(const char *string, char tocount) {
 
 /*
 =======================================================================================================================================
-
+Com_sprintf
 =======================================================================================================================================
 */
 void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) {
@@ -1840,11 +1858,11 @@ void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) {
 	len = Q_vsnprintf(bigbuffer, sizeof(bigbuffer), fmt, argptr);
 	va_end(argptr);
 
-	if (len>= sizeof(bigbuffer)) {
+	if (len >= sizeof(bigbuffer)) {
 		Com_Error(ERR_FATAL, "Com_sprintf: overflowed bigbuffer");
 	}
 
-	if (len>= size) {
+	if (len >= size) {
 		Com_Printf("Com_sprintf: overflow of %i in %i\n", len, size);
 #if defined(_MSC_VER) && defined(_DEBUG)
 		__asm
@@ -1857,13 +1875,11 @@ void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) {
 	Q_strncpyz(dest, bigbuffer, size);
 }
 
-
 /*
 =======================================================================================================================================
 va
 
-does a varargs printf into a temp buffer, so I don't need to have
-varargs versions of all text functions.
+Does a varargs printf into a temp buffer, so I don't need to have varargs versions of all text functions.
 =======================================================================================================================================
 */
 char *QDECL va(char *format, ...) {
@@ -1878,7 +1894,6 @@ char *QDECL va(char *format, ...) {
 	va_start(argptr, format);
 	Q_vsnprintf(buf, sizeof(*string), format, argptr);
 	va_end(argptr);
-
 	return buf;
 }
 
@@ -1886,16 +1901,16 @@ char *QDECL va(char *format, ...) {
 =======================================================================================================================================
 Com_TruncateLongString
 
-Assumes buffer is atleast TRUNCATE_LENGTH big
+Assumes buffer is atleast TRUNCATE_LENGTH big.
 =======================================================================================================================================
 */
 void Com_TruncateLongString(char *buffer, const char *s) {
 	int length = strlen(s);
 
-	if (length<= TRUNCATE_LENGTH)
+	if (length <= TRUNCATE_LENGTH) {
 		Q_strncpyz(buffer, s, TRUNCATE_LENGTH);
-	else {
-		Q_strncpyz(buffer, s,(TRUNCATE_LENGTH / 2) - 3);
+	} else {
+		Q_strncpyz(buffer, s, (TRUNCATE_LENGTH / 2) - 3);
 		Q_strcat(buffer, TRUNCATE_LENGTH, " ... ");
 		Q_strcat(buffer, TRUNCATE_LENGTH, s + length - (TRUNCATE_LENGTH / 2) + 3);
 	}
@@ -1904,7 +1919,7 @@ void Com_TruncateLongString(char *buffer, const char *s) {
 /*
 =======================================================================================================================================
 
- INFO STRINGS
+	INFO STRINGS
 
 =======================================================================================================================================
 */
@@ -1913,16 +1928,13 @@ void Com_TruncateLongString(char *buffer, const char *s) {
 =======================================================================================================================================
 Info_ValueForKey
 
-Searches the string for the given
-key and returns the associated value, or an empty string.
+Searches the string for the given key and returns the associated value, or an empty string.
 FIXME: overflow check?
 =======================================================================================================================================
 */
 char *Info_ValueForKey(const char *s, const char *key) {
 	char pkey[BIG_INFO_KEY];
-	static char value[2][BIG_INFO_VALUE];	// use two buffers so compares
-
-	// work without stomping on each other
+	static char value[2][BIG_INFO_VALUE]; // use two buffers so compares work without stomping on each other
 	static int valueindex = 0;
 	char *o;
 
@@ -1930,11 +1942,11 @@ char *Info_ValueForKey(const char *s, const char *key) {
 		return "";
 	}
 
-	if (strlen(s)>= BIG_INFO_STRING) {
+	if (strlen(s) >= BIG_INFO_STRING) {
 		Com_Error(ERR_DROP, "Info_ValueForKey: oversize infostring");
 	}
 
-	valueindex ^ = 1;
+	valueindex ^= 1;
 
 	if (*s == '\\') {
 		s++;
@@ -1942,6 +1954,7 @@ char *Info_ValueForKey(const char *s, const char *key) {
 
 	while (1) {
 		o = pkey;
+
 		while (*s != '\\') {
 			if (!*s) {
 				return "";
@@ -1954,7 +1967,7 @@ char *Info_ValueForKey(const char *s, const char *key) {
 		s++;
 		o = value[valueindex];
 
-		while (*s != '\\' && * s) {
+		while (*s != '\\' && *s) {
 			*o++ = *s++;
 		}
 
@@ -1974,12 +1987,11 @@ char *Info_ValueForKey(const char *s, const char *key) {
 	return "";
 }
 
-
 /*
 =======================================================================================================================================
 Info_NextPair
 
-Used to itterate through all the key/value pairs in an info string
+Used to itterate through all the key/value pairs in an info string.
 =======================================================================================================================================
 */
 void Info_NextPair(const char **head, char *key, char *value) {
@@ -2010,14 +2022,13 @@ void Info_NextPair(const char **head, char *key, char *value) {
 	s++;
 	o = value;
 
-	while (*s != '\\' && * s) {
+	while (*s != '\\' && *s) {
 		*o++ = *s++;
 	}
 
 	*o = 0;
 	*head = s;
 }
-
 
 /*
 =======================================================================================================================================
@@ -2030,7 +2041,7 @@ void Info_RemoveKey(char *s, const char *key) {
 	char value[MAX_INFO_VALUE];
 	char *o;
 
-	if (strlen(s)>= MAX_INFO_STRING) {
+	if (strlen(s) >= MAX_INFO_STRING) {
 		Com_Error(ERR_DROP, "Info_RemoveKey: oversize infostring [%s] [%s]", s, key);
 	}
 
@@ -2059,7 +2070,7 @@ void Info_RemoveKey(char *s, const char *key) {
 		s++;
 		o = value;
 
-		while (*s != '\\' && * s) {
+		while (*s != '\\' && *s) {
 			if (!*s) {
 				return;
 			}
@@ -2070,7 +2081,7 @@ void Info_RemoveKey(char *s, const char *key) {
 		*o = 0;
 
 		if (!Q_stricmp(key, pkey)) {
-			memmove(start, s, strlen(s) + 1);	// remove this part
+			memmove(start, s, strlen(s) + 1); // remove this part
 			return;
 		}
 
@@ -2091,7 +2102,7 @@ void Info_RemoveKey_Big(char *s, const char *key) {
 	char value[BIG_INFO_VALUE];
 	char *o;
 
-	if (strlen(s)>= BIG_INFO_STRING) {
+	if (strlen(s) >= BIG_INFO_STRING) {
 		Com_Error(ERR_DROP, "Info_RemoveKey_Big: oversize infostring [%s] [%s]", s, key);
 	}
 
@@ -2101,6 +2112,7 @@ void Info_RemoveKey_Big(char *s, const char *key) {
 
 	while (1) {
 		start = s;
+
 		if (*s == '\\') {
 			s++;
 		}
@@ -2119,7 +2131,7 @@ void Info_RemoveKey_Big(char *s, const char *key) {
 		s++;
 		o = value;
 
-		while (*s != '\\' && * s) {
+		while (*s != '\\' && *s) {
 			if (!*s) {
 				return;
 			}
@@ -2130,7 +2142,7 @@ void Info_RemoveKey_Big(char *s, const char *key) {
 		*o = 0;
 
 		if (!Q_stricmp(key, pkey)) {
-			strcpy(start, s);	// remove this part
+			strcpy(start, s); // remove this part
 			return;
 		}
 
@@ -2171,26 +2183,26 @@ void Info_SetValueForKey(char *s, const char *key, const char *value) {
 	char newi[MAX_INFO_STRING];
 	const char *blacklist = "\\;\"";
 
-	if (strlen(s)>= MAX_INFO_STRING) {
+	if (strlen(s) >= MAX_INFO_STRING) {
 		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]", s, key, value);
 	}
 
 	for (; *blacklist; ++blacklist) {
-		if (strchr(key, *blacklist) || strchr(value, *blacklist))
-		{
+		if (strchr(key, *blacklist) || strchr(value, *blacklist)) {
 			Com_Printf(S_COLOR_YELLOW "Can't use keys or values with a '%c': %s = %s\n", *blacklist, key, value);
 			return;
 		}
 	}
 
 	Info_RemoveKey(s, key);
+
 	if (!value || !strlen(value)) {
 		return;
 	}
 
 	Com_sprintf(newi, sizeof(newi), "\\%s\\%s", key, value);
 
-	if (strlen(newi) + strlen(s)>= MAX_INFO_STRING) {
+	if (strlen(newi) + strlen(s) >= MAX_INFO_STRING) {
 		Com_Printf("Info string length exceeded\n");
 		return;
 	}
@@ -2203,14 +2215,14 @@ void Info_SetValueForKey(char *s, const char *key, const char *value) {
 =======================================================================================================================================
 Info_SetValueForKey_Big
 
-Changes or adds a key/value pair
+Changes or adds a key/value pair.
 =======================================================================================================================================
 */
 void Info_SetValueForKey_Big(char *s, const char *key, const char *value) {
 	char newi[BIG_INFO_STRING];
 	const char *blacklist = "\\;\"";
 
-	if (strlen(s)>= BIG_INFO_STRING) {
+	if (strlen(s) >= BIG_INFO_STRING) {
 		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring");
 	}
 
@@ -2223,23 +2235,19 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value) {
 
 	Info_RemoveKey_Big(s, key);
 
-	if (!value || !strlen(value))
+	if (!value || !strlen(value)) {
 		return;
+	}
 
 	Com_sprintf(newi, sizeof(newi), "\\%s\\%s", key, value);
 
-	if (strlen(newi) + strlen(s)>= BIG_INFO_STRING) {
+	if (strlen(newi) + strlen(s) >= BIG_INFO_STRING) {
 		Com_Printf("BIG Info string length exceeded\n");
 		return;
 	}
 
 	strcat(s, newi);
 }
-
-
-
-
- //====================================================================
 
 /*
 =======================================================================================================================================
@@ -2250,8 +2258,9 @@ static qboolean Com_CharIsOneOfCharset(char c, char *set) {
 	int i;
 
 	for (i = 0; i < strlen(set); i++) {
-		if (set[i] == c)
+		if (set[i] == c) {
 			return qtrue;
+		}
 	}
 
 	return qfalse;
@@ -2266,10 +2275,11 @@ char *Com_SkipCharset(char *s, char *sep) {
 	char *p = s;
 
 	while (p) {
-		if (Com_CharIsOneOfCharset(*p, sep))
+		if (Com_CharIsOneOfCharset(*p, sep)) {
 			p++;
-		else
+		} else {
 			break;
+		}
 	}
 
 	return p;
@@ -2287,28 +2297,34 @@ char *Com_SkipTokens(char *s, int numTokens, char *sep) {
 	while (sepCount < numTokens) {
 		if (Com_CharIsOneOfCharset(*p++, sep)) {
 			sepCount++;
-			while (Com_CharIsOneOfCharset(*p, sep))
+
+			while (Com_CharIsOneOfCharset(*p, sep)) {
 				p++;
-		} else if (*p == '\0')
+			}
+		} else if (*p == '\0') {
 			break;
+		}
 	}
 
-	if (sepCount == numTokens)
+	if (sepCount == numTokens) {
 		return p;
-	else
+	} else {
 		return s;
+	}
 }
 
 /*
 =======================================================================================================================================
-
+Com_CheckColorCodes
 =======================================================================================================================================
-*/qboolean Com_CheckColorCodes(const char *s) {
+*/
+qboolean Com_CheckColorCodes(const char *s) {
 
 	while (s[0]) {
 		if (Q_IsColorString(s)) {
-			if (!s[1])
+			if (!s[1]) {
 				return qfalse;
+			}
 		}
 
 		s++;

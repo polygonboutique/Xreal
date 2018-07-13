@@ -674,7 +674,7 @@ void ACEMV_Attack(gentity_t *self) {
 	if (random() < 0.8 && ACEMV_CheckShot(self, target)) {
 		switch (self->client->pers.cmd.weapon) {
 			case WP_FLAK_CANNON:
-			case WP_ROCKET_LAUNCHER:
+			case WP_ROCKETLAUNCHER:
 				self->client->pers.cmd.buttons = (random() < 0.5) ? BUTTON_ATTACK : BUTTON_ATTACK2;
 				break;
 

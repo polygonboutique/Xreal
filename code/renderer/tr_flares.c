@@ -1,7 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2008 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -118,7 +117,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	R_TransformModelToClip(point, backEnd.orientation.modelViewMatrix, backEnd.viewParms.projectionMatrix, eye, clip);
 	// check to see if the point is completely off screen
 	for (i = 0; i < 3; i++) {
-		if (clip[i] >= clip[3] || clip[i] <= - clip[3]) {
+		if (clip[i] >= clip[3] || clip[i] <= -clip[3]) {
 			return;
 		}
 	}
@@ -438,7 +437,7 @@ void RB_RenderFlares(void) {
 		r_flareCoeff->modified = qfalse;
 	}
 #endif
-	// reset currentEntity to world so that any previously referenced entities don't have influence on the rendering of these flares (i.e. RF_ renderer flags).
+	// reset currentEntity to world so that any previously referenced entities don't have influence on the rendering of these flares (i.e. RF_ renderer flags)
 	backEnd.currentEntity = &tr.worldEntity;
 	backEnd.orientation = backEnd.viewParms.world;
 	GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);

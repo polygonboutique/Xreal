@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -62,7 +62,7 @@ void CG_BuildSolidList(void) {
 		cent = &cg_entities[snap->entities[i].number];
 		ent = &cent->currentState;
 
-		if (ent->eType == ET_ITEM || ent->eType == ET_PUSH_TRIGGER || ent->eType == ET_TELEPORT_TRIGGER) {
+		if (ent->eType == ET_ITEM || ent->eType == ET_TELEPORT_TRIGGER || ent->eType == ET_PUSH_TRIGGER) {
 			cg_triggerEntities[cg_numTriggerEntities] = cent;
 			cg_numTriggerEntities++;
 			continue;
@@ -252,7 +252,6 @@ static void CG_InterpolatePlayerState(qboolean grabAngles) {
 	playerState_t *out;
 	snapshot_t *prev, *next;
 
-	//CG_Printf("CG_InterpolatePlayerState(grabAngles = %d)\n", grabAngles);
 	out = &cg.predictedPlayerState;
 	prev = cg.snap;
 	next = cg.nextSnap;
@@ -464,11 +463,7 @@ void CG_PredictPlayerState(void) {
 	}
 	// non-predicting local movement will grab the latest angles
 	if (cg_nopredict.integer || cg_synchronousClients.integer) {
-#if defined(USE_JAVA)
-		CG_InterpolatePlayerState(qfalse);
-#else
 		CG_InterpolatePlayerState(qtrue);
-#endif
 		return;
 	}
 	// prepare for pmove
@@ -485,8 +480,6 @@ void CG_PredictPlayerState(void) {
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) {
 		cg_pmove.tracemask &= ~CONTENTS_BODY; // spectators can fly through bodies
 	}
-
-	cg_pmove.noFootsteps = (cgs.dmflags & DF_NO_FOOTSTEPS) > 0;
 	// save the state before the pmove so we can detect transitions
 	oldPlayerState = cg.predictedPlayerState;
 	current = trap_GetCurrentCmdNumber();
@@ -545,9 +538,9 @@ void CG_PredictPlayerState(void) {
 
 				cg.thisFrameTeleport = qfalse;
 			} else {
-				vec3_t adjusted;
+				vec3_t adjusted, new_angles;
 
-				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted);
+				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, cg.predictedPlayerState.viewangles, new_angles);
 
 				if (cg_showmiss.integer) {
 					if (!VectorCompare(oldPlayerState.origin, adjusted)) {
@@ -626,7 +619,7 @@ void CG_PredictPlayerState(void) {
 		return;
 	}
 	// adjust for the movement of the groundentity
-	CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.time, cg.predictedPlayerState.origin);
+	CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.time, cg.predictedPlayerState.origin, cg.predictedPlayerState.viewangles, cg.predictedPlayerState.viewangles);
 
 	if (cg_showmiss.integer) {
 		if (cg.predictedPlayerState.eventSequence > oldPlayerState.eventSequence + MAX_PS_EVENTS) {

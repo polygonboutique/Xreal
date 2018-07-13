@@ -1,8 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999 - 2005 Id Software, Inc.
-Copyright (C) 2006 - 2011 Robert Beckebans <trebor_7@users.sourceforge.net>
-Copyright (C) 2009 Peter McNeill <n27@bigpond.net.au>
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -357,19 +355,24 @@ static int QDECL LightmapNameCompare(const void *a, const void *b) {
 	return 0;
 }
 
-/*standard conversion from rgbe to float pixels*/
-/*note: Ward uses ldexp(col + 0.5, exp - (128 + 8)).  However we wanted pixels*/
-/*      in the range [0, 1] to map back into the range [0, 1].           */
+/*
+=======================================================================================================================================
+rgbe2float
+
+Standard conversion from rgbe to float pixels.
+NOTE: Ward uses ldexp(col + 0.5, exp - (128 + 8)). However we wanted pixels in the range [0, 1] to map back into the range [0, 1].
+=======================================================================================================================================
+*/
 static ID_INLINE void rgbe2float(float *red, float *green, float *blue, unsigned char rgbe[4]) {
 	float e;
 	float f;
 
-	if (rgbe[3]) { /*nonzero pixel*/
+	if (rgbe[3]) { // nonzero pixel
 		f = ldexp(1.0, rgbe[3] - (int)(128 + 8));
 		//f = ldexp(1.0, rgbe[3] - 128) / 10.0;
 		e = (rgbe[3] - 128) / 4.0f;
 
-		// RB: exp2 not defined by MSVC
+		// exp2 not defined by MSVC
 		//f = exp2(e);
 		f = pow(2, e);
 
@@ -752,15 +755,15 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName) {
 				unsigned short * hdrImage;
 
 				for (i = 0; i < numLightmaps; i++) {
-					ri.Printf(PRINT_ALL, "...loading external lightmap as RGB 16 bit half HDR '%s / %s'\n", mapName, lightmapFiles[i]);
+					ri.Printf(PRINT_ALL, "...loading external lightmap as RGB 16 bit half HDR '%s/%s'\n", mapName, lightmapFiles[i]);
 
 					width = height = 0;
-					//LoadRGBEToFloats(va("%s / %s", mapName, lightmapFiles[i]), &hdrImage, &width, &height, qtrue, qfalse, qtrue);
-					LoadRGBEToHalfs(va("%s / %s", mapName, lightmapFiles[i]), &hdrImage, &width, &height);
+					//LoadRGBEToFloats(va("%s/%s", mapName, lightmapFiles[i]), &hdrImage, &width, &height, qtrue, qfalse, qtrue);
+					LoadRGBEToHalfs(va("%s/%s", mapName, lightmapFiles[i]), &hdrImage, &width, &height);
 
-					//ri.Printf(PRINT_ALL, "...converted '%s / %s' to HALF format\n", mapName, lightmapFiles[i]);
+					//ri.Printf(PRINT_ALL, "...converted '%s/%s' to HALF format\n", mapName, lightmapFiles[i]);
 
-					image = R_AllocImage(va("%s / %s", mapName, lightmapFiles[i]), qtrue);
+					image = R_AllocImage(va("%s/%s", mapName, lightmapFiles[i]), qtrue);
 
 					if (!image){
 						Com_Dealloc(hdrImage);
@@ -787,9 +790,9 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName) {
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F_ARB, width, height, 0, GL_RGB, GL_HALF_FLOAT_ARB, hdrImage);
 
 					if (glConfig2.generateMipmapAvailable) {
-						//glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_NICEST);    // make sure its nice
+						//glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_NICEST); // make sure its nice
 						glTexParameteri(image->type, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
-						glTexParameteri(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // default to trilinear
+						glTexParameteri(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // default to trilinear
 					}
 #if 0
 					if (glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10) {
@@ -815,12 +818,12 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName) {
 				byte *ldrImage;
 
 				for (i = 0; i < numLightmaps; i++) {
-					ri.Printf(PRINT_ALL, "...loading external lightmap as RGB8 LDR '%s / %s'\n", mapName, lightmapFiles[i]);
+					ri.Printf(PRINT_ALL, "...loading external lightmap as RGB8 LDR '%s/%s'\n", mapName, lightmapFiles[i]);
 
 					width = height = 0;
-					LoadRGBEToBytes(va("%s / %s", mapName, lightmapFiles[i]), &ldrImage, &width, &height);
+					LoadRGBEToBytes(va("%s/%s", mapName, lightmapFiles[i]), &ldrImage, &width, &height);
 
-					image = R_CreateImage(va("%s / %s", mapName, lightmapFiles[i]), (byte *)ldrImage, width, height, IF_NOPICMIP|IF_LIGHTMAP|IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP);
+					image = R_CreateImage(va("%s/%s", mapName, lightmapFiles[i]), (byte *)ldrImage, width, height, IF_NOPICMIP|IF_LIGHTMAP|IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP);
 
 					Com_AddToGrowList(&tr.lightmaps, image);
 
@@ -846,9 +849,9 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName) {
 				ri.Printf(PRINT_ALL, "...loading %i deluxemaps\n", numLightmaps);
 
 				for (i = 0; i < numLightmaps; i++) {
-					ri.Printf(PRINT_ALL, "...loading external lightmap '%s / %s'\n", mapName, lightmapFiles[i]);
+					ri.Printf(PRINT_ALL, "...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
-					image = R_FindImageFile(va("%s / %s", mapName, lightmapFiles[i]), IF_NORMALMAP|IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP, NULL);
+					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP|IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP, NULL);
 					Com_AddToGrowList(&tr.deluxemaps, image);
 				}
 			}
@@ -871,18 +874,18 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName) {
 			R_SyncRenderThread();
 
 			for (i = 0; i < numLightmaps; i++) {
-				ri.Printf(PRINT_ALL, "...loading external lightmap '%s / %s'\n", mapName, lightmapFiles[i]);
+				ri.Printf(PRINT_ALL, "...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
 				if (tr.worldDeluxeMapping) {
 					if (i % 2 == 0) {
-						image = R_FindImageFile(va("%s / %s", mapName, lightmapFiles[i]), IF_LIGHTMAP|IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
+						image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP|IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
 						Com_AddToGrowList(&tr.lightmaps, image);
 					} else {
-						image = R_FindImageFile(va("%s / %s", mapName, lightmapFiles[i]), IF_NORMALMAP|IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
+						image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP|IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
 						Com_AddToGrowList(&tr.deluxemaps, image);
 					}
 				} else {
-					image = R_FindImageFile(va("%s / %s", mapName, lightmapFiles[i]), IF_LIGHTMAP|IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
+					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP|IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP, NULL);
 					Com_AddToGrowList(&tr.lightmaps, image);
 				}
 			}
@@ -8230,7 +8233,7 @@ void R_BuildCubeMaps(void) {
 
 				if (fileBufY >= REF_CUBEMAP_STORE_SIDE) {
 					// File is full, write it
-					fileName = va("maps / %s / cm_%04d.png", s_worldData.baseName, fileCount);
+					fileName = va("maps/%s / cm_%04d.png", s_worldData.baseName, fileCount);
 					ri.Printf(PRINT_ALL, "\nwriting %s\n", fileName);
 					ri.FS_WriteFile(fileName, fileBuf, 1); // create path
 					SavePNG(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE, 4, qfalse);
@@ -8270,9 +8273,9 @@ void R_BuildCubeMaps(void) {
 #if 0
 	// write buffer if theres any still unwritten
 	if (fileBufX != 0 || fileBufY != 0) {
-		fileName = va("maps / %s / cm_%04d.png", s_worldData.baseName, fileCount);
+		fileName = va("maps/%s / cm_%04d.png", s_worldData.baseName, fileCount);
 		ri.Printf(PRINT_ALL, "writing %s\n", fileName);
-		ri.FS_WriteFile(fileName, fileBuf, 1);	// create path
+		ri.FS_WriteFile(fileName, fileBuf, 1); // create path
 		SavePNG(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE, 4, qfalse);
 	}
 
@@ -8353,7 +8356,7 @@ void RE_LoadWorldMap(const char *name) {
 		ri.Error(ERR_DROP, "ERROR: attempted to redundantly load world map\n");
 	}
 
-	ri.Printf(PRINT_ALL, "-----RE_LoadWorldMap(%s) -----\n", name);
+	ri.Printf(PRINT_ALL, "----- RE_LoadWorldMap(%s) -----\n", name);
 	// set default sun direction to be used if it isn't overridden by a shader
 	tr.sunDirection[0] = 0.45f;
 	tr.sunDirection[1] = 0.3f;
@@ -8406,7 +8409,7 @@ void RE_LoadWorldMap(const char *name) {
 	i = LittleLong(header->version);
 
 	if (i != BSP_VERSION) {
-		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s has wrong version number(%i should be %i)", name, i, BSP_VERSION);
+		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s has wrong version number (%i should be %i)", name, i, BSP_VERSION);
 	}
 	// swap all the lumps
 	for (i = 0; i < sizeof(dheader_t) / 4; i++) {

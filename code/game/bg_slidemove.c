@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -26,8 +26,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  Part of bg_pmove functionality.
 **************************************************************************************************************************************/
 
-#include <q_shared.h>
-#include <bg_public.h>
+#include "../qcommon/q_shared.h"
+#include "bg_public.h"
 #include "bg_local.h"
 
 /*

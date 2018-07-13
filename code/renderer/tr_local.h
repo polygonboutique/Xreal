@@ -2131,7 +2131,7 @@ typedef struct {
 	vec3_t vieworg;
 	vec3_t viewaxis[3];	// transformation matrix
 	int time;		// time in milliseconds for shader effects and other time dependent rendering issues
-	int rdflags;	// RDF_NOWORLDMODEL, etc
+	int rdflags;	// RDF_NOWORLDMODEL, etc.
 	// 1 bits will prevent the associated area from rendering at all
 	byte areamask[MAX_MAP_AREA_BYTES];
 	qboolean areamaskModified;	// qtrue if areamask changed since last scene

@@ -34,17 +34,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define POOLSIZE	128 * 1024
 
-int             ui_numBots;
-static char    *ui_botInfos[MAX_BOTS];
+int ui_numBots;
+static char *ui_botInfos[MAX_BOTS];
 
-static int      ui_numArenas;
-static char    *ui_arenaInfos[MAX_ARENAS];
+static int ui_numArenas;
+static char *ui_arenaInfos[MAX_ARENAS];
 
-static int      ui_numSinglePlayerArenas;
-static int      ui_numSpecialSinglePlayerArenas;
+static int ui_numSinglePlayerArenas;
+static int ui_numSpecialSinglePlayerArenas;
 
-static char     memoryPool[POOLSIZE];
-static int      allocPoint, outOfMemory;
+static char memoryPool[POOLSIZE];
+static int allocPoint, outOfMemory;
 
 
 /*
@@ -54,7 +54,7 @@ UI_Alloc
 */
 void           *UI_Alloc(int size)
 {
-	char           *p;
+	char *p;
 
 	if(allocPoint + size > POOLSIZE)
 	{
@@ -87,10 +87,10 @@ UI_ParseInfos
 */
 int UI_ParseInfos(char *buf, int max, char *infos[])
 {
-	char           *token;
-	int             count;
-	char            key[MAX_TOKEN_CHARS];
-	char            info[MAX_INFO_STRING];
+	char *token;
+	int count;
+	char key[MAX_TOKEN_CHARS];
+	char info[MAX_INFO_STRING];
 
 	count = 0;
 
@@ -153,9 +153,9 @@ UI_LoadArenasFromFile
 */
 static void UI_LoadArenasFromFile(char *filename)
 {
-	int             len;
+	int len;
 	fileHandle_t    f;
-	char            buf[MAX_ARENAS_TEXT];
+	char buf[MAX_ARENAS_TEXT];
 
 	len = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if(!f)
@@ -184,16 +184,16 @@ UI_LoadArenas
 */
 static void UI_LoadArenas(void)
 {
-	int             numdirs;
+	int numdirs;
 	vmCvar_t        arenasFile;
-	char            filename[128];
-	char            dirlist[MAX_ARENAS];
-	char           *dirptr;
-	int             i, n;
-	int             dirlen;
-	char           *type;
-	char           *tag;
-	int             singlePlayerNum, specialNum, otherNum;
+	char filename[128];
+	char dirlist[MAX_ARENAS];
+	char *dirptr;
+	int i, n;
+	int dirlen;
+	char *type;
+	char *tag;
+	int singlePlayerNum, specialNum, otherNum;
 
 	ui_numArenas = 0;
 
@@ -298,10 +298,10 @@ static void UI_LoadArenas(void)
 UI_GetArenaInfoByNumber
 ===============
 */
-const char     *UI_GetArenaInfoByNumber(int num)
+const char *UI_GetArenaInfoByNumber(int num)
 {
-	int             n;
-	char           *value;
+	int n;
+	char *value;
 
 	if(num < 0 || num >= ui_numArenas)
 	{
@@ -327,9 +327,9 @@ const char     *UI_GetArenaInfoByNumber(int num)
 UI_GetArenaInfoByNumber
 ===============
 */
-const char     *UI_GetArenaInfoByMap(const char *map)
+const char *UI_GetArenaInfoByMap(const char *map)
 {
-	int             n;
+	int n;
 
 	for(n = 0; n < ui_numArenas; n++)
 	{
@@ -348,9 +348,9 @@ const char     *UI_GetArenaInfoByMap(const char *map)
 UI_GetSpecialArenaInfo
 ===============
 */
-const char     *UI_GetSpecialArenaInfo(const char *tag)
+const char *UI_GetSpecialArenaInfo(const char *tag)
 {
-	int             n;
+	int n;
 
 	for(n = 0; n < ui_numArenas; n++)
 	{
@@ -370,9 +370,9 @@ UI_LoadBotsFromFile
 */
 static void UI_LoadBotsFromFile(char *filename)
 {
-	int             len;
+	int len;
 	fileHandle_t    f;
-	char            buf[MAX_BOTS_TEXT];
+	char buf[MAX_BOTS_TEXT];
 
 	len = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if(!f)
@@ -404,12 +404,12 @@ UI_LoadBots
 static void UI_LoadBots(void)
 {
 	vmCvar_t        botsFile;
-	int             numdirs;
-	char            filename[128];
-	char            dirlist[1024];
-	char           *dirptr;
-	int             i;
-	int             dirlen;
+	int numdirs;
+	char filename[128];
+	char dirlist[1024];
+	char *dirptr;
+	int i;
+	int dirlen;
 
 	ui_numBots = 0;
 
@@ -442,7 +442,7 @@ static void UI_LoadBots(void)
 UI_GetBotInfoByNumber
 ===============
 */
-char           *UI_GetBotInfoByNumber(int num)
+char *UI_GetBotInfoByNumber(int num)
 {
 	if(num < 0 || num >= ui_numBots)
 	{
@@ -458,10 +458,10 @@ char           *UI_GetBotInfoByNumber(int num)
 UI_GetBotInfoByName
 ===============
 */
-char           *UI_GetBotInfoByName(const char *name)
+char *UI_GetBotInfoByName(const char *name)
 {
-	int             n;
-	char           *value;
+	int n;
+	char *value;
 
 	for(n = 0; n < ui_numBots; n++)
 	{
@@ -489,12 +489,12 @@ Returns the player's best finish on a given level, 0 if the have not played the 
 */
 void UI_GetBestScore(int level, int *score, int *skill)
 {
-	int             n;
-	int             skillScore;
-	int             bestScore;
-	int             bestScoreSkill;
-	char            arenaKey[16];
-	char            scores[MAX_INFO_VALUE];
+	int n;
+	int skillScore;
+	int bestScore;
+	int bestScoreSkill;
+	char arenaKey[16];
+	char scores[MAX_INFO_VALUE];
 
 	if(!score || !skill)
 	{
@@ -542,10 +542,10 @@ Set the player's best finish for a level
 */
 void UI_SetBestScore(int level, int score)
 {
-	int             skill;
-	int             oldScore;
-	char            arenaKey[16];
-	char            scores[MAX_INFO_VALUE];
+	int skill;
+	int oldScore;
+	char arenaKey[16];
+	char scores[MAX_INFO_VALUE];
 
 	// validate score
 	if(score < 1 || score > 8)
@@ -584,9 +584,9 @@ UI_LogAwardData
 */
 void UI_LogAwardData(int award, int data)
 {
-	char            key[16];
-	char            awardData[MAX_INFO_VALUE];
-	int             oldValue;
+	char key[16];
+	char awardData[MAX_INFO_VALUE];
+	int oldValue;
 
 	if(data == 0)
 	{
@@ -616,8 +616,8 @@ UI_GetAwardLevel
 */
 int UI_GetAwardLevel(int award)
 {
-	char            key[16];
-	char            awardData[MAX_INFO_VALUE];
+	char key[16];
+	char awardData[MAX_INFO_VALUE];
 
 	trap_Cvar_VariableStringBuffer("g_spAwards", awardData, sizeof(awardData));
 
@@ -633,12 +633,12 @@ UI_TierCompleted
 */
 int UI_TierCompleted(int levelWon)
 {
-	int             level;
-	int             n;
-	int             tier;
-	int             score;
-	int             skill;
-	const char     *info;
+	int level;
+	int n;
+	int tier;
+	int score;
+	int skill;
+	const char *info;
 
 	tier = levelWon / ARENAS_PER_TIER;
 	level = tier * ARENAS_PER_TIER;
@@ -677,8 +677,8 @@ UI_ShowTierVideo
 */
 qboolean UI_ShowTierVideo(int tier)
 {
-	char            key[16];
-	char            videos[MAX_INFO_VALUE];
+	char key[16];
+	char videos[MAX_INFO_VALUE];
 
 	if(tier <= 0)
 	{
@@ -707,8 +707,8 @@ UI_CanShowTierVideo
 */
 qboolean UI_CanShowTierVideo(int tier)
 {
-	char            key[16];
-	char            videos[MAX_INFO_VALUE];
+	char key[16];
+	char videos[MAX_INFO_VALUE];
 
 	if(!tier)
 	{
@@ -736,10 +736,10 @@ Returns the next level the player has not won
 */
 int UI_GetCurrentGame(void)
 {
-	int             level;
-	int             rank;
-	int             skill;
-	const char     *info;
+	int level;
+	int rank;
+	int skill;
+	const char *info;
 
 	info = UI_GetSpecialArenaInfo("training");
 	if(info)
@@ -840,10 +840,10 @@ UI_SPUnlock_f
 */
 void UI_SPUnlock_f(void)
 {
-	char            arenaKey[16];
-	char            scores[MAX_INFO_VALUE];
-	int             level;
-	int             tier;
+	char arenaKey[16];
+	char scores[MAX_INFO_VALUE];
+	int level;
+	int tier;
 
 	// get scores for skill 1
 	trap_Cvar_VariableStringBuffer("g_spScores1", scores, MAX_INFO_VALUE);
@@ -875,9 +875,9 @@ UI_SPUnlockMedals_f
 */
 void UI_SPUnlockMedals_f(void)
 {
-	int             n;
-	char            key[16];
-	char            awardData[MAX_INFO_VALUE];
+	int n;
+	char key[16];
+	char awardData[MAX_INFO_VALUE];
 
 	trap_Cvar_VariableStringBuffer("g_spAwards", awardData, MAX_INFO_VALUE);
 

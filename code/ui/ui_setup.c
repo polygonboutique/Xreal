@@ -52,17 +52,17 @@ typedef struct
 {
 	menuframework_s menu;
 
-	menutext_s      banner;
-	menubitmap_s    framel;
-	menubitmap_s    framer;
-	menutext_s      setupplayer;
-	menutext_s      setupcontrols;
-	menutext_s      setupsystem;
-	menutext_s      game;
-//  menutext_s      load;
-//  menutext_s      save;
-	menutext_s      defaults;
-	menubitmap_s    back;
+	menutext_s banner;
+	menubitmap_s framel;
+	menubitmap_s framer;
+	menutext_s setupplayer;
+	menutext_s setupcontrols;
+	menutext_s setupsystem;
+	menutext_s game;
+//  menutext_s load;
+//  menutext_s save;
+	menutext_s defaults;
+	menubitmap_s back;
 } setupMenuInfo_t;
 
 static setupMenuInfo_t setupMenuInfo;
@@ -160,7 +160,7 @@ UI_SetupMenu_Init
 */
 static void UI_SetupMenu_Init(void)
 {
-	int             y;
+	int y;
 
 	UI_SetupMenu_Cache();
 

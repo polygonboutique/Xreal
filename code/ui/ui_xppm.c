@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // ui_xppm.c -- handle md5 model stuff ( instead of ui_players.c )
 #include "ui_local.h"
 
-static int      dp_realtime;
+static int dp_realtime;
 
 #define SWINGSPEED				0.3f
 
@@ -35,18 +35,18 @@ static int      dp_realtime;
 UI_XPPMParseCharacterFile
 
 Read a configuration file containing body.md5mesh custom
-models/players/visor/character.cfg, etc
+models/players/visor/character.cfg, etc.
 ======================
 */
 
-static qboolean UI_XPPMParseCharacterFile(const char *filename, playerInfo_t * pi)
+static qboolean UI_XPPMParseCharacterFile(const char *filename, playerInfo_t *pi)
 {
-	char           *text_p, *prev;
-	int             len;
-	int             i;
-	char           *token;
-	int             skip;
-	char            text[20000];
+	char *text_p, *prev;
+	int len;
+	int i;
+	char *token;
+	int skip;
+	char text[20000];
 	fileHandle_t    f;
 
 	Com_Printf("UI_XPPM: Loading configuration %s\n", filename);
@@ -157,11 +157,11 @@ static qboolean UI_XPPMParseCharacterFile(const char *filename, playerInfo_t * p
 	return qtrue;
 }
 
-static qboolean UI_XPPM_RegisterPlayerAnimation(playerInfo_t * pi, const char *modelName, int anim, const char *animName,
+static qboolean UI_XPPM_RegisterPlayerAnimation(playerInfo_t *pi, const char *modelName, int anim, const char *animName,
 										   qboolean loop, qboolean reversed, qboolean clearOrigin)
 {
-	char            filename[MAX_QPATH];
-	int             frameRate;
+	char filename[MAX_QPATH];
+	int frameRate;
 
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/%s.md5anim", modelName, animName);
@@ -211,10 +211,10 @@ UI_XPPM_RegisterModel
 ==========================
 */
 
-qboolean UI_XPPM_RegisterModel(playerInfo_t * pi, const char *modelName, const char *skinName)
+qboolean UI_XPPM_RegisterModel(playerInfo_t *pi, const char *modelName, const char *skinName)
 {
-	int             i;
-	char            filename[MAX_QPATH * 2];
+	int i;
+	char filename[MAX_QPATH * 2];
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/body.md5mesh", modelName);
 
@@ -303,7 +303,7 @@ qboolean UI_XPPM_RegisterModel(playerInfo_t * pi, const char *modelName, const c
 	return qtrue;
 }
 
-/*static void UI_PlayerFloatSprite(playerInfo_t * pi, vec3_t origin, qhandle_t shader)
+/*static void UI_PlayerFloatSprite(playerInfo_t *pi, vec3_t origin, qhandle_t shader)
 {
 	refEntity_t     ent;
 
@@ -318,9 +318,9 @@ qboolean UI_XPPM_RegisterModel(playerInfo_t * pi, const char *modelName, const c
 }*/
 
 
-void UI_XPPM_TransformSkeleton(refSkeleton_t * skel, const vec3_t scale)
+void UI_XPPM_TransformSkeleton(refSkeleton_t *skel, const vec3_t scale)
 {
-	int             i;
+	int i;
 	refBone_t      *bone;
 
 	switch (skel->type)
@@ -377,9 +377,9 @@ void UI_XPPM_TransformSkeleton(refSkeleton_t * skel, const vec3_t scale)
 /*static void UI_XPPM_SwingAngles(float destination, float swingTolerance, float clampTolerance,
 						   float speed, float *angle, qboolean * swinging)
 {
-	float           swing;
-	float           move;
-	float           scale;
+	float swing;
+	float move;
+	float scale;
 
 	if(!*swinging)
 	{
@@ -447,7 +447,7 @@ void UI_XPPM_TransformSkeleton(refSkeleton_t * skel, const vec3_t scale)
 	}
 }
 
-static float UI_XPPM_MovedirAdjustment(playerInfo_t * pi)
+static float UI_XPPM_MovedirAdjustment(playerInfo_t *pi)
 {
 	vec3_t          relativeAngles;
 	vec3_t          moveVector;
@@ -495,10 +495,10 @@ static float UI_XPPM_MovedirAdjustment(playerInfo_t * pi)
 	return -22;
 }
 
-static void UI_XPPM_PlayerAngles(playerInfo_t * pi, vec3_t legsAngles, vec3_t torsoAngles, vec3_t headAngles)
+static void UI_XPPM_PlayerAngles(playerInfo_t *pi, vec3_t legsAngles, vec3_t torsoAngles, vec3_t headAngles)
 {
-	float           dest;
-	float           adjust;
+	float dest;
+	float adjust;
 
 	VectorCopy(pi->viewAngles, headAngles);
 	headAngles[YAW] = AngleNormalize360(headAngles[YAW]);
@@ -550,7 +550,7 @@ static void UI_XPPM_PlayerAngles(playerInfo_t * pi, vec3_t legsAngles, vec3_t to
 
 
 
-void UI_XPPM_Player(float x, float y, float w, float h, playerInfo_t * pi, int time)
+void UI_XPPM_Player(float x, float y, float w, float h, playerInfo_t *pi, int time)
 {
 	refEntity_t     body;
 	refEntity_t     podium;
@@ -563,12 +563,12 @@ void UI_XPPM_Player(float x, float y, float w, float h, playerInfo_t * pi, int t
 	vec3_t          podiumAngles;
 
 	vec3_t          origin;
-	int             renderfx;
+	int renderfx;
 
 	vec3_t          mins = { -16, -16, -24 };
 	vec3_t          maxs = { 16, 16, 32 };
-	float           len;
-	float           xx;
+	float len;
+	float xx;
 
 	if(!pi->bodyModel)
 		return;

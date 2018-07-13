@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -28,7 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "g_local.h"
 
-/*QUAKED info_player_deathmatch(1 0 1) (-16 -16 - 24) (16 16 32) initial
+/*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 56) INITIAL
 potential spawning position for deathmatch games.
 The first time a player enters the game, they will be at an 'initial' spot.
 Targets will be fired when someone spawns in on them.
@@ -50,14 +50,14 @@ void SP_info_player_deathmatch(gentity_t *ent) {
 		ent->flags |= FL_NO_HUMANS;
 	}
 
-	G_SpawnInt("initial", "0", &i);
+	G_SpawnInt("INITIAL", "0", &i);
 
 	if (i) {
 		ent->spawnflags |= 1;
 	}
 }
 
-/*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32)
+/*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 56)
 equivalent to info_player_deathmatch
 */
 void SP_info_player_start(gentity_t *ent) {
@@ -116,7 +116,6 @@ qboolean SpotWouldTelefrag(gentity_t *spot) {
 	return qfalse;
 }
 
-#define MAX_SPAWN_POINTS 128
 /*
 =======================================================================================================================================
 SelectNearestDeathmatchSpawnPoint
@@ -148,7 +147,6 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from) {
 	return nearestSpot;
 }
 
-#define MAX_SPAWN_POINTS 128
 /*
 =======================================================================================================================================
 SelectRandomDeathmatchSpawnPoint
@@ -405,10 +403,8 @@ A player is respawning, so make an entity that looks just like the existing corp
 void CopyToBodyQue(gentity_t *ent) {
 // otty: removed this
 /*
-#ifdef MISSIONPACK
 	gentity_t *e;
 	int i;
-#endif
 	gentity_t *body;
 	int contents;
 
@@ -420,18 +416,17 @@ void CopyToBodyQue(gentity_t *ent) {
 		return;
 	}
 	// grab a body que and cycle to the next one
-	body = level.bodyQue[level.bodyQueIndex];
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
 
 	trap_UnlinkEntity(body);
-
+	body = level.bodyQue[level.bodyQueIndex];
 	body->s = ent->s;
 	body->s.eFlags = EF_DEAD; // clear EF_TALK, etc.
-#ifdef MISSIONPACK
+
 	if (ent->s.eFlags & EF_KAMIKAZE) {
 		body->s.eFlags |= EF_KAMIKAZE;
 		// check if there is a kamikaze timer around for this owner
-		for (i = 0; i < MAX_GENTITIES; i++) {
+		for (i = 0; i < level.num_entities; i++) {
 			e = &g_entities[i];
 
 			if (!e->inuse) {
@@ -450,7 +445,7 @@ void CopyToBodyQue(gentity_t *ent) {
 			break;
 		}
 	}
-#endif
+
 	body->s.powerups = 0; // clear powerups
 	body->s.loopSound = 0; // clear lava burning
 	body->s.number = body - g_entities;
@@ -608,8 +603,8 @@ PickTeam
 team_t PickTeam(int ignoreClientNum) {
 	int counts[TEAM_NUM_TEAMS];
 
-	counts[TEAM_BLUE] = TeamCount(ignoreClientNum, TEAM_BLUE);
 	counts[TEAM_RED] = TeamCount(ignoreClientNum, TEAM_RED);
+	counts[TEAM_BLUE] = TeamCount(ignoreClientNum, TEAM_BLUE);
 
 	if (counts[TEAM_BLUE] > counts[TEAM_RED]) {
 		return TEAM_RED;
@@ -626,25 +621,6 @@ team_t PickTeam(int ignoreClientNum) {
 	return TEAM_BLUE;
 }
 
-/*
-=======================================================================================================================================
-ForceClientSkin
-
-Forces a client's skin (for teamplay).
-=======================================================================================================================================
-*/
-/*
-static void ForceClientSkin(gclient_t *client, char *model, const char *skin) {
-	char *p;
-
-	if ((p = Q_strrchr(model, '/')) != 0) {
-		*p = 0;
-	}
-
-	Q_strcat(model, MAX_QPATH, "/");
-	Q_strcat(model, MAX_QPATH, skin);
-}
-*/
 /*
 =======================================================================================================================================
 ClientCleanName
@@ -813,7 +789,7 @@ void ClientUserinfoChanged(int clientNum) {
 	// set model
 	Q_strncpyz(model, Info_ValueForKey(userinfo, "model"), sizeof(model));
 	// bots set their team a few frames later
-	if (g_gametype.integer >= GT_TEAM && g_entities[clientNum].r.svFlags & SVF_BOT) {
+	if (g_gametype.integer > GT_TOURNAMENT && g_entities[clientNum].r.svFlags & SVF_BOT) {
 		s = Info_ValueForKey(userinfo, "team");
 
 		if (!Q_stricmp(s, "red") || !Q_stricmp(s, "r")) {
@@ -841,13 +817,13 @@ void ClientUserinfoChanged(int clientNum) {
 	}
 	// don't ever use a default skin in teamplay, it would just waste memory
 	// however bots will always join a team but they spawn in as spectator
-	if (g_gametype.integer >= GT_TEAM && team == TEAM_SPECTATOR) {
+	if (g_gametype.integer > GT_TOURNAMENT && team == TEAM_SPECTATOR) {
 		ForceClientSkin(client, model, "red");
 //		ForceClientSkin(client, headModel, "red");
 	}
 */
 #ifdef MISSIONPACK
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		client->pers.teamInfo = qtrue;
 	} else {
 		s = Info_ValueForKey(userinfo, "teamoverlay");
@@ -903,11 +879,6 @@ void ClientUserinfoChanged(int clientNum) {
 	}
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, userinfo);
-#ifdef G_LUA
-	// Lua API callbacks
-	// This only gets called when the ClientUserinfo is changed, replicating ETPro's behaviour.
-	G_LuaHook_ClientUserinfoChanged(clientNum);
-#endif
 	// this is not the userinfo, more like the configstring actually
 	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, s);
 }
@@ -955,12 +926,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 			return "Invalid password";
 		}
 	}
-#ifdef G_LUA
-	// Lua API callbacks(check with Lua scripts)
-	if (G_LuaHook_ClientConnect(clientNum, firstTime, isBot, reason)) {
-		return "Connection Rejected by lua module.";
-	}
-#endif
 	// they can connect
 	ent->client = level.clients + clientNum;
 	client = ent->client;
@@ -969,7 +934,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	memset(client, 0, sizeof(*client));
 
 	client->pers.connected = CON_CONNECTING;
-	// read or initialize the session data
+	// read or INITIALize the session data
 	if (firstTime || level.newSession) {
 		G_InitSessionData(client, userinfo);
 	}
@@ -983,17 +948,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	if (isBot) {
 		ent->r.svFlags |= SVF_BOT;
 		ent->inuse = qtrue;
-#if defined(BRAINWORKS)
-		if (!G_BotConnect(clientNum, !firstTime)) {
-			return "BotConnectfailed";
-		}
-#elif defined(ACEBOT)
-		if (!ACESP_BotConnect(clientNum, !firstTime)) {
-			return "BotConnectfailed";
-		}
-#else
 		return "BotConnectfailed";
-#endif
 	}
 	// get and distribute relevant parameters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
@@ -1003,7 +958,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 		trap_SendServerCommand(-1, va("print\"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 	}
 
-	if (g_gametype.integer >= GT_TEAM && client->sess.sessionTeam != TEAM_SPECTATOR) {
+	if (g_gametype.integer > GT_TOURNAMENT && client->sess.sessionTeam != TEAM_SPECTATOR) {
 		BroadcastTeamChange(client, -1);
 	}
 	// count current clients and rank for scoreboard
@@ -1071,10 +1026,6 @@ void ClientBegin(int clientNum) {
 	G_LogPrintf("ClientBegin: %i\n", clientNum);
 	// count current clients and rank for scoreboard
 	CalculateRanks();
-#ifdef G_LUA
-	// Lua API callbacks
-	G_LuaHook_ClientBegin(clientNum);
-#endif
 }
 
 /*
@@ -1108,20 +1059,20 @@ void ClientSpawn(gentity_t *ent) {
 	// do it before setting health back up, so farthest ranging doesn't count this client
 	if (client->sess.sessionTeam == TEAM_SPECTATOR) {
 		spawnPoint = SelectSpectatorSpawnPoint(spawn_origin, spawn_angles);
-	} else if (g_gametype.integer >= GT_CTF) {
+	} else if (g_gametype.integer > GT_TEAM) {
 		// all base oriented team games use the CTF spawn points
 		spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles);
 	} else {
 		do {
 			// the first spawn should be at a good looking spot
-			if (!client->pers.initialSpawn && client->pers.localClient) {
-				client->pers.initialSpawn = qtrue;
+			if (!client->pers.INITIALSpawn && client->pers.localClient) {
+				client->pers.INITIALSpawn = qtrue;
 				spawnPoint = SelectInitialSpawnPoint(spawn_origin, spawn_angles);
 			} else {
 				// don't spawn near existing origin if possible
 				spawnPoint = SelectSpawnPoint(client->ps.origin, spawn_origin, spawn_angles);
 			}
-			// Tim needs to prevent bots from spawning at the initial point
+			// Tim needs to prevent bots from spawning at the INITIAL point
 			// on q3dm0...
 			if ((spawnPoint->flags & FL_NO_BOTS) && (ent->r.svFlags & SVF_BOT)) {
 				continue; // try again
@@ -1174,7 +1125,7 @@ void ClientSpawn(gentity_t *ent) {
 	// increment the spawncount so the client will detect the respawn
 	client->ps.persistant[PERS_SPAWN_COUNT]++;
 	client->ps.persistant[PERS_TEAM] = client->sess.sessionTeam;
-	client->airOutTime = level.time + 12000;
+	client->airOutTime = level.time + 30000;
 
 	trap_GetUserinfo(index, userinfo, sizeof(userinfo));
 	// set max health
@@ -1184,9 +1135,9 @@ void ClientSpawn(gentity_t *ent) {
 		client->pers.maxHealth = 100;
 	}
 	// clear entity values
-	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags = flags;
-
+	// health will count down towards max_health
+	ent->health = client->ps.stats[STAT_HEALTH] = 125;
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
 	ent->client = &level.clients[index];
 	ent->takedamage = qtrue;
@@ -1250,12 +1201,6 @@ void ClientSpawn(gentity_t *ent) {
 	} else {
 		// fire the targets of the spawn point
 		G_UseTargets(spawnPoint, ent);
-#ifdef G_LUA
-		// Lua API callbacks
-		if (spawnPoint && spawnPoint->luaTrigger) {
-			G_LuaHook_EntityTrigger(spawnPoint->luaTrigger, spawnPoint->s.number, ent->s.number);
-		}
-#endif
 		// select the highest weapon number available, after any spawn given items have fired
 		client->ps.weapon = 1;
 
@@ -1266,16 +1211,7 @@ void ClientSpawn(gentity_t *ent) {
 			}
 		}
 	}
-#if defined(ACEBOT)
-	if (ent->r.svFlags & SVF_BOT) {
-		ACESP_SetupBotState(ent);
-	}
-#endif
-#ifdef G_LUA
-	// Lua API callbacks
-	G_LuaHook_ClientSpawn(ent->s.number);
-#endif
-	// run a client frame to drop exactly to the floor, initialize animations and other things
+	// run a client frame to drop exactly to the floor, INITIALize animations and other things
 	client->ps.commandTime = level.time - 100;
 	ent->client->pers.cmd.serverTime = level.time;
 
@@ -1313,10 +1249,6 @@ void ClientDisconnect(int clientNum) {
 	if (!ent->client) {
 		return;
 	}
-#ifdef G_LUA
-	// Lua API callbacks
-	G_LuaHook_ClientDisconnect(clientNum);
-#endif
 	// stop any following clients
 	for (i = 0; i < level.maxclients; i++) {
 		if (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR && level.clients[i].sess.spectatorState == SPECTATOR_FOLLOW && level.clients[i].sess.spectatorClient == clientNum) {
@@ -1329,9 +1261,8 @@ void ClientDisconnect(int clientNum) {
 		tent->s.clientNum = ent->s.clientNum;
 		// they don't get to take powerups with them! Especially important for stuff like CTF flags
 		TossClientItems(ent);
-#if defined(MISSIONPACK)
 		TossClientPersistantPowerups(ent);
-#endif
+
 		if (g_gametype.integer == GT_HARVESTER) {
 			TossClientCubes(ent);
 		}

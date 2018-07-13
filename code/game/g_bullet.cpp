@@ -350,7 +350,7 @@ static void G_ShootBox(const vec3_t start, const vec3_t dir) {
 	bolt->physics = G_PhysicsBox_Physics;
 	bolt->s.eType = ET_PHYSICS_BOX;
 	bolt->r.svFlags = SVF_BROADCAST;
-	// bolt->s.weapon = WP_ROCKET_LAUNCHER;
+	// bolt->s.weapon = WP_ROCKETLAUNCHER;
 	// bolt->r.ownerNum = ent->s.number;
 	// bolt->parent = ent;
 	// bolt->damage = 100;

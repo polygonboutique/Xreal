@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -28,9 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "q_shared.h"
 #include "qcommon.h"
-#if defined(USE_JAVA)
-#include "vm_java.h"
-#elif defined(USE_MONO)
+#if defined(USE_MONO)
 #include "vm_mono.h"
 #endif
 #include <setjmp.h>
@@ -190,8 +188,8 @@ void QDECL Com_Printf(const char *fmt, ...) {
 	Sys_Print(msg);
 	// logfile
 	if (com_logfile && com_logfile->integer) {
-		// TTimo: only open the qconsole.log if the filesystem is in an initialized state
-		// also, avoid recursing in the qconsole.log opening (i.e. if fs_debug is on)
+		// TTimo: only open the console.log if the filesystem is in an initialized state
+		// also, avoid recursing in the console.log opening (i.e. if fs_debug is on)
 		if (!logfile && FS_Initialized() && !opening_qconsole) {
 			struct tm *newtime;
 			time_t aclock;
@@ -201,7 +199,7 @@ void QDECL Com_Printf(const char *fmt, ...) {
 			time(&aclock);
 
 			newtime = localtime(&aclock);
-			logfile = FS_FOpenFileWrite("qconsole.log");
+			logfile = FS_FOpenFileWrite("console.log");
 
 			if (logfile) {
 				Com_Printf("logfile opened on %s\n", asctime(newtime));
@@ -211,7 +209,7 @@ void QDECL Com_Printf(const char *fmt, ...) {
 					FS_ForceFlush(logfile);
 				}
 			} else {
-				Com_Printf("Opening qconsole.log failed!\n");
+				Com_Printf("Opening console.log failed!\n");
 				Cvar_SetValue("logfile", 0);
 			}
 
@@ -321,9 +319,7 @@ void QDECL Com_Error(int code, const char *fmt, ...) {
 	} else {
 		CL_Shutdown(va(S_COLOR_RED "Client fatal crashed: %s" S_COLOR_WHITE, com_errorMessage));
 		SV_Shutdown(va(S_COLOR_RED "Server fatal crashed: %s" S_COLOR_WHITE, com_errorMessage));
-#if defined(USE_JAVA)
-		JVM_Shutdown();
-#elif defined(USE_MONO)
+#if defined(USE_MONO)
 		Mono_Shutdown();
 #endif
 	}
@@ -365,9 +361,9 @@ void Com_Quit_f(void) {
 
 	All of these are valid:
 
-	quake3 +set test blah +map test
-	quake3 set test blah+map test
-	quake3 set test blah + map test
+	quakewars +set test blah +map test
+	quakewars set test blah+map test
+	quakewars set test blah + map test
 
 =======================================================================================================================================
 */
@@ -413,7 +409,7 @@ void Com_ParseCommandLine(char *commandLine) {
 =======================================================================================================================================
 Com_SafeMode
 
-Check for "safe" on the command line, which will skip loading of q3config.cfg.
+Check for "safe" on the command line, which will skip loading of config.cfg.
 =======================================================================================================================================
 */
 qboolean Com_SafeMode(void) {
@@ -2451,8 +2447,8 @@ void Com_ExecuteCfg(void) {
 	Cbuf_Execute(); // always execute after exec to prevent text buffer overflowing
 
 	if (!Com_SafeMode()) {
-		// skip the q3config.cfg and autoexec.cfg if "safe" is on the command line
-		Cbuf_ExecuteText(EXEC_NOW, "exec " Q3CONFIG_CFG "\n");
+		// skip the config.cfg and autoexec.cfg if "safe" is on the command line
+		Cbuf_ExecuteText(EXEC_NOW, "exec " QWCONFIG_CFG "\n");
 		Cbuf_Execute();
 		Cbuf_ExecuteText(EXEC_NOW, "exec autoexec.cfg\n");
 		Cbuf_Execute();
@@ -2509,120 +2505,6 @@ void Com_GameRestart_f(void) {
 	Com_GameRestart(0, qtrue);
 }
 
-#ifndef STANDALONE
-// TTimo: centralizing the cl_cdkey stuff after I discovered a buffer overflow problem with the dedicated server version
-// not sure it's necessary to have different defaults for regular and dedicated, but I don't want to risk it
-// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=470
-#ifndef DEDICATED
-char cl_cdkey[34] = "                                ";
-#else
-char cl_cdkey[34] = "123456789";
-#endif
-/*
-=======================================================================================================================================
-Com_ReadCDKey
-=======================================================================================================================================
-*/
-qboolean CL_CDKeyValidate(const char *key, const char *checksum);
-void Com_ReadCDKey(const char *filename) {
-	fileHandle_t f;
-	char buffer[33];
-	char fbuffer[MAX_OSPATH];
-
-	Com_sprintf(fbuffer, sizeof(fbuffer), "%s/q3key", filename);
-
-	FS_SV_FOpenFileRead(fbuffer, &f);
-
-	if (!f) {
-		Q_strncpyz(cl_cdkey, "                ", 17);
-		return;
-	}
-
-	Com_Memset(buffer, 0, sizeof(buffer));
-
-	FS_Read(buffer, 16, f);
-	FS_FCloseFile(f);
-
-	if (CL_CDKeyValidate(buffer, NULL)) {
-		Q_strncpyz(cl_cdkey, buffer, 17);
-	} else {
-		Q_strncpyz(cl_cdkey, "                ", 17);
-	}
-}
-
-/*
-=======================================================================================================================================
-Com_AppendCDKey
-=======================================================================================================================================
-*/
-void Com_AppendCDKey(const char *filename) {
-	fileHandle_t f;
-	char buffer[33];
-	char fbuffer[MAX_OSPATH];
-
-	Com_sprintf(fbuffer, sizeof(fbuffer), "%s/q3key", filename);
-
-	FS_SV_FOpenFileRead(fbuffer, &f);
-
-	if (!f) {
-		Q_strncpyz(&cl_cdkey[16], "                ", 17);
-		return;
-	}
-
-	Com_Memset(buffer, 0, sizeof(buffer));
-
-	FS_Read(buffer, 16, f);
-	FS_FCloseFile(f);
-
-	if (CL_CDKeyValidate(buffer, NULL)) {
-		strcat(&cl_cdkey[16], buffer);
-	} else {
-		Q_strncpyz(&cl_cdkey[16], "                ", 17);
-	}
-}
-#ifndef DEDICATED
-/*
-=======================================================================================================================================
-Com_WriteCDKey
-=======================================================================================================================================
-*/
-static void Com_WriteCDKey(const char *filename, const char *ikey) {
-	fileHandle_t f;
-	char fbuffer[MAX_OSPATH];
-	char key[17];
-#ifndef _WIN32
-	mode_t savedumask;
-#endif
-	Com_sprintf(fbuffer, sizeof(fbuffer), "%s/q3key", filename);
-
-	Q_strncpyz(key, ikey, 17);
-
-	if (!CL_CDKeyValidate(key, NULL)) {
-		return;
-	}
-#ifndef _WIN32
-	savedumask = umask(0077);
-#endif
-	f = FS_SV_FOpenFileWrite(fbuffer);
-
-	if (!f) {
-		Com_Printf("Couldn't write CD key to %s.\n", fbuffer);
-		goto out;
-	}
-
-	FS_Write(key, 16, f);
-	FS_Printf(f, "\n// Generated by quake, do not modify\r\n");
-	FS_Printf(f, "// Do not give this file to ANYONE.\r\n");
-	FS_Printf(f, "// id Software and Activision will NOT ask you to send this file to them.\r\n");
-	FS_FCloseFile(f);
-out:
-#ifndef _WIN32
-	umask(savedumask);
-#endif
-	return;
-}
-#endif
-#endif // STANDALONE
 /*
 =======================================================================================================================================
 Com_PrintVector
@@ -3455,7 +3337,8 @@ void Com_Init(char *commandLine) {
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 	// init commands and vars
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
-	com_maxfps = Cvar_Get("com_maxfps", "125", CVAR_ARCHIVE);
+	com_maxfps = Cvar_Get("com_maxfps", "60", CVAR_ARCHIVE);
+	com_singlePlayerActive = Cvar_Get("ui_singlePlayerActive", "0", CVAR_SYSTEMINFO|CVAR_ROM);
 	com_blood = Cvar_Get("com_blood", "1", CVAR_ARCHIVE);
 	com_timescale = Cvar_Get("timescale", "1", CVAR_CHEAT|CVAR_SYSTEMINFO);
 	com_fixedtime = Cvar_Get("fixedtime", "0", CVAR_CHEAT);
@@ -3504,9 +3387,7 @@ void Com_Init(char *commandLine) {
 	Com_RandomBytes((byte *)&qport, sizeof(int));
 	Netchan_Init(qport & 0xffff);
 	VM_Init();
-#if defined(USE_JAVA)
-	JVM_Init();
-#elif defined(USE_MONO)
+#if defined(USE_MONO)
 	Mono_Init();
 #endif
 	SV_Init();
@@ -3592,20 +3473,7 @@ void Com_WriteConfiguration(void) {
 
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 
-	Com_WriteConfigToFile(Q3CONFIG_CFG);
-	// not needed for dedicated
-#ifndef DEDICATED
-	fs = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
-#ifndef STANDALONE
-	if (!Cvar_VariableIntegerValue("com_standalone")) {
-		if (UI_usesUniqueCDKey() && fs && fs->string[0] != 0) {
-			Com_WriteCDKey(fs->string, &cl_cdkey[16]);
-		} else {
-			Com_WriteCDKey(BASEGAME, cl_cdkey);
-		}
-	}
-#endif
-#endif
+	Com_WriteConfigToFile(QWCONFIG_CFG);
 }
 
 /*

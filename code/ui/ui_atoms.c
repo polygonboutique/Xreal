@@ -34,7 +34,7 @@ qboolean        m_entersound;	// after a frame, so caching won't disrupt the sou
 void QDECL Com_Error(int level, const char *error, ...)
 {
 	va_list         argptr;
-	char            text[1024];
+	char text[1024];
 
 	va_start(argptr, error);
 	Q_vsnprintf(text, sizeof(text), error, argptr);
@@ -46,7 +46,7 @@ void QDECL Com_Error(int level, const char *error, ...)
 void QDECL Com_Printf(const char *msg, ...)
 {
 	va_list         argptr;
-	char            text[1024];
+	char text[1024];
 
 	va_start(argptr, msg);
 	Q_vsnprintf(text, sizeof(text), msg, argptr);
@@ -86,8 +86,8 @@ UI_PushMenu
 */
 void UI_PushMenu(menuframework_s * menu)
 {
-	int             i;
-	menucommon_s   *item;
+	int i;
+	menucommon_s *item;
 
 	// avoid stacking menus invoked by hotkeys
 	for(i = 0; i < uis.menusp; i++)
@@ -174,7 +174,7 @@ UI_LerpColor
 */
 void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 {
-	int             i;
+	int i;
 
 	// lerp and clamp each component
 	for(i = 0; i < 4; i++)
@@ -349,16 +349,16 @@ UI_DrawBannerString
 */
 static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 {
-	const char     *s;
-	unsigned char   ch;
-	float           ax;
-	float           ay;
-	float           aw;
-	float           ah;
-	float           frow;
-	float           fcol;
-	float           fwidth;
-	float           fheight;
+	const char *s;
+	unsigned char ch;
+	float ax;
+	float ay;
+	float aw;
+	float ah;
+	float frow;
+	float fcol;
+	float fwidth;
+	float fheight;
 
 	// draw the colored text
 	trap_R_SetColor(color);
@@ -395,9 +395,9 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 
 void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 {
-	const char     *s;
-	int             ch;
-	int             width;
+	const char *s;
+	int ch;
+	int width;
 	vec4_t          drawcolor;
 
 	// find the width of the drawn text
@@ -446,10 +446,10 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 
 int UI_ProportionalStringWidth(const char *str)
 {
-	const char     *s;
-	int             ch;
-	int             charWidth;
-	int             width;
+	const char *s;
+	int ch;
+	int charWidth;
+	int width;
 
 	s = str;
 	width = 0;
@@ -471,16 +471,16 @@ int UI_ProportionalStringWidth(const char *str)
 
 static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t color, float sizeScale, qhandle_t charset)
 {
-	const char     *s;
-	unsigned char   ch;			// bk001204 - unsigned
-	float           ax;
-	float           ay;
-	float           aw = 0;		// bk001204 - init
-	float           ah;
-	float           frow;
-	float           fcol;
-	float           fwidth;
-	float           fheight;
+	const char *s;
+	unsigned char ch;			// bk001204 - unsigned
+	float ax;
+	float ay;
+	float aw = 0;		// bk001204 - init
+	float ah;
+	float frow;
+	float fcol;
+	float fwidth;
+	float fheight;
 
 	// draw the colored text
 	trap_R_SetColor(color);
@@ -540,8 +540,8 @@ UI_DrawProportionalString
 void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color)
 {
 	vec4_t          drawcolor;
-	int             width;
-	float           sizeScale;
+	int width;
+	float sizeScale;
 
 	sizeScale = UI_ProportionalSizeScale(style);
 
@@ -605,11 +605,11 @@ UI_DrawProportionalString_Wrapped
 */
 void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, const char *str, int style, vec4_t color)
 {
-	int             width;
-	char           *s1, *s2, *s3;
-	char            c_bcp;
-	char            buf[1024];
-	float           sizeScale;
+	int width;
+	char *s1, *s2, *s3;
+	char c_bcp;
+	char buf[1024];
+	float sizeScale;
 
 	if(!str || str[0] == '\0')
 		return;
@@ -673,16 +673,16 @@ UI_DrawString2
 */
 static void UI_DrawString2(int x, int y, const char *str, vec4_t color, int charw, int charh)
 {
-	const char     *s;
-	char            ch;
-	int             forceColor = qfalse;	//APSFIXME;
+	const char *s;
+	char ch;
+	int forceColor = qfalse;	//APSFIXME;
 	vec4_t          tempcolor;
-	float           ax;
-	float           ay;
-	float           aw;
-	float           ah;
-	float           frow;
-	float           fcol;
+	float ax;
+	float ay;
+	float aw;
+	float ah;
+	float frow;
+	float fcol;
 
 	if(y < -charh)
 	{
@@ -735,12 +735,12 @@ UI_DrawString
 */
 void UI_DrawString(int x, int y, const char *str, int style, vec4_t color)
 {
-	int             len;
-	int             charw;
-	int             charh;
+	int len;
+	int charw;
+	int charh;
 	vec4_t          newcolor;
 	vec4_t          lowlight;
-	float          *drawcolor;
+	float *drawcolor;
 	vec4_t          dropcolor;
 
 	if(!str)
@@ -815,7 +815,7 @@ UI_DrawChar
 */
 void UI_DrawChar(int x, int y, int ch, int style, vec4_t color)
 {
-	char            buff[2];
+	char buff[2];
 
 	buff[0] = ch;
 	buff[1] = '\0';
@@ -824,16 +824,16 @@ void UI_DrawChar(int x, int y, int ch, int style, vec4_t color)
 }
 
 
-int UI_Text_Width(const char *text, float scale, int limit, const fontInfo_t * font)
+int UI_Text_Width(const char *text, float scale, int limit, const fontInfo_t *font)
 {
-	int             count, len;
-	float           out;
+	int count, len;
+	float out;
 	const glyphInfo_t *glyph;
-	float           useScale;
+	float useScale;
 
 // FIXME: see ui_main.c, same problem
 //  const unsigned char *s = text;
-	const char     *s = text;
+	const char *s = text;
 
 	useScale = scale * font->glyphScale;
 	out = 0;
@@ -865,16 +865,16 @@ int UI_Text_Width(const char *text, float scale, int limit, const fontInfo_t * f
 	return out * useScale;
 }
 
-int UI_Text_Height(const char *text, float scale, int limit, const fontInfo_t * font)
+int UI_Text_Height(const char *text, float scale, int limit, const fontInfo_t *font)
 {
-	int             len, count;
-	float           max;
+	int len, count;
+	float max;
 	const glyphInfo_t *glyph;
-	float           useScale;
+	float useScale;
 
 // TTimo: FIXME
 //  const unsigned char *s = text;
-	const char     *s = text;
+	const char *s = text;
 
 	useScale = scale * font->glyphScale;
 	max = 0;
@@ -912,7 +912,7 @@ int UI_Text_Height(const char *text, float scale, int limit, const fontInfo_t * 
 void UI_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2,
 					   qhandle_t hShader)
 {
-	float           w, h;
+	float w, h;
 
 	w = width * scale;
 	h = height * scale;
@@ -924,16 +924,16 @@ void UI_Text_PaintChar(float x, float y, float width, float height, float scale,
 //otty: Fixed bugs ( styles were ignored by new ttf font code ) 
 
 void UI_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style,
-				   const fontInfo_t * font)
+				   const fontInfo_t *font)
 {
-	int             len, count;
+	int len, count;
 	vec4_t          newColor;
 	const glyphInfo_t* glyph;
-	float           useScale;
+	float useScale;
 	vec4_t          drawColor;
 
-	int             textWidth = UI_Text_Width(text, scale, 0, font);
-	int             textHeight = UI_Text_Height(text, scale, 0, font);
+	int textWidth = UI_Text_Width(text, scale, 0, font);
+	int textHeight = UI_Text_Height(text, scale, 0, font);
 
 
 	if((style & UI_BLINK) && ((uis.realtime / BLINK_DIVISOR) & 1))
@@ -980,7 +980,7 @@ void UI_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 	{
 // TTimo: FIXME
 //      const unsigned char *s = text;
-		const char     *s = text;
+		const char *s = text;
 
 		trap_R_SetColor(drawColor);
 		memcpy(&newColor[0], &drawColor[0], sizeof(vec4_t));
@@ -1007,11 +1007,11 @@ void UI_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 			}
 			else
 			{
-				float           yadj = useScale * glyph->top;
+				float yadj = useScale * glyph->top;
 
 				if(style & UI_DROPSHADOW)	// || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
-					int             ofs = 1;	//style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					int ofs = 1;	//style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
 
 					colorBlack[3] = newColor[3];
 					trap_R_SetColor(colorBlack);
@@ -1039,15 +1039,15 @@ void UI_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 //added by otty to replace UI_DrawProportionalString_AutoWrapped
 
 void UI_Text_Paint_AutoWrapped(int x, int y, float scale, int xmax, const char *str, int style, vec4_t color,
-							   const fontInfo_t * font)
+							   const fontInfo_t *font)
 {
-	int             width;
-	char           *s1, *s2, *s3;
-	char            c_bcp;
-	char            buf[1024];
-	int             ystep;
+	int width;
+	char *s1, *s2, *s3;
+	char c_bcp;
+	char buf[1024];
+	int ystep;
 
-	//float           sizeScale;
+	//float sizeScale;
 
 	if(!str || str[0] == '\0')
 		return;
@@ -1196,8 +1196,8 @@ UI_MouseEvent
 */
 void UI_MouseEvent(int dx, int dy)
 {
-	int             i;
-	menucommon_s   *m;
+	int i;
+	menucommon_s *m;
 
 	if(!uis.activemenu)
 		return;
@@ -1252,9 +1252,9 @@ void UI_MouseEvent(int dx, int dy)
 	}
 }
 
-char           *UI_Argv(int arg)
+char *UI_Argv(int arg)
 {
-	static char     buffer[MAX_STRING_CHARS];
+	static char buffer[MAX_STRING_CHARS];
 
 	trap_Argv(arg, buffer, sizeof(buffer));
 
@@ -1262,9 +1262,9 @@ char           *UI_Argv(int arg)
 }
 
 
-char           *UI_Cvar_VariableString(const char *var_name)
+char *UI_Cvar_VariableString(const char *var_name)
 {
-	static char     buffer[MAX_STRING_CHARS];
+	static char buffer[MAX_STRING_CHARS];
 
 	trap_Cvar_VariableStringBuffer(var_name, buffer, sizeof(buffer));
 
@@ -1319,7 +1319,7 @@ UI_ConsoleCommand
 */
 qboolean UI_ConsoleCommand(int realTime)
 {
-	char           *cmd;
+	char *cmd;
 
 	cmd = UI_Argv(0);
 
@@ -1461,10 +1461,10 @@ void UI_DrawNamedPic(float x, float y, float width, float height, const char *pi
 
 void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
 {
-	float           s0;
-	float           s1;
-	float           t0;
-	float           t1;
+	float s0;
+	float s1;
+	float t0;
+	float t1;
 
 	if(w < 0)
 	{							// flip about vertical
@@ -1562,9 +1562,9 @@ UI_Refresh
 =================
 */
 
-int             nextLine = 0;
-int             lineY = 0;
-int             lineX = 0;
+int nextLine = 0;
+int lineY = 0;
+int lineX = 0;
 
 void UI_Refresh(int realtime)
 {

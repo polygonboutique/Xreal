@@ -2345,7 +2345,7 @@ infoParm_t infoParms[] = {
 #if !defined(COMPAT_ET) {"moveableclip", 1, 0, 0}, // FIXME
 	{"ikclip", 1, 0, 0}, // FIXME
 #endif
-	{"nodrop", 1, 0, CONTENTS_NODROP}, // don't drop items or leave bodies(death fog, lava, etc) {"nonsolid", 1, SURF_NONSOLID, 0}, // clears the solid flag
+	{"nodrop", 1, 0, CONTENTS_NODROP}, // don't drop items or leave bodies(death fog, lava, etc.) {"nonsolid", 1, SURF_NONSOLID, 0}, // clears the solid flag
 	{"blood", 1, 0, CONTENTS_WATER},
 	// utility relevant attributes
 	{"origin", 1, 0, CONTENTS_ORIGIN}, // center of rotating brushes

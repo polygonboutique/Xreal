@@ -37,9 +37,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct
 {
 	menuframework_s menu;
-	menubitmap_s    frame;
-	menutext_s      message;
-	menutext_s      ok;
+	menubitmap_s frame;
+	menutext_s message;
+	menutext_s ok;
 } rankstatus_t;
 
 static rankstatus_t s_rankstatus;
@@ -48,7 +48,7 @@ static menuframework_s s_rankstatus_menu;
 static menuaction_s s_rankstatus_ok;
 
 static grank_status_t s_status = 0;
-static char    *s_rankstatus_message = NULL;
+static char *s_rankstatus_message = NULL;
 
 static vec4_t   s_rankingstatus_color_prompt = { 1.00, 0.43, 0.00, 1.00 };
 
@@ -110,7 +110,7 @@ RankStatus_MenuInit
 */
 void RankStatus_MenuInit(void)
 {
-	int             y;
+	int y;
 
 	memset(&s_rankstatus, 0, sizeof(s_rankstatus));
 

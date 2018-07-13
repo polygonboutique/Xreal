@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
@@ -741,12 +741,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame) {
 		}
 	}
 	// if the menu is going to cover the entire screen, we don't need to render anything under it
-#if defined(USE_JAVA)
-	if (!Java_UI_IsFullscreen())
-#else
-	if (uivm && !VM_Call(uivm, UI_IS_FULLSCREEN))
-#endif
-	{
+	if (uivm && !VM_Call(uivm, UI_IS_FULLSCREEN)) {
 		switch (cls.state) {
 			default:
 				Com_Error(ERR_FATAL, "SCR_DrawScreenField: bad cls.state");
@@ -757,23 +752,14 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame) {
 			case CA_DISCONNECTED:
 				// force menu up
 				S_StopAllSounds();
-#if defined(USE_JAVA)
-				Java_UI_SetActiveMenu(UIMENU_MAIN);
-#else
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
-#endif
 				break;
 			case CA_CONNECTING:
 			case CA_CHALLENGING:
 			case CA_CONNECTED:
 				// connecting clients will only show the connection dialog refresh to update the time
-#if defined(USE_JAVA)
-				Java_UI_Refresh(cls.realtime);
-				Java_UI_DrawConnectScreen(qfalse);
-#else
 				VM_Call(uivm, UI_REFRESH, cls.realtime);
 				VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
-#endif
 				break;
 			case CA_LOADING:
 			case CA_PRIMED:
@@ -781,13 +767,8 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame) {
 				CL_CGameRendering(stereoFrame);
 				// also draw the connection information, so it doesn't flash away too briefly on local or lan games
 				// refresh to update the time
-#if defined(USE_JAVA)
-				Java_UI_Refresh(cls.realtime);
-				Java_UI_DrawConnectScreen(qtrue);
-#else
 				VM_Call(uivm, UI_REFRESH, cls.realtime);
 				VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
-#endif
 				break;
 			case CA_ACTIVE:
 				// always supply STEREO_CENTER as vieworg offset is now done by the engine.
@@ -801,13 +782,9 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame) {
 	}
 	// the menu draws next
 	if (Key_GetCatcher()& KEYCATCH_UI) {
-#if defined(USE_JAVA)
-		Java_UI_Refresh(cls.realtime);
-#else
 		if (uivm) {
 			VM_Call(uivm, UI_REFRESH, cls.realtime);
 		}
-#endif
 	}
 	// console draws next
 	Con_DrawConsole();
@@ -837,12 +814,7 @@ void SCR_UpdateScreen(void) {
 
 	recursive = 1;
 	// if there is no VM, there are also no rendering commands issued. Stop the renderer in that case.
-#if defined(USE_JAVA)
-	if (com_dedicated->integer);
-#else
-	if (uivm || com_dedicated->integer)
-#endif
-	{
+	if (uivm || com_dedicated->integer) {
 		// if running in stereo, we need to draw the frame twice
 		if (cls.glconfig.stereoEnabled) {
 			SCR_DrawScreenField(STEREO_LEFT);

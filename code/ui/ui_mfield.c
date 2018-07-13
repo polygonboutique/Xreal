@@ -31,14 +31,14 @@ Handles horizontal scrolling and cursor blinking
 x, y, are in pixels
 ===================
 */
-void MField_Draw(mfield_t * edit, int x, int y, int style, vec4_t color)
+void MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color)
 {
-	int             len;
-	int             charw;
-	int             drawLen;
-	int             prestep;
-	int             cursorChar;
-	char            str[MAX_STRING_CHARS];
+	int len;
+	int charw;
+	int drawLen;
+	int prestep;
+	int cursorChar;
+	char str[MAX_STRING_CHARS];
 
 	drawLen = edit->widthInChars;
 	len = strlen(edit->buffer) + 1;
@@ -127,10 +127,10 @@ void MField_Draw(mfield_t * edit, int x, int y, int style, vec4_t color)
 MField_Paste
 ================
 */
-void MField_Paste(mfield_t * edit)
+void MField_Paste(mfield_t *edit)
 {
-	char            pasteBuffer[64];
-	int             pasteLen, i;
+	char pasteBuffer[64];
+	int pasteLen, i;
 
 	trap_GetClipboardData(pasteBuffer, 64);
 
@@ -152,9 +152,9 @@ in-game talk, and menu fields
 Key events are used for non-printable characters, others are gotten from char events.
 =================
 */
-void MField_KeyDownEvent(mfield_t * edit, int key)
+void MField_KeyDownEvent(mfield_t *edit, int key)
 {
-	int             len;
+	int len;
 
 	// shift-insert is paste
 	if(((key == K_INS) || (key == K_KP_INS)) && trap_Key_IsDown(K_SHIFT))
@@ -228,9 +228,9 @@ void MField_KeyDownEvent(mfield_t * edit, int key)
 MField_CharEvent
 ==================
 */
-void MField_CharEvent(mfield_t * edit, int ch)
+void MField_CharEvent(mfield_t *edit, int ch)
 {
-	int             len;
+	int len;
 
 	if(ch == 'v' - 'a' + 1)
 	{							// ctrl-v is paste
@@ -317,7 +317,7 @@ void MField_CharEvent(mfield_t * edit, int ch)
 MField_Clear
 ==================
 */
-void MField_Clear(mfield_t * edit)
+void MField_Clear(mfield_t *edit)
 {
 	edit->buffer[0] = 0;
 	edit->cursor = 0;
@@ -331,9 +331,9 @@ MenuField_Init
 */
 void MenuField_Init(menufield_s * m)
 {
-	int             l;
-	int             w;
-	int             h;
+	int l;
+	int w;
+	int h;
 
 	MField_Clear(&m->field);
 
@@ -370,13 +370,13 @@ MenuField_Draw
 */
 void MenuField_Draw(menufield_s * f)
 {
-	int             x;
-	int             y;
-	int             w;
-	int             h;
-	int             style;
+	int x;
+	int y;
+	int w;
+	int h;
+	int style;
 	qboolean        focus;
-	float          *color;
+	float *color;
 
 	x = f->generic.x;
 	y = f->generic.y;
@@ -452,7 +452,7 @@ MenuField_Key
 */
 sfxHandle_t MenuField_Key(menufield_s * m, int *key)
 {
-	int             keycode;
+	int keycode;
 
 	keycode = *key;
 

@@ -70,50 +70,50 @@ SINGLE PLAYER LEVEL SELECT MENU
 typedef struct
 {
 	menuframework_s menu;
-	menutext_s      item_banner;
-	menubitmap_s    item_leftarrow;
-	menubitmap_s    item_maps[4];
-	menubitmap_s    item_rightarrow;
-	menubitmap_s    item_player;
-	menubitmap_s    item_awards[6];
-	menubitmap_s    item_back;
-	menubitmap_s    item_reset;
-	menubitmap_s    item_custom;
-	menubitmap_s    item_next;
-	menubitmap_s    item_null;
+	menutext_s item_banner;
+	menubitmap_s item_leftarrow;
+	menubitmap_s item_maps[4];
+	menubitmap_s item_rightarrow;
+	menubitmap_s item_player;
+	menubitmap_s item_awards[6];
+	menubitmap_s item_back;
+	menubitmap_s item_reset;
+	menubitmap_s item_custom;
+	menubitmap_s item_next;
+	menubitmap_s item_null;
 
 	qboolean        reinit;
 
-	const char     *selectedArenaInfo;
-	int             numMaps;
-	char            levelPicNames[4][MAX_QPATH];
-	char            levelNames[4][16];
-	int             levelScores[4];
-	int             levelScoresSkill[4];
+	const char *selectedArenaInfo;
+	int numMaps;
+	char levelPicNames[4][MAX_QPATH];
+	char levelNames[4][16];
+	int levelScores[4];
+	int levelScoresSkill[4];
 	qhandle_t       levelSelectedPic;
 	qhandle_t       levelFocusPic;
 	qhandle_t       levelCompletePic[5];
 
-	char            playerModel[MAX_QPATH];
-	char            playerPicName[MAX_QPATH];
-	int             awardLevels[6];
+	char playerModel[MAX_QPATH];
+	char playerPicName[MAX_QPATH];
+	int awardLevels[6];
 	sfxHandle_t     awardSounds[6];
 
-	int             numBots;
+	int numBots;
 	qhandle_t       botPics[7];
-	char            botNames[7][10];
+	char botNames[7][10];
 } levelMenuInfo_t;
 
 static levelMenuInfo_t levelMenuInfo;
 
-static int      selectedArenaSet;
-static int      selectedArena;
-static int      currentSet;
-static int      currentGame;
-static int      trainingTier;
-static int      finalTier;
-static int      minTier;
-static int      maxTier;
+static int selectedArenaSet;
+static int selectedArena;
+static int currentSet;
+static int currentGame;
+static int trainingTier;
+static int finalTier;
+static int minTier;
+static int maxTier;
 
 
 /*
@@ -123,8 +123,8 @@ PlayerIcon
 */
 static void PlayerIcon(const char *modelAndSkin, char *iconName, int iconNameMaxSize)
 {
-	char           *skin;
-	char            model[MAX_QPATH];
+	char *skin;
+	char model[MAX_QPATH];
 
 	Q_strncpyz(model, modelAndSkin, sizeof(model));
 	skin = Q_strrchr(model, '/');
@@ -153,7 +153,7 @@ PlayerIconhandle
 */
 static qhandle_t PlayerIconHandle(const char *modelAndSkin)
 {
-	char            iconName[MAX_QPATH];
+	char iconName[MAX_QPATH];
 
 	PlayerIcon(modelAndSkin, iconName, sizeof(iconName));
 	return trap_R_RegisterShaderNoMip(iconName);
@@ -167,10 +167,10 @@ UI_SPLevelMenu_SetBots
 */
 static void UI_SPLevelMenu_SetBots(void)
 {
-	char           *p;
-	char           *bot;
-	char           *botInfo;
-	char            bots[MAX_INFO_STRING];
+	char *p;
+	char *bot;
+	char *botInfo;
+	char bots[MAX_INFO_STRING];
 
 	levelMenuInfo.numBots = 0;
 	if(selectedArenaSet > currentSet)
@@ -230,7 +230,7 @@ UI_SPLevelMenu_SetMenuItems
 */
 static void UI_SPLevelMenu_SetMenuArena(int n, int level, const char *arenaInfo)
 {
-	char            map[MAX_QPATH];
+	char map[MAX_QPATH];
 
 	Q_strncpyz(map, Info_ValueForKey(arenaInfo, "map"), sizeof(map));
 
@@ -263,9 +263,9 @@ static void UI_SPLevelMenu_SetMenuArena(int n, int level, const char *arenaInfo)
 
 static void UI_SPLevelMenu_SetMenuItems(void)
 {
-	int             n;
-	int             level;
-	const char     *arenaInfo;
+	int n;
+	int level;
+	const char *arenaInfo;
 
 	if(selectedArenaSet > currentSet)
 	{
@@ -508,7 +508,7 @@ UI_SPLevelMenu_AwardEvent
 */
 static void UI_SPLevelMenu_AwardEvent(void *ptr, int notification)
 {
-	int             n;
+	int n;
 
 	if(notification != QM_ACTIVATED)
 	{
@@ -592,15 +592,15 @@ UI_SPLevelMenu_MenuDraw
 
 static void UI_SPLevelMenu_MenuDraw(void)
 {
-	int             n, i;
-	int             x, y;
+	int n, i;
+	int x, y;
 	vec4_t          color;
-	int             level;
+	int level;
 
-//  int             fraglimit;
-	int             pad;
-	char            buf[MAX_INFO_VALUE];
-	char            string[64];
+//  int fraglimit;
+	int pad;
+	char buf[MAX_INFO_VALUE];
+	char string[64];
 
 	if(levelMenuInfo.reinit)
 	{
@@ -770,7 +770,7 @@ UI_SPLevelMenu_Cache
 */
 void UI_SPLevelMenu_Cache(void)
 {
-	int             n;
+	int n;
 
 
 	trap_R_RegisterShaderNoMip(UI_ART_BUTTON);
@@ -810,11 +810,11 @@ UI_SPLevelMenu_Init
 */
 static void UI_SPLevelMenu_Init(void)
 {
-	int             skill;
-	int             n;
-	int             x, y;
-	int             count;
-	char            buf[MAX_QPATH];
+	int skill;
+	int n;
+	int x, y;
+	int count;
+	char buf[MAX_QPATH];
 
 	skill = (int)trap_Cvar_VariableValue("g_spSkill");
 	if(skill < 1 || skill > 5)
@@ -1069,9 +1069,9 @@ UI_SPLevelMenu
 */
 void UI_SPLevelMenu(void)
 {
-	int             level;
-	int             trainingLevel;
-	const char     *arenaInfo;
+	int level;
+	int trainingLevel;
+	const char *arenaInfo;
 
 	trainingTier = -1;
 	arenaInfo = UI_GetSpecialArenaInfo("training");
