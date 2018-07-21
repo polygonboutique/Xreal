@@ -294,6 +294,7 @@ void Cmd_Vstr_f(void) {
 	}
 
 	v = Cvar_VariableString(Cmd_Argv(1));
+
 	Cbuf_InsertText(va("%s\n", v));
 }
 
@@ -524,7 +525,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes) {
 			}
 		}
 		// handle quoted strings
-		// NOTE TTimo this doesn't handle \" escaping
+		// NOTE: this doesn't handle \" escaping
 		if (!ignoreQuotes && *text == '"') {
 			cmd_argv[cmd_argc] = textOut;
 			cmd_argc++;
@@ -771,6 +772,8 @@ void Cmd_ExecuteString(const char *text) {
 /*
 =======================================================================================================================================
 Cmd_List_f
+
+List available commands.
 =======================================================================================================================================
 */
 void Cmd_List_f(void) {

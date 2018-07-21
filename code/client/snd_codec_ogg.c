@@ -47,7 +47,7 @@ snd_codec_t ogg_codec = {
 /*
 =======================================================================================================================================
 
-	Callbacks for vobisfile
+	CALLBACKS FOR VORBISFILE
 
 =======================================================================================================================================
 */
@@ -72,7 +72,7 @@ size_t S_OGG_Callback_read(void *ptr, size_t size, size_t nmemb, void *datasourc
 	}
 
 	if (!(size && nmemb)) {
-		// It's not an error, caller just wants zero bytes!
+		// it's not an error, caller just wants zero bytes!
 		errno = 0;
 		return 0;
 	}

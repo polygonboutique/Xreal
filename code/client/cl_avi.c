@@ -87,6 +87,7 @@ WRITE_STRING
 static ID_INLINE void WRITE_STRING(const char *s) {
 
 	Com_Memcpy(&buffer[bufIndex], s, strlen(s));
+
 	bufIndex += strlen(s);
 }
 
@@ -387,11 +388,11 @@ qboolean CL_OpenAVIForWriting(const char *fileName) {
 	}
 	// this doesn't write a real header, but allocates the correct amount of space at the beginning of the file
 	CL_WriteAVIHeader();
-
 	SafeFS_Write(buffer, bufIndex, afd.f);
 
 	afd.fileSize = bufIndex;
 	bufIndex = 0;
+
 	START_CHUNK("idx1");
 	SafeFS_Write(buffer, bufIndex, afd.idxF);
 
@@ -471,7 +472,6 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size) {
 }
 
 #define PCM_BUFFER_SIZE 44100
-
 /*
 =======================================================================================================================================
 CL_WriteAVIAudioFrame
@@ -532,7 +532,6 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size) {
 		SafeFS_Write(buffer, 16, afd.idxF);
 
 		afd.numIndices++;
-
 		bytesInBuffer = 0;
 	}
 }
@@ -572,7 +571,9 @@ qboolean CL_CloseAVI(void) {
 	afd.fileOpen = qfalse;
 
 	FS_Seek(afd.idxF, 4, FS_SEEK_SET);
+
 	bufIndex = 0;
+
 	WRITE_4BYTES(indexSize);
 	SafeFS_Write(buffer, bufIndex, afd.idxF);
 	FS_FCloseFile(afd.idxF);
@@ -595,7 +596,9 @@ qboolean CL_CloseAVI(void) {
 
 	FS_Read(buffer, indexRemainder, afd.idxF);
 	SafeFS_Write(buffer, indexRemainder, afd.f);
+
 	afd.fileSize += indexRemainder;
+
 	FS_FCloseFile(afd.idxF);
 	// remove temp index file
 	FS_HomeRemove(idxFileName);

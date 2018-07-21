@@ -677,7 +677,6 @@ qboolean Sys_GetPacket(netadr_t *net_from, msg_t *net_message) {
 }
 
 static char socksBuf[4096];
-
 /*
 =======================================================================================================================================
 Sys_SendPacket
@@ -1024,7 +1023,7 @@ void NET_JoinMulticast6(void) {
 		multicast6_socket = ip6_socket;
 	} else {
 		if ((multicast6_socket = NET_IP6Socket(net_mcast6addr->string, ntohs(boundto.sin6_port), NULL, &err)) == INVALID_SOCKET) {
-			// if the OS does not support binding to multicast addresses, like WinXP, at least try with the normal file descriptor.
+			// if the OS does not support binding to multicast addresses, like WinXP, at least try with the normal file descriptor
 			multicast6_socket = ip6_socket;
 		}
 	}
@@ -1357,7 +1356,7 @@ static void NET_GetLocalAddress(void) {
 		mask6.sin6_family = AF_INET6;
 
 		memset(&mask6.sin6_addr, 0xFF, sizeof(mask6.sin6_addr));
-		// add all IPs from returned list.
+		// add all IPs from returned list
 		for (search = res; search; search = search->ai_next) {
 			if (search->ai_family == AF_INET) {
 				NET_AddLocalAddress("", search->ai_addr, (struct sockaddr *)&mask4);

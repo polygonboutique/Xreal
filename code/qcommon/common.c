@@ -522,7 +522,7 @@ void Info_Print(const char *s) {
 			*o = 0;
 		}
 
-		Com_Printf("%s", key);
+		Com_Printf("%s ", key);
 
 		if (!*s) {
 			Com_Printf("MISSING VALUE\n");
