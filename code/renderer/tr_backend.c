@@ -1228,12 +1228,16 @@ static void RB_RenderDrawSurfaces(bool opaque, bool depthFill, renderDrawSurface
 
 		switch (drawSurfFilter) {
 			case DRAWSURFACES_WORLD_ONLY:
-				if (entity != &tr.worldEntity)
+				if (entity != &tr.worldEntity) {
 					continue;
+				}
+
 				break;
 			case DRAWSURFACES_ENTITIES_ONLY:
-				if (entity == &tr.worldEntity)
+				if (entity == &tr.worldEntity) {
 					continue;
+				}
+
 				break;
 			case DRAWSURFACES_ALL:
 				break;
@@ -1303,6 +1307,7 @@ static void RB_RenderDrawSurfaces(bool opaque, bool depthFill, renderDrawSurface
 				} else {
 					glDepthRange(0, 1);
 				}
+
 				oldDepthRange = depthRange;
 			}
 
@@ -4707,7 +4712,7 @@ static void RB_RenderInteractionsDeferredShadowMapped() {
 						GL_Cull(CT_FRONT_SIDED);
 					}
 
-					bool shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
+					qboolean shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
 					float shadowTexelSize = 1.0f;
 
 					if (shadowCompare) {

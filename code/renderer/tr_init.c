@@ -447,7 +447,7 @@ static const vidmode_t r_vidModes[] = {
 	{"1920x1080(16:9)",		1920,	1080, 1},
 	{"1920x1200 (16:10)",	1920,	1200, 1},
 	{"2048x1536",			2048,	1536, 1},
-	{"2560x1600 (16:10)",	2560,	1600, 1}, 
+	{"2560x1600 (16:10)",	2560,	1600, 1},
 };
 
 static const int s_numVidModes = (sizeof(r_vidModes) / sizeof(r_vidModes[0]));
@@ -559,6 +559,7 @@ static void RB_TakeScreenshot(int x, int y, int width, int height, char *fileNam
 
 	// with 18 bytes for the TGA file header
 	buffer = RB_ReadPixels(x, y, width, height, 18);
+
 	Com_Memset(buffer, 0, 18);
 
 	buffer[2] = 2; // uncompressed type

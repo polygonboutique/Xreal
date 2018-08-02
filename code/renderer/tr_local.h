@@ -2998,9 +2998,7 @@ extern refimport_t ri;
 
 extern int gl_filter_min, gl_filter_max;
 
-/*
- * * performanceCounters_t
-*/
+// performanceCounters_t
 typedef struct {
 	int c_sphere_cull_in, c_sphere_cull_out;
 	int c_plane_cull_in, c_plane_cull_out;
@@ -3126,8 +3124,7 @@ typedef struct {
 	int msec;		// total msec for backend run
 } backEndCounters_t;
 
-// all state modified by the back end is seperated
-// from the front end state
+// all state modified by the back end is seperated from the front end state
 typedef struct {
 	int smpFrame;
 	trRefdef_t refdef;
@@ -3157,12 +3154,12 @@ class GLShader;
 class GLShader_vertexLighting_DBS_entity;
 #endif
 /*
- * * trGlobals_t
- * * 
- * * Most renderer globals are defined here.
- * * backend functions should never modify any of these fields, 
- * * but may read fields that aren't dynamically modified
- * * by the frontend.
+=======================================================================================================================================
+	trGlobals_t
+
+	Most renderer globals are defined here.
+	backend functions should never modify any of these fields, but may read fields that aren't dynamically modified by the frontend.
+=======================================================================================================================================
 */
 typedef struct {
 	qboolean registered;	// cleared at shutdown, set at beginRegistration

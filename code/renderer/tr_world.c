@@ -285,8 +285,7 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits) {
 		}
 	}
 #if defined (USE_BSP_CLUSTERSURFACE_MERGING)
-	if (r_mergeClusterSurfaces->integer && !r_dynamicBspOcclusionCulling->integer &&
-		((r_mergeClusterFaces->integer && * surf->data == SF_FACE) || (r_mergeClusterCurves->integer && * surf->data == SF_GRID) ||
+	if (r_mergeClusterSurfaces->integer && !r_dynamicBspOcclusionCulling->integer && ((r_mergeClusterFaces->integer && * surf->data == SF_FACE) || (r_mergeClusterCurves->integer && * surf->data == SF_GRID) ||
 		(r_mergeClusterTriangles->integer && * surf->data == SF_TRIANGLES)) && !shader->isSky && !shader->isPortal && !ShaderRequiresCPUDeforms(shader))
 		return;
 #endif
@@ -663,7 +662,7 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2) {
 	vis = R_ClusterPVS(leaf->cluster);
 	leaf = R_PointInLeaf(p2);
 
-	if (!(vis[leaf->cluster >> 3] &(1 << (leaf->cluster & 7)))) {
+	if (!(vis[leaf->cluster >> 3] & (1 << (leaf->cluster & 7)))) {
 		return qfalse;
 	}
 
@@ -1031,7 +1030,7 @@ static void R_MarkLeaves(void) {
 		}
 	}
 
-	tr.visIndex = (tr.visIndex + 1)% MAX_VISCOUNTS;
+	tr.visIndex = (tr.visIndex + 1) % MAX_VISCOUNTS;
 	tr.visCounts[tr.visIndex]++;
 	tr.visClusters[tr.visIndex] = cluster;
 
@@ -1145,8 +1144,7 @@ static void DrawLeaf(bspNode_t *node, int decalBits) {
 	c = node->numMarkSurfaces;
 
 	while (c--) {
-		// the surface may have already been added if it
-		// spans multiple leafs
+		// the surface may have already been added if it spans multiple leafs
 		surf = *mark;
 		R_AddWorldSurface(surf, decalBits);
 		mark++;
@@ -1619,8 +1617,10 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node) {
 		InsertLink(&node->visChain, &tr.traversalStack);
 
 		if (node->contents != -1) {
-			if (node->visible[tr.viewCount])
+			if (node->visible[tr.viewCount]) {
 				DrawLeaf(node, tr.refdef.decalBits);
+			}
+
 			break;
 		}
 		// recurse down the children, front side first
@@ -1739,13 +1739,11 @@ static void R_CoherentHierachicalCulling() {
 	QueueInit(&tr.occlusionQueryQueue);
 	ClearLink(&tr.occlusionQueryList);
 	//ClearLink(&traversalStack);
-
 	QueueInit(&distanceQueue);
 	QueueInit(&occlusionQueryQueue);
 	QueueInit(&visibleQueue);
 	QueueInit(&invisibleQueue);
 	//QueueInit(&renderQueue);
-
 	EnQueue(&distanceQueue, &tr.world->nodes[0]);
 	//StackPush(&traversalStack, &tr.world->nodes[0]);
 	/*
@@ -1846,22 +1844,22 @@ static void R_CoherentHierachicalCulling() {
 				(node->contents == - 1 || (node->contents != -1 && node->numMarkSurfaces)) &&
 				InsideViewFrustum(node, FRUSTUM_CLIPALL)) {
 				// identify previously visible nodes
-				bool wasVisible = WasVisible(node);
+				qboolean wasVisible = WasVisible(node);
 
 				if (r_dynamicBspOcclusionCulling->integer > 1) {
 					// reset node's visibility classification
 					node->visible[tr.viewCount] = (qboolean)!QueryReasonable(node);
 				}
 				// identify nodes that we cannot skip queries for
-				bool needsQuery;
-				bool clipsNearPlane = (BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][FRUSTUM_NEAR]) == 3);
+				qboolean needsQuery;
+				qboolean clipsNearPlane = (BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][FRUSTUM_NEAR]) == 3);
 
 				if (clipsNearPlane) {
 					// node clips near plane so avoid the occlusion query test
 					node->occlusionQuerySamples[tr.viewCount] = r_chcVisibilityThreshold->integer + 1;
 					node->lastQueried[tr.viewCount] = tr.frameCount;
 					node->visible[tr.viewCount] = qtrue;
-					needsQuery = false;
+					needsQuery = qfalse;
 				}
 #if 1
 				else if (r_chcIgnoreLeaves->integer && node->contents != -1) {
@@ -1873,7 +1871,7 @@ static void R_CoherentHierachicalCulling() {
 					node->occlusionQuerySamples[tr.viewCount] = r_chcVisibilityThreshold->integer + 1;
 					node->lastQueried[tr.viewCount] = tr.frameCount;
 					node->visible[tr.viewCount] = qtrue;
-					needsQuery = false;
+					needsQuery = qfalse;
 				}
 #endif
 				else {
@@ -1889,13 +1887,13 @@ static void R_CoherentHierachicalCulling() {
 					wasVisible = qtrue;
 				}
 #endif
-				bool leafThatNeedsQuery = node->contents != -1;
+				qboolean leafThatNeedsQuery = node->contents != -1;
 				if (leafThatNeedsQuery) {
 					if (r_chcIgnoreLeaves->integer) {
-						leafThatNeedsQuery = false;
+						leafThatNeedsQuery = qfalse;
 					}
 				} else {
-					leafThatNeedsQuery = true;
+					leafThatNeedsQuery = qtrue;
 				}
 
 				if (r_dynamicBspOcclusionCulling->integer == 1) {

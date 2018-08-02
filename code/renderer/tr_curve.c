@@ -711,7 +711,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 			}
 			// back up and recheck this set again, it may need more subdivision
 			j -= 2;
-
 		}
 
 		Transpose(width, height, ctrl);
