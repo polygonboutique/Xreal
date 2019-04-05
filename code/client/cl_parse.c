@@ -215,7 +215,6 @@ void CL_ParseSnapshot(msg_t *msg) {
 	// get the reliable sequence acknowledge number
 	// NOTE: now sent with all server to client messages
 	//clc.reliableAcknowledge = MSG_ReadLong(msg);
-
 	// read in the new snapshot to a temporary buffer
 	// we will only copy to cl.snap if it is valid
 	Com_Memset(&newSnap, 0, sizeof(newSnap));
@@ -392,7 +391,7 @@ void CL_SystemInfoChanged(void) {
 		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT) {
 			Cvar_Get(key, value, CVAR_SERVER_CREATED|CVAR_ROM);
 		} else {
-			// if this cvar may not be modified by a server discard the value.
+			// if this cvar may not be modified by a server discard the value
 			if (!(cvar_flags & (CVAR_SYSTEMINFO|CVAR_SERVER_CREATED))) {
 				Com_Printf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s = %s\n", key, value);
 				continue;
@@ -626,7 +625,7 @@ A VoIP message has been received from the server.
 =======================================================================================================================================
 */
 static void CL_ParseVoip(msg_t *msg) {
-	static short decoded[4096]; // !!! FIXME: don't hardcode
+	static short decoded[4096]; // !!! FIXME: don't hard code
 	const int sender = MSG_ReadShort(msg);
 	const int generation = MSG_ReadByte(msg);
 	const int sequence = MSG_ReadLong(msg);
@@ -732,7 +731,7 @@ static void CL_ParseVoip(msg_t *msg) {
 		static FILE *encio = NULL;
 
 		if (encio == NULL) {
-			encio = fopen("voip - incoming - encoded.bin", "wb");
+			encio = fopen("voip-incoming-encoded.bin", "wb");
 		}
 
 		if (encio != NULL) {
@@ -743,7 +742,7 @@ static void CL_ParseVoip(msg_t *msg) {
 		static FILE *decio = NULL;
 
 		if (decio == NULL) {
-			decio = fopen("voip - incoming - decoded.bin", "wb");
+			decio = fopen("voip-incoming-decoded.bin", "wb");
 		}
 
 		if (decio != NULL) {
@@ -818,14 +817,12 @@ void CL_ParseServerMessage(msg_t *msg) {
 		}
 
 		cmd = MSG_ReadByte(msg);
-		// see if this is an extension command after the EOF, which means we
-		// got data that a legacy client should ignore.
+		// see if this is an extension command after the EOF, which means we got data that a legacy client should ignore
 		if ((cmd == svc_EOF) && (MSG_LookaheadByte(msg) == svc_extension)) {
 			SHOWNET(msg, "EXTENSION");
-			MSG_ReadByte(msg); // throw the svc_extension byte away.
+			MSG_ReadByte(msg); // throw the svc_extension byte away
 			cmd = MSG_ReadByte(msg); // something legacy clients can't do!
-			// sometimes you get a svc_extension at end of stream...dangling
-			// bits in the huffman decoder giving a bogus value?
+			// sometimes you get a svc_extension at end of stream ... dangling bits in the huffman decoder giving a bogus value?
 			if (cmd == -1) {
 				cmd = svc_EOF;
 			}

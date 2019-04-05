@@ -638,10 +638,10 @@ static void CG_DrawStatusBarQ3(void) {
 	qhandle_t handle;
 
 	static float colors[4][4] = {
-		{1.0f, 0.69f, 0.0f, 1.0f}, 	// normal
-		{1.0f, 0.2f, 0.2f, 1.0f}, 	// low health
-		{0.5f, 0.5f, 0.5f, 1.0f}, 	// weapon firing
-		{1.0f, 1.0f, 1.0f, 1.0f}	// health > 100
+		{1.0f, 0.69f, 0.0f, 1.0f}, // normal
+		{1.0f, 0.2f, 0.2f, 1.0f}, // low health
+		{0.5f, 0.5f, 0.5f, 1.0f}, // weapon firing
+		{1.0f, 1.0f, 1.0f, 1.0f} // health > 100
 	};
 
 	// draw the team background
@@ -1628,7 +1628,7 @@ CG_DrawSnapshot
 static float CG_DrawSnapshot(float y) {
 	char *s;
 
-	s = va("time:%i snap:%i cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
+	s = va("Time:%i Snap:%i Cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
 
 	CG_Text_PaintAligned(635, y + 4, s, 0.2f, UI_RIGHT|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
 	return y + 16;
@@ -1669,7 +1669,7 @@ static float CG_DrawFPS(float y) {
 		}
 
 		fps = 1000 * FPS_FRAMES / total;
-		s = va("%ifps", fps);
+		s = va("%iFps", fps);
 
 		CG_Text_PaintAligned(635, y, s, 0.25f, UI_RIGHT|UI_DROPSHADOW, colorWhite, &cgs.media.freeSansBoldFont);
 	}
@@ -1823,7 +1823,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 				p = CG_ConfigString(CS_LOCATIONS + ci->location);
 
 				if (!p || !*p) {
-					p = "unknown";
+					p = "Unknown";
 				}
 
 				len = CG_DrawStrlen(p);
@@ -1996,7 +1996,7 @@ static float CG_DrawScores(float y) {
 		CG_DrawBigString(x + 4, y, s, 1.0f);
 
 		if (cgs.gametype == GT_CTF) {
-			// Display flag status
+			// display flag status
 			item = BG_FindItemForPowerup(PW_REDFLAG);
 
 			if (item) {
@@ -2505,7 +2505,7 @@ static void CG_DrawDisconnect(void) {
 		return;
 	}
 	// also add text in center of screen
-	s = "Connection Interrupted";
+	s = "Connection Interrupted!";
 	w = CG_Text_Width(s, 0.5f, 0, &cgs.media.freeSansBoldFont);
 
 	CG_Text_Paint(320 - w / 2, 100, 0.5f, colorRed, s, 0, 0, UI_DROPSHADOW, &cgs.media.freeSansBoldFont);
@@ -2551,14 +2551,7 @@ static void CG_DrawLagometer(void) {
 		return;
 	}
 	// draw the graph
-/*#ifdef MISSIONPACK
-	x = 640 - 48;
-	y = 480 - 144;
-#else
-	x = 640 - 48;
-	y = 480 - 90;
-#endif
-*/
+
 	// otty: readjusted lagometer
 	x = 640 - 68;
 	y = 480 - 120;
@@ -3447,11 +3440,9 @@ static void CG_Draw2D(void) {
 		return;
 	}
 
-#ifdef MISSIONPACK
 	if (cgs.orderPending && cg.time > cgs.orderTime) {
 		CG_CheckOrderPending();
 	}
-#endif
 	// if we are taking a levelshot for the menu, don't draw anything
 	if (cg.levelShot) {
 		return;

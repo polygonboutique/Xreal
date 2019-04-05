@@ -1017,7 +1017,7 @@ void CM_InitBoxHull(void) {
 	box_brush->edges = (cbrushedge_t *)Hunk_Alloc(sizeof(cbrushedge_t) * 12, h_low);
 	box_brush->numEdges = 12;
 	box_model.leaf.numLeafBrushes = 1;
-//	box_model.leaf.firstLeafBrush = cm.numBrushes;
+	//box_model.leaf.firstLeafBrush = cm.numBrushes;
 	box_model.leaf.firstLeafBrush = cm.numLeafBrushes;
 
 	cm.leafbrushes[cm.numLeafBrushes] = cm.numBrushes;

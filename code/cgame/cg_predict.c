@@ -326,18 +326,18 @@ static void CG_TouchItem(centity_t *cent) {
 
 	item = &bg_itemlist[cent->currentState.modelindex];
 	// special case for flags. we don't predict touching our own flag
-	if (cgs.gametype == GT_1FCTF) {
-		if (item->giTag != PW_NEUTRALFLAG) {
-			return;
-		}
-	}
-
 	if (cgs.gametype == GT_CTF || cgs.gametype == GT_HARVESTER) {
 		if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_RED && item->giTag == PW_REDFLAG) {
 			return;
 		}
 
 		if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_BLUE && item->giTag == PW_BLUEFLAG) {
+			return;
+		}
+	}
+
+	if (cgs.gametype == GT_1FCTF) {
+		if (item->giTag != PW_NEUTRALFLAG) {
 			return;
 		}
 	}

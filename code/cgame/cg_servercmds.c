@@ -657,7 +657,7 @@ int CG_HeadModelVoiceChats(char *filename) {
 	}
 
 	if (len >= MAX_VOICEFILESIZE) {
-		trap_Print(va(S_COLOR_RED "voice chat file too large: %s is %i, max allowed is %i", filename, len, MAX_VOICEFILESIZE));
+		trap_Print(va(S_COLOR_RED "voice chat file too large: %s is %i, max allowed is %i\n", filename, len, MAX_VOICEFILESIZE));
 		trap_FS_FCloseFile(f);
 		return -1;
 	}
@@ -821,6 +821,7 @@ CG_PlayVoiceChat
 =======================================================================================================================================
 */
 void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat) {
+
 	// if we are going into the intermission, don't start any voices
 	if (cg.intermissionStarted) {
 		return;

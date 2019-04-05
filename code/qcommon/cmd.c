@@ -274,7 +274,6 @@ void Cmd_Exec_f(void) {
 
 	Com_Printf("execing %s\n", Cmd_Argv(1));
 	Cbuf_InsertText(f.c);
-
 	FS_FreeFile(f.v);
 }
 

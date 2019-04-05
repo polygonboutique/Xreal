@@ -966,7 +966,7 @@ void CG_BubbleThink(localEntity_t *le) {
 	contents = CG_PointContents(trace.endpos, -1);
 
 	if (!(contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
-		// Bubble isn't in liquid anymore, remove it.
+		// bubble isn't in liquid anymore, remove it
 		CG_FreeLocalEntity(le);
 		return;
 	}

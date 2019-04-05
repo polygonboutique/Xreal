@@ -77,7 +77,7 @@ const char *BuildShaderStateConfig(void) {
 	memset(buff, 0, MAX_STRING_CHARS);
 
 	for (i = 0; i < remapCount; i++) {
-		Com_sprintf(out, (MAX_QPATH * 2) + 5, "%s = %s:%5.2f@", remappedShaders[i].oldShader, remappedShaders[i].newShader, remappedShaders[i].timeOffset);
+		Com_sprintf(out, (MAX_QPATH * 2) + 5, "%s=%s:%5.2f@", remappedShaders[i].oldShader, remappedShaders[i].newShader, remappedShaders[i].timeOffset);
 		Q_strcat(buff, sizeof(buff), out);
 	}
 
@@ -87,7 +87,7 @@ const char *BuildShaderStateConfig(void) {
 /*
 =======================================================================================================================================
 
-	Model / Sound configstring indexes.
+	Model/Sound configstring indexes.
 
 =======================================================================================================================================
 */
@@ -366,17 +366,17 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator) {
 
 /*
 =======================================================================================================================================
-tv
+TempVector
 
-TempVector: This is just a convenience function for making temporary vectors for function calls.
+This is just a convenience function for making temporary vectors for function calls.
 =======================================================================================================================================
 */
-float *tv(float x, float y, float z) {
+float *TempVector(float x, float y, float z) {
 	static int index;
 	static vec3_t vecs[8];
 	float *v;
 
-	// use an array so that multiple tempvectors won't collide for a while
+	// use an array so that multiple vectors won't collide for a while
 	v = vecs[index];
 	index = (index + 1)&7;
 
@@ -389,17 +389,17 @@ float *tv(float x, float y, float z) {
 
 /*
 =======================================================================================================================================
-vtos
+VectorToString
 
-VectorToString: This is just a convenience function for printing vectors.
+This is just a convenience function for printing vectors.
 =======================================================================================================================================
 */
-char *vtos(const vec3_t v) {
+char *VectorToString(const vec3_t v) {
 	static int index;
 	static char str[8][32];
 	char *s;
 
-	// use an array so that multiple vtos won't collide
+	// use an array so that multiple vectors won't collide
 	s = str[index];
 	index = (index + 1)&7;
 
@@ -462,10 +462,10 @@ void G_ActivateUseFirst(gentity_t *ent, gentity_t *other, qboolean firstActivate
 
 /*
 =======================================================================================================================================
-vectoyaw
+VectorToYaw
 =======================================================================================================================================
 */
-float vectoyaw(const vec3_t vec) {
+float VectorToYaw(const vec3_t vec) {
 	float yaw;
 
 	if (vec[YAW] == 0 && vec[PITCH] == 0) {

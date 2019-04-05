@@ -32,7 +32,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // includes for the OGG codec
 #include <errno.h>
 #include <vorbis/vorbisfile.h>
-// the OGG codec can return the samples in a number of different formats, we use the standard signed short format.
+// the OGG codec can return the samples in a number of different formats, we use the standard signed short format
 #define OGG_SAMPLEWIDTH 2
 // Q3 OGG codec
 snd_codec_t ogg_codec = {

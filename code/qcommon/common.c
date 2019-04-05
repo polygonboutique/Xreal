@@ -314,7 +314,9 @@ void QDECL Com_Error(int code, const char *fmt, ...) {
 		CL_FlushMemory();
 		VM_Forced_Unload_Done();
 		FS_PureServerSetLoadedPaks("", "");
+
 		com_errorEntered = qfalse;
+
 		longjmp(abortframe, -1);
 	} else {
 		CL_Shutdown(va(S_COLOR_RED "Client fatal crashed: %s" S_COLOR_WHITE, com_errorMessage));
@@ -1700,7 +1702,6 @@ void Hunk_Clear(void) {
 	hunk_temp = &hunk_high;
 
 	Com_Printf("Hunk_Clear: reset the hunk ok\n");
-
 	VM_Clear();
 #ifdef HUNK_DEBUG
 	hunkblocks = NULL;
@@ -3241,7 +3242,7 @@ Seed the random number generator, if possible with an OS supplied random seed.
 static void Com_InitRand(void) {
 	unsigned int seed;
 
-	if (Sys_RandomBytes((byte *)& seed, sizeof(seed))) {
+	if (Sys_RandomBytes((byte *)&seed, sizeof(seed))) {
 		srand(seed);
 	} else {
 		srand(time(NULL));
@@ -3266,16 +3267,15 @@ void Com_Init(char *commandLine) {
 	// clear queues
 	Com_Memset(&eventQueue[0], 0, MAX_QUEUED_EVENTS * sizeof(sysEvent_t));
 	Com_Memset(&sys_packetReceived[0], 0, MAX_MSGLEN * sizeof(byte));
-	// initialize the weak pseudo - random number generator for use later.
+	// initialize the weak pseudo-random number generator for use later
 	Com_InitRand();
 	// do this before anything else decides to push events
 	Com_InitPushEvent();
 	Com_InitSmallZoneMemory();
 	Cvar_Init();
-	// prepare enough of the subsystems to handle
-	// cvar and command buffer management
+	// prepare enough of the subsystems to handle cvar and command buffer management
 	Com_ParseCommandLine(commandLine);
-	// Swap_Init();
+	//Swap_Init();
 	Cbuf_Init();
 	// override anything from the config files with command line args
 	Com_StartupVariable(NULL);
@@ -3462,7 +3462,7 @@ void Com_WriteConfiguration(void) {
 #ifndef DEDICATED
 	cvar_t *fs;
 #endif
-	// if we are quiting without fully initializing, make sure we don't write out anything
+	// if we are quitting without fully initializing, make sure we don't write out anything
 	if (!com_fullyInitialized) {
 		return;
 	}
@@ -3530,7 +3530,7 @@ int Com_ModifyMsec(int msec) {
 		clampTime = 5000;
 	} else {
 		// for local single player gaming
-		// we may want to clamp the time to prevent players from flying off edges when something hitches.
+		// we may want to clamp the time to prevent players from flying off edges when something hitches
 		clampTime = 200;
 	}
 

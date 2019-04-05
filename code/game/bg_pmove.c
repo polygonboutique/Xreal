@@ -1120,6 +1120,7 @@ static int PM_FootstepForSurface(void) {
 	} else if (pml.groundTrace.surfaceFlags & SURF_WALLWALK) {
 		return EV_FOOTSTEP_WALLWALK;
 	}
+
 	switch (pml.groundTrace.surfaceFlags & SURF_MATERIAL_MASK) {
 		default:
 		// sound defaults to hard, dry materials
@@ -1988,7 +1989,6 @@ static void PM_SetWaterLevel(void) {
 	if (cont & MASK_WATER) {
 		sample2 = pm->ps->viewheight - playerMins[2];
 		sample1 = sample2 / 2;
-
 		pm->watertype = cont;
 		pm->waterlevel = 1;
 		point[2] = pm->ps->origin[2] + playerMins[2] + sample1;

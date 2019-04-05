@@ -411,7 +411,6 @@ static void CG_ItemPickup(int itemNum) {
 			cg.weaponSelect = bg_itemlist[itemNum].giTag;
 		}
 	}
-
 }
 
 /*
@@ -843,7 +842,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_JUMP_PAD:
 			DEBUGNAME("EV_JUMP_PAD");
-//			CG_Printf("EV_JUMP_PAD w/effect #%i\n", es->eventParm);
+			//CG_Printf("EV_JUMP_PAD w/effect #%i\n", es->eventParm);
 			{
 				localEntity_t *smoke;
 				vec3_t up = {0, 0, 1};
@@ -870,7 +869,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		// weapon events
 		case EV_NOAMMO:
 			DEBUGNAME("EV_NOAMMO");
-//			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound, 64);
+			//trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound, 64);
 
 			if (es->number == cg.snap->ps.clientNum) {
 				CG_OutOfAmmoChange();

@@ -93,7 +93,7 @@ sfxHandle_t CG_CustomSound(int clientNum, const char *soundName) {
 =======================================================================================================================================
 CG_ParseAnimationFile
 
-Read a configuration file containing animation counts and rates models/players/visor/animation.cfg, etc.
+Read a configuration file containing animation counts and rates, models/players/visor/animation.cfg, etc.
 =======================================================================================================================================
 */
 static qboolean CG_ParseCharacterFile(const char *filename, clientInfo_t *ci) {
@@ -295,13 +295,13 @@ qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t *ci, co
 
 	if (cgs.gametype > GT_TOURNAMENT) {
 		switch (ci->team) {
-			case TEAM_BLUE: {
-				team = "blue";
+			case TEAM_RED: {
+				team = "red";
 				break;
 			}
 
 			default: {
-				team = "red";
+				team = "blue";
 				break;
 			}
 		}
@@ -833,8 +833,8 @@ void CG_NewClientInfo(int clientNum) {
 				*slash++= 0;
 			}
 
-			Q_strncpyz(newInfo.skinName, skin, sizeof(newInfo.skinName));
 			Q_strncpyz(newInfo.modelName, modelStr, sizeof(newInfo.modelName));
+			Q_strncpyz(newInfo.skinName, skin, sizeof(newInfo.skinName));
 		}
 
 		if (cgs.gametype > GT_TOURNAMENT) {
@@ -2679,8 +2679,10 @@ void CG_Player(centity_t *cent) {
 			CrossProduct(skull.axis[1], skull.axis[2], skull.axis[0]);
 
 			skull.hModel = cgs.media.kamikazeHeadModel;
+
 			trap_R_AddRefEntityToScene(&skull);
 			skull.hModel = cgs.media.kamikazeHeadTrail;
+
 			trap_R_AddRefEntityToScene(&skull);
 		} else {
 			// three skulls spinning around the player
@@ -2688,6 +2690,7 @@ void CG_Player(centity_t *cent) {
 			dir[0] = cos(angle) * 20;
 			dir[1] = sin(angle) * 20;
 			dir[2] = cos(angle) * 20;
+
 			VectorAdd(body.origin, dir, skull.origin);
 
 			skull.origin[2] -= playerMins[2];
@@ -2704,6 +2707,7 @@ void CG_Player(centity_t *cent) {
 			AnglesToAxis(angles, skull.axis);
 			/*
 			dir[2] = 0;
+
 			VectorInverse(dir);
 			VectorCopy(dir, skull.axis[1]);
 			VectorNormalize(skull.axis[1]);

@@ -527,7 +527,7 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin) {
 	if (!chksrc->local) {
 		distance = Distance(origin, lastListenerOrigin);
 	}
-	// if we exceed a certain distance, scale the gain linearly until the sound vanishes into nothingness.
+	// if we exceed a certain distance, scale the gain linearly until the sound vanishes into nothingness
 	if (!chksrc->local && (distance -= s_alMaxDistance->value) > 0) {
 		float scaleFactor;
 
@@ -699,6 +699,8 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 /*
 =======================================================================================================================================
 S_AL_SaveLoopPos
+
+Remove given source as loop master if it is the master and hand off master status to another source in this case.
 =======================================================================================================================================
 */
 static void S_AL_SaveLoopPos(src_t *dest, ALuint alSource) {
@@ -1287,11 +1289,11 @@ static void S_AL_SrcUpdate(void) {
 
 				if (!curSource->isPlaying) {
 					if (curSource->priority == SRCPRI_AMBIENT) {
-						// if there are other ambient looping sources with the same sound, make sure the sound of these sources are in sync.
+						// if there are other ambient looping sources with the same sound, make sure the sound of these sources are in sync
 						if (curSfx->loopActiveCnt) {
 							int offset, error;
 
-							// we already have a master loop playing, get buffer position.
+							// we already have a master loop playing, get buffer position
 							S_AL_ClearError(qfalse);
 							qalGetSourcei(srcList[curSfx->masterLoopSrc].alSource, AL_SAMPLE_OFFSET, &offset);
 
@@ -1307,7 +1309,7 @@ static void S_AL_SrcUpdate(void) {
 
 							src_t *master = &srcList[curSfx->masterLoopSrc];
 							// this loop sound used to be played, but all sources are stopped. Use last sample position/time
-							// to calculate offset so the player thinks the sources continued playing while they were inaudible.
+							// to calculate offset so the player thinks the sources continued playing while they were inaudible
 							if (master->lastTimePos >= 0) {
 								secofs = master->lastTimePos + (Sys_Milliseconds() - master->lastSampleTime) / 1000.0f;
 								secofs = fmodf(secofs, (float)curSfx->info.samples / curSfx->info.rate);
@@ -1674,7 +1676,7 @@ static void S_AL_MusicProcess(ALuint b) {
 	// run out data to read, start at the beginning again
 	if (l == 0) {
 		S_CodecCloseStream(curstream);
-		// the intro stream just finished playing so we don't need to reopen the music stream.
+		// the intro stream just finished playing so we don't need to reopen the music stream
 		if (intro_stream) {
 			intro_stream = NULL;
 		} else {
@@ -1742,8 +1744,8 @@ static void S_AL_StartBackgroundTrack(const char *intro, const char *loop) {
 	// copy the loop over
 	strncpy(s_backgroundLoop, loop, sizeof(s_backgroundLoop));
 
-	if (!issame) { // open the intro and don't mind whether it succeeds.
-		// the important part is the loop.
+	if (!issame) { // open the intro and don't mind whether it succeeds
+		// the important part is the loop
 		intro_stream = S_CodecOpenStream(intro);
 	} else {
 		intro_stream = NULL;
@@ -2118,7 +2120,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	if (device && !*device) {
 		device = NULL;
 	}
-	// device enumeration support (extension is implemented reasonably only on Windows right now).
+	// device enumeration support (extension is implemented reasonably only on Windows right now)
 	if (qalcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT")) {
 		char devicenames[1024] = "";
 		const char *devicelist;
@@ -2135,7 +2137,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 			device = "Generic Software";
 		}
 #endif
-		// dump a list of available devices to a cvar for the user to see.
+		// dump a list of available devices to a cvar for the user to see
 		while ((curlen = strlen(devicelist))) {
 			Q_strcat(devicenames, sizeof(devicenames), devicelist);
 			Q_strcat(devicenames, sizeof(devicenames), "\n");

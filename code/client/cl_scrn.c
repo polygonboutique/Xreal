@@ -757,7 +757,8 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame) {
 			case CA_CONNECTING:
 			case CA_CHALLENGING:
 			case CA_CONNECTED:
-				// connecting clients will only show the connection dialog refresh to update the time
+				// connecting clients will only show the connection dialog
+				// refresh to update the time
 				VM_Call(uivm, UI_REFRESH, cls.realtime);
 				VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
 				break;
@@ -813,7 +814,7 @@ void SCR_UpdateScreen(void) {
 	}
 
 	recursive = 1;
-	// if there is no VM, there are also no rendering commands issued. Stop the renderer in that case.
+	// if there is no VM, there are also no rendering commands issued. Stop the renderer in that case
 	if (uivm || com_dedicated->integer) {
 		// if running in stereo, we need to draw the frame twice
 		if (cls.glconfig.stereoEnabled) {

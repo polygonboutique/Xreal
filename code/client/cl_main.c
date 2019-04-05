@@ -529,7 +529,7 @@ void CL_WriteDemoMessage(msg_t *msg, int headerBytes) {
 =======================================================================================================================================
 CL_StopRecord_f
 
-stop recording a demo.
+Stop recording a demo.
 =======================================================================================================================================
 */
 void CL_StopRecord_f(void) {
@@ -1175,7 +1175,8 @@ Called before parsing a gamestate.
 */
 void CL_ClearState(void) {
 
-//	S_StopAllSounds();
+	//S_StopAllSounds();
+
 	Com_Memset(&cl, 0, sizeof(cl));
 }
 
@@ -1933,13 +1934,13 @@ void CL_NextDownload(void) {
 			} else if (!*clc.sv_dlURL) {
 				Com_Printf("WARNING: Server allows download redirection, but does not have sv_dlURL set.\n");
 			} else if (!CL_cURL_Init()) {
-				Com_Printf("WARNING: could not load cURL library.\n");
+				Com_Printf("WARNING: Could not load cURL library.\n");
 			} else {
 				CL_cURL_BeginDownload(localName, va("%s/%s", clc.sv_dlURL, remoteName));
 				useCURL = qtrue;
 			}
 		} else if (!(clc.sv_allowDownload & DLF_NO_REDIRECT)) {
-			Com_Printf("WARNING: Server allows download redirection, but it disabled by client configuration (cl_allowDownload is %d)\n", cl_allowDownload->integer);
+			Com_Printf("WARNING: Server allows download redirection, but it disabled by client configuration (cl_allowDownload is %d).\n", cl_allowDownload->integer);
 		}
 #endif // USE_CURL
 		if (!useCURL) {
@@ -2137,7 +2138,6 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address) {
 }
 
 #define MAX_SERVERSPERPACKET 256
-
 /*
 =======================================================================================================================================
 CL_ServersResponsePacket
@@ -2267,7 +2267,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 	// challenge from the server we are connecting to
 	if (!Q_stricmp(c, "challengeResponse")) {
 		if (cls.state != CA_CONNECTING) {
-			Com_DPrintf("Unwanted challenge response received.  Ignored.\n");
+			Com_DPrintf("Unwanted challenge response received. Ignored.\n");
 			return;
 		}
 
@@ -2442,8 +2442,7 @@ Check whether client has been paused.
 */
 qboolean CL_CheckPaused(void) {
 
-	// if cl_paused->modified is set, the cvar has only been changed in this frame. Keep paused in this frame to ensure the server
-	// doesn't lag behind.
+	// if cl_paused->modified is set, the cvar has only been changed in this frame. Keep paused in this frame to ensure the server doesn't lag behind
 	if (cl_paused->integer || cl_paused->modified) {
 		return qtrue;
 	}
@@ -3128,7 +3127,7 @@ void CL_Init(void) {
 
 	CL_InitRef();
 	SCR_Init();
-//	Cbuf_Execute();
+	//Cbuf_Execute();
 	Cvar_Set("cl_running", "1");
 	CL_GenerateQKey();
 	Cvar_Get("cl_guid", "", CVAR_USERINFO|CVAR_ROM);
@@ -3203,15 +3202,15 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping) {
 
 	if (server) {
 		if (info) {
-			server->clients = atoi(Info_ValueForKey(info, "clients"));
-			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_NAME_LENGTH);
-			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
-			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), MAX_NAME_LENGTH);
-			server->gameType = atoi(Info_ValueForKey(info, "gametype"));
+			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_NAME_LENGTH);
 			server->netType = atoi(Info_ValueForKey(info, "nettype"));
 			server->minPing = atoi(Info_ValueForKey(info, "minping"));
 			server->maxPing = atoi(Info_ValueForKey(info, "maxping"));
+			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+			server->clients = atoi(Info_ValueForKey(info, "clients"));
+			server->gameType = atoi(Info_ValueForKey(info, "gametype"));
+			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
 		}
 
 		server->ping = ping;

@@ -304,7 +304,6 @@ static void ProximityMine_Player(gentity_t *mine, gentity_t *player) {
 	mine->enemy = player;
 	mine->think = ProximityMine_ExplodeOnPlayer;
 	mine->nextthink = level.time + 10 * 1000;
-
 }
 
 /*

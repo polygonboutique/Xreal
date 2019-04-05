@@ -115,6 +115,7 @@ void RemoveColinearPoints(winding_t *w) {
 
 		if (DotProduct(v1, v2) < 0.999) {
 			VectorCopy(w->p[i], p[nump]);
+
 			nump++;
 		}
 	}

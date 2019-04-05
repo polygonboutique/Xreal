@@ -1077,7 +1077,7 @@ NET_OpenSocks
 void NET_OpenSocks(int port) {
 	struct sockaddr_in address;
 	int err;
-	struct hostent * h;
+	struct hostent *h;
 	int len;
 	qboolean rfc1929;
 	unsigned char buf[64];

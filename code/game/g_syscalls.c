@@ -254,20 +254,20 @@ void trap_GetConfigstring(int num, char *buffer, int bufferSize) {
 
 /*
 =======================================================================================================================================
-trap_GetUserinfo
-=======================================================================================================================================
-*/
-void trap_GetUserinfo(int num, char *buffer, int bufferSize) {
-	syscall(G_GET_USERINFO, num, buffer, bufferSize);
-}
-
-/*
-=======================================================================================================================================
 trap_SetUserinfo
 =======================================================================================================================================
 */
 void trap_SetUserinfo(int num, const char *buffer) {
 	syscall(G_SET_USERINFO, num, buffer);
+}
+
+/*
+=======================================================================================================================================
+trap_GetUserinfo
+=======================================================================================================================================
+*/
+void trap_GetUserinfo(int num, char *buffer, int bufferSize) {
+	syscall(G_GET_USERINFO, num, buffer, bufferSize);
 }
 
 /*
@@ -574,7 +574,7 @@ int trap_BotLibLoadMap(const char *mapname) {
 trap_BotLibUpdateEntity
 =======================================================================================================================================
 */
-int trap_BotLibUpdateEntity(int ent, void /* struct bot_updateentity_s */ *bue) {
+int trap_BotLibUpdateEntity(int ent, void /*struct bot_updateentity_s*/ *bue) {
 	return syscall(BOTLIB_UPDATENTITY, ent, bue);
 }
 //#if defined(GLADIATOR)
@@ -1120,7 +1120,7 @@ void trap_BotRemoveConsoleMessage(int chatstate, int handle) {
 trap_BotNextConsoleMessage
 =======================================================================================================================================
 */
-int trap_BotNextConsoleMessage(int chatstate, void /* struct bot_consolemessage_s */ *cm) {
+int trap_BotNextConsoleMessage(int chatstate, void /*struct bot_consolemessage_s*/ *cm) {
 	return syscall(BOTLIB_AI_NEXT_CONSOLE_MESSAGE, chatstate, cm);
 }
 
@@ -1201,7 +1201,7 @@ int trap_StringContains(char *str1, char *str2, int casesensitive) {
 trap_BotFindMatch
 =======================================================================================================================================
 */
-int trap_BotFindMatch(char *str, void /* struct bot_match_s */ *match, unsigned long int context) {
+int trap_BotFindMatch(char *str, void /*struct bot_match_s*/ *match, unsigned long int context) {
 	return syscall(BOTLIB_AI_FIND_MATCH, str, match, context);
 }
 
@@ -1210,7 +1210,7 @@ int trap_BotFindMatch(char *str, void /* struct bot_match_s */ *match, unsigned 
 trap_BotMatchVariable
 =======================================================================================================================================
 */
-void trap_BotMatchVariable(void /* struct bot_match_s*/ *match, int variable, char *buf, int size) {
+void trap_BotMatchVariable(void /*struct bot_match_s*/ *match, int variable, char *buf, int size) {
 	syscall(BOTLIB_AI_MATCH_VARIABLE, match, variable, buf, size);
 }
 
@@ -1225,7 +1225,7 @@ void trap_UnifyWhiteSpaces(char *string) {
 
 /*
 =======================================================================================================================================
-trap_UnifyWhiteSpaces
+trap_BotReplaceSynonyms
 =======================================================================================================================================
 */
 void trap_BotReplaceSynonyms(char *string, unsigned long int context) {
@@ -1292,13 +1292,13 @@ void trap_BotRemoveFromAvoidGoals(int goalstate, int number) {
 trap_BotPushGoal
 =======================================================================================================================================
 */
-void trap_BotPushGoal(int goalstate, void /* struct bot_goal_s */ *goal) {
+void trap_BotPushGoal(int goalstate, void /*struct bot_goal_s*/ *goal) {
 	syscall(BOTLIB_AI_PUSH_GOAL, goalstate, goal);
 }
 
 /*
 =======================================================================================================================================
-trap_BotPushGoal
+trap_BotPopGoal
 =======================================================================================================================================
 */
 void trap_BotPopGoal(int goalstate) {
@@ -1346,7 +1346,7 @@ void trap_BotGoalName(int number, char *name, int size) {
 trap_BotGetTopGoal
 =======================================================================================================================================
 */
-int trap_BotGetTopGoal(int goalstate, void /* struct bot_goal_s */ *goal) {
+int trap_BotGetTopGoal(int goalstate, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_GET_TOP_GOAL, goalstate, goal);
 }
 
@@ -1355,7 +1355,7 @@ int trap_BotGetTopGoal(int goalstate, void /* struct bot_goal_s */ *goal) {
 trap_BotGetSecondGoal
 =======================================================================================================================================
 */
-int trap_BotGetSecondGoal(int goalstate, void /* struct bot_goal_s */ *goal) {
+int trap_BotGetSecondGoal(int goalstate, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_GET_SECOND_GOAL, goalstate, goal);
 }
 
@@ -1373,7 +1373,7 @@ int trap_BotChooseLTGItem(int goalstate, vec3_t origin, int *inventory, int trav
 trap_BotChooseNBGItem
 =======================================================================================================================================
 */
-int trap_BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int travelflags, void /* struct bot_goal_s */ *ltg, float maxtime) {
+int trap_BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int travelflags, void /*struct bot_goal_s*/ *ltg, float maxtime) {
 	return syscall(BOTLIB_AI_CHOOSE_NBG_ITEM, goalstate, origin, inventory, travelflags, ltg, PASSFLOAT(maxtime));
 }
 #endif
@@ -1382,7 +1382,7 @@ int trap_BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int trav
 trap_BotTouchingGoal
 =======================================================================================================================================
 */
-int trap_BotTouchingGoal(vec3_t origin, void /* struct bot_goal_s */ *goal) {
+int trap_BotTouchingGoal(vec3_t origin, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_TOUCHING_GOAL, origin, goal);
 }
 
@@ -1391,7 +1391,7 @@ int trap_BotTouchingGoal(vec3_t origin, void /* struct bot_goal_s */ *goal) {
 trap_BotItemGoalInVisButNotVisible
 =======================================================================================================================================
 */
-int trap_BotItemGoalInVisButNotVisible(int viewer, vec3_t eye, vec3_t viewangles, void /* struct bot_goal_s */ *goal) {
+int trap_BotItemGoalInVisButNotVisible(int viewer, vec3_t eye, vec3_t viewangles, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_ITEM_GOAL_IN_VIS_BUT_NOT_VISIBLE, viewer, eye, viewangles, goal);
 }
 
@@ -1400,7 +1400,7 @@ int trap_BotItemGoalInVisButNotVisible(int viewer, vec3_t eye, vec3_t viewangles
 trap_BotGetLevelItemGoal
 =======================================================================================================================================
 */
-int trap_BotGetLevelItemGoal(int index, char *classname, void /* struct bot_goal_s */ *goal) {
+int trap_BotGetLevelItemGoal(int index, char *classname, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_GET_LEVEL_ITEM_GOAL, index, classname, goal);
 }
 
@@ -1409,7 +1409,7 @@ int trap_BotGetLevelItemGoal(int index, char *classname, void /* struct bot_goal
 trap_BotGetNextCampSpotGoal
 =======================================================================================================================================
 */
-int trap_BotGetNextCampSpotGoal(int num, void /* struct bot_goal_s */ *goal) {
+int trap_BotGetNextCampSpotGoal(int num, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL, num, goal);
 }
 #if defined(GLADIATOR)
@@ -1418,7 +1418,7 @@ int trap_BotGetNextCampSpotGoal(int num, void /* struct bot_goal_s */ *goal) {
 trap_BotGetMapLocationGoal
 =======================================================================================================================================
 */
-int trap_BotGetMapLocationGoal(char *name, void /* struct bot_goal_s */ *goal) {
+int trap_BotGetMapLocationGoal(char *name, void /*struct bot_goal_s*/ *goal) {
 	return syscall(BOTLIB_AI_GET_MAP_LOCATION_GOAL, name, goal);
 }
 #endif
@@ -1549,7 +1549,7 @@ void trap_BotAddAvoidSpot(int movestate, vec3_t origin, float radius, int type) 
 trap_BotMoveToGoal
 =======================================================================================================================================
 */
-void trap_BotMoveToGoal(void /* struct bot_moveresult_s */ *result, int movestate, void /* struct bot_goal_s */ *goal, int travelflags) {
+void trap_BotMoveToGoal(void /*struct bot_moveresult_s*/ *result, int movestate, void /*struct bot_goal_s*/ *goal, int travelflags) {
 	syscall(BOTLIB_AI_MOVE_TO_GOAL, result, movestate, goal, travelflags);
 }
 
@@ -1595,7 +1595,7 @@ int trap_BotReachabilityArea(vec3_t origin, int testground) {
 trap_BotMovementViewTarget
 =======================================================================================================================================
 */
-int trap_BotMovementViewTarget(int movestate, void /* struct bot_goal_s */ *goal, int travelflags, float lookahead, vec3_t target) {
+int trap_BotMovementViewTarget(int movestate, void /*struct bot_goal_s*/ *goal, int travelflags, float lookahead, vec3_t target) {
 	return syscall(BOTLIB_AI_MOVEMENT_VIEW_TARGET, movestate, goal, travelflags, PASSFLOAT(lookahead), target);
 }
 
@@ -1604,7 +1604,7 @@ int trap_BotMovementViewTarget(int movestate, void /* struct bot_goal_s */ *goal
 trap_BotPredictVisiblePosition
 =======================================================================================================================================
 */
-int trap_BotPredictVisiblePosition(vec3_t origin, int areanum, void /* struct bot_goal_s */ *goal, int travelflags, vec3_t target) {
+int trap_BotPredictVisiblePosition(vec3_t origin, int areanum, void /*struct bot_goal_s*/ *goal, int travelflags, vec3_t target) {
 	return syscall(BOTLIB_AI_PREDICT_VISIBLE_POSITION, origin, areanum, goal, travelflags, target);
 }
 
@@ -1631,7 +1631,7 @@ void trap_BotFreeMoveState(int handle) {
 trap_BotInitMoveState
 =======================================================================================================================================
 */
-void trap_BotInitMoveState(int handle, void /* struct bot_initmove_s */ *initmove) {
+void trap_BotInitMoveState(int handle, void /*struct bot_initmove_s*/ *initmove) {
 	syscall(BOTLIB_AI_INIT_MOVE_STATE, handle, initmove);
 }
 
@@ -1650,7 +1650,7 @@ int trap_BotChooseBestFightWeapon(int weaponstate, int *inventory) {
 trap_BotGetWeaponInfo
 =======================================================================================================================================
 */
-void trap_BotGetWeaponInfo(int weaponstate, int weapon, void /* struct weaponinfo_s */ *weaponinfo) {
+void trap_BotGetWeaponInfo(int weaponstate, int weapon, void /*struct weaponinfo_s*/ *weaponinfo) {
 	syscall(BOTLIB_AI_GET_WEAPON_INFO, weaponstate, weapon, weaponinfo);
 }
 

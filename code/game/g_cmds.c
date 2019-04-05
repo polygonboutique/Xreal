@@ -954,7 +954,7 @@ static void Cmd_Tell_f(gentity_t *ent) {
 
 	G_LogPrintf("tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p);
 	G_Say(ent, target, SAY_TELL, p);
-	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot
+	// don't tell to the player self if it was already directed to this player, also don't send the chat back to a bot
 	if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
 		G_Say(ent, ent, SAY_TELL, p);
 	}
@@ -1084,7 +1084,7 @@ static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly) {
 
 	G_LogPrintf("vtell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, id);
 	G_Voice(ent, target, SAY_TELL, id, voiceonly);
-	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot
+	// don't tell to the player self if it was already directed to this player, also don't send the chat back to a bot
 	if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
 		G_Voice(ent, ent, SAY_TELL, id, voiceonly);
 	}
@@ -1217,8 +1217,8 @@ void Cmd_Where_f(gentity_t *ent) {
 
 static const char *gameNames[] = {
 	"Single Player",
-	"Tournament",
 	"Free For All",
+	"Tournament",
 	"Team Deathmatch",
 	"Capture the Flag",
 	"One Flag CTF",

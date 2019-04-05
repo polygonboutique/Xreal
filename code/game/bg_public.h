@@ -619,8 +619,7 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 #define MAX_MAP_SIZE 65536
 // bg_tracemap.c
 typedef struct {
-	// callbacks to test the world
-	// these will be different functions during game and cgame
+	// callbacks to test the world, these will be different functions during game and cgame
 	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
 } bgGenTracemap_t;

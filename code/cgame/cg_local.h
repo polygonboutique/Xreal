@@ -357,7 +357,7 @@ typedef struct localEntity_s {
 	quat_t quatRot;
 	vec3_t rotAxis;
 	float angVel;
-	float bounceFactor;	// 0.0 = no bounce, 1.0 = perfect
+	float bounceFactor;			// 0.0 = no bounce, 1.0 = perfect
 	float color[4];
 	float radius;
 	float light;
@@ -644,7 +644,7 @@ typedef struct {
 	qboolean thisFrameTeleport;
 	qboolean nextFrameTeleport;
 	int frametime;					// cg.time - cg.oldTime
-	int time;						// this is the time value that the client is rendering at.
+	int time;						// this is the server time value that the client is rendering at
 	int oldTime;					// time at last frame, used for missile trails and prediction checking
 	int physicsTime;				// either cg.snap->time or cg.nextSnap->time
 	int timelimitWarnings;			// 5 min, 1 min, overtime
@@ -1344,7 +1344,7 @@ extern vec4_t blueTeamColor;
 extern vec4_t baseTeamColor;
 extern vmCvar_t cg_drawPlayerCollision;
 extern vmCvar_t cg_wallWalkSmoothTime; 
-// cg_main.c 
+// cg_main.c
 const char *CG_ConfigString(int index);
 const char *CG_Argv(int arg);
 void QDECL CG_Printf(const char *msg, ...);
